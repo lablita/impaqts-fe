@@ -1,0 +1,8 @@
+{
+  "/be-ws/*": {
+    "target": "http://localhost:9000/test-query-ws-ext",
+    "secure": false,
+    "ws": true,
+    "logLevel": "debug"
+  }
+}

@@ -1,0 +1,17 @@
+<input type="text" [formControl]="wordFC">
+<button (click)="search()">Cerca</button>
+<table aria-describedby="Risultati" *ngIf="queryResponse">
+  <tr>
+    <th scope="col">Ref</th>
+    <th scope="col">Left</th>
+    <th scope="col">Kwic</th>
+    <th scope="col">Right</th>
+  </tr>
+  <tr *ngFor="let l of queryResponse.kwicLines">
+    <td>{{l.ref}}</td>
+    <td class="right-aligned">{{l.leftContext}}</td>
+    <td class="center-aligned">{{l.kwic}}</td>
+    <td>{{l.rightContext}}</td>
+  </tr>
+</table>
+<div>Totale: {{totalResults}}</div>
