@@ -10,6 +10,11 @@ import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { TopComponent } from './top/top.component';
+import { ConcordanceComponent } from './concordance/concordance.component';
+import { WordListComponent } from './word-list/word-list.component';
+import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
+import { MyJobComponent } from './my-job/my-job.component';
+import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +22,12 @@ import { TopComponent } from './top/top.component';
     QuerypocComponent,
     MainComponent,
     MenuComponent,
-    TopComponent
+    TopComponent,
+    ConcordanceComponent,
+    WordListComponent,
+    CorpusInfoComponent,
+    MyJobComponent,
+    AllWordsOrLemmasComponent
   ],
   imports: [
     BrowserModule,
