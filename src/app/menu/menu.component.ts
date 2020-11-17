@@ -1,6 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { MenuUtils } from './menu-utils';
+import { MenuEmitterService } from './menu-emitter.service';
+import { MenuService } from './menu.service';
+
+export class MenuEvent {
+  constructor(
+    public item: string,
+  ) { }
+}
+
 
 @Component({
   selector: 'app-menu',
@@ -9,16 +17,16 @@ import { MenuUtils } from './menu-utils';
 })
 export class MenuComponent implements OnInit {
 
-  public items: MenuItem[];
 
-  private menuItems: {
+  public items: MenuItem[] = [];
 
-  }
-
-  constructor() { }
+  constructor(
+    private readonly menuEmitterService: MenuEmitterService,
+    private readonly menuService: MenuService
+  ) { }
 
   ngOnInit(): void {
-    this.items = MenuUtils.getMenu('');
+    this.items = this.menuService.getMenuItems();
   }
 
 }
