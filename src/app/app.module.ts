@@ -15,6 +15,7 @@ import { WordListComponent } from './word-list/word-list.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { MyJobComponent } from './my-job/my-job.component';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
+import { SaveComponent } from './save/save.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-le
     WordListComponent,
     CorpusInfoComponent,
     MyJobComponent,
-    AllWordsOrLemmasComponent
+    AllWordsOrLemmasComponent,
+    SaveComponent
   ],
   imports: [
     BrowserModule,

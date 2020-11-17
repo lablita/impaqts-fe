@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { CONCORDANCE } from '../model/constants';
 import { MenuEmitterService } from './menu-emitter.service';
+import { MenuItemObject } from './menu-item-object';
 import { MenuService } from './menu.service';
 
 export class MenuEvent {
@@ -18,7 +19,7 @@ export class MenuEvent {
 export class MenuComponent implements OnInit {
 
 
-  public items: MenuItem[] = [];
+  public items: MenuItemObject[] = [];
 
   constructor(
     private readonly menuEmitterService: MenuEmitterService,
@@ -26,7 +27,13 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.items = this.menuService.getMenuItems();
+    this.items = this.menuService.getMenuItems(CONCORDANCE);
+    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
+      if (event.item) {
+        this.items = this.menuService.getMenuItems(event.item);
+      }
+    });
   }
+
 
 }
