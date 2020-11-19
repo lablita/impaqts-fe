@@ -1,13 +1,12 @@
 <p></p>
-
 <div class="p-d-flex p-flex-wrap" style="background-color: gray">
 
   <div class="p-d-flex p-mb-3 p-mr-3" style="width: 600px">
     <p-card class="p-p-3">
       <div class="p-field p-d-flex">
-        <label class="label-size" for="state">Corpus</label>
+        <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
         <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="name" [filter]="true"
-          [showClear]="true" placeholder="Select a Corpus">
+          [showClear]="true" placeholder="{{selectCorpus}}">
           <ng-template pTemplate="selectedItem">
             <div *ngIf="selectedCorpus">
               <div class="label-size">{{selectedCorpus.name}}</div>
@@ -21,35 +20,35 @@
         </p-dropdown>
       </div>
       <div class="p-field">
-        <label for="simple_query" class="label-size">Simple query</label>
+        <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
       <div class="p-d-flex">
-        <label class="label-size">Query type</label>
+        <label class="label-size">{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</label>
         <div *ngFor="let queryType of queryTypes" class="p-field-checkbox">
           <p-radioButton [inputId]="queryType.key" name="queryType" [value]="queryType" [(ngModel)]="selectedQueryType">
           </p-radioButton>
-          <label [for]="queryType.key" class="p-mr-2 p-ml-0">{{queryType.name}}</label>
+          <label [for]="queryType.key" class="p-mr-2 p-ml-1">{{queryType.name}}</label>
         </div>
       </div>
       <div class="p-field">
-        <label for="simple_query" class="label-size">Simple query</label>
+        <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
       <div class="p-field">
-        <label for="simple_query" class="label-size">Simple query</label>
+        <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
       <div class="p-field">
-        <label for="simple_query" class="label-size">Simple query</label>
+        <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
       <div class="p-field">
-        <label for="simple_query" class="label-size">Simple query</label>
+        <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
       <div class="p-field">
-        <label for="simple_query" class="label-size">Simple query</label>
+        <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
     </p-card>

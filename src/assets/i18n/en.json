@@ -27,5 +27,37 @@
     "COLLOCATIONS": "Collocations",
     "CONC_DECS": "ConcDesc",
     "VISUALIZE": "Visualize"
+  },
+  "PAGE": {
+    "CONCORDANCE": {
+      "CORPUS": "Corpus",
+      "SELECT_CORPUS": "Select a Corpus",
+      "SIMPLE_QUERY": "Simple query",
+      "MAKE_CONCORDANCE": "Make Concordance",
+      "QUERY_TYPES": "Query types",
+      "CONTEXT": "Context",
+      "TEXT_TYPE": "Text types",
+      "QUERY_TYPE": "Query type",
+      "SIMPLE": "Simple",
+      "LEMMA": "Lemma",
+      "PHRASE": "Phrase",
+      "WORD": "Word",
+      "CHARACTER": "Character",
+      "CQL": "CQL",
+      "WORD_FORM": "Word form",
+      "MATCH_CASE": "match case",
+      "DEFAULT_ATTRIBUTE": "Default attribute",
+      "LEMMA_FILTER": "Lemma filter",
+      "WINDOW": "Window",
+      "LEMMAS": "Lemma(s)",
+      "OF_THESE_ITEMS": "of these items",
+      "CLEAR_ALL": "Clear All",
+      "LEFT": "left",
+      "RIGHT": "right",
+      "BOTH": "both",
+      "ALL": "all",
+      "ANY": "any",
+      "NONE": "none"
+    }
   }
 }

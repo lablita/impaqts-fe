@@ -10,7 +10,8 @@ export class MenuItemObject implements MenuItem {
   disabled?: boolean;
   routerLink?: any;
 
-  constructor(label?: string, icon?: string, command?: any, url?: string, items?: MenuItem[], expanded?: boolean, disabled?: boolean, routerLink?: any) {
+  constructor(label?: string, icon?: string, command?: any, url?: string,
+    items?: MenuItem[], expanded?: boolean, disabled?: boolean, routerLink?: any) {
     this.label = label;
     this.icon = icon;
     this.command = command;
