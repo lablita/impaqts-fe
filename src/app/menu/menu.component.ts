@@ -1,5 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { CONCORDANCE } from '../model/constants';
+import { MenuEmitterService } from './menu-emitter.service';
+import { MenuItemObject } from './menu-item-object';
+import { MenuService } from './menu.service';
+
+export class MenuEvent {
+  constructor(
+    public item: string,
+  ) { }
+}
+
 
 @Component({
   selector: 'app-menu',
@@ -8,86 +18,22 @@ import { MenuItem } from 'primeng/api';
 })
 export class MenuComponent implements OnInit {
 
-  public items: MenuItem[];
 
-  constructor() { }
+  public items: MenuItemObject[] = [];
+
+  constructor(
+    private readonly menuEmitterService: MenuEmitterService,
+    private readonly menuService: MenuService
+  ) { }
 
   ngOnInit(): void {
-    this.items = [
-      {
-        label: 'File',
-        icon: 'pi pi-pw pi-file',
-        items: [{
-          label: 'New',
-          icon: 'pi pi-fw pi-plus',
-          items: [
-            { label: 'User', icon: 'pi pi-fw pi-user-plus' },
-            { label: 'Filter', icon: 'pi pi-fw pi-filter' }
-          ]
-        },
-        { label: 'Open', icon: 'pi pi-fw pi-external-link' },
-        { separator: true },
-        { label: 'Quit', icon: 'pi pi-fw pi-times' }
-        ]
-      },
-      {
-        label: 'Edit',
-        icon: 'pi pi-fw pi-pencil',
-        items: [
-          { label: 'Delete', icon: 'pi pi-fw pi-trash' },
-          { label: 'Refresh', icon: 'pi pi-fw pi-refresh' }
-        ]
-      },
-      {
-        label: 'Help',
-        icon: 'pi pi-fw pi-question',
-        items: [
-          {
-            label: 'Contents',
-            icon: 'pi pi-pi pi-bars'
-          },
-          {
-            label: 'Search',
-            icon: 'pi pi-pi pi-search',
-            items: [
-              {
-                label: 'Text',
-                items: [
-                  {
-                    label: 'Workspace'
-                  }
-                ]
-              },
-              {
-                label: 'User',
-                icon: 'pi pi-fw pi-file',
-              }
-            ]
-          }
-        ]
-      },
-      {
-        label: 'Actions',
-        icon: 'pi pi-fw pi-cog',
-        items: [
-          {
-            label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
-            items: [
-              { label: 'Save', icon: 'pi pi-fw pi-save' },
-              { label: 'Update', icon: 'pi pi-fw pi-save' },
-            ]
-          },
-          {
-            label: 'Other',
-            icon: 'pi pi-fw pi-tags',
-            items: [
-              { label: 'Delete', icon: 'pi pi-fw pi-minus' }
-            ]
-          }
-        ]
+    this.items = this.menuService.getMenuItems(CONCORDANCE);
+    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
+      if (event.item) {
+        this.items = this.menuService.getMenuItems(event.item);
       }
-    ];
+    });
   }
+
 
 }
