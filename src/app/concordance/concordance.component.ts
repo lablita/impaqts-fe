@@ -3,6 +3,17 @@ import { ActivatedRoute } from '@angular/router';
 import { SelectItem } from 'primeng/api';
 import { Corpus } from '../model/corpus';
 
+
+class RadioButtonCat {
+  name: string;
+  key: string;
+
+  constructor(name: string, key: string) {
+    this.name = name;
+    this.key = key;
+  }
+}
+
 @Component({
   selector: 'app-concordance',
   templateUrl: './concordance.component.html',
@@ -13,8 +24,10 @@ export class ConcordanceComponent implements OnInit {
 
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;
+  public items: SelectItem[];
 
-  items: SelectItem[];
+  public queryTypes: RadioButtonCat[];
+  public selectedQueryType: RadioButtonCat;
 
   constructor(
     private readonly route: ActivatedRoute
@@ -22,11 +35,16 @@ export class ConcordanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.corpusList = this.route.snapshot.data.corpusList;
+    this.queryTypes = [
+      new RadioButtonCat('simple', 'simple'),
+      new RadioButtonCat('lemma', 'lemma'),
+      new RadioButtonCat('phrase', 'phrase'),
+      new RadioButtonCat('word', 'word'),
+      new RadioButtonCat('character', 'character'),
+      new RadioButtonCat('CQL', 'cQL')
+    ];
+    this.selectedQueryType = this.queryTypes[0];
 
-    this.items = [];
-    for (let i = 0; i < 10000; i++) {
-      this.items.push({ label: 'Item ' + i, value: 'Item ' + i });
-    }
 
   }
 

@@ -5,7 +5,7 @@
   <div class="p-d-flex p-mb-3 p-mr-3" style="width: 600px">
     <p-card class="p-p-3">
       <div class="p-field p-d-flex">
-        <label style="width: 150px;" for="state">Corpus</label>
+        <label class="label-size" for="state">Corpus</label>
         <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="name" [filter]="true"
           [showClear]="true" placeholder="Select a Corpus">
           <ng-template pTemplate="selectedItem">
@@ -22,9 +22,36 @@
       </div>
       <div class="p-field">
         <label for="simple_query" class="label-size">Simple query</label>
-        <input width="400" id="simple_query" type="text" pInputText style="width: 350px;">
+        <input id="simple_query" type="text" pInputText style="width: 350px;">
       </div>
-
+      <div class="p-d-flex">
+        <label class="label-size">Query type</label>
+        <div *ngFor="let queryType of queryTypes" class="p-field-checkbox">
+          <p-radioButton [inputId]="queryType.key" name="queryType" [value]="queryType" [(ngModel)]="selectedQueryType">
+          </p-radioButton>
+          <label [for]="queryType.key" class="p-mr-2 p-ml-0">{{queryType.name}}</label>
+        </div>
+      </div>
+      <div class="p-field">
+        <label for="simple_query" class="label-size">Simple query</label>
+        <input id="simple_query" type="text" pInputText style="width: 350px;">
+      </div>
+      <div class="p-field">
+        <label for="simple_query" class="label-size">Simple query</label>
+        <input id="simple_query" type="text" pInputText style="width: 350px;">
+      </div>
+      <div class="p-field">
+        <label for="simple_query" class="label-size">Simple query</label>
+        <input id="simple_query" type="text" pInputText style="width: 350px;">
+      </div>
+      <div class="p-field">
+        <label for="simple_query" class="label-size">Simple query</label>
+        <input id="simple_query" type="text" pInputText style="width: 350px;">
+      </div>
+      <div class="p-field">
+        <label for="simple_query" class="label-size">Simple query</label>
+        <input id="simple_query" type="text" pInputText style="width: 350px;">
+      </div>
     </p-card>
   </div>
 

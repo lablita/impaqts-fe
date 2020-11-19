@@ -1,0 +1,31 @@
+{
+  "MENU": {
+    "CONCORDANCE": "Concordance",
+    "WOLRD_LIST": "Word list",
+    "CORPUS_INFO": "Corpus info",
+    "MY_JOBS": "My jobs",
+    "USER_GUIDE": "User guide",
+    "ALL_WORDS": "All words",
+    "ALL_LEMMANS": "All lemmans",
+    "SAVE": "Save",
+    "AS_SUBCORPUS": "as subcorpus",
+    "VIEW_OPTION": "View options",
+    "KWIC": "KWIC",
+    "SENTENCE": "Sentence",
+    "SORT": "Sort",
+    "LEFT": "Left",
+    "RIGHT": "Right",
+    "NODE": "Node",
+    "SHUFFLE": "Shuffle",
+    "SAMPLE": "Sample",
+    "FILTER": "Filter",
+    "OVERLAPS": "Overlaps",
+    "FIRST_HIT_IN_DOC": "1th hit in doc",
+    "FREQUENCY": "Frequency",
+    "NODE_TAGS": "Node tags",
+    "NODE_FORMS": "Node forms",
+    "COLLOCATIONS": "Collocations",
+    "CONC_DECS": "ConcDesc",
+    "VISUALIZE": "Visualize"
+  }
+}
