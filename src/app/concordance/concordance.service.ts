@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Corpus } from '../model/corpus';
+import { Corpus } from '../model/dropdown-item';
 
 @Injectable({
   providedIn: 'root'

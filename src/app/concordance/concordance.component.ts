@@ -1,19 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { SelectItem } from 'primeng/api';
-import { Corpus } from '../model/corpus';
+import { ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA, NONE, PHRASE, RIGHT, SIMPLE, WORD } from '../model/constants';
+import { Corpus, DropdownItem } from '../model/dropdown-item';
+import { RadioButtonItem } from '../model/radiobutton-item';
 
 
-class RadioButtonCat {
-  name: string;
-  key: string;
-
-  constructor(name: string, key: string) {
-    this.name = name;
-    this.key = key;
-  }
-}
 
 @Component({
   selector: 'app-concordance',
@@ -25,11 +17,39 @@ export class ConcordanceComponent implements OnInit {
 
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;
-  public items: SelectItem[];
 
-  public queryTypes: RadioButtonCat[];
-  public selectedQueryType: RadioButtonCat;
+
+  public windows: DropdownItem[];
+  public selectedWindow: DropdownItem;
+  public items: DropdownItem[];
+  public selectedItem: DropdownItem;
+  public tokens: DropdownItem[] = [];
+  public selectedToken: DropdownItem;
+
+  public queryTypes: RadioButtonItem[];
+  public selectedQueryType: RadioButtonItem;
   public selectCorpus: string;
+
+  public LEMMA = LEMMA;
+  public PHRASE = PHRASE;
+  public WORD = WORD;
+  public CHARACTER = CHARACTER;
+  public CQL = CQL;
+
+  public titleOption: string;
+
+  public simple: string;
+  public lemma: string;
+  public phrase: string;
+  public word: string;
+  public character: string;
+  public cql: string;
+
+  public queryTypeStatus: boolean;
+  public contextStatus: boolean;
+  public textTypeStatus: boolean;
+
+  public attributesSelection: string[] = [];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -37,28 +57,70 @@ export class ConcordanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.queryTypeStatus = false;
+    this.contextStatus = false;
+    this.textTypeStatus = false;
+
+    for (let i = 1; i < 6; i++) {
+      this.tokens.push(new DropdownItem('' + i, '' + i));
+    }
+    this.tokens.push(new DropdownItem('7', '7'));
+    this.tokens.push(new DropdownItem('10', '10'));
+    this.tokens.push(new DropdownItem('15', '15'));
+    this.selectedToken = this.tokens[4];
 
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
-      const lemma = this.translateService.instant('PAGE.CONCORDANCE.LEMMA');
-      const phrase = this.translateService.instant('PAGE.CONCORDANCE.PHRASE');
-      const word = this.translateService.instant('PAGE.CONCORDANCE.WORD');
-      const character = this.translateService.instant('PAGE.CONCORDANCE.CHARACTER');
-      const cql = this.translateService.instant('PAGE.CONCORDANCE.CQL');
       this.corpusList = this.route.snapshot.data.corpusList;
       this.queryTypes = [
-        new RadioButtonCat(simple, simple),
-        new RadioButtonCat(lemma, lemma),
-        new RadioButtonCat(phrase, phrase),
-        new RadioButtonCat(word, word),
-        new RadioButtonCat(character, character),
-        new RadioButtonCat(cql, cql)
+        new RadioButtonItem(SIMPLE, simple),
+        new RadioButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
+        new RadioButtonItem(PHRASE, this.translateService.instant('PAGE.CONCORDANCE.PHRASE')),
+        new RadioButtonItem(WORD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
+        new RadioButtonItem(CHARACTER, this.translateService.instant('PAGE.CONCORDANCE.CHARACTER')),
+        new RadioButtonItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
       ];
       this.selectedQueryType = this.queryTypes[0];
 
+      this.windows = [
+        new DropdownItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.LEFT')),
+        new DropdownItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.RIGHT')),
+        new DropdownItem(BOTH, this.translateService.instant('PAGE.CONCORDANCE.BOTH'))
+      ];
+      this.selectedWindow = this.windows[2];
+
+      this.items = [
+        new DropdownItem(ALL, this.translateService.instant('PAGE.CONCORDANCE.ALL')),
+        new DropdownItem(ANY, this.translateService.instant('PAGE.CONCORDANCE.ANY')),
+        new DropdownItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
+      ];
+      this.selectedItem = this.items[0];
     });
 
+    // TODO
+    this.titleOption = 'PAGE.CONCORDANCE.OPTION.VIEW_OPTION';
 
   }
+
+  public clickQueryType(): void {
+    this.queryTypeStatus = !this.queryTypeStatus;
+  }
+
+  public clickContext(): void {
+    this.contextStatus = !this.contextStatus;
+  }
+
+  public clickTextType(): void {
+    this.textTypeStatus = !this.textTypeStatus;
+  }
+
+  public clickMakeConcordance(): void {
+
+  }
+
+  public clickClearAll(): void {
+
+  }
+
 
 }

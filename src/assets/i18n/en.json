@@ -50,6 +50,7 @@
       "LEMMA_FILTER": "Lemma filter",
       "WINDOW": "Window",
       "LEMMAS": "Lemma(s)",
+      "TOKENS": "tokens",
       "OF_THESE_ITEMS": "of these items",
       "CLEAR_ALL": "Clear All",
       "LEFT": "left",
@@ -57,7 +58,39 @@
       "BOTH": "both",
       "ALL": "all",
       "ANY": "any",
-      "NONE": "none"
+      "NONE": "none",
+      "TAG": "tag",
+      "LC_WORD": "lc = word (lowercase)",
+      "LEMMA_LC": "lemma (lowercase)",
+      "OPTION": {
+        "VIEW_OPTION": "View options",
+        "ATTRIBUTES": "Attributes",
+        "STRUVTURES": "Structures",
+        "REFERENCES": "References",
+        "WORD_LOWER": "word (lowercase)",
+        "LEMMA_LOWER": "lemma (lowercase)",
+        "DISPLAY_ATTR": "Display attributes",
+        "FOR_EACH_TOKEN": "For each token",
+        "KWIC_TOKEN": "KWIC tokens only",
+        "TOOLTIPS": "as tooltips",
+        "SORT": "Simple Sort",
+        "ATTRIBUTE": "Attribute",
+        "REF_UP": "References up",
+        "PAGE_SIZE": "Page size (number of lines)",
+        "KWIC_CONTEXT": "KWIC context size (number of characters)",
+        "INCLUDING_POS": "(Including positional attributes)",
+        "SORT_GOOD": "Sort good dictionary examples (GDEX)",
+        "SHOW_GDEX": "Show GDEX scores in concordance (slow, use only for GDEX development)",
+        "NUM_LINES_SORT": "Number of lines to be sorted",
+        "ICON_FOR": "Icon for one-click sentence copying",
+        "ALLOW_MULT": "Allow multiple lines selection",
+        "COPYING_CLIP": "Do not use flash for copying to clipboard",
+        "CHECK_SEL_LINES": "Checkbox for selecting lines",
+        "SHOW_LINE": "Show line numbers",
+        "SHORT_LONG": "Shorten long references",
+        "CHANGE_VIEW": "Change view options"
+      },
+      "TEXT_TYPE_SECTION": {}
     }
   }
 }

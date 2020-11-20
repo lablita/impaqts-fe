@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Corpus } from '../model/corpus';
+import { Corpus } from '../model/dropdown-item';
 import { ConcordanceService } from './concordance.service';
 
 @Injectable({

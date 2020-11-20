@@ -27,4 +27,17 @@ export const CONC_DECS = 'conc_desc';
 export const VISUALIZE = 'visualize';
 export const CHENGE_OPTIONS = 'change_options';
 
+export const SIMPLE = 'simple';
+export const LEMMA = 'lemma';
+export const PHRASE = 'phrase';
+export const WORD = 'word';
+export const CHARACTER = 'characher';
+export const CQL = 'cql';
+
+export const BOTH = 'both';
+export const ALL = 'all';
+export const ANY = 'any';
+export const NONE = 'none';
+
+
 
