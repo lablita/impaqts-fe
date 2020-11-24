@@ -39,5 +39,29 @@ export const ALL = 'all';
 export const ANY = 'any';
 export const NONE = 'none';
 
+/* VIEW OPTION */
+export const OPTIONAL_ATTR_URL_PARAM = 'setattrs';
+export const OPTION_ATTR_URL_WORLD = 'word';
+export const OPTION_ATTR_URL_TAG = 'tag';
+export const OPTION_ATTR_URL_LEMMA = 'lemma';
+export const OPTION_ATTR_URL_WORLD_LC = 'lc';
+export const OPTION_ATTR_URL_LEMMA_LC = 'lemma_lc';
+
+export const OPTIONAL_DISPLAY_ATTR_URL_PARAM = 'allpos';
+export const OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH = 'all';
+export const OPTIONAL_DISPLAY_ATTR_URL_KWIC = 'kw';
+
+export const OPTIONAL_AS_TOOLTIP_URL_PARAM = 'attr_tooltip';
+export const OPTIONAL_AS_TOOLTIP_URL_ON = 'attr_tooltip';
+export const OPTIONAL_AS_TOOLTIP_URL_OFF = 'nott';
+
+export const OPTIONAL_STRUCS_URL_PARAM = 'setstructs';
+export const OPTIONAL_REFS_URL_PARAM = 'setrefs';
+export const OPTIONAL_REFS_UP_URL_PARAM = 'refs_up';
+export const OPTIONAL_REFS_UP_URL_ON = '1';
+export const OPTIONAL_REFS_UP_URL_OFF = '0';
+
+
+
 
 

@@ -1,4 +1,4 @@
-export class RadioButtonItem {
+export class ButtonItem {
   key: string;
   name: string;
 

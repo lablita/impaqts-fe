@@ -1,9 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA, NONE, PHRASE, RIGHT, SIMPLE, WORD } from '../model/constants';
+import { ButtonItem } from '../model/button-item';
+import {
+  ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
+  NONE, OPTIONAL_AS_TOOLTIP_URL_ON, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
+  OPTIONAL_DISPLAY_ATTR_URL_KWIC,
+
+
+  OPTIONAL_REFS_UP_URL_ON, OPTION_ATTR_URL_LEMMA, OPTION_ATTR_URL_LEMMA_LC, OPTION_ATTR_URL_TAG,
+  OPTION_ATTR_URL_WORLD, OPTION_ATTR_URL_WORLD_LC, PHRASE, RIGHT, SIMPLE,
+  WORD
+} from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
-import { RadioButtonItem } from '../model/radiobutton-item';
 
 
 
@@ -26,8 +35,31 @@ export class ConcordanceComponent implements OnInit {
   public tokens: DropdownItem[] = [];
   public selectedToken: DropdownItem;
 
-  public queryTypes: RadioButtonItem[];
-  public selectedQueryType: RadioButtonItem;
+  /** VIEW OPTION*/
+  public attributeChekBox: ButtonItem[];
+  public selectedAttributes: string[] = [];
+  public displayAttr: ButtonItem[];
+  public selectedDisplayAttr: ButtonItem;
+  public asTooltip: ButtonItem;
+  public selectedAsTooltip: string;
+
+  public setstructures: string[] = [];
+  public setReferences: string[] = [];
+  public refsUp: ButtonItem;
+  public selectedRefsUp: string;
+
+  public pageSize: number;
+  public kwicContext: number;
+  public sortGood: ButtonItem;
+  public showGDEX: ButtonItem;
+  public numLines: number;
+
+
+  /** */
+
+
+  public queryTypes: ButtonItem[];
+  public selectedQueryType: ButtonItem;
   public selectCorpus: string;
 
   public LEMMA = LEMMA;
@@ -73,12 +105,12 @@ export class ConcordanceComponent implements OnInit {
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
       this.corpusList = this.route.snapshot.data.corpusList;
       this.queryTypes = [
-        new RadioButtonItem(SIMPLE, simple),
-        new RadioButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new RadioButtonItem(PHRASE, this.translateService.instant('PAGE.CONCORDANCE.PHRASE')),
-        new RadioButtonItem(WORD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
-        new RadioButtonItem(CHARACTER, this.translateService.instant('PAGE.CONCORDANCE.CHARACTER')),
-        new RadioButtonItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
+        new ButtonItem(SIMPLE, simple),
+        new ButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
+        new ButtonItem(PHRASE, this.translateService.instant('PAGE.CONCORDANCE.PHRASE')),
+        new ButtonItem(WORD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
+        new ButtonItem(CHARACTER, this.translateService.instant('PAGE.CONCORDANCE.CHARACTER')),
+        new ButtonItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
       ];
       this.selectedQueryType = this.queryTypes[0];
 
@@ -95,6 +127,25 @@ export class ConcordanceComponent implements OnInit {
         new DropdownItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
       ];
       this.selectedItem = this.items[0];
+
+      this.attributeChekBox = [
+        new ButtonItem(OPTION_ATTR_URL_WORLD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
+        new ButtonItem(OPTION_ATTR_URL_TAG, this.translateService.instant('PAGE.CONCORDANCE.TAG')),
+        new ButtonItem(OPTION_ATTR_URL_LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
+        new ButtonItem(OPTION_ATTR_URL_WORLD_LC, this.translateService.instant('PAGE.CONCORDANCE.OPTION.WORD_LC')),
+        new ButtonItem(OPTION_ATTR_URL_LEMMA_LC, this.translateService.instant('PAGE.CONCORDANCE.OPTION.LEMMA_LC'))
+      ];
+
+      this.displayAttr = [
+        new ButtonItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, this.translateService.instant('PAGE.CONCORDANCE.OPTION.FOR_EACH_TOKEN')),
+        new ButtonItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, this.translateService.instant('PAGE.CONCORDANCE.OPTION.KWIC_TOKEN'))
+      ];
+      this.selectedDisplayAttr = this.displayAttr[0];
+
+      this.asTooltip = new ButtonItem(OPTIONAL_AS_TOOLTIP_URL_ON, this.translateService.instant('PAGE.CONCORDANCE.OPTION.TOOLTIPS'));
+      this.refsUp = new ButtonItem(OPTIONAL_REFS_UP_URL_ON, this.translateService.instant('PAGE.CONCORDANCE.OPTION.REF_UP'));
+      this.sortGood = new ButtonItem('0', this.translateService.instant('PAGE.CONCORDANCE.OPTION.TOOLTIPS'));
+      this.showGDEX = new ButtonItem('0', this.translateService.instant('PAGE.CONCORDANCE.OPTION.REF_UP'));
     });
 
     // TODO

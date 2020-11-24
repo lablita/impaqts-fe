@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { RadioButtonModule } from 'primeng/radiobutton';
 
@@ -22,7 +23,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     PanelMenuModule,
     InputTextModule,
     RadioButtonModule,
-    CheckboxModule
+    CheckboxModule,
+    InputTextareaModule
   ],
   exports: [
     CommonModule,
@@ -33,7 +35,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     PanelMenuModule,
     InputTextModule,
     RadioButtonModule,
-    CheckboxModule
+    CheckboxModule,
+    InputTextareaModule
   ]
 })
 export class PrimeNgModule { }

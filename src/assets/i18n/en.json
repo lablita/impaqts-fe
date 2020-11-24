@@ -65,10 +65,10 @@
       "OPTION": {
         "VIEW_OPTION": "View options",
         "ATTRIBUTES": "Attributes",
-        "STRUVTURES": "Structures",
+        "STRUCTURES": "Structures",
         "REFERENCES": "References",
-        "WORD_LOWER": "word (lowercase)",
-        "LEMMA_LOWER": "lemma (lowercase)",
+        "WORD_LC": "word (lowercase)",
+        "LEMMA_LC": "lemma (lowercase)",
         "DISPLAY_ATTR": "Display attributes",
         "FOR_EACH_TOKEN": "For each token",
         "KWIC_TOKEN": "KWIC tokens only",
