@@ -18,6 +18,7 @@ import { MyJobComponent } from './my-job/my-job.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { SaveComponent } from './save/save.component';
 import { TopComponent } from './top/top.component';
+import { ViewOptionPanelComponent } from './view-option-panel/view-option-panel.component';
 import { WordListComponent } from './word-list/word-list.component';
 
 @NgModule({
@@ -32,7 +33,8 @@ import { WordListComponent } from './word-list/word-list.component';
     CorpusInfoComponent,
     MyJobComponent,
     AllWordsOrLemmasComponent,
-    SaveComponent
+    SaveComponent,
+    ViewOptionPanelComponent
   ],
   imports: [
     BrowserModule,

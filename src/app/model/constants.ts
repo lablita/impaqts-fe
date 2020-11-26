@@ -61,6 +61,8 @@ export const OPTIONAL_REFS_UP_URL_PARAM = 'refs_up';
 export const OPTIONAL_REFS_UP_URL_ON = '1';
 export const OPTIONAL_REFS_UP_URL_OFF = '0';
 
+/** Corpus */
+export const REPUBBLICA = 'REPUBBLICA';
 
 
 

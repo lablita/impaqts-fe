@@ -1,18 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ButtonItem } from '../model/button-item';
 import {
   ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
-  NONE, OPTIONAL_AS_TOOLTIP_URL_ON, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
-  OPTIONAL_DISPLAY_ATTR_URL_KWIC,
+  NONE,
 
 
-  OPTIONAL_REFS_UP_URL_ON, OPTION_ATTR_URL_LEMMA, OPTION_ATTR_URL_LEMMA_LC, OPTION_ATTR_URL_TAG,
-  OPTION_ATTR_URL_WORLD, OPTION_ATTR_URL_WORLD_LC, PHRASE, RIGHT, SIMPLE,
+
+
+  PHRASE, REPUBBLICA, RIGHT, SIMPLE,
   WORD
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
+import { ViewOptionPanelComponent } from '../view-option-panel/view-option-panel.component';
 
 
 
@@ -24,9 +25,13 @@ import { Corpus, DropdownItem } from '../model/dropdown-item';
 export class ConcordanceComponent implements OnInit {
   public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
 
+
+  @ViewChild('viewOptionPanel') private pwdInput: ViewOptionPanelComponent;
+
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;
-
+  public corp = REPUBBLICA;
+  public dropdownActive = false;
 
   public windows: DropdownItem[];
   public selectedWindow: DropdownItem;
@@ -34,29 +39,6 @@ export class ConcordanceComponent implements OnInit {
   public selectedItem: DropdownItem;
   public tokens: DropdownItem[] = [];
   public selectedToken: DropdownItem;
-
-  /** VIEW OPTION*/
-  public attributeChekBox: ButtonItem[];
-  public selectedAttributes: string[] = [];
-  public displayAttr: ButtonItem[];
-  public selectedDisplayAttr: ButtonItem;
-  public asTooltip: ButtonItem;
-  public selectedAsTooltip: string;
-
-  public setstructures: string[] = [];
-  public setReferences: string[] = [];
-  public refsUp: ButtonItem;
-  public selectedRefsUp: string;
-
-  public pageSize: number;
-  public kwicContext: number;
-  public sortGood: ButtonItem;
-  public showGDEX: ButtonItem;
-  public numLines: number;
-
-
-  /** */
-
 
   public queryTypes: ButtonItem[];
   public selectedQueryType: ButtonItem;
@@ -128,24 +110,7 @@ export class ConcordanceComponent implements OnInit {
       ];
       this.selectedItem = this.items[0];
 
-      this.attributeChekBox = [
-        new ButtonItem(OPTION_ATTR_URL_WORLD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
-        new ButtonItem(OPTION_ATTR_URL_TAG, this.translateService.instant('PAGE.CONCORDANCE.TAG')),
-        new ButtonItem(OPTION_ATTR_URL_LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new ButtonItem(OPTION_ATTR_URL_WORLD_LC, this.translateService.instant('PAGE.CONCORDANCE.OPTION.WORD_LC')),
-        new ButtonItem(OPTION_ATTR_URL_LEMMA_LC, this.translateService.instant('PAGE.CONCORDANCE.OPTION.LEMMA_LC'))
-      ];
 
-      this.displayAttr = [
-        new ButtonItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, this.translateService.instant('PAGE.CONCORDANCE.OPTION.FOR_EACH_TOKEN')),
-        new ButtonItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, this.translateService.instant('PAGE.CONCORDANCE.OPTION.KWIC_TOKEN'))
-      ];
-      this.selectedDisplayAttr = this.displayAttr[0];
-
-      this.asTooltip = new ButtonItem(OPTIONAL_AS_TOOLTIP_URL_ON, this.translateService.instant('PAGE.CONCORDANCE.OPTION.TOOLTIPS'));
-      this.refsUp = new ButtonItem(OPTIONAL_REFS_UP_URL_ON, this.translateService.instant('PAGE.CONCORDANCE.OPTION.REF_UP'));
-      this.sortGood = new ButtonItem('0', this.translateService.instant('PAGE.CONCORDANCE.OPTION.TOOLTIPS'));
-      this.showGDEX = new ButtonItem('0', this.translateService.instant('PAGE.CONCORDANCE.OPTION.REF_UP'));
     });
 
     // TODO
@@ -171,6 +136,12 @@ export class ConcordanceComponent implements OnInit {
 
   public clickClearAll(): void {
 
+  }
+
+  public dropdownCorpus(): void {
+    if (!!this.selectedCorpus) {
+      this.dropdownActive = false;
+    }
   }
 
 

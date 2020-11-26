@@ -6,7 +6,7 @@
       <div class="p-field p-d-flex">
         <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
         <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="name" [filter]="true"
-          [showClear]="true" placeholder="{{selectCorpus}}">
+          [showClear]="true" placeholder="{{selectCorpus}}" (onChange)="dropdownCorpus()">
           <ng-template pTemplate="selectedItem">
             <div *ngIf="selectedCorpus">
               <div class="label-size">{{selectedCorpus.name}}</div>
@@ -136,69 +136,10 @@
 
     <div class="p-ml-3">
       <p-accordion class="p-mb-3 p-p-3">
-        <p-accordionTab header="{{titleOption | translate}}">
-          <div class="p-grid">
-            <div class="p-col">
-              <span class="p-text-center">
-                <h3>{{'PAGE.CONCORDANCE.OPTION.ATTRIBUTES' | translate}}</h3>
-              </span>
-              <div *ngFor="let attr of attributeChekBox" class="p-field-checkbox">
-                <div class="p-field-checkbox p-mb-0">
-                  <p-checkbox name="optionAttributes" [value]="attr.key" [label]="attr.name"
-                    [(ngModel)]="selectedAttributes"></p-checkbox>
-                </div>
-              </div>
-              <span class="p-text-center">
-                <h4>{{'PAGE.CONCORDANCE.OPTION.DISPLAY_ATTR' | translate}}</h4>
-              </span>
-              <div *ngFor="let display of displayAttr" class="p-field-checkbox">
-                <p-radioButton [inputId]="display.key" name="displayAttr" [value]="display"
-                  [(ngModel)]="selectedDisplayAttr">
-                </p-radioButton>
-                <label [for]="display.key" class="p-mr-2 p-ml-1">{{display.name}}</label>
-              </div>
-              <div class="p-field-checkbox p-mb-0">
-                <p-checkbox name="optionAttributes" [value]="asTooltip.key" [label]="asTooltip.name"
-                  [(ngModel)]="selectedAsTooltip"></p-checkbox>
-              </div>
-            </div>
-            <div class="p-col">
-              <span class="p-text-center">
-                <h3>{{'PAGE.CONCORDANCE.OPTION.STRUCTURES' | translate}}</h3>
-                <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-                  [(ngModel)]="setstructures"></textarea>
-              </span>
-            </div>
-            <div class="p-col">
-              <span class="p-text-center">
-                <h3>{{'PAGE.CONCORDANCE.OPTION.REFERENCES' | translate}}</h3>
-                <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-                  [(ngModel)]="setReferences"></textarea>
-                <div class="p-field-checkbox p-mb-0">
-                  <p-checkbox name="refsUp" [value]="refsUp.key" [label]="refsUp.name" [(ngModel)]="selectedRefsUp">
-                  </p-checkbox>
-                </div>
-              </span>
-            </div>
-          </div>
-          <hr>
-          <div class="p-field">
-            <label for="page_size"
-              class="label-size-enlarged">{{"PAGE.CONCORDANCE.OPTION.PAGE_SIZE" | translate}}</label>
-            <input id="page_size" type="number" pInputText style="width: 80px;" [(ngModel)]="pageSize">
-          </div>
-          <div class="p-field">
-            <label for="kwic-context" class="label-size-enlarged">{{"PAGE.CONCORDANCE.OPTION.KWIC_CONTEXT" | translate}}
-              {{"PAGE.CONCORDANCE.OPTION.INCLUDING_POS" | translate}}</label>
-            <input id="kwic-context" type="number" pInputText style="width: 80px;" [(ngModel)]="kwicContext">
-          </div>
+        <p-accordionTab header="{{titleOption | translate}}" [disabled]="!selectedCorpus" [selected]="!!selectCorpus">
+          <app-view-option-panel *ngIf="selectedCorpus" #viewOptionPanel [corpus]="selectedCorpus.code">
+          </app-view-option-panel>
 
-
-          <div class="p-field">
-            <label for="num-lines"
-              class="label-size-enlarged">{{"PAGE.CONCORDANCE.OPTION.NUM_LINES_SORT" | translate}}</label>
-            <input id="num-lines" type="number" pInputText style="width: 80px;" [(ngModel)]="numLines">
-          </div>
 
         </p-accordionTab>
       </p-accordion>

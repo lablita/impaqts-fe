@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { REPUBBLICA } from '../model/constants';
 import { Corpus } from '../model/dropdown-item';
 
 @Injectable({
@@ -18,7 +19,7 @@ export class ConcordanceService {
       new Corpus('5', 'FrWac Complete'),
       new Corpus('6', 'EPIC int_es_en'),
       new Corpus('7', 'ItWac Small'),
-      new Corpus('8', 'Repubblica')
+      new Corpus(REPUBBLICA, 'Repubblica')
     ];
     return of(corpusList);
   }
