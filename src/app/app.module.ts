@@ -20,6 +20,7 @@ import { SaveComponent } from './save/save.component';
 import { TopComponent } from './top/top.component';
 import { ViewOptionPanelComponent } from './view-option-panel/view-option-panel.component';
 import { WordListComponent } from './word-list/word-list.component';
+import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { WordListComponent } from './word-list/word-list.component';
     MyJobComponent,
     AllWordsOrLemmasComponent,
     SaveComponent,
-    ViewOptionPanelComponent
+    ViewOptionPanelComponent,
+    WordListOptionsPanelComponent
   ],
   imports: [
     BrowserModule,

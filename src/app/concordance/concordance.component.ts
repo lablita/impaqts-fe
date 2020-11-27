@@ -9,7 +9,7 @@ import {
 
 
 
-  PHRASE, REPUBBLICA, RIGHT, SIMPLE,
+  PHRASE, RIGHT, SIMPLE,
   WORD
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
@@ -30,8 +30,7 @@ export class ConcordanceComponent implements OnInit {
 
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;
-  public corp = REPUBBLICA;
-  public dropdownActive = false;
+  public dropdownCorpusActive = false;
 
   public windows: DropdownItem[];
   public selectedWindow: DropdownItem;
@@ -139,8 +138,8 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public dropdownCorpus(): void {
-    if (!!this.selectedCorpus) {
-      this.dropdownActive = false;
+    if (this.dropdownCorpusActive && !this.selectedCorpus) {
+      this.dropdownCorpusActive = false;
     }
   }
 

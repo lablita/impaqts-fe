@@ -136,7 +136,8 @@
 
     <div class="p-ml-3">
       <p-accordion class="p-mb-3 p-p-3">
-        <p-accordionTab header="{{titleOption | translate}}" [disabled]="!selectedCorpus" [selected]="!!selectCorpus">
+        <p-accordionTab header="{{titleOption | translate}}" [disabled]="!selectedCorpus"
+          [(selected)]="dropdownCorpusActive">
           <app-view-option-panel *ngIf="selectedCorpus" #viewOptionPanel [corpus]="selectedCorpus.code">
           </app-view-option-panel>
 
