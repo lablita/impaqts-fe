@@ -1,21 +1,20 @@
-<div class="p-grid">
-  <h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_OPTION' | translate}}</h3>
+<h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_OPTION' | translate}}</h3>
 
 
-  <h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.OUTPUT_OPTION' | translate}}</h3>
+<h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.OUTPUT_OPTION' | translate}}</h3>
 
+<div class="p-ml-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_WORD" | translate}}
   <div class="p-field p-ml-3">
-    <label for="regexp" class="label-size-enlarged">{{"PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_WORD" | translate}}</label>
-    <label for="regexp" class="label-size-enlarged">{{"PAGE.CONCORDANCE.WORD_OPTIONS.REGEXP" | translate}}</label>
+    <label for="regexp" class="p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.REGEXP" | translate}}</label>
     <input id="regexp" type="number" pInputText style="width: 300px;" [(ngModel)]="wordListOptionsQueryRequest.regexp">
   </div>
-
-  <!-- <div class="p-field-checkbox p-mb-3">
+</div>
+<!-- <div class="p-field-checkbox p-mb-3">
   <p-checkbox name="sortGood" [binary]="true" [label]="sortGoodLabel" [(ngModel)]="viewOptionsQueryRequest.sortGood">
   </p-checkbox>
 </div> -->
 
 
 
-  <button pButton type="button" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.BUTTON' | translate}}"
-    (click)="clickWordListOption()" class="p-mr-5"></button>
+<button pButton type="button" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.BUTTON' | translate}}"
+  (click)="clickWordListOption()" class="p-mr-5"></button>
