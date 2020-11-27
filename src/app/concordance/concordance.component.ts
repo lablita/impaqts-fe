@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'src/environments/environment';
 import { ButtonItem } from '../model/button-item';
 import {
   ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
   NONE, PHRASE, RIGHT, SIMPLE, WORD
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
+import { CORPORA_LIST } from '../utils/lookup-tab';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
 
@@ -77,7 +79,7 @@ export class ConcordanceComponent implements OnInit {
 
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
-      this.corpusList = this.route.snapshot.data.corpusList;
+      this.corpusList = CORPORA_LIST[environment.corpora].corpusList;
       this.queryTypes = [
         new ButtonItem(SIMPLE, simple),
         new ButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),

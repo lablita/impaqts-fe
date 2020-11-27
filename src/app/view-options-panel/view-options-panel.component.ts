@@ -48,7 +48,7 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.viewOptionQueryRequest = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : CORPORA_LIST[environment.corpora];
+      JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : CORPORA_LIST[environment.corpora].viewOptionsQueryRequest;
     this.corpusAttributes = this.viewOptionPanelService.getAttributesByCorpus(this.corpus);
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.corpusAttributes.forEach(attribute =>

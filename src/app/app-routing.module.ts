@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
-import { CorpusResolverService } from './concordance/corpus-resolver.service';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { MainComponent } from './main/main.component';
 import { MyJobComponent } from './my-job/my-job.component';
@@ -20,8 +19,7 @@ const routes: Routes = [
       },
       {
         path: 'concordance',
-        component: ConcordanceComponent,
-        resolve: { corpusList: CorpusResolverService }
+        component: ConcordanceComponent
       },
       {
         path: 'word_list',
