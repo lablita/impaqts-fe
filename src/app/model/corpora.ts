@@ -1,12 +1,19 @@
 import { Corpus } from './dropdown-item';
-import { ViewOptionQueryRequest } from './query-request';
+import { ViewOptionsQueryRequest } from './view-options-query-request';
+import { WordListOptionsQueryRequest } from './word-list-options-query-request';
 
 export class Corpora {
   corpusList: Corpus[];
-  viewOptionsQueryRequest: ViewOptionQueryRequest;
+  viewOptionsQueryRequest: ViewOptionsQueryRequest;
+  wordListOptionsQueryRequest: WordListOptionsQueryRequest;
 
-  constructor(corpusList: Corpus[], viewOptionsQueryRequest: ViewOptionQueryRequest) {
+  constructor(
+    corpusList: Corpus[],
+    viewOptionsQueryRequest: ViewOptionsQueryRequest,
+    wordListOptionsQueryRequest: WordListOptionsQueryRequest
+  ) {
     this.corpusList = corpusList;
     this.viewOptionsQueryRequest = viewOptionsQueryRequest;
+    this.wordListOptionsQueryRequest = wordListOptionsQueryRequest;
   }
 }

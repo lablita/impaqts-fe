@@ -108,7 +108,7 @@ export class MenuComponent implements OnInit {
       }, null, null, false, false, CONCORDANCE),
       new MenuItemObject(this.wordList, null, () => {
         this.menuEmitterService.click.emit(new MenuEvent(WORD_LIST));
-      }, null, null, false, false, WORD_LIST),
+      }, null, null, false, false, null),
       new MenuItemObject(this.corpusInfo, null, () => {
         this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
       }, null, null, false, false, CORPUS_INFO),

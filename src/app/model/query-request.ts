@@ -1,60 +1,4 @@
-export class ViewOptionQueryRequest {
-  attributes: string[];
-  structures: string[];
-  references: string[];
-  displayAttr: string;
-  asTooltip: boolean;
-  refsUp: boolean;
-  pageSize: number;
-  kwicContext: number;
-  sortGood: boolean;
-  showGDEX: boolean;
-  numLines: number;
-  iconForOne: boolean;
-  allowMulti: boolean;
-  flashCoping: boolean;
-  checkSelLines: boolean;
-  showLinesNum: boolean;
-  shortLongRef: boolean;
-
-  constructor(
-    attributes: string[],
-    structures: string[],
-    references: string[],
-    displayAttr: string,
-    asTooltip: boolean,
-    refsUp: boolean,
-    pageSize: number,
-    kwicContext: number,
-    sortGood: boolean,
-    showGDEX: boolean,
-    numLines: number,
-    iconForOne: boolean,
-    allowMulti: boolean,
-    flashCoping: boolean,
-    checkSelLines: boolean,
-    showLinesNum: boolean,
-    shortLongRef: boolean,
-  ) {
-    this.attributes = attributes;
-    this.structures = structures;
-    this.references = references;
-    this.displayAttr = displayAttr;
-    this.asTooltip = asTooltip;
-    this.refsUp = refsUp;
-    this.pageSize = pageSize;
-    this.kwicContext = kwicContext;
-    this.sortGood = sortGood;
-    this.showGDEX = showGDEX;
-    this.numLines = numLines;
-    this.iconForOne = iconForOne;
-    this.allowMulti = allowMulti;
-    this.flashCoping = flashCoping;
-    this.checkSelLines = checkSelLines;
-    this.showLinesNum = showLinesNum;
-    this.shortLongRef = shortLongRef;
-  }
-}
+import { ViewOptionsQueryRequest } from './view-options-query-request';
 
 export class WordListOption {
   subcorpus: string;
@@ -65,7 +9,7 @@ export class QueryRequest {
   start: number;
   end: number;
   word: string;
-  viewOptionQueryRequest: ViewOptionQueryRequest;
+  viewOptionQueryRequest: ViewOptionsQueryRequest;
   wordListOption: WordListOption;
 
 

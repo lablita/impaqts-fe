@@ -23,8 +23,8 @@ export class ViewOptionsPanelService {
           new LookUpObject('OPTION_ATTR_URL_WORLD', 'PAGE.CONCORDANCE.WORD'),
           new LookUpObject('OPTION_ATTR_URL_TAG', 'PAGE.CONCORDANCE.TAG'),
           new LookUpObject('OPTION_ATTR_URL_LEMMA', 'PAGE.CONCORDANCE.LEMMA'),
-          new LookUpObject('OPTION_ATTR_URL_WORLD_LC', 'PAGE.CONCORDANCE.OPTION.WORD_LC'),
-          new LookUpObject('OPTION_ATTR_URL_LEMMA_LC', 'PAGE.CONCORDANCE.OPTION.LEMMA_LC')
+          new LookUpObject('OPTION_ATTR_URL_WORLD_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC'),
+          new LookUpObject('OPTION_ATTR_URL_LEMMA_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.LEMMA_LC')
         ]
       )
     ];

@@ -138,13 +138,14 @@
       <p-accordion class="p-mb-3 p-p-3">
         <p-accordionTab header="{{titleOption | translate}}" [disabled]="!selectedCorpus"
           [(selected)]="dropdownCorpusActive">
-          <app-view-options-panel *ngIf="selectedCorpus" #viewOptionPanel [corpus]="selectedCorpus.code">
+          <app-view-options-panel *ngIf="selectedCorpus && titleOption === 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS'"
+            #viewOptionPanel [corpus]="selectedCorpus.code">
           </app-view-options-panel>
+          <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel"></app-word-list-options-panel>
 
 
         </p-accordionTab>
       </p-accordion>
     </div>
   </div>
-
 </div>

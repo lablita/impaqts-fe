@@ -1,7 +1,8 @@
 import { OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA } from '../model/constants';
 import { Corpora } from '../model/corpora';
 import { Corpus } from '../model/dropdown-item';
-import { ViewOptionQueryRequest } from '../model/query-request';
+import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
+import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 
 export const CORPORA_LIST = {
   uno: new Corpora(
@@ -15,7 +16,7 @@ export const CORPORA_LIST = {
       new Corpus('7', 'ItWac Small'),
       new Corpus(REPUBBLICA, 'Repubblica')
     ],
-    new ViewOptionQueryRequest(
+    new ViewOptionsQueryRequest(
       [],
       [],
       [],
@@ -33,6 +34,25 @@ export const CORPORA_LIST = {
       false,
       false,
       false
+    ), new WordListOptionsQueryRequest(
+      null,
+      null,
+      false,
+      2,
+      null,
+      5,
+      0,
+      null,
+      null,
+      false,
+      null,
+      null,
+      null,
+      null,
+      1,
+      null,
+      null,
+      null
     )
   )
   ,
@@ -42,7 +62,7 @@ export const CORPORA_LIST = {
       new Corpus('2', 'Brexit IT'),
       new Corpus(REPUBBLICA, 'Repubblica')
     ],
-    new ViewOptionQueryRequest(
+    new ViewOptionsQueryRequest(
       [],
       [],
       [],
@@ -60,6 +80,25 @@ export const CORPORA_LIST = {
       false,
       false,
       false
+    ), new WordListOptionsQueryRequest(
+      null,
+      null,
+      false,
+      4,
+      null,
+      10,
+      0,
+      null,
+      null,
+      false,
+      null,
+      null,
+      null,
+      null,
+      10,
+      null,
+      null,
+      null
     )
   )
 
