@@ -14,7 +14,7 @@ export class CorpusAttributes {
 @Injectable({
   providedIn: 'root'
 })
-export class ViewOptionPanelService {
+export class ViewOptionsPanelService {
 
   private attributesByCorpus =
     [

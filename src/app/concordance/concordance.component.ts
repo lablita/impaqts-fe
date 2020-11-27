@@ -4,16 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { ButtonItem } from '../model/button-item';
 import {
   ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
-  NONE,
-
-
-
-
-  PHRASE, RIGHT, SIMPLE,
-  WORD
+  NONE, PHRASE, RIGHT, SIMPLE, WORD
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
-import { ViewOptionPanelComponent } from '../view-option-panel/view-option-panel.component';
+import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
 
 
@@ -25,8 +19,7 @@ import { ViewOptionPanelComponent } from '../view-option-panel/view-option-panel
 export class ConcordanceComponent implements OnInit {
   public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
 
-
-  @ViewChild('viewOptionPanel') private pwdInput: ViewOptionPanelComponent;
+  @ViewChild('viewOptionsPanel') private pwdInput: ViewOptionsPanelComponent;
 
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;

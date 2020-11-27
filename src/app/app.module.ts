@@ -18,9 +18,9 @@ import { MyJobComponent } from './my-job/my-job.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { SaveComponent } from './save/save.component';
 import { TopComponent } from './top/top.component';
-import { ViewOptionPanelComponent } from './view-option-panel/view-option-panel.component';
-import { WordListComponent } from './word-list/word-list.component';
+import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+import { WordListComponent } from './word-list/word-list.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +35,7 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     MyJobComponent,
     AllWordsOrLemmasComponent,
     SaveComponent,
-    ViewOptionPanelComponent,
+    ViewOptionsPanelComponent,
     WordListOptionsPanelComponent
   ],
   imports: [

@@ -9,16 +9,16 @@ import {
 import { LookUpObject } from '../model/lookup-object';
 import { QueryRequest, ViewOptionQueryRequest } from '../model/query-request';
 import { CORPORA_LIST } from '../utils/lookup-tab';
-import { ViewOptionPanelService } from './view-option-panel.service';
+import { ViewOptionsPanelService } from './view-options-panel.service';
 
 const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 @Component({
-  selector: 'app-view-option-panel',
-  templateUrl: './view-option-panel.component.html',
-  styleUrls: ['./view-option-panel.component.scss']
+  selector: 'app-view-options-panel',
+  templateUrl: './view-options-panel.component.html',
+  styleUrls: ['./view-options-panel.component.scss']
 })
 
-export class ViewOptionPanelComponent implements OnInit {
+export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string;
 
@@ -43,7 +43,7 @@ export class ViewOptionPanelComponent implements OnInit {
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly viewOptionPanelService: ViewOptionPanelService
+    private readonly viewOptionPanelService: ViewOptionsPanelService
   ) { }
 
   ngOnInit(): void {
