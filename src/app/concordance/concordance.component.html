@@ -1,7 +1,7 @@
 <p></p>
 <div class="p-d-flex p-flex-wrap" style="background-color: gray">
 
-  <div class="p-d-flex p-mb-3 p-mr-3" style="width: 700px">
+  <div class="p-d-flex p-mb-3 p-mr-3">
     <p-card class="p-p-3">
       <div class="p-field p-d-flex">
         <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
@@ -102,50 +102,49 @@
     </p-card>
   </div>
 
-  <div style="width: 600px">
-    <div class="p-ml-3">
-      <p-accordion class="p-mb-3 p-p-3">
-        <p-accordionTab header="MetaDati" [disabled]="!textTypeStatus">
-          <div>
-            <div class="p-mt-4">
-              <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
-            </div>
-            <div class="p-mt-1 p-ml-3">
-              <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
-              <div class="p-field">
-                <label class="label-size-reduced">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
-                <p-dropdown [options]="windows" [(ngModel)]="selectedWindow" optionLabel="name" [showClear]="true">
-                </p-dropdown>&nbsp;
-                <p-dropdown [options]="tokens" [(ngModel)]="selectedToken" optionLabel="name" [showClear]="true">
-                </p-dropdown>&nbsp;
-                <label class="label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
+  <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" autoZIndex="true">
+    <div class="p-ml-3 p-component">
+      <div>
+        <div *ngIf="displayPanelMetadata">
+          <a class="p-shadow-7 p-component right-button" (click)="displayPanelMetadata = false">
+            {{'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS' | translate}}</a>
+        </div>
+        <div class="p-mt-4">
+          <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
+        </div>
+        <div class="p-mt-1 p-ml-3">
+          <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
+          <div class="p-field">
+            <label class="label-size-reduced">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
+            <p-dropdown [options]="windows" [(ngModel)]="selectedWindow" optionLabel="name" [showClear]="true">
+            </p-dropdown>&nbsp;
+            <p-dropdown [options]="tokens" [(ngModel)]="selectedToken" optionLabel="name" [showClear]="true">
+            </p-dropdown>&nbsp;
+            <label class="label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
 
-                <div class="p-field p-mt-3">
-                  <label for="lemmas" class="label-size-reduced">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
-                  <input id="lemmas" type="text" pInputText style="width: 150px;" [(ngModel)]="simple">&nbsp;
-                  <p-dropdown [options]="items" [(ngModel)]="selectedItem" optionLabel="name" [showClear]="true">
-                  </p-dropdown>&nbsp;
-                  <label class="label-size">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
-                </div>
-              </div>
+            <div class="p-field p-mt-3">
+              <label for="lemmas" class="label-size-reduced">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
+              <input id="lemmas" type="text" pInputText style="width: 150px;" [(ngModel)]="simple">&nbsp;
+              <p-dropdown [options]="items" [(ngModel)]="selectedItem" optionLabel="name" [showClear]="true">
+              </p-dropdown>&nbsp;
+              <label class="label-size">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
             </div>
           </div>
-        </p-accordionTab>
-      </p-accordion>
+        </div>
+      </div>
     </div>
+  </p-sidebar>
 
+
+  <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'50em'}">
     <div class="p-ml-3">
-      <p-accordion class="p-mb-3 p-p-3">
-        <p-accordionTab header="{{titleOption | translate}}" [disabled]="!selectedCorpus"
-          [(selected)]="dropdownCorpusActive">
-          <app-view-options-panel *ngIf="selectedCorpus && titleOption === 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS'"
-            #viewOptionPanel [corpus]="selectedCorpus.code">
-          </app-view-options-panel>
-          <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel"></app-word-list-options-panel>
-
-
-        </p-accordionTab>
-      </p-accordion>
+      <app-view-options-panel #viewOptionPanel *ngIf="titleOption !== wordListOptionsLabel"
+        [corpus]="selectedCorpus?.code" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false">
+      </app-view-options-panel>
+      <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false"></app-word-list-options-panel>
     </div>
-  </div>
+  </p-sidebar>
+
 </div>

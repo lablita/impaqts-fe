@@ -1,0 +1,18 @@
+a.right-button {
+  display: block;
+  position: absolute;
+  width: 108px;
+  height: 52px;
+  line-height: 52px;
+  background-color: var(--primary-color);
+  text-align: center;
+  color: var(--primary-color-text);
+  top: 250px;
+  left: -120px;
+  overflow: hidden;
+  cursor: pointer;
+  outline: 0 none;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+}

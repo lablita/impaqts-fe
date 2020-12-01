@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
-import { CORPORA_LIST } from '../utils/lookup-tab';
+import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const WORD_LIST_OPTION_QUERY_REQUEST = 'wordListOptionQueryRequest';
 @Component({
@@ -12,6 +12,9 @@ const WORD_LIST_OPTION_QUERY_REQUEST = 'wordListOptionQueryRequest';
 })
 export class WordListOptionsPanelComponent implements OnInit {
 
+  @Input() public showRightButton: boolean;
+  @Output() public closeSidebarEvent = new EventEmitter<boolean>();
+
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
 
   constructor(
@@ -20,7 +23,7 @@ export class WordListOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.wordListOptionsQueryRequest = localStorage.getItem(WORD_LIST_OPTION_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(WORD_LIST_OPTION_QUERY_REQUEST)) : CORPORA_LIST[environment.corpora].wordListOptionsQueryRequest;
+      JSON.parse(localStorage.getItem(WORD_LIST_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].wordListOptionsQueryRequest;
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
     });
 
@@ -28,6 +31,14 @@ export class WordListOptionsPanelComponent implements OnInit {
 
   public clickWordListOption(): void {
 
+  }
+
+  public onWhiteListBasicUpload(event): void {
+    console.log('file: ');
+  }
+
+  public closeSidebar(): void {
+    this.closeSidebarEvent.emit(true);
   }
 
 }

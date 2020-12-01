@@ -1,20 +1,51 @@
-<h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_OPTION' | translate}}</h3>
-
-
-<h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.OUTPUT_OPTION' | translate}}</h3>
-
-<div class="p-ml-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_WORD" | translate}}
-  <div class="p-field p-ml-3">
-    <label for="regexp" class="p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.REGEXP" | translate}}</label>
-    <input id="regexp" type="number" pInputText style="width: 300px;" [(ngModel)]="wordListOptionsQueryRequest.regexp">
-  </div>
+<div *ngIf="!!showRightButton">
+  <a class="p-shadow-7 p-component right-button" (click)="closeSidebar()">
+    {{'PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS' | translate}}</a>
 </div>
-<!-- <div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="sortGood" [binary]="true" [label]="sortGoodLabel" [(ngModel)]="viewOptionsQueryRequest.sortGood">
-  </p-checkbox>
-</div> -->
+<span class="p-component">
+  <h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_OPTION' | translate}}</h3>
+
+
+  <h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.OUTPUT_OPTION' | translate}}</h3>
+  <div class="p-ml-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_WORD" | translate}}
+    <div class="p-field p-ml-3">
+      <label for="regexp" class="label-size p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.REGEXP" | translate}}</label>
+      <input id="regexp" type="number" pInputText style="width: 300px;"
+        [(ngModel)]="wordListOptionsQueryRequest.regexp">
+    </div>
+  </div>
+  <div class="p-field p-ml-5">
+    <label for="minFreq" class="label-size p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.MIN_FREQ" | translate}}</label>
+    <input id="minFreq" type="number" pInputText style="width: 80px;" [(ngModel)]="wordListOptionsQueryRequest.minFreq">
+  </div>
+  <div class="p-field p-ml-5">
+    <label for="maxFreq" class="label-size p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.MAX_FREQ" | translate}}</label>
+    <input id="maxFreq" type="number" pInputText style="width: 80px;" [(ngModel)]="wordListOptionsQueryRequest.maxFreq">
+  </div>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="label-size p-col">
+      <p class="p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.WHITE_LIST" | translate}}</p>
+    </div>
+    <div class="p-col">
+      <p-fileUpload #whiteListUpload mode="basic" name="wordListOptionsQueryRequest.whitelist"
+        url="https://www.primefaces.org/primeng/showcase/#/fileupload/upload.php" accept="*" maxFileSize="1000000"
+        (onUpload)="onWhiteListBasicUpload($event)" [auto]="true" chooseLabel="Browse"></p-fileUpload>
+    </div>
+    <div class="p-col">
+      <p>{{wordListOptionsQueryRequest.whitelist}}</p>
+    </div>
+  </div>
+
+
+  <!-- <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="sortGood" [binary]="true" [label]="sortGoodLabel" [(ngModel)]="viewOptionsQueryRequest.sortGood">
+    </p-checkbox>
+  </div> -->
 
 
 
-<button pButton type="button" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.BUTTON' | translate}}"
-  (click)="clickWordListOption()" class="p-mr-5"></button>
+  <button pButton type="button" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.BUTTON' | translate}}"
+    (click)="clickWordListOption()" class="p-mr-5"></button>
+
+</span>

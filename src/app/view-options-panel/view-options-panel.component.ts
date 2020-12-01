@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { ButtonItem } from '../model/button-item';
@@ -9,7 +9,7 @@ import {
 import { LookUpObject } from '../model/lookup-object';
 import { QueryRequest } from '../model/query-request';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
-import { CORPORA_LIST } from '../utils/lookup-tab';
+import { INSTALLATION_LIST } from '../utils/lookup-tab';
 import { ViewOptionsPanelService } from './view-options-panel.service';
 
 const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
@@ -22,6 +22,8 @@ const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string;
+  @Input() public showRightButton: boolean;
+  @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public attributeChekBox: ButtonItem[] = [];
   public displayAttr: ButtonItem[];
@@ -49,7 +51,7 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.viewOptionsQueryRequest = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : CORPORA_LIST[environment.corpora].viewOptionsQueryRequest;
+      JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
     this.corpusAttributes = this.viewOptionPanelService.getAttributesByCorpus(this.corpus);
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.corpusAttributes.forEach(attribute =>
@@ -79,6 +81,10 @@ export class ViewOptionsPanelComponent implements OnInit {
   public clickChangeViewOption(): void {
     console.log('vai');
     localStorage.setItem(VIEW_OPTION_QUERY_REQUEST, JSON.stringify(this.viewOptionsQueryRequest));
+  }
+
+  public closeSidebar(): void {
+    this.closeSidebarEvent.emit(true);
   }
 
 }

@@ -5,12 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
+import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { RadioButtonModule } from 'primeng/radiobutton';
-
-
+import { SidebarModule } from 'primeng/sidebar';
 
 @NgModule({
   declarations: [],
@@ -24,7 +24,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     InputTextModule,
     RadioButtonModule,
     CheckboxModule,
-    InputTextareaModule
+    InputTextareaModule,
+    FileUploadModule,
+    SidebarModule
   ],
   exports: [
     CommonModule,
@@ -36,7 +38,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     InputTextModule,
     RadioButtonModule,
     CheckboxModule,
-    InputTextareaModule
+    InputTextareaModule,
+    FileUploadModule,
+    SidebarModule
   ]
 })
 export class PrimeNgModule { }

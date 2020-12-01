@@ -10,7 +10,8 @@ import {
   NONE, PHRASE, RIGHT, SIMPLE, WORD, WORD_LIST
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
-import { CORPORA_LIST } from '../utils/lookup-tab';
+import { EmitterService } from '../utils/emitter.service';
+import { INSTALLATION_LIST } from '../utils/lookup-tab';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
 
@@ -27,7 +28,7 @@ export class ConcordanceComponent implements OnInit {
 
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;
-  public dropdownCorpusActive = false;
+  // public dropdownCorpusActive = false;
 
   public windows: DropdownItem[];
   public selectedWindow: DropdownItem;
@@ -63,11 +64,15 @@ export class ConcordanceComponent implements OnInit {
 
   public wordListOptionsLabel: string;
 
+  public displayPanelMetadata = false;
+  public displayPanelOptions = false;
+
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly translateService: TranslateService,
-    private readonly menuEmitterService: MenuEmitterService
+    private readonly menuEmitterService: MenuEmitterService,
+    private readonly emitterServices: EmitterService
   ) { }
 
   ngOnInit(): void {
@@ -89,11 +94,20 @@ export class ConcordanceComponent implements OnInit {
       } else {
         this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
       }
+      this.emitterServices.clickLabel.emit(this.titleOption);
+    });
+
+    this.emitterServices.clickPanelDisplayOptions.subscribe((event: boolean) => {
+      this.displayPanelOptions = event;
+    });
+
+    this.emitterServices.clickPanelDisplayMetadata.subscribe((event: boolean) => {
+      this.displayPanelMetadata = event;
     });
 
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
-      this.corpusList = CORPORA_LIST[environment.corpora].corpusList;
+      this.corpusList = INSTALLATION_LIST[environment.installation].corpusList;
       this.wordListOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS');
       this.queryTypes = [
         new ButtonItem(SIMPLE, simple),
@@ -137,6 +151,7 @@ export class ConcordanceComponent implements OnInit {
 
   public clickTextType(): void {
     this.textTypeStatus = !this.textTypeStatus;
+    this.emitterServices.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
   }
 
   public clickMakeConcordance(): void {
@@ -148,10 +163,9 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public dropdownCorpus(): void {
-    if (this.dropdownCorpusActive && !this.selectedCorpus) {
-      this.dropdownCorpusActive = false;
-    }
+    this.emitterServices.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
   }
+
 
 
 }

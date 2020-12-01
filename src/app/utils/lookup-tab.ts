@@ -1,11 +1,11 @@
 import { OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA } from '../model/constants';
-import { Corpora } from '../model/corpora';
 import { Corpus } from '../model/dropdown-item';
+import { Installation } from '../model/installation';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 
-export const CORPORA_LIST = {
-  uno: new Corpora(
+export const INSTALLATION_LIST = {
+  uno: new Installation(
     [
       new Corpus('1', 'AcWac EU'),
       new Corpus('2', 'Brexit IT'),
@@ -56,7 +56,7 @@ export const CORPORA_LIST = {
     )
   )
   ,
-  due: new Corpora(
+  due: new Installation(
     [
       new Corpus('1', 'AcWac EU'),
       new Corpus('2', 'Brexit IT'),

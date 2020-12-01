@@ -1,14 +1,18 @@
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity:0.6;
+}
+
 a.right-button {
-  display: block;
   position: absolute;
-  width: 108px;
+  width: 106px;
   height: 52px;
   line-height: 52px;
   background-color: var(--primary-color);
   text-align: center;
   color: var(--primary-color-text);
-  top: 170px;
-  left: -120px;
+  right: 0px;
   overflow: hidden;
   cursor: pointer;
   outline: 0 none;

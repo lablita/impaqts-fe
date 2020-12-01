@@ -62,6 +62,7 @@
       "TAG": "tag",
       "LC_WORD": "lc = word (lowercase)",
       "LEMMA_LC": "lemma (lowercase)",
+      "METADATI": "Metadati",
       "VIEW_OPTIONS": {
         "VIEW_OPTIONS": "View options",
         "ATTRIBUTES": "Attributes",

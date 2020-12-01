@@ -21,6 +21,7 @@ import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { WordListComponent } from './word-list/word-list.component';
+import { RightComponent } from './right/right.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { WordListComponent } from './word-list/word-list.component';
     AllWordsOrLemmasComponent,
     SaveComponent,
     ViewOptionsPanelComponent,
-    WordListOptionsPanelComponent
+    WordListOptionsPanelComponent,
+    RightComponent
   ],
   imports: [
     BrowserModule,

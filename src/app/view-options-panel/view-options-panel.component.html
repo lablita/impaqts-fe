@@ -1,106 +1,113 @@
-<div class="p-grid">
-  <div class="p-col">
-    <span class="p-text-center">
-      <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTES' | translate}}</h3>
-    </span>
-    <div *ngFor="let attr of attributeChekBox" class="p-field-checkbox">
+<div *ngIf="!!showRightButton">
+  <a class="p-shadow-7 p-component right-button" (click)="closeSidebar()">
+    {{'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS' | translate}}</a>
+</div>
+<span class="p-component">
+  <div class="p-grid">
+    <div class="p-col">
+      <span class="p-text-center">
+        <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTES' | translate}}</h3>
+      </span>
+      <div *ngFor="let attr of attributeChekBox" class="p-field-checkbox">
+        <div class="p-field-checkbox p-mb-0">
+          <p-checkbox name="optionAttributes" [value]="attr.key" [label]="attr.name"
+            [(ngModel)]="viewOptionsQueryRequest.attributes">
+          </p-checkbox>
+        </div>
+      </div>
+      <span class="p-text-center">
+        <h4>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.DISPLAY_ATTR' | translate}}</h4>
+      </span>
+
+      <div *ngFor="let display of displayAttr" class="p-field-checkbox">
+        <p-radioButton [inputId]="display.key" name="displayAttr" [value]="display" [(ngModel)]="selectedDisplayAttr">
+        </p-radioButton>
+        <label [for]="display.key" class="p-mr-2 p-ml-1">{{display.name}}</label>
+      </div>
+
       <div class="p-field-checkbox p-mb-0">
-        <p-checkbox name="optionAttributes" [value]="attr.key" [label]="attr.name"
-          [(ngModel)]="viewOptionsQueryRequest.attributes">
+        <p-checkbox name="optionAttributes" [binary]="true" [label]="asTooltipLabel"
+          [(ngModel)]="viewOptionsQueryRequest.asTooltip">
         </p-checkbox>
       </div>
     </div>
-    <span class="p-text-center">
-      <h4>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.DISPLAY_ATTR' | translate}}</h4>
-    </span>
 
-    <div *ngFor="let display of displayAttr" class="p-field-checkbox">
-      <p-radioButton [inputId]="display.key" name="displayAttr" [value]="display" [(ngModel)]="selectedDisplayAttr">
-      </p-radioButton>
-      <label [for]="display.key" class="p-mr-2 p-ml-1">{{display.name}}</label>
+    <div class="p-col">
+      <span class="p-text-center">
+        <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.STRUCTURES' | translate}}</h3>
+        <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
+          [(ngModel)]="viewOptionsQueryRequest.structures"></textarea>
+      </span>
     </div>
-
-    <div class="p-field-checkbox p-mb-0">
-      <p-checkbox name="optionAttributes" [binary]="true" [label]="asTooltipLabel"
-        [(ngModel)]="viewOptionsQueryRequest.asTooltip">
-      </p-checkbox>
+    <div class="p-col">
+      <span class="p-text-center">
+        <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.REFERENCES' | translate}}</h3>
+        <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
+          [(ngModel)]="viewOptionsQueryRequest.references"></textarea>
+        <div class="p-field-checkbox p-mb-0">
+          <p-checkbox name="refsUp" [binary]="true" [label]="refsUpLabel" [(ngModel)]="viewOptionsQueryRequest.refsUp">
+          </p-checkbox>
+        </div>
+      </span>
     </div>
   </div>
-  <div class="p-col">
-    <span class="p-text-center">
-      <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.STRUCTURES' | translate}}</h3>
-      <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-        [(ngModel)]="viewOptionsQueryRequest.structures"></textarea>
-    </span>
+  <hr>
+  <div class="p-field">
+    <label for="page_size" class="label-size-enlarged">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.PAGE_SIZE" | translate}}</label>
+    <input id="page_size" type="number" pInputText style="width: 80px;" [(ngModel)]="viewOptionsQueryRequest.pageSize">
   </div>
-  <div class="p-col">
-    <span class="p-text-center">
-      <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.REFERENCES' | translate}}</h3>
-      <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-        [(ngModel)]="viewOptionsQueryRequest.references"></textarea>
-      <div class="p-field-checkbox p-mb-0">
-        <p-checkbox name="refsUp" [binary]="true" [label]="refsUpLabel" [(ngModel)]="viewOptionsQueryRequest.refsUp">
-        </p-checkbox>
-      </div>
-    </span>
+  <div class="p-field">
+    <label for="kwic-context" class="label-size-enlarged">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_CONTEXT" | translate}}
+      {{"PAGE.CONCORDANCE.VIEW_OPTIONS.INCLUDING_POS" | translate}}</label>
+    <input id="kwic-context" type="number" pInputText style="width: 80px;"
+      [(ngModel)]="viewOptionsQueryRequest.kwicContext">
   </div>
-</div>
-<hr>
-<div class="p-field">
-  <label for="page_size" class="label-size-enlarged">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.PAGE_SIZE" | translate}}</label>
-  <input id="page_size" type="number" pInputText style="width: 80px;" [(ngModel)]="viewOptionsQueryRequest.pageSize">
-</div>
-<div class="p-field">
-  <label for="kwic-context" class="label-size-enlarged">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_CONTEXT" | translate}}
-    {{"PAGE.CONCORDANCE.VIEW_OPTIONS.INCLUDING_POS" | translate}}</label>
-  <input id="kwic-context" type="number" pInputText style="width: 80px;"
-    [(ngModel)]="viewOptionsQueryRequest.kwicContext">
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="sortGood" [binary]="true" [label]="sortGoodLabel" [(ngModel)]="viewOptionsQueryRequest.sortGood">
-  </p-checkbox>
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="showGDEX" [binary]="true" [label]="showGDEXLabel" [(ngModel)]="viewOptionsQueryRequest.showGDEX">
-  </p-checkbox>
-</div>
-<div class="p-field">
-  <label for="num-lines"
-    class="label-size-enlarged">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.NUM_LINES_SORT" | translate}}</label>
-  <input id="num-lines" type="number" pInputText style="width: 80px;" [(ngModel)]="viewOptionsQueryRequest.numLines">
-</div>
-<hr>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="iconForOne" [binary]="true" [label]="iconForOneLabel"
-    [(ngModel)]="viewOptionsQueryRequest.iconForOne">
-  </p-checkbox>
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="allowMulti" [binary]="true" [label]="allowMultiLabel"
-    [(ngModel)]="viewOptionsQueryRequest.allowMulti">
-  </p-checkbox>
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="flashCoping" [binary]="true" [label]="flashCopingLabel"
-    [(ngModel)]="viewOptionsQueryRequest.flashCoping">
-  </p-checkbox>
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="checkSelLines" [binary]="true" [label]="checkSelLinesLabel"
-    [(ngModel)]="viewOptionsQueryRequest.checkSelLines">
-  </p-checkbox>
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="showLinesNum" [binary]="true" [label]="showLinesNumLabel"
-    [(ngModel)]="viewOptionsQueryRequest.showLinesNum">
-  </p-checkbox>
-</div>
-<div class="p-field-checkbox p-mb-3">
-  <p-checkbox name="shortLongRef" [binary]="true" [label]="shortLongRefLabel"
-    [(ngModel)]="viewOptionsQueryRequest.shortLongRef">
-  </p-checkbox>
-</div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="sortGood" [binary]="true" [label]="sortGoodLabel" [(ngModel)]="viewOptionsQueryRequest.sortGood">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="showGDEX" [binary]="true" [label]="showGDEXLabel" [(ngModel)]="viewOptionsQueryRequest.showGDEX">
+    </p-checkbox>
+  </div>
+  <div class="p-field">
+    <label for="num-lines"
+      class="label-size-enlarged">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.NUM_LINES_SORT" | translate}}</label>
+    <input id="num-lines" type="number" pInputText style="width: 80px;" [(ngModel)]="viewOptionsQueryRequest.numLines">
+  </div>
+  <hr>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="iconForOne" [binary]="true" [label]="iconForOneLabel"
+      [(ngModel)]="viewOptionsQueryRequest.iconForOne">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="allowMulti" [binary]="true" [label]="allowMultiLabel"
+      [(ngModel)]="viewOptionsQueryRequest.allowMulti">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="flashCoping" [binary]="true" [label]="flashCopingLabel"
+      [(ngModel)]="viewOptionsQueryRequest.flashCoping">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="checkSelLines" [binary]="true" [label]="checkSelLinesLabel"
+      [(ngModel)]="viewOptionsQueryRequest.checkSelLines">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="showLinesNum" [binary]="true" [label]="showLinesNumLabel"
+      [(ngModel)]="viewOptionsQueryRequest.showLinesNum">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox p-mb-3">
+    <p-checkbox name="shortLongRef" [binary]="true" [label]="shortLongRefLabel"
+      [(ngModel)]="viewOptionsQueryRequest.shortLongRef">
+    </p-checkbox>
+  </div>
 
 
-<button pButton type="button" label="{{'PAGE.CONCORDANCE.VIEW_OPTIONS.CHANGE_VIEW' | translate}}"
-  (click)="clickChangeViewOption()" class="p-mr-5"></button>
+  <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIEW_OPTIONS.CHANGE_VIEW' | translate}}"
+    (click)="clickChangeViewOption()" class="p-mr-5"></button>
+</span>
