@@ -14,6 +14,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SidebarModule } from 'primeng/sidebar';
 import { SliderModule } from 'primeng/slider';
+import { TableModule } from 'primeng/table';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { SliderModule } from 'primeng/slider';
     SidebarModule,
     MessagesModule,
     MessageModule,
-    SliderModule
+    SliderModule,
+    TableModule
   ],
   exports: [
     CommonModule,
@@ -50,7 +52,8 @@ import { SliderModule } from 'primeng/slider';
     SidebarModule,
     MessagesModule,
     MessageModule,
-    SliderModule
+    SliderModule,
+    TableModule
   ]
 })
 export class PrimeNgModule { }

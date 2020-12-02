@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { environment } from 'src/environments/environment';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -10,11 +11,14 @@ import {
   NONE, PHRASE, RIGHT, SIMPLE, WORD, WORD_LIST
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
+import { KWICline } from '../model/kwicline';
+import { QueryRequest } from '../model/query-request';
+import { QueryResponse } from '../model/query-response';
 import { EmitterService } from '../utils/emitter.service';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
-
+const WS_URL = '/test-query-ws-ext';
 
 @Component({
   selector: 'app-concordance',
@@ -67,6 +71,13 @@ export class ConcordanceComponent implements OnInit {
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
 
+  public queryResponse: QueryResponse;
+  public totalResults = 0;
+  public kwicLines: KWICline[];
+
+  private websocket: WebSocketSubject<any>;
+
+
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -76,6 +87,23 @@ export class ConcordanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    /** Web Socket */
+    const url = `ws://localhost:9000${WS_URL}`;
+    this.websocket = webSocket(url);
+    this.websocket.asObservable().subscribe(
+      resp => {
+        const qr = resp as QueryResponse;
+        if (qr.kwicLines.length > 0) {
+          this.queryResponse = resp as QueryResponse;
+        }
+        this.totalResults = qr.currentSize;
+      },
+      err => console.error(err),
+      () => console.log('Activiti WS disconnected')
+    );
+    /** */
+
+
     this.queryTypeStatus = false;
     this.contextStatus = false;
     this.textTypeStatus = false;
@@ -132,8 +160,6 @@ export class ConcordanceComponent implements OnInit {
         new DropdownItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
       ];
       this.selectedItem = this.items[0];
-
-
     });
 
     // TODO
@@ -155,7 +181,11 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public clickMakeConcordance(): void {
-
+    const qr = new QueryRequest();
+    qr.start = 0;
+    qr.end = 500000;
+    qr.word = `[word="${this.simple}"]`;
+    this.websocket.next(qr);
   }
 
   public clickClearAll(): void {

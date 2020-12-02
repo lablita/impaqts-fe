@@ -13,6 +13,7 @@ a.right-button {
   text-align: center;
   color: var(--primary-color-text);
   right: 0px;
+  z-index: 1;
   overflow: hidden;
   cursor: pointer;
   outline: 0 none;
