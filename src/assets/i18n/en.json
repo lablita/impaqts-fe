@@ -63,6 +63,7 @@
       "LC_WORD": "lc = word (lowercase)",
       "LEMMA_LC": "lemma (lowercase)",
       "METADATI": "Metadati",
+      "FILE_UPLOADED": "File uploaded",
       "VIEW_OPTIONS": {
         "VIEW_OPTIONS": "View options",
         "ATTRIBUTES": "Attributes",
@@ -94,7 +95,7 @@
       "WORD_OPTIONS": {
         "WORD_OPTIONS": "Word list options",
         "SUBCORPUS": "Subcorpus",
-        "SEARCH_ATTR": "Subcorpus",
+        "SEARCH_ATTR": "Search attribute",
         "N_GRAM": "use n-grams",
         "VALUE_OF": "Value of n",
         "FILTER_OPTION": "Filter options",
@@ -106,7 +107,7 @@
         "NO_FILE": "no file selected",
         "BLACK_LIST": "Blacklist",
         "FORMAT": "format",
-        "INCLUDE_NON": "Include non-words",
+        "NON_WORDS": "Include non-words",
         "OUTPUT_OPTION": "Output options",
         "FREQ_FIG": "Frequency figures",
         "HIT_COUNTS": "Hit counts",
@@ -119,7 +120,7 @@
         "PREFER": "Prefer",
         "RARE_WORDS": "rare words",
         "COMMON_WORDS": "common words",
-        "CHANGE_OUTPUT": "Change output attribute(s)",
+        "CHANGE_OUT": "Change output attribute(s)",
         "INFO": "You can select one or more output attributes. Please note that this option can be time-consuming.",
         "BUTTON": "Make word list"
       },

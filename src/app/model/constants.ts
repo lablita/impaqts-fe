@@ -39,7 +39,7 @@ export const ALL = 'all';
 export const ANY = 'any';
 export const NONE = 'none';
 
-/* VIEW OPTION */
+/** VIEW OPTIONS */
 export const OPTIONAL_ATTR_URL_PARAM = 'setattrs';
 export const OPTION_ATTR_URL_WORLD = 'word';
 export const OPTION_ATTR_URL_TAG = 'tag';
@@ -60,6 +60,14 @@ export const OPTIONAL_REFS_URL_PARAM = 'setrefs';
 export const OPTIONAL_REFS_UP_URL_PARAM = 'refs_up';
 export const OPTIONAL_REFS_UP_URL_ON = '1';
 export const OPTIONAL_REFS_UP_URL_OFF = '0';
+
+/** WORD OPTIONS */
+export const HIT_COUNTS = 'hit_counts';
+export const DOC_COUNTS = 'doc_counts';
+export const ARF = 'arf';
+
+export const KEYWORD = 'keyword';
+export const CHANGE_OUT = 'change_out';
 
 /** Corpus */
 export const REPUBBLICA = 'REPUBBLICA';

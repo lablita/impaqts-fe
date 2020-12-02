@@ -8,9 +8,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SidebarModule } from 'primeng/sidebar';
+import { SliderModule } from 'primeng/slider';
+
 
 @NgModule({
   declarations: [],
@@ -26,7 +30,10 @@ import { SidebarModule } from 'primeng/sidebar';
     CheckboxModule,
     InputTextareaModule,
     FileUploadModule,
-    SidebarModule
+    SidebarModule,
+    MessagesModule,
+    MessageModule,
+    SliderModule
   ],
   exports: [
     CommonModule,
@@ -40,7 +47,10 @@ import { SidebarModule } from 'primeng/sidebar';
     CheckboxModule,
     InputTextareaModule,
     FileUploadModule,
-    SidebarModule
+    SidebarModule,
+    MessagesModule,
+    MessageModule,
+    SliderModule
   ]
 })
 export class PrimeNgModule { }
