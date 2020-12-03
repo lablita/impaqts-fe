@@ -1,4 +1,4 @@
-export class Corpus {
+export class DropdownItem {
   code: string;
   name: string;
 
@@ -6,4 +6,8 @@ export class Corpus {
     this.code = code;
     this.name = name;
   }
+}
+
+export class Corpus extends DropdownItem {
+
 }

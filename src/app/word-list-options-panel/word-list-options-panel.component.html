@@ -1,0 +1,175 @@
+<div *ngIf="!!showRightButton">
+  <a class="p-shadow-7 p-component right-button" (click)="closeSidebar()">
+    {{'PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS' | translate}}</a>
+</div>
+<span class="p-component">
+
+  <div class="p-field">
+    <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SUBCORPUS" | translate}}</label>
+    <p-dropdown [options]="subcorpusList" [(ngModel)]="selectedSubcorpus" optionLabel="name" [showClear]="true">
+    </p-dropdown>
+  </div>
+
+  <div class="p-field">
+    <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SEARCH_ATTR" | translate}}</label>
+    <p-dropdown [options]="searchAttrList" [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+    </p-dropdown>
+  </div>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-fixed" style="width: 96px;"></div>
+    <div class="p-col-fixed p-ai-center" style="width: 110px;">
+      <p-checkbox name="nonWords" [binary]="true" [label]="nGram" [(ngModel)]="wordListOptionsQueryRequest.useNGrams">
+      </p-checkbox>
+    </div>
+    <div class="p-col p-ai-center">
+      <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.VALUE_OF" | translate}}</label>
+      <p-dropdown [options]="valueOfList" [(ngModel)]="selectedValueOf" optionLabel="name" [showClear]="true">
+      </p-dropdown>
+    </div>
+  </div>
+
+  <h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_OPTION' | translate}}</h3>
+
+  <div class="p-ml-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.FILTER_WORD" | translate}}
+    <div class="p-field p-ml-3">
+      <label for="regexp" class="label-size p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.REGEXP" | translate}}</label>
+      <input id="regexp" type="number" pInputText style="width: 300px;"
+        [(ngModel)]="wordListOptionsQueryRequest.regexp">
+    </div>
+  </div>
+  <div class="p-field p-ml-5">
+    <label for="minFreq" class="label-size p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.MIN_FREQ" | translate}}</label>
+    <input id="minFreq" type="number" pInputText style="width: 80px;" [(ngModel)]="wordListOptionsQueryRequest.minFreq">
+  </div>
+  <div class="p-field p-ml-5">
+    <label for="maxFreq" class="label-size p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.MAX_FREQ" | translate}}</label>
+    <input id="maxFreq" type="number" pInputText style="width: 80px;" [(ngModel)]="wordListOptionsQueryRequest.maxFreq">
+  </div>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-fixed" style="width: 133px;">
+      <p class="p-mr-3" style="width: 50px !important;">{{"PAGE.CONCORDANCE.WORD_OPTIONS.WHITE_LIST" | translate}}</p>
+    </div>
+    <div class="p-col">
+      <p-fileUpload #whiteListUpload mode="basic" name="wordListOptionsQueryRequest.whitelist" url="#" accept="*"
+        maxFileSize="1000000" (onUpload)="onWhiteListBasicUpload($event)" [auto]="false" chooseLabel="Browse">
+      </p-fileUpload>
+    </div>
+    <div class="p-col">
+      <p>{{wordListOptionsQueryRequest.whitelist}}</p>
+    </div>
+  </div>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-fixed" style="width: 133px;">
+      <p class="p-mr-3">{{"PAGE.CONCORDANCE.WORD_OPTIONS.BLACK_LIST" | translate}}</p>
+    </div>
+    <div class="p-col">
+      <p-fileUpload #blackListUpload mode="basic" name="wordListOptionsQueryRequest.blacklist" url="#" accept="*"
+        maxFileSize="1000000" (onUpload)="onBlackListBasicUpload($event)" [auto]="false" chooseLabel="Browse">
+      </p-fileUpload>
+    </div>
+    <div class="p-col">
+      <p>{{wordListOptionsQueryRequest.whitelist}}</p>
+    </div>
+  </div>
+
+  <div class="p-field-checkbox p-ml-4">
+    <p-checkbox name="nonWords" [binary]="true" [label]="nonWords" [(ngModel)]="wordListOptionsQueryRequest.nonWords">
+    </p-checkbox>
+  </div>
+
+  <h3>{{'PAGE.CONCORDANCE.WORD_OPTIONS.OUTPUT_OPTION' | translate}}</h3>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-fixed" style="width: 145px;">
+      <p class="p-mr-3"><b>{{'PAGE.CONCORDANCE.WORD_OPTIONS.FREQ_FIG' | translate}}</b></p>
+    </div>
+    <div class="p-col p-ai-center">
+      <div *ngFor="let freq of frequencyFigures" class="p-field-checkbox" class="p-d-inline">
+        <p-radioButton [inputId]="freq.key" name="displayAttr" [value]="freq" [(ngModel)]="selectedFrequencyFigure">
+        </p-radioButton>
+        <label [for]="freq.key" class="p-mr-2 p-ml-1">{{freq.name}}</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-grid p-ml-4">
+    <div class="p-col-fixed p-ai-start vertical-container" style="width: 145px;">
+      <p class="p-mr-3"> <b>{{'PAGE.CONCORDANCE.WORD_OPTIONS.OUPUT_TYPE' | translate}}</b></p>
+    </div>
+
+
+    <div class="p-col">
+      <div class="p-field-checkbox">
+        <p-radioButton [inputId]="outputTypes[0].key" name="displayAttr" [value]="outputTypes[0]"
+          [(ngModel)]="selectedOutputType">
+        </p-radioButton>
+        <label [for]="outputTypes[0].key" class="p-mr-2 p-ml-1">{{outputTypes[0].name}}</label>
+      </div>
+
+      <div class="p-field-checkbox">
+        <p-radioButton [inputId]="outputTypes[1].key" name="displayAttr" [value]="outputTypes[1]"
+          [(ngModel)]="selectedOutputType">
+        </p-radioButton>
+        <label [for]="outputTypes[1].key" class="p-mr-2 p-ml-1">{{outputTypes[1].name}}</label>
+      </div>
+      <div class="p-mt-0 p-mb-3 p-ml-3">
+        <div>
+          <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.REFS_SUB' | translate}}</div>
+          <div class="p-field p-d-inline p-mr-1">
+            <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" [options]="searchAttrList"
+              [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+            </p-dropdown>
+          </div>
+          <div class="p-field p-d-inline">
+            <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" [options]="searchAttrList"
+              [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+            </p-dropdown>
+          </div>
+        </div>
+        <div>
+          <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.PREFER' | translate}}</div>
+          <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.RARE_WORDS' | translate}}</div>
+          <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" class="p-mr-2" [options]="rareWordsList"
+            [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+          </p-dropdown>
+          <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.COMMON_WORDS' | translate}}</div>
+          <input [disabled]="selectedOutputType == outputTypes[1]" id="commonWords" pInputText style="width: 70px;"
+            [(ngModel)]="wordListOptionsQueryRequest.commonWords">
+        </div>
+      </div>
+
+      <div class="p-field-checkbox">
+        <p-radioButton [inputId]="outputTypes[2].key" name="displayAttr" [value]="outputTypes[2]"
+          [(ngModel)]="selectedOutputType">
+        </p-radioButton>
+        <label [for]="outputTypes[2].key" class="p-mr-2 p-ml-1">{{outputTypes[2].name}}</label>
+      </div>
+      <div class="p-mt-0 p-mb-3 p-ml-3">
+        <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="p-mr-2" [options]="rareWordsList"
+          [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+        </p-dropdown>
+        <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="p-mr-2" [options]="rareWordsList"
+          [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+        </p-dropdown>
+        <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="p-mr-2" [options]="rareWordsList"
+          [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+        </p-dropdown>
+      </div>
+      <div class="p-mt-0 p-mb-3 p-ml-3">
+        {{'PAGE.CONCORDANCE.WORD_OPTIONS.INFO' | translate}}
+      </div>
+
+
+
+    </div>
+
+  </div>
+
+
+  <button pButton type="button" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.BUTTON' | translate}}"
+    (click)="clickWordListOption()" class="p-mr-5"></button>
+
+</span>
