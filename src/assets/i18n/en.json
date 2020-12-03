@@ -125,6 +125,30 @@
         "BUTTON": "Make word list"
       },
       "TEXT_TYPE_SECTION": {}
+    },
+    "CORPUS_INFO": {
+      "STAT_INFO": "statistics and info",
+      "COUNTS": "Counts",
+      "WORDS": "Words",
+      "SENTENCES": "Sentences",
+      "PARAGRAPHS": "Paragraphs",
+      "DOCUMENTS": "Documents",
+      "GENERAL_INFO": "General info",
+      "CORPUS_DESC": "Corpus description",
+      "LANGUAGE": "Language",
+      "ENCODING": "Encoding",
+      "COMPILED": "Compiled",
+      "TAGSET": "Tagset",
+      "LEXICON_SIZES": "Lexicon sizes",
+      "LC": "lc",
+      "LEMMA_LC": "lemma_lc",
+      "STRUCT_ATTR": "Structures and attributes",
+      "SUBTITLE": "subtitle",
+      "TITLE": "title",
+      "TEXT": "text",
+      "SUMMARY": "summary",
+      "S": "s",
+      "ARTICLE": "article"
     }
   }
 }
