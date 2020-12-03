@@ -9,5 +9,4 @@ export class DropdownItem {
 }
 
 export class Corpus extends DropdownItem {
-
 }

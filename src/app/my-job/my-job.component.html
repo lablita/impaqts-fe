@@ -1,1 +1,76 @@
-<p>my-job works!</p>
+<p></p>
+<span class="p-component">
+  <h2>{{"PAGE.MY_JOBS.MY_JOBS_LABEL" | translate}}</h2>
+
+
+
+  <div class="p-field-checkbox">
+    <label class="p-mr-2">{{"PAGE.MY_JOBS.AUTO_RELOAD" | translate}}</label>
+    <p-checkbox name="autoReloaded" [binary]="true" [(ngModel)]="autoReloaded">
+    </p-checkbox>
+  </div>
+  <div class="p-field-checkbox">
+    <label class="p-mr-2">{{"PAGE.MY_JOBS.RELOAD_NOW" | translate}}</label>
+    <p-checkbox name="showCom" [binary]="true" [(ngModel)]="showCom">
+    </p-checkbox>
+  </div>
+
+  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline">
+    <p-table id="myTable" [columns]="selectedColumns" [value]="jobs" styleClass="p-datatable-striped" [paginator]="true"
+      [rows]="10" [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="[10,25,50]">
+      <ng-template pTemplate="caption">
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="name"
+          selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns">
+        </p-multiSelect>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th pSortableColumn="id" style="width: 250px;" class="p-text-right">ID <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <!-- <th pSortableColumn="corpus" class="p-text-right">{{"PAGE.CONCORDANCE.CORPUS" | translate}} <p-sortIcon
+              field="corpus">
+            </p-sortIcon>
+          </th>
+          <th pSortableColumn="descriptionLabel" class="p-text-right">{{"PAGE.MY_JOBS.DESCRIPTION" | translate}}
+            <p-sortIcon field="descriptionLabel"></p-sortIcon>
+          </th>
+          <th pSortableColumn="started" class="p-text-right">{{"PAGE.MY_JOBS.STARTED" | translate}} <p-sortIcon
+              field="started"></p-sortIcon>
+          </th>
+          <th pSortableColumn="estimation" class="p-text-right">{{"PAGE.MY_JOBS.ESTIMATION" | translate}} <p-sortIcon
+              field="estimation">
+            </p-sortIcon>
+          </th>
+          <th pSortableColumn="status" class="p-text-right">{{"PAGE.MY_JOBS.STATUS" | translate}} <p-sortIcon
+              field="status"></p-sortIcon>
+          </th>
+          <th pSortableColumn="progress" style="width: 100px;" class="p-text-right">
+            {{"PAGE.MY_JOBS.PROGRESS" | translate}} <p-sortIcon field="progress">
+            </p-sortIcon>
+          </th> -->
+
+          <th class="p-text-right" *ngFor="let col of columns" pSortableColumn="col.code">
+            {{col.name | translate}}
+            <p-sortIcon field="col.code"></p-sortIcon>
+          </th>
+
+
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-job let-columns="columns">
+        <tr>
+          <td class="p-text-right">{{job.id}}</td>
+          <td class="p-text-right" *ngFor="let col of columns">{{job[col.field] | translate}} </td>
+
+          <!-- <td class="p-text-right">{{job.corpus}}</td>
+          <td class="p-text-right"><a href="{{job.descriptionUrl}}">{{job.descriptionLabel}}</a></td>
+          <td class="p-text-right">{{job.started | date: 'dd/MM/yyyy HH:mm'}}</td>
+          <td class="p-text-right">{{job.estimation}}</td>
+          <td class="p-text-right">{{job.status}}</td>
+          <td class="p-text-right">{{job.progress}}%</td> -->
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</span>
