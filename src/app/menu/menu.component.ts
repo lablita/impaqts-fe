@@ -170,7 +170,7 @@ export class MenuComponent implements OnInit {
           new MenuItemObject(this.shuffle, null, () => {
             this.menuEmitterService.click.emit(new MenuEvent(SHUFFLE));
           }, null, null, false, false, SHUFFLE),
-        ], false, false, SORT),
+        ], false, false, null),
         new MenuItemObject(this.sample, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
         }, null, null, false, false, SAMPLE),

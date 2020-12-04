@@ -8,7 +8,7 @@ import { MenuEvent } from '../menu/menu.component';
 import { ButtonItem } from '../model/button-item';
 import {
   ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
-  NONE, PHRASE, RIGHT, SIMPLE, WORD, WORD_LIST
+  NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
 import { KWICline } from '../model/kwicline';
@@ -28,56 +28,47 @@ const WS_URL = '/test-query-ws-ext';
 export class ConcordanceComponent implements OnInit {
   public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
 
-  @ViewChild('viewOptionsPanel') private pwdInput: ViewOptionsPanelComponent;
+  @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
 
+  /** public */
   public corpusList: Corpus[];
   public selectedCorpus: Corpus;
-  // public dropdownCorpusActive = false;
-
   public windows: DropdownItem[];
   public selectedWindow: DropdownItem;
   public items: DropdownItem[];
   public selectedItem: DropdownItem;
   public tokens: DropdownItem[] = [];
   public selectedToken: DropdownItem;
-
   public queryTypes: ButtonItem[];
   public selectedQueryType: ButtonItem;
   public selectCorpus: string;
-
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
-
   public titleOption: string;
-
   public simple: string;
   public lemma: string;
   public phrase: string;
   public word: string;
   public character: string;
   public cql: string;
-
   public queryTypeStatus: boolean;
   public contextStatus: boolean;
   public textTypeStatus: boolean;
-
   public attributesSelection: string[] = [];
-
+  public viewOptionsLabel: string;
   public wordListOptionsLabel: string;
-
+  public sortOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
-
   public queryResponse: QueryResponse;
   public totalResults = 0;
   public kwicLines: KWICline[];
 
+  /** private */
   private websocket: WebSocketSubject<any>;
-
-
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -101,8 +92,6 @@ export class ConcordanceComponent implements OnInit {
       err => console.error(err),
       () => console.log('Activiti WS disconnected')
     );
-    /** */
-
 
     this.queryTypeStatus = false;
     this.contextStatus = false;
@@ -117,11 +106,22 @@ export class ConcordanceComponent implements OnInit {
     this.selectedToken = this.tokens[4];
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (event.item === WORD_LIST) {
-        this.titleOption = this.wordListOptionsLabel;
-      } else {
-        this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
+      switch (event.item) {
+        case WORD_LIST:
+          this.titleOption = this.wordListOptionsLabel;
+          break;
+        case SORT:
+          this.titleOption = this.sortOptionsLabel;
+          break;
+        default:
+          this.titleOption = this.viewOptionsLabel;
+        // this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
       }
+      // if (event.item === WORD_LIST) {
+      //   this.titleOption = this.wordListOptionsLabel;
+      // } else {
+      //   this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
+      // }
       this.emitterServices.clickLabel.emit(this.titleOption);
     });
 
@@ -137,6 +137,8 @@ export class ConcordanceComponent implements OnInit {
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
       this.corpusList = INSTALLATION_LIST[environment.installation].corpusList;
       this.wordListOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS');
+      this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
+      this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
         new ButtonItem(SIMPLE, simple),
         new ButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
@@ -186,6 +188,7 @@ export class ConcordanceComponent implements OnInit {
     qr.end = 500000;
     qr.word = `[word="${this.simple}"]`;
     this.websocket.next(qr);
+    this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
 
   public clickClearAll(): void {

@@ -23,8 +23,8 @@
         <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
         &nbsp;
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-          (click)="clickMakeConcordance()"></button>
+        <button [disabled]="!selectedCorpus" pButton type="button"
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="clickMakeConcordance()"></button>
       </div>
       <div class="p-field">
         <label for="simple_query" class="label-size"></label>
@@ -163,16 +163,15 @@
   </p-sidebar>
 
 
-  <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'50em'}">
+  <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
     <div class="p-ml-3">
-      <app-view-options-panel #viewOptionPanel *ngIf="titleOption !== wordListOptionsLabel"
-        [corpus]="selectedCorpus?.code" [showRightButton]="displayPanelOptions"
-        (closeSidebarEvent)="displayPanelOptions=false">
+      <app-view-options-panel #viewOptionsPanel *ngIf="titleOption === viewOptionsLabel" [corpus]="selectedCorpus?.code"
+        [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
       </app-view-options-panel>
       <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel" [showRightButton]="displayPanelOptions"
         (closeSidebarEvent)="displayPanelOptions=false"></app-word-list-options-panel>
+      <app-sort-options-panel *ngIf="titleOption === sortOptionsLabel" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false"></app-sort-options-panel>
     </div>
   </p-sidebar>
-
-
 </div>

@@ -14,7 +14,7 @@ export const SORT = 'sort';
 export const SAMPLE = 'sample';
 export const LEFT = 'left';
 export const RIGHT = 'right';
-export const NODE = 'shuffle';
+export const NODE = 'node';
 export const SHUFFLE = 'shuffle';
 export const FILTER = 'filter';
 export const OVERLAPS = 'overlaps';
@@ -68,6 +68,18 @@ export const ARF = 'arf';
 
 export const KEYWORD = 'keyword';
 export const CHANGE_OUT = 'change_out';
+
+/** SORT */
+export const FIRST = 'first';
+export const SECOND = 'second';
+export const THIRD = 'third';
+export const L3 = '3L';
+export const L2 = '2L';
+export const L1 = '1L';
+export const R3 = '3R';
+export const R2 = '2R';
+export const R1 = '1R';
+
 
 /** Corpus */
 export const REPUBBLICA = 'REPUBBLICA';

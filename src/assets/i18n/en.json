@@ -124,6 +124,22 @@
         "INFO": "You can select one or more output attributes. Please note that this option can be time-consuming.",
         "BUTTON": "Make word list"
       },
+      "SORT_OPTIONS": {
+        "SORT_OPTIONS": "Sort options",
+        "SIMPLE_SORT": "Simple sort",
+        "SORT_KEY": "Sort key",
+        "LEFT_CONTEXT": "Left context",
+        "RIGHT_CONTEXT": "RIght contenxt",
+        "NUM_TOKEN": "Number of tokens to sort",
+        "IGNORE_CASE": "Ignore case",
+        "BACKWARD": "Backward",
+        "SORT_CONCORDANCE": "Sort concordance",
+        "MULTILEVEL_SORT": "Multilevel sort",
+        "FIRST_LEVEL": "first level (Sort by ...)",
+        "SECOND_LEVEL": "second level (... then sort by ...)",
+        "THIRD_LEVEL": "third level (... finally sort by)",
+        "POSITION": "Position"
+      },
       "TEXT_TYPE_SECTION": {}
     },
     "CORPUS_INFO": {

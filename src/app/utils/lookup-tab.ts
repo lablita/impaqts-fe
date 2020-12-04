@@ -1,6 +1,7 @@
-import { OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA } from '../model/constants';
+import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
 import { Corpus } from '../model/dropdown-item';
 import { Installation } from '../model/installation';
+import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 
@@ -53,6 +54,17 @@ export const INSTALLATION_LIST = {
       null,
       null,
       null
+    ), new SortOptionsQueryRequest(
+      WORD,
+      LEFT,
+      3,
+      false,
+      false,
+      FIRST,
+      WORD,
+      false,
+      false,
+      NODE
     )
   )
   ,
@@ -99,6 +111,17 @@ export const INSTALLATION_LIST = {
       null,
       null,
       null
+    ), new SortOptionsQueryRequest(
+      WORD,
+      LEFT,
+      3,
+      false,
+      false,
+      FIRST,
+      WORD,
+      false,
+      false,
+      NODE
     )
   )
 

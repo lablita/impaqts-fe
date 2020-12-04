@@ -8,7 +8,7 @@ import { DropdownItem } from '../model/dropdown-item';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
-const WORD_LIST_OPTION_QUERY_REQUEST = 'wordListOptionQueryRequest';
+const WORD_LIST_OPTIONS_QUERY_REQUEST = 'wordListOptionsQueryRequest';
 @Component({
   selector: 'app-word-list-options-panel',
   templateUrl: './word-list-options-panel.component.html',
@@ -61,8 +61,8 @@ export class WordListOptionsPanelComponent implements OnInit {
       new DropdownItem('10000', '10000'),
       new DropdownItem('100000', '100000'),
     ];
-    this.wordListOptionsQueryRequest = localStorage.getItem(WORD_LIST_OPTION_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(WORD_LIST_OPTION_QUERY_REQUEST)) :
+    this.wordListOptionsQueryRequest = localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST) ?
+      JSON.parse(localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST)) :
       INSTALLATION_LIST[environment.installation].wordListOptionsQueryRequest;
     this.translateService.get('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(translated => {
       this.fileUploadedInfo = translated;
@@ -80,9 +80,6 @@ export class WordListOptionsPanelComponent implements OnInit {
         new ButtonItem(KEYWORD, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD')),
         new ButtonItem(CHANGE_OUT, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT'))
       ];
-
-
-
     });
 
   }
