@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { DropdownItem } from '../model/dropdown-item';
 import { JobOjs } from '../model/job-obj';
@@ -16,7 +16,7 @@ export class MyJobComponent implements OnInit {
   public showCom: boolean;
 
   public cols: DropdownItem[];
-  public selectedColumns: DropdownItem[];
+  public _selectedColumns: DropdownItem[];
 
   constructor(
     private readonly translateService: TranslateService
@@ -35,9 +35,7 @@ export class MyJobComponent implements OnInit {
       new JobOjs('ab7c776d013dac28618192873f98232c', 'Repubblica', '(Sub)corpus statistics (Freq)', '#', new Date(Date.now()), '0:00:35', 'Completed', 100)
     ];
     this.translateService.get('PAGE.CONCORDANCE.CORPUS').subscribe(corpus => {
-      // this.translateService.instant('PAGE.CONCORDANCE.LEMMA')
       this.cols = [
-        // new DropdownItem('id', 'ID'),
         new DropdownItem('corpus', corpus),
         new DropdownItem('descriptionLabel', this.translateService.instant('PAGE.MY_JOBS.DESCRIPTION')),
         new DropdownItem('started', this.translateService.instant('PAGE.MY_JOBS.STARTED')),
@@ -45,25 +43,16 @@ export class MyJobComponent implements OnInit {
         new DropdownItem('status', this.translateService.instant('PAGE.MY_JOBS.STATUS')),
         new DropdownItem('progress', this.translateService.instant('PAGE.MY_JOBS.PROGRESS'))
       ];
-
-      this.selectedColumns = [
-
-        new DropdownItem('estimation', this.translateService.instant('PAGE.MY_JOBS.ESTIMATION')),
-        new DropdownItem('status', this.translateService.instant('PAGE.MY_JOBS.STATUS')),
-        new DropdownItem('progress', this.translateService.instant('PAGE.MY_JOBS.PROGRESS'))
-      ];
-
+      this._selectedColumns = this.cols.slice();
     });
-
   }
 
-  // @Input() getSelectedColumns(): DropdownItem[] {
-  //   return this.selectedColumns;
-  // }
+  @Input() get selectedColumns(): DropdownItem[] {
+    return this._selectedColumns;
+  }
 
-  // set selectedColumns(val: DropdownItem[]) {
-  //   //restore original order
-  //   this.selectedColums = this.cols.filter(col => val.includes(col));
-  // }
+  set selectedColumns(val: DropdownItem[]) {
+    this._selectedColumns = this.cols.filter(col => val.includes(col));
+  }
 
 }

@@ -26,49 +26,25 @@
       </ng-template>
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th pSortableColumn="id" style="width: 250px;" class="p-text-right">ID <p-sortIcon field="id"></p-sortIcon>
+          <th pSortableColumn="id" style="width: 250px;" class="p-text-left">ID <p-sortIcon field="id"></p-sortIcon>
           </th>
-          <!-- <th pSortableColumn="corpus" class="p-text-right">{{"PAGE.CONCORDANCE.CORPUS" | translate}} <p-sortIcon
-              field="corpus">
-            </p-sortIcon>
-          </th>
-          <th pSortableColumn="descriptionLabel" class="p-text-right">{{"PAGE.MY_JOBS.DESCRIPTION" | translate}}
-            <p-sortIcon field="descriptionLabel"></p-sortIcon>
-          </th>
-          <th pSortableColumn="started" class="p-text-right">{{"PAGE.MY_JOBS.STARTED" | translate}} <p-sortIcon
-              field="started"></p-sortIcon>
-          </th>
-          <th pSortableColumn="estimation" class="p-text-right">{{"PAGE.MY_JOBS.ESTIMATION" | translate}} <p-sortIcon
-              field="estimation">
-            </p-sortIcon>
-          </th>
-          <th pSortableColumn="status" class="p-text-right">{{"PAGE.MY_JOBS.STATUS" | translate}} <p-sortIcon
-              field="status"></p-sortIcon>
-          </th>
-          <th pSortableColumn="progress" style="width: 100px;" class="p-text-right">
-            {{"PAGE.MY_JOBS.PROGRESS" | translate}} <p-sortIcon field="progress">
-            </p-sortIcon>
-          </th> -->
-
-          <th class="p-text-right" *ngFor="let col of columns" pSortableColumn="col.code">
+          <th class="p-text-right" *ngFor="let col of columns" [pSortableColumn]="col.code">
             {{col.name | translate}}
-            <p-sortIcon field="col.code"></p-sortIcon>
+            <p-sortIcon [field]="col.code"></p-sortIcon>
           </th>
-
-
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-job let-columns="columns">
         <tr>
-          <td class="p-text-right">{{job.id}}</td>
-          <td class="p-text-right" *ngFor="let col of columns">{{job[col.field] | translate}} </td>
+          <td class="p-text-left">{{job.id}}</td>
+          <td class="p-text-right" *ngFor="let col of columns">
+            <span *ngIf="col.code !== 'progress' && col.code !== 'descriptionLabel'">{{job[col.code] | translate}}
+            </span>
+            <span *ngIf="col.code === 'descriptionLabel'"><a
+                href="{{job.descriptionUrl}}">{{job.descriptionLabel}}</a></span>
+            <span *ngIf="col.code === 'progress'">{{job[col.code] | translate}}% </span>
 
-          <!-- <td class="p-text-right">{{job.corpus}}</td>
-          <td class="p-text-right"><a href="{{job.descriptionUrl}}">{{job.descriptionLabel}}</a></td>
-          <td class="p-text-right">{{job.started | date: 'dd/MM/yyyy HH:mm'}}</td>
-          <td class="p-text-right">{{job.estimation}}</td>
-          <td class="p-text-right">{{job.status}}</td>
-          <td class="p-text-right">{{job.progress}}%</td> -->
+          </td>
         </tr>
       </ng-template>
     </p-table>
