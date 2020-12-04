@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { CorpusInfoObj } from '../model/corpus-info-obj';
 
 @Component({
@@ -19,9 +18,9 @@ export class CorpusInfoComponent implements OnInit {
   public structArt: CorpusInfoObj[];
 
 
-  constructor(
-    private readonly translateService: TranslateService
-  ) {
+  constructor() { }
+
+  ngOnInit(): void {
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
     this.counts = [
       new CorpusInfoObj('PAGE.CONCORDANCE.TOKENS', '380,823,725'),
@@ -58,11 +57,6 @@ export class CorpusInfoComponent implements OnInit {
       new CorpusInfoObj('PAGE.CORPUS_INFO.S', '15,835,675'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.ARTICLE', '572,515')
     ];
-  }
-
-  ngOnInit(): void {
-
-
   }
 
 }

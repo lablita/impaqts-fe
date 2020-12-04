@@ -10,6 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { SidebarModule } from 'primeng/sidebar';
@@ -35,7 +36,8 @@ import { TableModule } from 'primeng/table';
     MessagesModule,
     MessageModule,
     SliderModule,
-    TableModule
+    TableModule,
+    MultiSelectModule
   ],
   exports: [
     CommonModule,
@@ -53,7 +55,8 @@ import { TableModule } from 'primeng/table';
     MessagesModule,
     MessageModule,
     SliderModule,
-    TableModule
+    TableModule,
+    MultiSelectModule
   ]
 })
 export class PrimeNgModule { }
