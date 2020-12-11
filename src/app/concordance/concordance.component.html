@@ -172,6 +172,8 @@
         (closeSidebarEvent)="displayPanelOptions=false"></app-word-list-options-panel>
       <app-sort-options-panel *ngIf="titleOption === sortOptionsLabel" [showRightButton]="displayPanelOptions"
         (closeSidebarEvent)="displayPanelOptions=false"></app-sort-options-panel>
+      <app-frequency-options-panel *ngIf="titleOption === freqOptionsLabel" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false"></app-frequency-options-panel>
     </div>
   </p-sidebar>
 </div>

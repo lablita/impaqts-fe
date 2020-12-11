@@ -7,7 +7,7 @@ import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { ButtonItem } from '../model/button-item';
 import {
-  ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
+  ALL, ANY, BOTH, CHARACTER, CQL, FREQUENCY, LEFT, LEMMA,
   NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
 import { Corpus, DropdownItem } from '../model/dropdown-item';
@@ -61,6 +61,7 @@ export class ConcordanceComponent implements OnInit {
   public viewOptionsLabel: string;
   public wordListOptionsLabel: string;
   public sortOptionsLabel: string;
+  public freqOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public queryResponse: QueryResponse;
@@ -113,15 +114,12 @@ export class ConcordanceComponent implements OnInit {
         case SORT:
           this.titleOption = this.sortOptionsLabel;
           break;
+        case FREQUENCY:
+          this.titleOption = this.sortOptionsLabel;
+          break;
         default:
           this.titleOption = this.viewOptionsLabel;
-        // this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
       }
-      // if (event.item === WORD_LIST) {
-      //   this.titleOption = this.wordListOptionsLabel;
-      // } else {
-      //   this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
-      // }
       this.emitterServices.clickLabel.emit(this.titleOption);
     });
 
@@ -138,6 +136,7 @@ export class ConcordanceComponent implements OnInit {
       this.corpusList = INSTALLATION_LIST[environment.installation].corpusList;
       this.wordListOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS');
       this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
+      this.freqOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS');
       this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
         new ButtonItem(SIMPLE, simple),
@@ -187,6 +186,7 @@ export class ConcordanceComponent implements OnInit {
     qr.start = 0;
     qr.end = 500000;
     qr.word = `[word="${this.simple}"]`;
+    qr.corpus = this.selectedCorpus.code;
     this.websocket.next(qr);
     this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
