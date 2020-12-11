@@ -140,6 +140,18 @@
         "THIRD_LEVEL": "third level (... finally sort by)",
         "POSITION": "Position"
       },
+      "FREQ_OPTIONS": {
+        "FREQ_OPTIONS": "Frequency options",
+        "FREQ_DIST": "Text type frequency distribution",
+        "MULTI_FREQ_DIST": "Multilevel frequency distribution",
+        "FREQ_LIMIT": "Frequency limit",
+        "FIRST_LEVEL": "first level",
+        "SECOND_LEVEL": "second level",
+        "THIRD_LEVEL": "third level",
+        "FOURTH_LEVEL": "fourth level",
+        "MAKE_FREQ": "Make frequency list",
+        "INCLUDE_CAT": "Include categories with no hits"
+      },
       "TEXT_TYPE_SECTION": {}
     },
     "CORPUS_INFO": {

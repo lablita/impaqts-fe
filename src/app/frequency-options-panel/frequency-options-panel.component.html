@@ -1,0 +1,63 @@
+<div *ngIf="!!showRightButton">
+  <a class="p-shadow-7 p-component right-button" (click)="closeSidebar()">
+    {{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS' | translate}}</a>
+</div>
+
+<span class="p-component">
+
+  <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}</h3>
+  <div class="p-field p-ml-2">
+    <label for="numToken" style="width: 145px;"
+      class="p-mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
+    <input id="numToken" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
+  </div>
+  <div class="p-grid">
+    <div *ngFor="let level of levels, let i = index" class="p-field-checkbox" class="p-d-inline">
+      <div class="p-col">
+        <div class="p-mb-4 p-ml-2">
+          <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
+          </p-radioButton>
+          <label [for]="level.key" class="p-mr-2 p-ml-1">{{level.name}}</label>
+        </div>
+        <div class="p-field p-ml-2 p-mb-2">
+          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="name"
+            [showClear]="true">
+          </p-dropdown>
+        </div>
+        <div class="p-field-checkbox p-ml-2 p-mb-2">
+          <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel" [(ngModel)]="ignoreCase[i]">
+          </p-checkbox>
+        </div>
+        <div class="p-field p-ml-2">
+          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="name" [showClear]="true">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
+    (click)="clickFreqOption()" class="p-mr-5"></button>
+
+
+  <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
+  <div class="p-field p-ml-2">
+    <label for="numToken" style="width: 145px;"
+      class="p-mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
+    <input id="numToken" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
+  </div>
+  <div class="p-field-checkbox p-ml-2">
+    <p-checkbox name="nonWords" [binary]="true" [label]="includeCatLabel"
+      [(ngModel)]="freqOptionsQueryRequest.includeCat">
+    </p-checkbox>
+  </div>
+  <div class="p-text-center">
+    <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
+      [(ngModel)]="freqOptionsQueryRequest.categories"></textarea>
+  </div>
+
+  <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
+    (click)="clickFreqOption()" class="p-mr-5"></button>
+
+</span>
