@@ -1,21 +1,16 @@
 import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
-import { Corpus } from '../model/dropdown-item';
-import { Installation } from '../model/installation';
+import { CorpusShort } from '../model/dropdown-item';
+import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
+import { Startup } from '../model/startup';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 
 export const INSTALLATION_LIST = {
-  uno: new Installation(
+  uno: new Startup(
     [
-      new Corpus('1', 'AcWac EU'),
-      new Corpus('2', 'Brexit IT'),
-      new Corpus('3', 'DeWac Small'),
-      new Corpus('4', 'DeWac Complete'),
-      new Corpus('5', 'FrWac Complete'),
-      new Corpus('6', 'EPIC int_es_en'),
-      new Corpus('7', 'ItWac Small'),
-      new Corpus(REPUBBLICA, 'Repubblica')
+      new CorpusShort('susanne', 'susanne'),
+      new CorpusShort('wikiita', 'wikiita')
     ],
     new ViewOptionsQueryRequest(
       [],
@@ -65,14 +60,23 @@ export const INSTALLATION_LIST = {
       false,
       false,
       NODE
+    ), new FreqOptionsQueryRequest(
+      0,
+      FIRST,
+      WORD,
+      false,
+      NODE,
+      0,
+      false,
+      []
     )
   )
   ,
-  due: new Installation(
+  due: new Startup(
     [
-      new Corpus('1', 'AcWac EU'),
-      new Corpus('2', 'Brexit IT'),
-      new Corpus(REPUBBLICA, 'Repubblica')
+      new CorpusShort('1', 'AcWac EU'),
+      new CorpusShort('2', 'Brexit IT'),
+      new CorpusShort(REPUBBLICA, 'Repubblica')
     ],
     new ViewOptionsQueryRequest(
       [],
@@ -122,6 +126,15 @@ export const INSTALLATION_LIST = {
       false,
       false,
       NODE
+    ), new FreqOptionsQueryRequest(
+      0,
+      FIRST,
+      WORD,
+      false,
+      NODE,
+      0,
+      false,
+      []
     )
   )
 

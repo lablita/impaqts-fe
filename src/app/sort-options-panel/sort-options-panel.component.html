@@ -27,16 +27,18 @@
   <div class="p-field p-ml-2">
     <label for="numToken" style="width: 145px;"
       class="p-mr-3">{{"PAGE.CONCORDANCE.SORT_OPTIONS.NUM_TOKEN" | translate}}</label>
-    <input id="numToken" type="number" pInputText style="width: 50px;" [(ngModel)]="sortOptionsRequest.numberTokens">
+    <input id="numToken" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="sortOptionsQueryRequest.numberTokens">
   </div>
 
   <div class="p-field-checkbox p-ml-2">
-    <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel" [(ngModel)]="sortOptionsRequest.ignoreCase">
+    <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel"
+      [(ngModel)]="sortOptionsQueryRequest.ignoreCase">
     </p-checkbox>
   </div>
 
   <div class="p-field-checkbox p-ml-2">
-    <p-checkbox name="nonWords" [binary]="true" [label]="backwordLabel" [(ngModel)]="sortOptionsRequest.backward">
+    <p-checkbox name="nonWords" [binary]="true" [label]="backwordLabel" [(ngModel)]="sortOptionsQueryRequest.backward">
     </p-checkbox>
   </div>
 
@@ -46,9 +48,6 @@
   </div>
 
   <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.MULTILEVEL_SORT' | translate}}</h3>
-  <div class="p-ml-2 p-mb-2">
-    <b>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_KEY' | translate}}</b>
-  </div>
   <div class="p-grid">
     <div *ngFor="let level of levels, let i = index" class="p-field-checkbox" class="p-d-inline">
       <div class="p-col">

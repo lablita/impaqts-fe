@@ -8,5 +8,8 @@ export class DropdownItem {
   }
 }
 
-export class Corpus extends DropdownItem {
+export class CorpusShort extends DropdownItem {
+  constructor(code: string, name: string) {
+    super(code, name);
+  }
 }

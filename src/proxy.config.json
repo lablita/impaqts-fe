@@ -1,0 +1,12 @@
+{
+  "/impaqts-configurator/*": {
+    "target": "http://localhost:9001",
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/metadatum-values/*": {
+    "target": "http://localhost:9000",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

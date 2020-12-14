@@ -1,3 +1,9 @@
+/** SYSTEM */
+export const CONTEXT_INSTALLATION = '/impaqts-configurator';
+export const CONTEXT_CORPORA = '';
+export const FIND_FAILED = 'FIND_FAILED';
+
+
 export const CONCORDANCE = 'concordance';
 export const WORD_LIST = 'word_list';
 export const CORPUS_INFO = 'corpus_info';

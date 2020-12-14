@@ -24,6 +24,7 @@ import { ViewOptionsPanelComponent } from './view-options-panel/view-options-pan
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { WordListComponent } from './word-list/word-list.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
+import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { FrequencyOptionsPanelComponent } from './frequency-options-panel/freque
     WordListOptionsPanelComponent,
     RightComponent,
     SortOptionsPanelComponent,
-    FrequencyOptionsPanelComponent
+    FrequencyOptionsPanelComponent,
+    MetadataPanelComponent
   ],
   imports: [
     BrowserModule,

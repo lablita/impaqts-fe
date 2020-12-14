@@ -19,27 +19,21 @@ export class SortOptionsPanelComponent implements OnInit {
   @Input() public showRightButton: boolean;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public sortOptionsRequest: SortOptionsQueryRequest;
+  public sortOptionsQueryRequest: SortOptionsQueryRequest;
 
   public attributeList: DropdownItem[];
   public selectedAttribute: DropdownItem;
   public selectedMultiAttribute: DropdownItem[];
-
   public sortKeys: ButtonItem[];
   public selectedSortKey: ButtonItem;
-
   public ignoreCaseLabel: string;
   public backwordLabel: string;
-
   public levels: ButtonItem[];
   public selectedLevel: ButtonItem;
-
   public positionList: DropdownItem[];
   public selectedPosition: DropdownItem[];
-
   public ignoreCase: boolean[];
   public backward: boolean[];
-
 
   constructor(
     private readonly translateService: TranslateService
@@ -49,7 +43,7 @@ export class SortOptionsPanelComponent implements OnInit {
     this.ignoreCase = [false, false, false];
     this.backward = [false, false, false];
 
-    this.sortOptionsRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
+    this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
       JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
       INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
 
@@ -78,13 +72,13 @@ export class SortOptionsPanelComponent implements OnInit {
       ];
 
       this.positionList = [
-        new DropdownItem(L1, L1),
-        new DropdownItem(L2, L2),
         new DropdownItem(L3, L3),
+        new DropdownItem(L2, L2),
+        new DropdownItem(L1, L1),
         new DropdownItem(NODE, NODE),
-        new DropdownItem(R1, R1),
+        new DropdownItem(R3, R3),
         new DropdownItem(R2, R2),
-        new DropdownItem(R3, R3)
+        new DropdownItem(R1, R1)
       ];
 
       this.selectedMultiAttribute = [

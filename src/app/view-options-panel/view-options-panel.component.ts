@@ -23,6 +23,7 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string;
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: LookUpObject[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public attributeChekBox: ButtonItem[] = [];
@@ -41,7 +42,7 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   public viewOptionsQueryRequest: ViewOptionsQueryRequest;
 
-  private corpusAttributes: LookUpObject[];
+  // private corpusAttributes: LookUpObject[];
   private queryRequest: QueryRequest;
 
   constructor(
@@ -52,7 +53,7 @@ export class ViewOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
     this.viewOptionsQueryRequest = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST) ?
       JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
-    this.corpusAttributes = this.viewOptionPanelService.getAttributesByCorpus(this.corpus);
+    // this.corpusAttributes = this.viewOptionPanelService.getAttributesByCorpus(this.corpus);
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.corpusAttributes.forEach(attribute =>
         this.attributeChekBox.push(new ButtonItem(attribute.value, this.translateService.instant(attribute.viewValue))));

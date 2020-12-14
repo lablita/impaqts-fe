@@ -1,0 +1,32 @@
+<div>
+  <div>
+    <a class="p-shadow-7 p-component right-button" (click)="closeSidebar()">
+      {{'PAGE.CONCORDANCE.METADATA' | translate}}</a>
+  </div>
+  <div class="p-mt-4">
+    <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
+  </div>
+  <div class="p-mt-1 p-ml-3">
+    <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
+    <div class="p-field p-mb-3">
+      <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SUBCORPUS" | translate}}</label>
+      <p-dropdown [options]="subcorpusList" [(ngModel)]="selectedSubcorpus" optionLabel="name" [showClear]="true">
+      </p-dropdown>
+    </div>
+    <div *ngFor="let metadatum of metadata, let i = index" class="p-field p-mb-2">
+      <!-- <div *ngIf="!metadatum.multipleChoice"> -->
+      <label *ngIf="!metadatum.multipleChoice" class="label-size">{{metadatum.name | translate}}</label>
+      <input *ngIf="!metadatum.multipleChoice" type="text" pInputText style="width: 200px;" [(ngModel)]="res[i].name">
+      <!-- </div> -->
+      <!-- <div *ngIf="metadatum.multipleChoice">
+        <label class="label-size">{{metadatum.name | translate}}</label>
+        <div *ngFor="let subMeta of metadatum.subMetadata" class="p-field-checkbox">
+          <p-radioButton [inputId]="queryType.key" name="queryType" [value]="queryType"
+            [(ngModel)]="selectedQueryType">
+          </p-radioButton> 
+          <label class="p-mr-2 p-ml-1">{{subMeta.name}}</label>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>

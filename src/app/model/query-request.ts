@@ -1,4 +1,3 @@
-import { ViewOptionsQueryRequest } from './view-options-query-request';
 
 export class WordListOption {
   subcorpus: string;
@@ -8,9 +7,7 @@ export class WordListOption {
 export class QueryRequest {
   start: number;
   end: number;
+  corpusMetadatum: string;
   word: string;
-  viewOptionQueryRequest: ViewOptionsQueryRequest;
-  wordListOption: WordListOption;
-
-
+  corpus: string;
 }
