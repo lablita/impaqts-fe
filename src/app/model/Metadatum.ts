@@ -16,5 +16,5 @@ export class Metadatum {
   freeText: boolean;
   tree: TreeNode[] = [];
   parentMD = false;
-  selection: TreeNode;
+  selection: string | TreeNode;
 }

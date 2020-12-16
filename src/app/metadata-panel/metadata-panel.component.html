@@ -14,7 +14,7 @@
         <label *ngIf="!metadatum.multipleChoice && metadatum.freeText"
           class="label-size">{{metadatum.name | translate}}</label>
         <input *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText style="width: 200px;"
-          [(ngModel)]="res[i].name">
+          [(ngModel)]="metadatum.selection">
         <!-- Tree & checkbox-->
         <div *ngIf="(metadatum.tree?.length > 0) && metadatum.multipleChoice">
           <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
@@ -25,16 +25,6 @@
           <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection">
           </p-tree>
         </div>
-        <!-- Checkbox -->
-        <!-- <div *ngIf="metadatum.multipleChoice && !metadatum.freeText && !(metadatum.tree?.length > 0)">
-          <label class="label-size"> {{metadatum.name | translate}}</label>
-          <div *ngFor="let subMeta of metadatum?.subMetadata['metadataValues']" class="p-field-checkbox">
-            <p-checkbox [name]="subMeta" [label]="subMeta" [(ngModel)]="selected">
-            </p-checkbox>
-            <label class="p-mr-2 p-ml-1">{{subMeta}}</label>
-          </div>
-        </div> -->
-
       </div>
     </div>
   </p-scrollPanel>

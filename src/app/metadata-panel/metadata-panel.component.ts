@@ -3,6 +3,8 @@ import { TreeNode } from 'primeng/api';
 import { ConcordanceService } from '../concordance/concordance.service';
 import { DropdownItem } from '../model/dropdown-item';
 import { Metadatum } from '../model/Metadatum';
+import { Selection } from '../model/selection';
+import { TextTypesRequest } from '../model/text-types-request';
 
 export class subMetadatum {
   currentSize: number;
@@ -24,15 +26,12 @@ export class MetadataPanelComponent implements OnInit {
 
   public subcorpusList: DropdownItem[] = [];
   public selectedSubcorpus: DropdownItem;
-
   public simple: string;
-
   public res: DropdownItem[] = [];
-
   public displayPanelMetadata = false;
-
   public selected: any;
 
+  private textTypesRequest: TextTypesRequest;
 
   constructor(
     private readonly concordanceService: ConcordanceService
@@ -113,7 +112,23 @@ export class MetadataPanelComponent implements OnInit {
   }
 
   public clickMakeConcordance() {
-    console.log('OK');
+    this.textTypesRequest = new TextTypesRequest();
+    this.metadata.forEach(md => {
+      if (md.freeText) {
+        //freetxt
+        this.textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
+      } else if (!md.multipleChoice && (md?.tree[0]?.children.length > 0)) {
+        //single
+        this.textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
+      } else {
+        //multi
+        const values: string[] = [];
+        (md.selection as TreeNode[]).forEach(m => {
+          values.push(m.label);
+        });
+        this.textTypesRequest.multiSelects.push(new Selection(md.name, null, values));
+      }
+    });
   }
 
 }
