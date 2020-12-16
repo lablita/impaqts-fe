@@ -23,18 +23,18 @@ export class WordListOptionsPanelComponent implements OnInit {
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
   public fileUploadedInfo: string;
   public nonWords: string;
-  public frequencyFigures: ButtonItem[];
+  public frequencyFigures: ButtonItem[] = [];
   public selectedFrequencyFigure: ButtonItem;
-  public outputTypes: ButtonItem[];
+  public outputTypes: ButtonItem[] = [];
   public selectedOutputType: ButtonItem;
-  public subcorpusList: DropdownItem[];
+  public subcorpusList: DropdownItem[] = [];
   public selectedSubcorpus: DropdownItem;
-  public searchAttrList: DropdownItem[];
+  public searchAttrList: DropdownItem[] = [];
   public selectedSearchAttr: DropdownItem;
   public nGram: string;
-  public valueOfList: DropdownItem[];
+  public valueOfList: DropdownItem[] = [];
   public selectedValueOf: DropdownItem;
-  public rareWordsList: DropdownItem[];
+  public rareWordsList: DropdownItem[] = [];
   public selectedRareWords: DropdownItem;
 
 

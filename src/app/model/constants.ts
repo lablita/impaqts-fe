@@ -1,3 +1,9 @@
+/** SYSTEM */
+export const CONTEXT_INSTALLATION = '/impaqts-configurator';
+export const CONTEXT_CORPORA = '';
+export const FIND_FAILED = 'FIND_FAILED';
+
+
 export const CONCORDANCE = 'concordance';
 export const WORD_LIST = 'word_list';
 export const CORPUS_INFO = 'corpus_info';
@@ -69,13 +75,20 @@ export const ARF = 'arf';
 export const KEYWORD = 'keyword';
 export const CHANGE_OUT = 'change_out';
 
-/** SORT */
+/** SORT & FREQ*/
 export const FIRST = 'first';
 export const SECOND = 'second';
 export const THIRD = 'third';
+export const FOURTH = 'fourth';
+export const L6 = '6L';
+export const L5 = '5L';
+export const L4 = '4L';
 export const L3 = '3L';
 export const L2 = '2L';
 export const L1 = '1L';
+export const R6 = '6R';
+export const R5 = '5R';
+export const R4 = '4R';
 export const R3 = '3R';
 export const R2 = '2R';
 export const R1 = '1R';

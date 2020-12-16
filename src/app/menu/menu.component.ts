@@ -193,7 +193,7 @@ export class MenuComponent implements OnInit {
           new MenuItemObject(this.nodeForms, null, () => {
             this.menuEmitterService.click.emit(new MenuEvent(NODE_FORMS));
           }, null, null, false, false, NODE_FORMS),
-        ], false, false, FREQUENCY),
+        ], false, false, null),
         new MenuItemObject(this.collocations, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(COLLOCATIONS));
         }, null, null, false, false, COLLOCATIONS),

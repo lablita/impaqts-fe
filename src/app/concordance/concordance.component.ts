@@ -2,21 +2,24 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { environment } from 'src/environments/environment';
+import { INSTALLATION } from '../app.component';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { ButtonItem } from '../model/button-item';
 import {
-  ALL, ANY, BOTH, CHARACTER, CQL, LEFT, LEMMA,
+  ALL, ANY, BOTH, CHARACTER, CQL, FREQUENCY, LEFT, LEMMA,
   NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
-import { Corpus, DropdownItem } from '../model/dropdown-item';
+import { CorpusShort, DropdownItem } from '../model/dropdown-item';
+import { Installation } from '../model/installation';
 import { KWICline } from '../model/kwicline';
+import { LookUpObject } from '../model/lookup-object';
+import { Metadatum } from '../model/Metadatum';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { EmitterService } from '../utils/emitter.service';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
+import { ConcordanceService } from './concordance.service';
 
 const WS_URL = '/test-query-ws-ext';
 
@@ -30,9 +33,12 @@ export class ConcordanceComponent implements OnInit {
 
   @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
 
+  public installation: Installation;
   /** public */
-  public corpusList: Corpus[];
-  public selectedCorpus: Corpus;
+  public corpusList: CorpusShort[] = [];
+  public metadata: Metadatum[] = [];
+
+  public selectedCorpus: CorpusShort;
   public windows: DropdownItem[];
   public selectedWindow: DropdownItem;
   public items: DropdownItem[];
@@ -41,7 +47,7 @@ export class ConcordanceComponent implements OnInit {
   public selectedToken: DropdownItem;
   public queryTypes: ButtonItem[];
   public selectedQueryType: ButtonItem;
-  public selectCorpus: string;
+  public selectCorpus: string = 'PAGE.CONCORDANCE.SELECT_CORPUS';
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
@@ -61,11 +67,14 @@ export class ConcordanceComponent implements OnInit {
   public viewOptionsLabel: string;
   public wordListOptionsLabel: string;
   public sortOptionsLabel: string;
+  public freqOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public queryResponse: QueryResponse;
   public totalResults = 0;
   public kwicLines: KWICline[];
+
+  public corpusAttributes: LookUpObject[] = [];
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -74,10 +83,15 @@ export class ConcordanceComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly translateService: TranslateService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly emitterServices: EmitterService
+    private readonly emitterServices: EmitterService,
+    private readonly concordanceService: ConcordanceService
   ) { }
 
   ngOnInit(): void {
+
+    this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
+    this.installation.corpora.forEach(corpus => this.corpusList.push(new CorpusShort(corpus.name, corpus.name)));
+
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;
     this.websocket = webSocket(url);
@@ -113,15 +127,12 @@ export class ConcordanceComponent implements OnInit {
         case SORT:
           this.titleOption = this.sortOptionsLabel;
           break;
+        case FREQUENCY:
+          this.titleOption = this.sortOptionsLabel;
+          break;
         default:
           this.titleOption = this.viewOptionsLabel;
-        // this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
       }
-      // if (event.item === WORD_LIST) {
-      //   this.titleOption = this.wordListOptionsLabel;
-      // } else {
-      //   this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
-      // }
       this.emitterServices.clickLabel.emit(this.titleOption);
     });
 
@@ -134,11 +145,14 @@ export class ConcordanceComponent implements OnInit {
     });
 
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
+      // this.corpusList = INSTALLATION_LIST[environment.installation].corpusList;
+      // this.installation.corpora.forEach(corpus => this.corpusList.push(new CorpusShort(corpus.name, corpus.name)));
+      // this.corpusList = this.corpusList;
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
-      this.corpusList = INSTALLATION_LIST[environment.installation].corpusList;
       this.wordListOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS');
       this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
-      this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
+      this.freqOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS');
+      this.titleOption = this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
         new ButtonItem(SIMPLE, simple),
         new ButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
@@ -164,8 +178,6 @@ export class ConcordanceComponent implements OnInit {
       this.selectedItem = this.items[0];
     });
 
-    // TODO
-    this.titleOption = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
 
   }
 
@@ -187,6 +199,7 @@ export class ConcordanceComponent implements OnInit {
     qr.start = 0;
     qr.end = 500000;
     qr.word = `[word="${this.simple}"]`;
+    qr.corpus = this.selectedCorpus.code;
     this.websocket.next(qr);
     this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
@@ -197,6 +210,21 @@ export class ConcordanceComponent implements OnInit {
 
   public dropdownCorpus(): void {
     this.emitterServices.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
+    this.emitterServices.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+    if (this.selectedCorpus) {
+      this.metadata = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata;
+      this.metadata.forEach(md => {
+        this.corpusAttributes.push(new LookUpObject(md.name, md.name));
+      });
+
+      // this.metadata.forEach(metadatum => {
+      //   if (metadatum.multipleChoice) {
+      //     this.concordanceService.getMetadatumValues(this.selectedCorpus.code, metadatum.name).subscribe(res => {
+      //       const r = res;
+      //     });
+      //   }
+      // });
+    }
   }
 
 

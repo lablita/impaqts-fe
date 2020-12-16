@@ -16,6 +16,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { SidebarModule } from 'primeng/sidebar';
 import { SliderModule } from 'primeng/slider';
 import { TableModule } from 'primeng/table';
+import { ToastModule } from 'primeng/toast';
+
 
 
 @NgModule({
@@ -37,7 +39,8 @@ import { TableModule } from 'primeng/table';
     MessageModule,
     SliderModule,
     TableModule,
-    MultiSelectModule
+    MultiSelectModule,
+    ToastModule
   ],
   exports: [
     CommonModule,
@@ -56,7 +59,8 @@ import { TableModule } from 'primeng/table';
     MessageModule,
     SliderModule,
     TableModule,
-    MultiSelectModule
+    MultiSelectModule,
+    ToastModule
   ]
 })
 export class PrimeNgModule { }

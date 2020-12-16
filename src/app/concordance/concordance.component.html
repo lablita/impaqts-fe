@@ -1,6 +1,5 @@
 <p></p>
 <div class="p-d-flex p-flex-wrap" style="background-color: gray">
-
   <div class="p-d-flex p-mb-3 p-mr-3 p-d-block">
     <p-card class="p-p-3">
       <div class="p-field p-d-flex">
@@ -28,12 +27,12 @@
       </div>
       <div class="p-field">
         <label for="simple_query" class="label-size"></label>
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" class="p-button-text"
-          (click)="clickQueryType()"></button>&nbsp;
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}" class="p-button-text"
-          (click)="clickContext()"></button>&nbsp;
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.TEXT_TYPE' | translate}}" class="p-button-text"
-          (click)="clickTextType()"></button>
+        <button pButton type="button" label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}"
+          [disabled]="!selectedCorpus" class="p-button-text" (click)="clickQueryType()"></button>&nbsp;
+        <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}" [disabled]="!selectedCorpus"
+          class="p-button-text" (click)="clickContext()"></button>&nbsp;
+        <button pButton type="button" label="{{'PAGE.CONCORDANCE.TEXT_TYPE' | translate}}" [disabled]="!selectedCorpus"
+          class="p-button-text" (click)="clickTextType()"></button>
       </div>
 
       <div *ngIf="queryTypeStatus">
@@ -130,48 +129,27 @@
   </div>
 
   <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" autoZIndex="true">
-    <div class="p-ml-3 p-component">
-      <div>
-        <div *ngIf="displayPanelMetadata">
-          <a class="p-shadow-7 p-component right-button" (click)="displayPanelMetadata = false">
-            {{'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS' | translate}}</a>
-        </div>
-        <div class="p-mt-4">
-          <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
-        </div>
-        <div class="p-mt-1 p-ml-3">
-          <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
-          <div class="p-field">
-            <label class="label-size-reduced">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
-            <p-dropdown [options]="windows" [(ngModel)]="selectedWindow" optionLabel="name" [showClear]="true">
-            </p-dropdown>&nbsp;
-            <p-dropdown [options]="tokens" [(ngModel)]="selectedToken" optionLabel="name" [showClear]="true">
-            </p-dropdown>&nbsp;
-            <label class="label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
-
-            <div class="p-field p-mt-3">
-              <label for="lemmas" class="label-size-reduced">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
-              <input id="lemmas" type="text" pInputText style="width: 150px;" [(ngModel)]="simple">&nbsp;
-              <p-dropdown [options]="items" [(ngModel)]="selectedItem" optionLabel="name" [showClear]="true">
-              </p-dropdown>&nbsp;
-              <label class="label-size">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="p-ml-3" *ngIf="selectedCorpus">
+      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.code" [metadata]="metadata"
+        (closeSidebarEvent)="displayPanelMetadata=false">
+      </app-metadata-panel>
     </div>
   </p-sidebar>
 
 
   <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
-    <div class="p-ml-3">
+    <div class="p-ml-3" *ngIf="selectedCorpus">
       <app-view-options-panel #viewOptionsPanel *ngIf="titleOption === viewOptionsLabel" [corpus]="selectedCorpus?.code"
-        [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
+        [showRightButton]="displayPanelOptions" [corpusAttributes]="corpusAttributes"
+        (closeSidebarEvent)="displayPanelOptions=false">
       </app-view-options-panel>
       <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel" [showRightButton]="displayPanelOptions"
         (closeSidebarEvent)="displayPanelOptions=false"></app-word-list-options-panel>
       <app-sort-options-panel *ngIf="titleOption === sortOptionsLabel" [showRightButton]="displayPanelOptions"
         (closeSidebarEvent)="displayPanelOptions=false"></app-sort-options-panel>
+      <app-frequency-options-panel *ngIf="titleOption === freqOptionsLabel" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false"></app-frequency-options-panel>
     </div>
   </p-sidebar>
 </div>
+attributi: {{corpusAttributes | json}}

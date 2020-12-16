@@ -1,23 +1,35 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { CONTEXT_CORPORA, CONTEXT_INSTALLATION, FIND_FAILED } from '../model/constants';
+import { Installation } from '../model/installation';
+import { UtilService } from '../utils/util.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConcordanceService {
 
-  constructor() { }
+  private installationName: string;
+  private installationUrl: string;
 
-  // public getCorpus(): Observable<Corpus[]> {
-  //   const corpusList = [
-  //     new Corpus('1', 'AcWac EU'),
-  //     new Corpus('2', 'Brexit IT'),
-  //     new Corpus('3', 'DeWac Small'),
-  //     new Corpus('4', 'DeWac Complete'),
-  //     new Corpus('5', 'FrWac Complete'),
-  //     new Corpus('6', 'EPIC int_es_en'),
-  //     new Corpus('7', 'ItWac Small'),
-  //     new Corpus(REPUBBLICA, 'Repubblica')
-  //   ];
-  //   return of(corpusList);
-  // }
+  constructor(
+    private readonly http: HttpClient,
+    private readonly utils: UtilService
+  ) {
+    this.installationName = environment.installationName;
+    this.installationUrl = environment.installationUrl;
+  }
+
+  public getInstallation(): Observable<Installation> {
+    return this.http.get<Installation>(`${CONTEXT_INSTALLATION}/installation?installationName=${this.installationName}`)
+      .pipe(catchError(this.utils.handleErrorObservable('getInstallation', FIND_FAILED, null)));
+  }
+
+  public getMetadatumValues(corpus: string, metadatum: string): Observable<any> {
+    return this.http.get<any>(`${CONTEXT_CORPORA}/metadatum-values/${corpus}/${metadatum}`)
+      .pipe(catchError(this.utils.handleErrorObservable('getMetadatumValues', FIND_FAILED, null)));
+  }
 }
