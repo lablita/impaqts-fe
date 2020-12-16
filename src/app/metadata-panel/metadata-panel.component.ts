@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { TreeNode } from 'primeng/api';
 import { ConcordanceService } from '../concordance/concordance.service';
 import { DropdownItem } from '../model/dropdown-item';
 import { Metadatum } from '../model/Metadatum';
@@ -30,28 +31,89 @@ export class MetadataPanelComponent implements OnInit {
 
   public displayPanelMetadata = false;
 
+  public selected: any;
+
 
   constructor(
     private readonly concordanceService: ConcordanceService
   ) { }
 
   ngOnInit(): void {
-    this.metadata.sort((a, b) => a.position - b.position);
-    this.metadata.forEach(metadatum => {
-      this.res.push(new DropdownItem(metadatum.name, ''));
-      if (metadatum.multipleChoice) {
-        this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
-          const r = res;
 
-        });
+
+    // genero albero per componente multiselect check box
+    const idSet = new Set<number>();
+    this.metadata.forEach(md => {
+      if (md.subMetadata?.length > 0) {
+        md.tree = [];
+        md.tree.push(this.generateTree(md, idSet));
       }
     });
+    // elimino metadata che partecimano ad alberi 
+    idSet.forEach(id => this.metadata = this.metadata.filter(md => md.id !== id));
+
+    //ordinamento position 
+    this.metadata.sort((a, b) => a.position - b.position);
+
+    // genero albero flat per componente multiselect check box e single select
+    this.metadata.forEach((metadatum, index) => {
+      this.res.push(new DropdownItem(metadatum.name, ''));
+      if (metadatum.retrieveValuesFromCorpus) {
+        setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
+          if (res) {
+            metadatum.subMetadata = res;
+            const root: TreeNode = {
+              label: metadatum.name,
+              selectable: false,
+              children: []
+            };
+            res.metadataValues.forEach(el => {
+              root.children.push({
+                label: el,
+                selectable: true,
+                parent: root,
+              });
+            });
+            metadatum.tree = [];
+            metadatum.tree.push(root);
+          }
+        }), 4000 * index);
+      }
+    });
+    console.log('test');
   }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
   }
 
+  private generateTree(meta: Metadatum, idSet: Set<number>): TreeNode {
+    const root = {
+      label: meta.name,
+      selectable: true,
+      children: []
+    };
+    const expandBranch = (metadata: Metadatum, parentNode: TreeNode) => {
+      metadata.subMetadata.forEach(md => {
+        const node: TreeNode = {
+          label: md.name,
+          parent: parentNode,
+          selectable: true,
+          children: []
+        };
+        parentNode.children.push(node);
+        if (md.subMetadata.length > 0) {
+          expandBranch(md, node);
+        }
+        idSet.add(md.id);
+      });
+    };
+    expandBranch(meta, root);
+    return root;
+  }
 
+  public clickMakeConcordance() {
+    console.log('OK');
+  }
 
 }
