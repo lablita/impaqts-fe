@@ -128,9 +128,10 @@
 
   </div>
 
-  <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" autoZIndex="true">
+  <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" autoZIndex="true"
+    blockScroll="false">
     <div class="p-ml-3" *ngIf="selectedCorpus">
-      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.code" [metadata]="metadata"
+      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.code" [metadata]="metadataTextTypes"
         (closeSidebarEvent)="displayPanelMetadata=false">
       </app-metadata-panel>
     </div>
@@ -140,7 +141,7 @@
   <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
     <div class="p-ml-3" *ngIf="selectedCorpus">
       <app-view-options-panel #viewOptionsPanel *ngIf="titleOption === viewOptionsLabel" [corpus]="selectedCorpus?.code"
-        [showRightButton]="displayPanelOptions" [corpusAttributes]="corpusAttributes"
+        [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
         (closeSidebarEvent)="displayPanelOptions=false">
       </app-view-options-panel>
       <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel" [showRightButton]="displayPanelOptions"
@@ -152,4 +153,3 @@
     </div>
   </p-sidebar>
 </div>
-attributi: {{corpusAttributes | json}}

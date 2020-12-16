@@ -36,7 +36,8 @@ export class ConcordanceComponent implements OnInit {
   public installation: Installation;
   /** public */
   public corpusList: CorpusShort[] = [];
-  public metadata: Metadatum[] = [];
+  // public metadataCorpus: Metadatum[] = [];
+  public metadataTextTypes: Metadatum[] = [];
 
   public selectedCorpus: CorpusShort;
   public windows: DropdownItem[];
@@ -74,7 +75,7 @@ export class ConcordanceComponent implements OnInit {
   public totalResults = 0;
   public kwicLines: KWICline[];
 
-  public corpusAttributes: LookUpObject[] = [];
+  public metadataAttributes: LookUpObject[];
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -212,18 +213,15 @@ export class ConcordanceComponent implements OnInit {
     this.emitterServices.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterServices.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
     if (this.selectedCorpus) {
-      this.metadata = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata;
-      this.metadata.forEach(md => {
-        this.corpusAttributes.push(new LookUpObject(md.name, md.name));
+      this.metadataAttributes = [];
+      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.sort((a, b) => a.position - b.position);
+      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.forEach(md => {
+        //Attributes in View Options
+        if (!md.documentMetadatum) {
+          this.metadataAttributes.push(new LookUpObject(md.name, md.name));
+        }
       });
-
-      // this.metadata.forEach(metadatum => {
-      //   if (metadatum.multipleChoice) {
-      //     this.concordanceService.getMetadatumValues(this.selectedCorpus.code, metadatum.name).subscribe(res => {
-      //       const r = res;
-      //     });
-      //   }
-      // });
+      this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.filter(md => md.documentMetadatum);
     }
   }
 

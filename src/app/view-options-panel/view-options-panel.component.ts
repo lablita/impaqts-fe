@@ -10,7 +10,6 @@ import { LookUpObject } from '../model/lookup-object';
 import { QueryRequest } from '../model/query-request';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
-import { ViewOptionsPanelService } from './view-options-panel.service';
 
 const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 @Component({
@@ -42,18 +41,15 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   public viewOptionsQueryRequest: ViewOptionsQueryRequest;
 
-  // private corpusAttributes: LookUpObject[];
   private queryRequest: QueryRequest;
 
   constructor(
-    private readonly translateService: TranslateService,
-    private readonly viewOptionPanelService: ViewOptionsPanelService
+    private readonly translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
     this.viewOptionsQueryRequest = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST) ?
       JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
-    // this.corpusAttributes = this.viewOptionPanelService.getAttributesByCorpus(this.corpus);
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.corpusAttributes.forEach(attribute =>
         this.attributeChekBox.push(new ButtonItem(attribute.value, this.translateService.instant(attribute.viewValue))));
