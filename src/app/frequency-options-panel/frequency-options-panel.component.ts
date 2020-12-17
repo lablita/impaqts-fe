@@ -76,6 +76,20 @@ export class FrequencyOptionsPanelComponent implements OnInit {
         new DropdownItem(R2, R2),
         new DropdownItem(R1, R1)
       ];
+
+      this.selectedMultiAttribute = [
+        new DropdownItem('word', word),
+        new DropdownItem('word', word),
+        new DropdownItem('word', word),
+        new DropdownItem('word', word)
+      ];
+
+      this.selectedPosition = [
+        new DropdownItem(NODE, NODE),
+        new DropdownItem(NODE, NODE),
+        new DropdownItem(NODE, NODE),
+        new DropdownItem(NODE, NODE)
+      ];
     });
 
   }

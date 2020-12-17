@@ -129,7 +129,7 @@ export class ConcordanceComponent implements OnInit {
           this.titleOption = this.sortOptionsLabel;
           break;
         case FREQUENCY:
-          this.titleOption = this.sortOptionsLabel;
+          this.titleOption = this.freqOptionsLabel;
           break;
         default:
           this.titleOption = this.viewOptionsLabel;
