@@ -5,6 +5,7 @@ import { ButtonItem } from '../model/button-item';
 import { FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
 import { DropdownItem } from '../model/dropdown-item';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { LookUpObject } from '../model/lookup-object';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
@@ -17,11 +18,12 @@ const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 export class FrequencyOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: LookUpObject[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public freqOptionsQueryRequest: FreqOptionsQueryRequest;
 
-  public attributeList: DropdownItem[];
+  public attributeList: DropdownItem[] = [];
   public levels: ButtonItem[];
   public selectedLevel: ButtonItem;
   public selectedAttribute: DropdownItem;
@@ -37,6 +39,9 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.corpusAttributes?.length > 0) {
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new DropdownItem(ca.value, ca.viewValue)));
+    }
     this.ignoreCase = [false, false, false, false];
 
     this.freqOptionsQueryRequest = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST) ?
@@ -44,13 +49,13 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       INSTALLATION_LIST[environment.installation].freqOptionsQueryRequest;
 
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      this.attributeList = [
-        new DropdownItem('word', word),
-        new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
-        new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
-        new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
-      ];
+      // this.attributeList = [
+      //   new DropdownItem('word', word),
+      //   new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
+      //   new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
+      //   new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
+      //   new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
+      // ];
 
       this.includeCatLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT');
 

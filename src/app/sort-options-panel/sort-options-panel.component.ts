@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { ButtonItem } from '../model/button-item';
 import { FIRST, L1, L2, L3, LEFT, NODE, R1, R2, R3, RIGHT, SECOND, THIRD } from '../model/constants';
 import { DropdownItem } from '../model/dropdown-item';
+import { LookUpObject } from '../model/lookup-object';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
@@ -17,11 +18,12 @@ const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 export class SortOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: LookUpObject[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public sortOptionsQueryRequest: SortOptionsQueryRequest;
 
-  public attributeList: DropdownItem[];
+  public attributeList: DropdownItem[] = [];
   public selectedAttribute: DropdownItem;
   public selectedMultiAttribute: DropdownItem[];
   public sortKeys: ButtonItem[];
@@ -40,6 +42,9 @@ export class SortOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.corpusAttributes?.length > 0) {
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new DropdownItem(ca.value, ca.viewValue)));
+    }
     this.ignoreCase = [false, false, false];
     this.backward = [false, false, false];
 
@@ -48,13 +53,13 @@ export class SortOptionsPanelComponent implements OnInit {
       INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
 
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      this.attributeList = [
-        new DropdownItem('word', word),
-        new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
-        new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
-        new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
-      ];
+      // this.attributeList = [
+      //   new DropdownItem('word', word),
+      //   new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
+      //   new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
+      //   new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
+      //   new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
+      // ];
 
       this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
       this.backwordLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD');

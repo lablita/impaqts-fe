@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { ButtonItem } from '../model/button-item';
 import { ARF, CHANGE_OUT, DOC_COUNTS, HIT_COUNTS, KEYWORD, SIMPLE } from '../model/constants';
 import { DropdownItem } from '../model/dropdown-item';
+import { LookUpObject } from '../model/lookup-object';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
@@ -18,6 +19,8 @@ const WORD_LIST_OPTIONS_QUERY_REQUEST = 'wordListOptionsQueryRequest';
 export class WordListOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: LookUpObject[];
+  @Input() public textTypesAttributes: LookUpObject[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
@@ -29,7 +32,8 @@ export class WordListOptionsPanelComponent implements OnInit {
   public selectedOutputType: ButtonItem;
   public subcorpusList: DropdownItem[] = [];
   public selectedSubcorpus: DropdownItem;
-  public searchAttrList: DropdownItem[] = [];
+  // public searchAttrList: DropdownItem[] = [];
+  public searchAttrList: {}[] = [];
   public selectedSearchAttr: DropdownItem;
   public nGram: string;
   public valueOfList: DropdownItem[] = [];
@@ -44,6 +48,15 @@ export class WordListOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.searchAttrList.push({
+      label: 'positional attributes',
+      items: this.corpusAttributes
+    }, {
+      label: 'Text types',
+      items: this.textTypesAttributes
+    }
+    )
+
     this.valueOfList = [
       new DropdownItem('2', '2'),
       new DropdownItem('3', '3'),

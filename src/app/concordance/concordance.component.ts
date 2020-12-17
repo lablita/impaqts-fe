@@ -7,7 +7,7 @@ import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { ButtonItem } from '../model/button-item';
 import {
-  ALL, ANY, BOTH, CHARACTER, CQL, FREQUENCY, LEFT, LEMMA,
+  ALL, ANY, BOTH, CHARACTER, COLLOCATIONS, CQL, FREQUENCY, LEFT, LEMMA,
   NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
 import { CorpusShort, DropdownItem } from '../model/dropdown-item';
@@ -69,6 +69,7 @@ export class ConcordanceComponent implements OnInit {
   public wordListOptionsLabel: string;
   public sortOptionsLabel: string;
   public freqOptionsLabel: string;
+  public collocationOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public queryResponse: QueryResponse;
@@ -76,6 +77,7 @@ export class ConcordanceComponent implements OnInit {
   public kwicLines: KWICline[];
 
   public metadataAttributes: LookUpObject[];
+  public textTypesAttributes: LookUpObject[];
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -131,6 +133,9 @@ export class ConcordanceComponent implements OnInit {
         case FREQUENCY:
           this.titleOption = this.freqOptionsLabel;
           break;
+        case COLLOCATIONS:
+          this.titleOption = this.collocationOptionsLabel;
+          break;
         default:
           this.titleOption = this.viewOptionsLabel;
       }
@@ -146,13 +151,12 @@ export class ConcordanceComponent implements OnInit {
     });
 
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
-      // this.corpusList = INSTALLATION_LIST[environment.installation].corpusList;
-      // this.installation.corpora.forEach(corpus => this.corpusList.push(new CorpusShort(corpus.name, corpus.name)));
-      // this.corpusList = this.corpusList;
+
       this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
       this.wordListOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS');
       this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
       this.freqOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS');
+      this.collocationOptionsLabel = this.translateService.instant('MENU.COLLOCATIONS');
       this.titleOption = this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
         new ButtonItem(SIMPLE, simple),
@@ -178,8 +182,6 @@ export class ConcordanceComponent implements OnInit {
       ];
       this.selectedItem = this.items[0];
     });
-
-
   }
 
   public clickQueryType(): void {
@@ -214,14 +216,19 @@ export class ConcordanceComponent implements OnInit {
     this.emitterServices.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
     if (this.selectedCorpus) {
       this.metadataAttributes = [];
-      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.sort((a, b) => a.position - b.position);
+      this.textTypesAttributes = [];
+      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].
+        metadata.sort((a, b) => a.position - b.position);
       this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.forEach(md => {
         //Attributes in View Options
         if (!md.documentMetadatum) {
           this.metadataAttributes.push(new LookUpObject(md.name, md.name));
+        } else {
+          this.textTypesAttributes.push(new LookUpObject(md.name, md.name));
         }
       });
-      this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.filter(md => md.documentMetadatum);
+      this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].
+        metadata.filter(md => md.documentMetadatum);
     }
   }
 

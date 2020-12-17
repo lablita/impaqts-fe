@@ -4,15 +4,16 @@
 </div>
 <span class="p-component">
 
-  <div class="p-field">
+  <!-- <div class="p-field">
     <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SUBCORPUS" | translate}}</label>
     <p-dropdown [options]="subcorpusList" [(ngModel)]="selectedSubcorpus" optionLabel="name" [showClear]="true">
     </p-dropdown>
-  </div>
+  </div> -->
 
   <div class="p-field">
     <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SEARCH_ATTR" | translate}}</label>
-    <p-dropdown [options]="searchAttrList" [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+    <p-dropdown [options]="searchAttrList" [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true"
+      [group]="true">
     </p-dropdown>
   </div>
 

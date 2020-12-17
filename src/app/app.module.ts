@@ -25,6 +25,7 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
 import { WordListComponent } from './word-list/word-list.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
 import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
+import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { MetadataPanelComponent } from './metadata-panel/metadata-panel.componen
     RightComponent,
     SortOptionsPanelComponent,
     FrequencyOptionsPanelComponent,
-    MetadataPanelComponent
+    MetadataPanelComponent,
+    CollocationOptionsPanelComponent
   ],
   imports: [
     BrowserModule,

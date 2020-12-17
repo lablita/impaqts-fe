@@ -152,6 +152,16 @@
         "MAKE_FREQ": "Make frequency list",
         "INCLUDE_CAT": "Include categories with no hits"
       },
+      "COLLOCATION_OPTIONS": {
+        "CANDIDATES": "Collocation candidates",
+        "RANGE": "In the range from",
+        "TO": "to",
+        "MIN_FREQ": "Minimum frequency in corpus",
+        "MAX_FREQ": "Maximum frequency in given range",
+        "SHOW": "Show functions",
+        "SORT_BY": "Sort by",
+        "MAKE_CANDIDATE_LIST": "Make candidate list"
+      },
       "TEXT_TYPE_SECTION": {}
     },
     "CORPUS_INFO": {

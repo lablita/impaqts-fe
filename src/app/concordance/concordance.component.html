@@ -144,12 +144,20 @@
         [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
         (closeSidebarEvent)="displayPanelOptions=false">
       </app-view-options-panel>
-      <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel" [showRightButton]="displayPanelOptions"
-        (closeSidebarEvent)="displayPanelOptions=false"></app-word-list-options-panel>
-      <app-sort-options-panel *ngIf="titleOption === sortOptionsLabel" [showRightButton]="displayPanelOptions"
-        (closeSidebarEvent)="displayPanelOptions=false"></app-sort-options-panel>
-      <app-frequency-options-panel *ngIf="titleOption === freqOptionsLabel" [showRightButton]="displayPanelOptions"
-        (closeSidebarEvent)="displayPanelOptions=false"></app-frequency-options-panel>
+      <app-word-list-options-panel *ngIf="titleOption === wordListOptionsLabel" [corpusAttributes]="metadataAttributes"
+        [textTypesAttributes]="textTypesAttributes" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false">
+      </app-word-list-options-panel>
+      <app-sort-options-panel *ngIf="titleOption === sortOptionsLabel" [corpusAttributes]="metadataAttributes"
+        [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
+      </app-sort-options-panel>
+      <app-frequency-options-panel *ngIf="titleOption === freqOptionsLabel" [corpusAttributes]="metadataAttributes"
+        [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
+      </app-frequency-options-panel>
+      <app-collocation-options-panel *ngIf="titleOption === collocationOptionsLabel"
+        [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false">
+      </app-collocation-options-panel>
     </div>
   </p-sidebar>
 </div>
