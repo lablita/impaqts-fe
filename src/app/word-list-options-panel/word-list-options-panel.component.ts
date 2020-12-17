@@ -10,12 +10,22 @@ import { WordListOptionsQueryRequest } from '../model/word-list-options-query-re
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const WORD_LIST_OPTIONS_QUERY_REQUEST = 'wordListOptionsQueryRequest';
+class DropdownIG {
+  label: string;
+  value: string;
+  constructor(label: string, value: string) {
+    this.label = label;
+    this.value = value;
+  }
+}
 @Component({
   selector: 'app-word-list-options-panel',
   templateUrl: './word-list-options-panel.component.html',
   styleUrls: ['./word-list-options-panel.component.scss'],
   providers: [MessageService]
 })
+
+
 export class WordListOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
@@ -32,7 +42,6 @@ export class WordListOptionsPanelComponent implements OnInit {
   public selectedOutputType: ButtonItem;
   public subcorpusList: DropdownItem[] = [];
   public selectedSubcorpus: DropdownItem;
-  // public searchAttrList: DropdownItem[] = [];
   public searchAttrList: {}[] = [];
   public selectedSearchAttr: DropdownItem;
   public nGram: string;
@@ -40,6 +49,8 @@ export class WordListOptionsPanelComponent implements OnInit {
   public selectedValueOf: DropdownItem;
   public rareWordsList: DropdownItem[] = [];
   public selectedRareWords: DropdownItem;
+  public attributeList: DropdownIG[] = [];
+  public textTypeList: DropdownIG[] = [];
 
 
   constructor(
@@ -48,14 +59,23 @@ export class WordListOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.searchAttrList.push({
-      label: 'positional attributes',
-      items: this.corpusAttributes
-    }, {
-      label: 'Text types',
-      items: this.textTypesAttributes
+    if (this.corpusAttributes?.length > 0) {
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new DropdownIG(ca.value, ca.viewValue)));
     }
-    )
+    if (this.corpusAttributes?.length > 0) {
+      this.textTypesAttributes.forEach(ca => this.textTypeList.push(new DropdownIG(ca.value, ca.viewValue)));
+    }
+
+    this.searchAttrList.push(
+      {
+        label: 'Positional attributes',
+        value: 'Positional attributes',
+        items: this.attributeList
+      }, {
+      label: 'Text types',
+      value: 'Text types',
+      items: this.textTypeList
+    });
 
     this.valueOfList = [
       new DropdownItem('2', '2'),
