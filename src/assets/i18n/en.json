@@ -156,8 +156,8 @@
         "CANDIDATES": "Collocation candidates",
         "RANGE": "In the range from",
         "TO": "to",
-        "MIN_FREQ": "Minimum frequency in corpus",
-        "MAX_FREQ": "Maximum frequency in given range",
+        "MIN_FREQ_C": "Minimum frequency in corpus",
+        "MIN_FREQ_R": "Minimum frequency in given range",
         "SHOW": "Show functions",
         "SORT_BY": "Sort by",
         "MAKE_CANDIDATE_LIST": "Make candidate list"

@@ -1,3 +1,4 @@
+import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
 import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
 import { CorpusShort } from '../model/dropdown-item';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
@@ -69,6 +70,14 @@ export const INSTALLATION_LIST = {
       0,
       false,
       []
+    ), new CollocationOptionsQueryRequest(
+      null,
+      -5,
+      5,
+      5,
+      3,
+      [],
+      null
     )
   )
   ,
@@ -135,6 +144,14 @@ export const INSTALLATION_LIST = {
       0,
       false,
       []
+    ), new CollocationOptionsQueryRequest(
+      null,
+      -5,
+      5,
+      5,
+      3,
+      [],
+      null
     )
   )
 

@@ -42,7 +42,7 @@
             <p-radioButton [inputId]="queryType.key" name="queryType" [value]="queryType"
               [(ngModel)]="selectedQueryType">
             </p-radioButton>
-            <label [for]="queryType.key" class="p-mr-2 p-ml-1">{{queryType.name}}</label>
+            <label [for]="queryType.key" class="p-mr-2 p-ml-1">{{queryType.value}}</label>
           </div>
         </div>
         <div *ngIf="selectedQueryType?.key === LEMMA" class="p-field">

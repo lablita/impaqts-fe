@@ -6,64 +6,52 @@
 <span class="p-component">
   <h3>{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.CANDIDATES' | translate}}</h3>
 
-  <div class="p-field p-ml-2 p-mb-2">
+
+  <div class="p-d-inline p-field p-ml-2">
+    <label class="label-size p-mr-1">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
     <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute" optionLabel="name" [showClear]="true">
     </p-dropdown>
   </div>
-
-  <!-- <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}</h3>
-  <div class="p-field p-ml-2">
-    <label for="numToken" style="width: 145px;"
-      class="p-mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
-    <input id="numToken" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
+  <div class="p-d-inline p-field p-ml-6">
+    <label for="rangeFrom" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.RANGE" | translate}}</label>
+    <input id="rangeFrom" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="collocationOptionsQueryRequest.rangeFrom" class="p-mr-3">
   </div>
-  <div class="p-grid">
-    <div *ngFor="let level of levels, let i = index" class="p-field-checkbox" class="p-d-inline">
-      <div class="p-col">
-        <div class="p-mb-4 p-ml-2">
-          <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
-          </p-radioButton>
-          <label [for]="level.key" class="p-mr-2 p-ml-1">{{level.name}}</label>
-        </div>
-        <div class="p-field p-ml-2 p-mb-2">
-          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="name"
-            [showClear]="true">
-          </p-dropdown>
-        </div>
-        <div class="p-field-checkbox p-ml-2 p-mb-2">
-          <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel" [(ngModel)]="ignoreCase[i]">
-          </p-checkbox>
-        </div>
-        <div class="p-field p-ml-2">
-          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="name" [showClear]="true">
-          </p-dropdown>
-        </div>
-      </div>
+  <div class="p-d-inline p-field p-ml-2">
+    <label for="rangeTo" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
+    <input id="rangeTo" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="collocationOptionsQueryRequest.rangeTo">
+  </div>
+
+  <div class="p-field p-ml-2 p-mt-3">
+    <label for="minCorpus" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
+    <input id="minCorpus" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="p-mr-3">
+  </div>
+  <div class="p-field p-ml-2">
+    <label for="minRange" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
+    <input id="minRange" type="number" pInputText style="width: 50px;"
+      [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="p-mr-3">
+  </div>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-fixed" style="width: 70px;">
+      <label for="show" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
+    </div>
+    <div class="p-col-fixed" style="width: 150px;">
+      <p-listbox id="show" [options]="attributeList" [multiple]="true"
+        [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="name"></p-listbox>
+    </div>
+    <div class="p-col-fixed" style="width: 70px;">
+      <label for="sort">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
+    </div>
+    <div class="p-col-fixed" style="width: 150px;">
+      <p-listbox id="sort" [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
+        optionLabel="name"></p-listbox>
     </div>
   </div>
-  <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
-    (click)="clickFreqOption()" class="p-mr-5"></button>
 
-
-  <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
-  <div class="p-field p-ml-2">
-    <label for="numToken" style="width: 145px;"
-      class="p-mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
-    <input id="numToken" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
-  </div>
-  <div class="p-field-checkbox p-ml-2">
-    <p-checkbox name="nonWords" [binary]="true" [label]="includeCatLabel"
-      [(ngModel)]="freqOptionsQueryRequest.includeCat">
-    </p-checkbox>
-  </div>
-  <div class="p-text-center">
-    <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-      [(ngModel)]="freqOptionsQueryRequest.categories"></textarea>
-  </div>
-
-  <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
-    (click)="clickFreqOption()" class="p-mr-5"></button> -->
+  <button pButton type="button" label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MAKE_CANDIDATE_LIST' | translate}}"
+    (click)="clickCollocationOption()" class="p-mr-5 p-mt-6"></button>
 
 </span>

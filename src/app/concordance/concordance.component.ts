@@ -5,13 +5,13 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { INSTALLATION } from '../app.component';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { ButtonItem } from '../model/button-item';
 import {
   ALL, ANY, BOTH, CHARACTER, COLLOCATIONS, CQL, FREQUENCY, LEFT, LEMMA,
   NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
 import { CorpusShort, DropdownItem } from '../model/dropdown-item';
 import { Installation } from '../model/installation';
+import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { LookUpObject } from '../model/lookup-object';
 import { Metadatum } from '../model/Metadatum';
@@ -46,8 +46,8 @@ export class ConcordanceComponent implements OnInit {
   public selectedItem: DropdownItem;
   public tokens: DropdownItem[] = [];
   public selectedToken: DropdownItem;
-  public queryTypes: ButtonItem[];
-  public selectedQueryType: ButtonItem;
+  public queryTypes: KeyValueItem[];
+  public selectedQueryType: KeyValueItem;
   public selectCorpus: string = 'PAGE.CONCORDANCE.SELECT_CORPUS';
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
@@ -159,12 +159,12 @@ export class ConcordanceComponent implements OnInit {
       this.collocationOptionsLabel = this.translateService.instant('MENU.COLLOCATIONS');
       this.titleOption = this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
-        new ButtonItem(SIMPLE, simple),
-        new ButtonItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new ButtonItem(PHRASE, this.translateService.instant('PAGE.CONCORDANCE.PHRASE')),
-        new ButtonItem(WORD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
-        new ButtonItem(CHARACTER, this.translateService.instant('PAGE.CONCORDANCE.CHARACTER')),
-        new ButtonItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
+        new KeyValueItem(SIMPLE, simple),
+        new KeyValueItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
+        new KeyValueItem(PHRASE, this.translateService.instant('PAGE.CONCORDANCE.PHRASE')),
+        new KeyValueItem(WORD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
+        new KeyValueItem(CHARACTER, this.translateService.instant('PAGE.CONCORDANCE.CHARACTER')),
+        new KeyValueItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
       ];
       this.selectedQueryType = this.queryTypes[0];
 
@@ -219,14 +219,15 @@ export class ConcordanceComponent implements OnInit {
       this.textTypesAttributes = [];
       this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].
         metadata.sort((a, b) => a.position - b.position);
-      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].metadata.forEach(md => {
-        //Attributes in View Options
-        if (!md.documentMetadatum) {
-          this.metadataAttributes.push(new LookUpObject(md.name, md.name));
-        } else {
-          this.textTypesAttributes.push(new LookUpObject(md.name, md.name));
-        }
-      });
+      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0]
+        .metadata.filter(md => !md.child).forEach(md => {
+          //Attributes in View Options
+          if (!md.documentMetadatum) {
+            this.metadataAttributes.push(new LookUpObject(md.name, md.name));
+          } else {
+            this.textTypesAttributes.push(new LookUpObject(md.name, md.name));
+          }
+        });
       this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].
         metadata.filter(md => md.documentMetadatum);
     }

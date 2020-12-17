@@ -41,15 +41,14 @@ export class MetadataPanelComponent implements OnInit {
 
 
     // genero albero per componente multiselect check box
-    const idSet = new Set<number>();
     this.metadata.forEach(md => {
       if (md.subMetadata?.length > 0) {
         md.tree = [];
-        md.tree.push(this.generateTree(md, idSet));
+        md.tree.push(this.generateTree(md));
       }
     });
     // elimino metadata che partecimano ad alberi 
-    idSet.forEach(id => this.metadata = this.metadata.filter(md => md.id !== id));
+    this.metadata = this.metadata.filter(md => !md.child);
 
     //ordinamento position 
     this.metadata.sort((a, b) => a.position - b.position);
@@ -86,7 +85,7 @@ export class MetadataPanelComponent implements OnInit {
     this.closeSidebarEvent.emit(true);
   }
 
-  private generateTree(meta: Metadatum, idSet: Set<number>): TreeNode {
+  private generateTree(meta: Metadatum): TreeNode {
     const root = {
       label: meta.name,
       selectable: true,
@@ -104,7 +103,6 @@ export class MetadataPanelComponent implements OnInit {
         if (md.subMetadata.length > 0) {
           expandBranch(md, node);
         }
-        idSet.add(md.id);
       });
     };
     expandBranch(meta, root);

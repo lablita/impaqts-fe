@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { ButtonItem } from '../model/button-item';
 import { FIRST, L1, L2, L3, LEFT, NODE, R1, R2, R3, RIGHT, SECOND, THIRD } from '../model/constants';
 import { DropdownItem } from '../model/dropdown-item';
+import { KeyValueItem } from '../model/key-value-item';
 import { LookUpObject } from '../model/lookup-object';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -26,12 +26,12 @@ export class SortOptionsPanelComponent implements OnInit {
   public attributeList: DropdownItem[] = [];
   public selectedAttribute: DropdownItem;
   public selectedMultiAttribute: DropdownItem[];
-  public sortKeys: ButtonItem[];
-  public selectedSortKey: ButtonItem;
+  public sortKeys: KeyValueItem[];
+  public selectedSortKey: KeyValueItem;
   public ignoreCaseLabel: string;
   public backwordLabel: string;
-  public levels: ButtonItem[];
-  public selectedLevel: ButtonItem;
+  public levels: KeyValueItem[];
+  public selectedLevel: KeyValueItem;
   public positionList: DropdownItem[];
   public selectedPosition: DropdownItem[];
   public ignoreCase: boolean[];
@@ -53,27 +53,19 @@ export class SortOptionsPanelComponent implements OnInit {
       INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
 
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      // this.attributeList = [
-      //   new DropdownItem('word', word),
-      //   new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
-      //   new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-      //   new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
-      //   new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
-      // ];
-
       this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
       this.backwordLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD');
 
       this.sortKeys = [
-        new ButtonItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT')),
-        new ButtonItem(NODE, this.translateService.instant('MENU.NODE')),
-        new ButtonItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT'))
+        new KeyValueItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT')),
+        new KeyValueItem(NODE, this.translateService.instant('MENU.NODE')),
+        new KeyValueItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT'))
       ];
 
       this.levels = [
-        new ButtonItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL')),
-        new ButtonItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL')),
-        new ButtonItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL'))
+        new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL')),
+        new KeyValueItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL')),
+        new KeyValueItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL'))
       ];
 
       this.positionList = [

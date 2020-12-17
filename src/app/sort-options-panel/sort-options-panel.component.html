@@ -19,7 +19,7 @@
       <div *ngFor="let sortkey of sortKeys" class="p-field-checkbox" class="p-d-inline">
         <p-radioButton [inputId]="sortkey.key" name="displayAttr" [value]="sortkey" [(ngModel)]="selectedSortKey">
         </p-radioButton>
-        <label [for]="sortkey.key" class="p-mr-2 p-ml-1">{{sortkey.name}}</label>
+        <label [for]="sortkey.key" class="p-mr-2 p-ml-1">{{sortkey.value}}</label>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@
         <div class="p-mb-4 p-ml-2">
           <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
           </p-radioButton>
-          <label [for]="level.key" class="p-mr-2 p-ml-1">{{level.name}}</label>
+          <label [for]="level.key" class="p-mr-2 p-ml-1">{{level.value}}</label>
         </div>
         <div class="p-field p-ml-2 p-mb-2">
           <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="name"
