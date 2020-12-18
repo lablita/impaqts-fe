@@ -183,7 +183,7 @@ export class MenuComponent implements OnInit {
           new MenuItemObject(this.firstHitToDoc, null, () => {
             this.menuEmitterService.click.emit(new MenuEvent(FIRST_HIT_IN_DOC));
           }, null, null, false, false, FIRST_HIT_IN_DOC),
-        ], false, false, FILTER),
+        ], false, false, null),
         new MenuItemObject(this.frequency, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(FREQUENCY));
         }, null, [

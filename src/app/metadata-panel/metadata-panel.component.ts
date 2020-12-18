@@ -22,6 +22,7 @@ export class MetadataPanelComponent implements OnInit {
 
   @Input() public metadata: Metadatum[];
   @Input() public corpus: string;
+  @Input() public title: string;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public simple: string;
@@ -125,6 +126,10 @@ export class MetadataPanelComponent implements OnInit {
         this.textTypesRequest.multiSelects.push(new Selection(md.name, null, values));
       }
     });
+  }
+
+  public isFilterOptions(): boolean {
+    return this.title === 'MENU.FILTER';
   }
 
 }

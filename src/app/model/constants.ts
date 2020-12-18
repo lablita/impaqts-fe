@@ -97,6 +97,11 @@ export const R1 = '1R';
 /** Corpus */
 export const REPUBBLICA = 'REPUBBLICA';
 
+/** FILTER */
+export const POSITIVE = 'positive';
+export const NEGATIVE = 'negative';
+export const LAST = 'last';
+
 
 
 

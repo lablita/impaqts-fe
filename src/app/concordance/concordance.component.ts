@@ -5,7 +5,7 @@ import { INSTALLATION } from '../app.component';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  ALL, ANY, BOTH, CHARACTER, COLLOCATIONS, CQL, FREQUENCY, LEFT, LEMMA,
+  ALL, ANY, BOTH, CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, LEFT, LEMMA,
   NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
@@ -66,6 +66,7 @@ export class ConcordanceComponent implements OnInit {
   public sortOptionsLabel: string;
   public freqOptionsLabel: string;
   public collocationOptionsLabel: string;
+  public filterOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public queryResponse: QueryResponse;
@@ -130,6 +131,9 @@ export class ConcordanceComponent implements OnInit {
         case COLLOCATIONS:
           this.titleOption = this.collocationOptionsLabel;
           break;
+        case FILTER:
+          this.titleOption = this.filterOptionsLabel;
+          break;
         default:
           this.titleOption = this.viewOptionsLabel;
       }
@@ -151,6 +155,7 @@ export class ConcordanceComponent implements OnInit {
       this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
       this.freqOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS');
       this.collocationOptionsLabel = this.translateService.instant('MENU.COLLOCATIONS');
+      this.filterOptionsLabel = this.translateService.instant('MENU.FILTER');
       this.titleOption = this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
         new KeyValueItem(SIMPLE, simple),
@@ -226,7 +231,4 @@ export class ConcordanceComponent implements OnInit {
         metadata.filter(md => md.documentMetadatum);
     }
   }
-
-
-
 }
