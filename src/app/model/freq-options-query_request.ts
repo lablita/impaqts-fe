@@ -2,27 +2,27 @@ import { KeyValueItem } from "./key-value-item";
 
 export class FreqOptionsQueryRequest {
   freqLimitMulti: number;
-  level: string;
-  attributes: string;
+  level: KeyValueItem;
+  attribute: KeyValueItem;
   ignoreCase: boolean;
-  position: string;
+  position: KeyValueItem;
   freqLimit: number;
   includeCat: boolean;
   categories: KeyValueItem[];
 
   constructor(
     freqLimitMulti: number,
-    level: string,
-    attributes: string,
+    level: KeyValueItem,
+    attribute: KeyValueItem,
     ignoreCase: boolean,
-    position: string,
+    position: KeyValueItem,
     freqLimit: number,
     includeCat: boolean,
     categories: KeyValueItem[],
   ) {
     this.freqLimitMulti = freqLimitMulti;
     this.level = level;
-    this.attributes = attributes;
+    this.attribute = attribute;
     this.ignoreCase = ignoreCase;
     this.position = position;
     this.freqLimit = freqLimit;

@@ -48,7 +48,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
       this.includeCatLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT');
-
+      this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
       this.levels = [
         new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL')),
         new KeyValueItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL')),
@@ -85,6 +85,13 @@ export class FrequencyOptionsPanelComponent implements OnInit {
         new KeyValueItem(NODE, NODE),
         new KeyValueItem(NODE, NODE)
       ];
+
+      this.selectedLevel = this.levels.filter(l => l.key === this.freqOptionsQueryRequest.level.key)[0];
+      const index = this.selectedLevel.key === FIRST ? 0 :
+        (this.selectedLevel.key === SECOND ? 1 : (this.selectedLevel.key === THIRD ? 2 : 3));
+      this.selectedMultiAttribute[index] = this.freqOptionsQueryRequest.attribute;
+      this.selectedPosition[index] = this.freqOptionsQueryRequest.position;
+      this.ignoreCase[index] = this.freqOptionsQueryRequest.ignoreCase;
     });
   }
 
@@ -93,6 +100,13 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickFreqOption(): void {
+    this.freqOptionsQueryRequest.level = this.selectedLevel;
+    const index = this.freqOptionsQueryRequest.level.key === FIRST ? 0 :
+      (this.freqOptionsQueryRequest.level.key === SECOND ? 1 : (this.freqOptionsQueryRequest.level.key === THIRD ? 2 : 3));
+    this.freqOptionsQueryRequest.attribute = this.selectedMultiAttribute[index];
+    this.freqOptionsQueryRequest.ignoreCase = this.ignoreCase[index];
+    this.freqOptionsQueryRequest.position = this.selectedPosition[index];
+
     localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
     console.log('ok');
   }
