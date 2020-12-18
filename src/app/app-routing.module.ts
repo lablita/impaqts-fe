@@ -7,7 +7,6 @@ import { MainComponent } from './main/main.component';
 import { MyJobComponent } from './my-job/my-job.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { SaveComponent } from './save/save.component';
-import { WordListComponent } from './word-list/word-list.component';
 
 const routes: Routes = [
   {
@@ -20,10 +19,6 @@ const routes: Routes = [
       {
         path: 'concordance',
         component: ConcordanceComponent
-      },
-      {
-        path: 'word_list',
-        component: WordListComponent
       },
       {
         path: 'corpus_info',
