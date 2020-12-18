@@ -20,7 +20,7 @@
       [rows]="10" [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="[10,25,50]">
       <ng-template pTemplate="caption">
-        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="name"
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="value"
           selectedItemsLabel="{0} columns selected" [style]="{minWidth: '200px'}" placeholder="Choose Columns">
         </p-multiSelect>
       </ng-template>
@@ -28,9 +28,9 @@
         <tr>
           <th pSortableColumn="id" style="width: 250px;" class="p-text-left">ID <p-sortIcon field="id"></p-sortIcon>
           </th>
-          <th class="p-text-right" *ngFor="let col of columns" [pSortableColumn]="col.code">
+          <th class="p-text-right" *ngFor="let col of columns" [pSortableColumn]="col.key">
             {{col.name | translate}}
-            <p-sortIcon [field]="col.code"></p-sortIcon>
+            <p-sortIcon [field]="col.key"></p-sortIcon>
           </th>
         </tr>
       </ng-template>
@@ -38,11 +38,11 @@
         <tr>
           <td class="p-text-left">{{job.id}}</td>
           <td class="p-text-right" *ngFor="let col of columns">
-            <span *ngIf="col.code !== 'progress' && col.code !== 'descriptionLabel'">{{job[col.code] | translate}}
+            <span *ngIf="col.key !== 'progress' && col.key !== 'descriptionLabel'">{{job[col.key] | translate}}
             </span>
-            <span *ngIf="col.code === 'descriptionLabel'"><a
+            <span *ngIf="col.key === 'descriptionLabel'"><a
                 href="{{job.descriptionUrl}}">{{job.descriptionLabel}}</a></span>
-            <span *ngIf="col.code === 'progress'">{{job[col.code] | translate}}% </span>
+            <span *ngIf="col.key === 'progress'">{{job[col.key] | translate}}% </span>
 
           </td>
         </tr>

@@ -2,10 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
-import { DropdownItem } from '../model/dropdown-item';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
-import { LookUpObject } from '../model/lookup-object';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
@@ -18,19 +16,19 @@ const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 export class FrequencyOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: LookUpObject[];
+  @Input() public corpusAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public freqOptionsQueryRequest: FreqOptionsQueryRequest;
 
-  public attributeList: DropdownItem[] = [];
+  public attributeList: KeyValueItem[] = [];
   public levels: KeyValueItem[];
   public selectedLevel: KeyValueItem;
-  public selectedAttribute: DropdownItem;
-  public selectedMultiAttribute: DropdownItem[];
+  public selectedAttribute: KeyValueItem;
+  public selectedMultiAttribute: KeyValueItem[];
   public ignoreCase: boolean[];
-  public positionList: DropdownItem[];
-  public selectedPosition: DropdownItem[];
+  public positionList: KeyValueItem[];
+  public selectedPosition: KeyValueItem[];
   public ignoreCaseLabel: string;
   public includeCatLabel: string;
 
@@ -40,7 +38,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.corpusAttributes?.length > 0) {
-      this.corpusAttributes.forEach(ca => this.attributeList.push(new DropdownItem(ca.value, ca.viewValue)));
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false, false];
 
@@ -59,36 +57,35 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       ];
 
       this.positionList = [
-        new DropdownItem(L6, L6),
-        new DropdownItem(L5, L5),
-        new DropdownItem(L4, L4),
-        new DropdownItem(L3, L3),
-        new DropdownItem(L2, L2),
-        new DropdownItem(L1, L1),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(R6, R6),
-        new DropdownItem(R5, R5),
-        new DropdownItem(R4, R4),
-        new DropdownItem(R3, R3),
-        new DropdownItem(R2, R2),
-        new DropdownItem(R1, R1)
+        new KeyValueItem(L6, L6),
+        new KeyValueItem(L5, L5),
+        new KeyValueItem(L4, L4),
+        new KeyValueItem(L3, L3),
+        new KeyValueItem(L2, L2),
+        new KeyValueItem(L1, L1),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(R6, R6),
+        new KeyValueItem(R5, R5),
+        new KeyValueItem(R4, R4),
+        new KeyValueItem(R3, R3),
+        new KeyValueItem(R2, R2),
+        new KeyValueItem(R1, R1)
       ];
 
       this.selectedMultiAttribute = [
-        new DropdownItem('word', word),
-        new DropdownItem('word', word),
-        new DropdownItem('word', word),
-        new DropdownItem('word', word)
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word)
       ];
 
       this.selectedPosition = [
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE)
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE)
       ];
     });
-
   }
 
   public closeSidebar(): void {
@@ -96,7 +93,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickFreqOption(): void {
-
   }
 
 }

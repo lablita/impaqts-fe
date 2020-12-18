@@ -9,7 +9,8 @@
 
   <div class="p-d-inline p-field p-ml-2">
     <label class="label-size p-mr-1">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
-    <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute" optionLabel="name" [showClear]="true">
+    <p-dropdown [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.attribute" optionLabel="value"
+      [showClear]="true">
     </p-dropdown>
   </div>
   <div class="p-d-inline p-field p-ml-6">
@@ -40,14 +41,14 @@
     </div>
     <div class="p-col-fixed" style="width: 150px;">
       <p-listbox id="show" [options]="attributeList" [multiple]="true"
-        [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="name"></p-listbox>
+        [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value"></p-listbox>
     </div>
     <div class="p-col-fixed" style="width: 70px;">
       <label for="sort">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
     </div>
     <div class="p-col-fixed" style="width: 150px;">
       <p-listbox id="sort" [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
-        optionLabel="name"></p-listbox>
+        optionLabel="value"></p-listbox>
     </div>
   </div>
 

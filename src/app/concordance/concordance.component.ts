@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { INSTALLATION } from '../app.component';
@@ -9,17 +8,14 @@ import {
   ALL, ANY, BOTH, CHARACTER, COLLOCATIONS, CQL, FREQUENCY, LEFT, LEMMA,
   NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
-import { CorpusShort, DropdownItem } from '../model/dropdown-item';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
-import { LookUpObject } from '../model/lookup-object';
 import { Metadatum } from '../model/Metadatum';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { EmitterService } from '../utils/emitter.service';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
-import { ConcordanceService } from './concordance.service';
 
 const WS_URL = '/test-query-ws-ext';
 
@@ -35,17 +31,17 @@ export class ConcordanceComponent implements OnInit {
 
   public installation: Installation;
   /** public */
-  public corpusList: CorpusShort[] = [];
+  public corpusList: KeyValueItem[] = [];
   // public metadataCorpus: Metadatum[] = [];
   public metadataTextTypes: Metadatum[] = [];
 
-  public selectedCorpus: CorpusShort;
-  public windows: DropdownItem[];
-  public selectedWindow: DropdownItem;
-  public items: DropdownItem[];
-  public selectedItem: DropdownItem;
-  public tokens: DropdownItem[] = [];
-  public selectedToken: DropdownItem;
+  public selectedCorpus: KeyValueItem;
+  public windows: KeyValueItem[];
+  public selectedWindow: KeyValueItem;
+  public items: KeyValueItem[];
+  public selectedItem: KeyValueItem;
+  public tokens: KeyValueItem[] = [];
+  public selectedToken: KeyValueItem;
   public queryTypes: KeyValueItem[];
   public selectedQueryType: KeyValueItem;
   public selectCorpus: string = 'PAGE.CONCORDANCE.SELECT_CORPUS';
@@ -76,24 +72,22 @@ export class ConcordanceComponent implements OnInit {
   public totalResults = 0;
   public kwicLines: KWICline[];
 
-  public metadataAttributes: LookUpObject[];
-  public textTypesAttributes: LookUpObject[];
+  public metadataAttributes: KeyValueItem[];
+  public textTypesAttributes: KeyValueItem[];
 
   /** private */
   private websocket: WebSocketSubject<any>;
 
   constructor(
-    private readonly route: ActivatedRoute,
     private readonly translateService: TranslateService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly emitterServices: EmitterService,
-    private readonly concordanceService: ConcordanceService
+    private readonly emitterServices: EmitterService
   ) { }
 
   ngOnInit(): void {
 
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
-    this.installation.corpora.forEach(corpus => this.corpusList.push(new CorpusShort(corpus.name, corpus.name)));
+    this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
 
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;
@@ -115,11 +109,11 @@ export class ConcordanceComponent implements OnInit {
     this.textTypeStatus = false;
 
     for (let i = 1; i < 6; i++) {
-      this.tokens.push(new DropdownItem('' + i, '' + i));
+      this.tokens.push(new KeyValueItem('' + i, '' + i));
     }
-    this.tokens.push(new DropdownItem('7', '7'));
-    this.tokens.push(new DropdownItem('10', '10'));
-    this.tokens.push(new DropdownItem('15', '15'));
+    this.tokens.push(new KeyValueItem('7', '7'));
+    this.tokens.push(new KeyValueItem('10', '10'));
+    this.tokens.push(new KeyValueItem('15', '15'));
     this.selectedToken = this.tokens[4];
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
@@ -169,16 +163,16 @@ export class ConcordanceComponent implements OnInit {
       this.selectedQueryType = this.queryTypes[0];
 
       this.windows = [
-        new DropdownItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.LEFT')),
-        new DropdownItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.RIGHT')),
-        new DropdownItem(BOTH, this.translateService.instant('PAGE.CONCORDANCE.BOTH'))
+        new KeyValueItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.LEFT')),
+        new KeyValueItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.RIGHT')),
+        new KeyValueItem(BOTH, this.translateService.instant('PAGE.CONCORDANCE.BOTH'))
       ];
       this.selectedWindow = this.windows[2];
 
       this.items = [
-        new DropdownItem(ALL, this.translateService.instant('PAGE.CONCORDANCE.ALL')),
-        new DropdownItem(ANY, this.translateService.instant('PAGE.CONCORDANCE.ANY')),
-        new DropdownItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
+        new KeyValueItem(ALL, this.translateService.instant('PAGE.CONCORDANCE.ALL')),
+        new KeyValueItem(ANY, this.translateService.instant('PAGE.CONCORDANCE.ANY')),
+        new KeyValueItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
       ];
       this.selectedItem = this.items[0];
     });
@@ -202,7 +196,7 @@ export class ConcordanceComponent implements OnInit {
     qr.start = 0;
     qr.end = 500000;
     qr.word = `[word="${this.simple}"]`;
-    qr.corpus = this.selectedCorpus.code;
+    qr.corpus = this.selectedCorpus.key;
     this.websocket.next(qr);
     this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
@@ -217,18 +211,18 @@ export class ConcordanceComponent implements OnInit {
     if (this.selectedCorpus) {
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
-      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].
+      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.sort((a, b) => a.position - b.position);
-      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0]
+      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0]
         .metadata.filter(md => !md.child).forEach(md => {
           //Attributes in View Options
           if (!md.documentMetadatum) {
-            this.metadataAttributes.push(new LookUpObject(md.name, md.name));
+            this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
           } else {
-            this.textTypesAttributes.push(new LookUpObject(md.name, md.name));
+            this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
           }
         });
-      this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.code)[0].
+      this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.filter(md => md.documentMetadatum);
     }
   }

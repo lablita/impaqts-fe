@@ -21,7 +21,7 @@
           <label [for]="level.key" class="p-mr-2 p-ml-1">{{level.value}}</label>
         </div>
         <div class="p-field p-ml-2 p-mb-2">
-          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="name"
+          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="key"
             [showClear]="true">
           </p-dropdown>
         </div>
@@ -30,7 +30,7 @@
           </p-checkbox>
         </div>
         <div class="p-field p-ml-2">
-          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="name" [showClear]="true">
+          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value" [showClear]="true">
           </p-dropdown>
         </div>
       </div>

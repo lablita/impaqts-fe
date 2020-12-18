@@ -7,7 +7,8 @@
   <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SIMPLE_SORT' | translate}}</h3>
 
   <div class="p-field p-ml-2 p-mb-2">
-    <p-dropdown [options]="attributeList" [(ngModel)]="selectedAttribute" optionLabel="name" [showClear]="true">
+    <p-dropdown [options]="attributeList" [(ngModel)]="sortOptionsQueryRequest.attribute" optionLabel="key"
+      [showClear]="true">
     </p-dropdown>
   </div>
 
@@ -17,7 +18,8 @@
     </div>
     <div class="p-col p-ai-center">
       <div *ngFor="let sortkey of sortKeys" class="p-field-checkbox" class="p-d-inline">
-        <p-radioButton [inputId]="sortkey.key" name="displayAttr" [value]="sortkey" [(ngModel)]="selectedSortKey">
+        <p-radioButton [inputId]="sortkey.key" name="displayAttr" [value]="sortkey"
+          [(ngModel)]="sortOptionsQueryRequest.sortKey">
         </p-radioButton>
         <label [for]="sortkey.key" class="p-mr-2 p-ml-1">{{sortkey.value}}</label>
       </div>
@@ -52,12 +54,13 @@
     <div *ngFor="let level of levels, let i = index" class="p-field-checkbox" class="p-d-inline">
       <div class="p-col">
         <div class="p-mb-4 p-ml-2">
-          <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
+          <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level"
+            [(ngModel)]="sortOptionsQueryRequest.level">rrrewqwert1w5
           </p-radioButton>
           <label [for]="level.key" class="p-mr-2 p-ml-1">{{level.value}}</label>
         </div>
         <div class="p-field p-ml-2 p-mb-2">
-          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="name"
+          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="value"
             [showClear]="true">
           </p-dropdown>
         </div>
@@ -70,7 +73,7 @@
           </p-checkbox>
         </div>
         <div class="p-field p-ml-2">
-          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="name" [showClear]="true">
+          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value" [showClear]="true">
           </p-dropdown>
         </div>
       </div>

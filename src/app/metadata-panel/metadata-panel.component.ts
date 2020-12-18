@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { ConcordanceService } from '../concordance/concordance.service';
-import { DropdownItem } from '../model/dropdown-item';
+import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
@@ -24,10 +24,8 @@ export class MetadataPanelComponent implements OnInit {
   @Input() public corpus: string;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public subcorpusList: DropdownItem[] = [];
-  public selectedSubcorpus: DropdownItem;
   public simple: string;
-  public res: DropdownItem[] = [];
+  public res: KeyValueItem[] = [];
   public displayPanelMetadata = false;
   public selected: any;
 
@@ -55,7 +53,7 @@ export class MetadataPanelComponent implements OnInit {
 
     // genero albero flat per componente multiselect check box e single select
     this.metadata.forEach((metadatum, index) => {
-      this.res.push(new DropdownItem(metadatum.name, ''));
+      this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
         setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
           if (res) {

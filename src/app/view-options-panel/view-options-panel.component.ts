@@ -6,7 +6,6 @@ import {
   OPTIONAL_DISPLAY_ATTR_URL_KWIC
 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { LookUpObject } from '../model/lookup-object';
 import { QueryRequest } from '../model/query-request';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -22,7 +21,7 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string;
   @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: LookUpObject[];
+  @Input() public corpusAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public attributeChekBox: KeyValueItem[] = [];
@@ -52,7 +51,7 @@ export class ViewOptionsPanelComponent implements OnInit {
       JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.corpusAttributes.forEach(attribute =>
-        this.attributeChekBox.push(new KeyValueItem(attribute.value, this.translateService.instant(attribute.viewValue))));
+        this.attributeChekBox.push(new KeyValueItem(attribute.key, this.translateService.instant(attribute.value))));
 
       this.displayAttr = [
         new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN')),
