@@ -22,14 +22,14 @@ export class SortOptionsPanelComponent implements OnInit {
   public sortOptionsQueryRequest: SortOptionsQueryRequest;
 
   public attributeList: KeyValueItem[] = [];
-  // public selectedAttribute: KeyValueItem;
+
   public selectedMultiAttribute: KeyValueItem[];
   public sortKeys: KeyValueItem[];
-  // public selectedSortKey: KeyValueItem;
+  public selectedSortKey: KeyValueItem;
   public ignoreCaseLabel: string;
   public backwordLabel: string;
   public levels: KeyValueItem[];
-  // public selectedLevel: KeyValueItem;
+  public selectedLevel: KeyValueItem;
   public positionList: KeyValueItem[];
   public selectedPosition: KeyValueItem[];
   public ignoreCase: boolean[];
@@ -40,16 +40,6 @@ export class SortOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.corpusAttributes?.length > 0) {
-      this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
-    }
-    this.ignoreCase = [false, false, false];
-    this.backward = [false, false, false];
-
-    this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
-
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
       this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
       this.backwordLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD');
@@ -87,6 +77,24 @@ export class SortOptionsPanelComponent implements OnInit {
         new KeyValueItem(NODE, NODE),
         new KeyValueItem(NODE, NODE),
       ];
+
+      if (this.corpusAttributes?.length > 0) {
+        this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
+      }
+      this.ignoreCase = [false, false, false];
+      this.backward = [false, false, false];
+
+      this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
+        JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
+        INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
+
+      this.selectedSortKey = this.sortKeys.filter(sk => sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
+      this.selectedLevel = this.levels.filter(l => l.key === this.sortOptionsQueryRequest.level.key)[0];
+      const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
+      this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
+      this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
+      this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
+      this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
     });
   }
 
@@ -95,6 +103,8 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickSortOption(): void {
+    this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
+    this.sortOptionsQueryRequest.level = this.selectedLevel;
     const index = this.sortOptionsQueryRequest.level.key === FIRST ? 0 : (this.sortOptionsQueryRequest.level.key === SECOND ? 1 : 2);
     this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute[index];
     this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase[index];

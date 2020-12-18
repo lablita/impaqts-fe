@@ -93,6 +93,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickFreqOption(): void {
+    localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
+    console.log('ok');
   }
 
 }

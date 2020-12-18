@@ -52,7 +52,7 @@ export const INSTALLATION_LIST = {
       null
     ), new SortOptionsQueryRequest(
       new KeyValueItem(WORD, WORD),
-      LEFT,
+      new KeyValueItem(LEFT, LEFT),
       3,
       false,
       false,
@@ -126,7 +126,7 @@ export const INSTALLATION_LIST = {
       null
     ), new SortOptionsQueryRequest(
       new KeyValueItem(WORD, WORD),
-      LEFT,
+      new KeyValueItem(LEFT, LEFT),
       3,
       false,
       false,

@@ -52,9 +52,9 @@
       [(ngModel)]="freqOptionsQueryRequest.includeCat">
     </p-checkbox>
   </div>
-  <div class="p-text-center">
-    <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-      [(ngModel)]="freqOptionsQueryRequest.categories"></textarea>
+  <div class="p-col-fixed" style="width: 150px;">
+    <p-listbox id="show" [options]="attributeList" [multiple]="true" [(ngModel)]="freqOptionsQueryRequest.categories"
+      optionLabel="value"></p-listbox>
   </div>
 
   <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"

@@ -1,3 +1,5 @@
+import { KeyValueItem } from "./key-value-item";
+
 export class FreqOptionsQueryRequest {
   freqLimitMulti: number;
   level: string;
@@ -6,7 +8,7 @@ export class FreqOptionsQueryRequest {
   position: string;
   freqLimit: number;
   includeCat: boolean;
-  categories: string[];
+  categories: KeyValueItem[];
 
   constructor(
     freqLimitMulti: number,
@@ -16,7 +18,7 @@ export class FreqOptionsQueryRequest {
     position: string,
     freqLimit: number,
     includeCat: boolean,
-    categories: string[],
+    categories: KeyValueItem[],
   ) {
     this.freqLimitMulti = freqLimitMulti;
     this.level = level;

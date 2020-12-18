@@ -2,7 +2,7 @@ import { KeyValueItem } from "./key-value-item";
 
 export class SortOptionsQueryRequest {
   attribute: KeyValueItem;
-  sortKey: string;
+  sortKey: KeyValueItem;
   numberTokens: number;
   ignoreCase: boolean;
   backward: boolean;
@@ -14,7 +14,7 @@ export class SortOptionsQueryRequest {
 
   constructor(
     attribute: KeyValueItem,
-    sortKey: string,
+    sortKey: KeyValueItem,
     numberTokens: number,
     ignoreCase: boolean,
     backward: boolean,
