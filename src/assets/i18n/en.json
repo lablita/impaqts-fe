@@ -171,7 +171,8 @@
         "LAST": "last",
         "SEARCH_SPAN": "Search span",
         "FROM": "from",
-        "KWIC": "include KWIC"
+        "KWIC": "include KWIC",
+        "FILTER_CON": "Filter concordance"
       },
       "TEXT_TYPE_SECTION": {}
     },

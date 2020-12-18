@@ -50,8 +50,12 @@ export class FilterOptionsPanelComponent implements OnInit {
         new KeyValueItem(LAST, this.translateService.instant('PAGE.CONCORDANCE.FILTER_OPTIONS.LAST')),
       ];
     });
+  }
 
-
+  public clickMakeFilter(): void {
+    this.filterOptionsQueryRequest.contextConcordance = this.contextConcordanceQueryRequest;
+    localStorage.setItem(FILTER_OPTIONS_QUERY_REQUEST, JSON.stringify(this.filterOptionsQueryRequest));
+    console.log('ok');
   }
 
 }
