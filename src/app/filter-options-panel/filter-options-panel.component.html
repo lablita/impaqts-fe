@@ -36,6 +36,9 @@
   </p-checkbox>
 </div>
 
+<app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
+</app-context-concordance>
+
 <app-metadata-panel [corpus]="corpus" [metadata]="metadata" (closeSidebarEvent)="displayPanelMetadata=false"
   title="MENU.FILTER">
 </app-metadata-panel>

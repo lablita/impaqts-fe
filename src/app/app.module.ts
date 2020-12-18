@@ -26,6 +26,7 @@ import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { FilterOptionsPanelComponent } from './filter-options-panel/filter-options-panel.component';
+import { ContextConcordanceComponent } from './context-concordance/context-concordance.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { FilterOptionsPanelComponent } from './filter-options-panel/filter-optio
     FrequencyOptionsPanelComponent,
     MetadataPanelComponent,
     CollocationOptionsPanelComponent,
-    FilterOptionsPanelComponent
+    FilterOptionsPanelComponent,
+    ContextConcordanceComponent
   ],
   imports: [
     BrowserModule,
