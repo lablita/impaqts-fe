@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { DropdownItem } from '../model/dropdown-item';
 import { JobOjs } from '../model/job-obj';
+import { KeyValueItem } from '../model/key-value-item';
 
 @Component({
   selector: 'app-my-job',
@@ -15,8 +15,8 @@ export class MyJobComponent implements OnInit {
   public autoReloaded: boolean;
   public showCom: boolean;
 
-  public cols: DropdownItem[];
-  public _selectedColumns: DropdownItem[];
+  public cols: KeyValueItem[];
+  public _selectedColumns: KeyValueItem[];
 
   constructor(
     private readonly translateService: TranslateService
@@ -36,22 +36,22 @@ export class MyJobComponent implements OnInit {
     ];
     this.translateService.get('PAGE.CONCORDANCE.CORPUS').subscribe(corpus => {
       this.cols = [
-        new DropdownItem('corpus', corpus),
-        new DropdownItem('descriptionLabel', this.translateService.instant('PAGE.MY_JOBS.DESCRIPTION')),
-        new DropdownItem('started', this.translateService.instant('PAGE.MY_JOBS.STARTED')),
-        new DropdownItem('estimation', this.translateService.instant('PAGE.MY_JOBS.ESTIMATION')),
-        new DropdownItem('status', this.translateService.instant('PAGE.MY_JOBS.STATUS')),
-        new DropdownItem('progress', this.translateService.instant('PAGE.MY_JOBS.PROGRESS'))
+        new KeyValueItem('corpus', corpus),
+        new KeyValueItem('descriptionLabel', this.translateService.instant('PAGE.MY_JOBS.DESCRIPTION')),
+        new KeyValueItem('started', this.translateService.instant('PAGE.MY_JOBS.STARTED')),
+        new KeyValueItem('estimation', this.translateService.instant('PAGE.MY_JOBS.ESTIMATION')),
+        new KeyValueItem('status', this.translateService.instant('PAGE.MY_JOBS.STATUS')),
+        new KeyValueItem('progress', this.translateService.instant('PAGE.MY_JOBS.PROGRESS'))
       ];
       this._selectedColumns = this.cols.slice();
     });
   }
 
-  @Input() get selectedColumns(): DropdownItem[] {
+  @Input() get selectedColumns(): KeyValueItem[] {
     return this._selectedColumns;
   }
 
-  set selectedColumns(val: DropdownItem[]) {
+  set selectedColumns(val: KeyValueItem[]) {
     this._selectedColumns = this.cols.filter(col => val.includes(col));
   }
 

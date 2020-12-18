@@ -1,34 +1,36 @@
+import { KeyValueItem } from "./key-value-item";
+
 export class SortOptionsQueryRequest {
-  attributes: string;
-  sortKey: string;
+  attribute: KeyValueItem;
+  sortKey: KeyValueItem;
   numberTokens: number;
   ignoreCase: boolean;
   backward: boolean;
-  level: string;
-  attributesMulti: string;
+  level: KeyValueItem;
+  attributeMulti: KeyValueItem;
   ignoreCaseMulti: boolean;
   backwardMulti: boolean;
-  position: string;
+  position: KeyValueItem;
 
   constructor(
-    attributes: string,
-    sortKey: string,
+    attribute: KeyValueItem,
+    sortKey: KeyValueItem,
     numberTokens: number,
     ignoreCase: boolean,
     backward: boolean,
-    level: string,
-    attributesMulti: string,
+    level: KeyValueItem,
+    attributeMulti: KeyValueItem,
     ignoreCaseMulti: boolean,
     backwardMulti: boolean,
-    position: string,
+    position: KeyValueItem,
   ) {
-    this.attributes = attributes;
+    this.attribute = attribute;
     this.sortKey = sortKey;
     this.numberTokens = numberTokens;
     this.ignoreCase = ignoreCase;
     this.backward = backward;
     this.level = level;
-    this.attributesMulti = attributesMulti;
+    this.attributeMulti = attributeMulti;
     this.ignoreCaseMulti = ignoreCaseMulti;
     this.backwardMulti = backwardMulti;
     this.position = position;

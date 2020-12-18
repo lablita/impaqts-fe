@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { LookUpObject } from '../model/lookup-object';
+import { KeyValueItem } from '../model/key-value-item';
 
 export class CorpusAttributes {
   corpus: string;
-  attributes: LookUpObject[];
+  attributes: KeyValueItem[];
 
-  constructor(corpus: string, attributes: LookUpObject[]) {
+  constructor(corpus: string, attributes: KeyValueItem[]) {
     this.corpus = corpus;
     this.attributes = attributes;
   }
@@ -20,18 +20,18 @@ export class ViewOptionsPanelService {
     [
       new CorpusAttributes('REPUBBLICA',
         [
-          new LookUpObject('OPTION_ATTR_URL_WORLD', 'PAGE.CONCORDANCE.WORD'),
-          new LookUpObject('OPTION_ATTR_URL_TAG', 'PAGE.CONCORDANCE.TAG'),
-          new LookUpObject('OPTION_ATTR_URL_LEMMA', 'PAGE.CONCORDANCE.LEMMA'),
-          new LookUpObject('OPTION_ATTR_URL_WORLD_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC'),
-          new LookUpObject('OPTION_ATTR_URL_LEMMA_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.LEMMA_LC')
+          new KeyValueItem('OPTION_ATTR_URL_WORLD', 'PAGE.CONCORDANCE.WORD'),
+          new KeyValueItem('OPTION_ATTR_URL_TAG', 'PAGE.CONCORDANCE.TAG'),
+          new KeyValueItem('OPTION_ATTR_URL_LEMMA', 'PAGE.CONCORDANCE.LEMMA'),
+          new KeyValueItem('OPTION_ATTR_URL_WORLD_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC'),
+          new KeyValueItem('OPTION_ATTR_URL_LEMMA_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.LEMMA_LC')
         ]
       )
     ];
 
   constructor() { }
 
-  public getAttributesByCorpus(corpus: string): LookUpObject[] {
+  public getAttributesByCorpus(corpus: string): KeyValueItem[] {
     const attributes = this.attributesByCorpus.find(ca => ca.corpus === corpus);
     return attributes ? attributes.attributes : [];
   }

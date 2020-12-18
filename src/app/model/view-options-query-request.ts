@@ -1,7 +1,9 @@
+import { KeyValueItem } from "./key-value-item";
+
 export class ViewOptionsQueryRequest {
   attributes: string[];
-  structures: string[];
-  references: string[];
+  structures: KeyValueItem[];
+  references: KeyValueItem[];
   displayAttr: string;
   asTooltip: boolean;
   refsUp: boolean;
@@ -19,8 +21,8 @@ export class ViewOptionsQueryRequest {
 
   constructor(
     attributes: string[],
-    structures: string[],
-    references: string[],
+    structures: KeyValueItem[],
+    references: KeyValueItem[],
     displayAttr: string,
     asTooltip: boolean,
     refsUp: boolean,

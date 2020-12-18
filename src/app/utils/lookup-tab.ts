@@ -1,6 +1,7 @@
+import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
 import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
-import { CorpusShort } from '../model/dropdown-item';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { Startup } from '../model/startup';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
@@ -9,8 +10,8 @@ import { WordListOptionsQueryRequest } from '../model/word-list-options-query-re
 export const INSTALLATION_LIST = {
   uno: new Startup(
     [
-      new CorpusShort('susanne', 'susanne'),
-      new CorpusShort('wikiita', 'wikiita')
+      new KeyValueItem('susanne', 'susanne'),
+      new KeyValueItem('wikiita', 'wikiita')
     ],
     new ViewOptionsQueryRequest(
       [],
@@ -50,16 +51,16 @@ export const INSTALLATION_LIST = {
       null,
       null
     ), new SortOptionsQueryRequest(
-      WORD,
-      LEFT,
+      new KeyValueItem(WORD, WORD),
+      new KeyValueItem(LEFT, LEFT),
       3,
       false,
       false,
-      FIRST,
-      WORD,
+      new KeyValueItem(FIRST, FIRST),
+      new KeyValueItem(WORD, WORD),
       false,
       false,
-      NODE
+      new KeyValueItem(NODE, NODE),
     ), new FreqOptionsQueryRequest(
       0,
       FIRST,
@@ -69,14 +70,22 @@ export const INSTALLATION_LIST = {
       0,
       false,
       []
+    ), new CollocationOptionsQueryRequest(
+      null,
+      -5,
+      5,
+      5,
+      3,
+      [],
+      null
     )
   )
   ,
   due: new Startup(
     [
-      new CorpusShort('1', 'AcWac EU'),
-      new CorpusShort('2', 'Brexit IT'),
-      new CorpusShort(REPUBBLICA, 'Repubblica')
+      new KeyValueItem('1', 'AcWac EU'),
+      new KeyValueItem('2', 'Brexit IT'),
+      new KeyValueItem(REPUBBLICA, 'Repubblica')
     ],
     new ViewOptionsQueryRequest(
       [],
@@ -116,16 +125,16 @@ export const INSTALLATION_LIST = {
       null,
       null
     ), new SortOptionsQueryRequest(
-      WORD,
-      LEFT,
+      new KeyValueItem(WORD, WORD),
+      new KeyValueItem(LEFT, LEFT),
       3,
       false,
       false,
-      FIRST,
-      WORD,
+      new KeyValueItem(FIRST, FIRST),
+      new KeyValueItem(WORD, WORD),
       false,
       false,
-      NODE
+      new KeyValueItem(NODE, NODE),
     ), new FreqOptionsQueryRequest(
       0,
       FIRST,
@@ -135,6 +144,14 @@ export const INSTALLATION_LIST = {
       0,
       false,
       []
+    ), new CollocationOptionsQueryRequest(
+      null,
+      -5,
+      5,
+      5,
+      3,
+      [],
+      null
     )
   )
 

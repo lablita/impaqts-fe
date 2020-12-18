@@ -8,6 +8,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ListboxModule } from 'primeng/listbox';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -42,7 +43,8 @@ import { TreeModule } from 'primeng/tree';
     MultiSelectModule,
     ToastModule,
     ScrollPanelModule,
-    TreeModule
+    TreeModule,
+    ListboxModule
   ],
   exports: [
     CommonModule,
@@ -64,7 +66,8 @@ import { TreeModule } from 'primeng/tree';
     MultiSelectModule,
     ToastModule,
     ScrollPanelModule,
-    TreeModule
+    TreeModule,
+    ListboxModule
   ]
 })
 export class PrimeNgModule { }

@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { ButtonItem } from '../model/button-item';
 import {
   OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
   OPTIONAL_DISPLAY_ATTR_URL_KWIC
 } from '../model/constants';
-import { LookUpObject } from '../model/lookup-object';
+import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequest } from '../model/query-request';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -22,12 +21,12 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string;
   @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: LookUpObject[];
+  @Input() public corpusAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public attributeChekBox: ButtonItem[] = [];
-  public displayAttr: ButtonItem[];
-  public selectedDisplayAttr: ButtonItem;
+  public attributeChekBox: KeyValueItem[] = [];
+  public displayAttr: KeyValueItem[];
+  public selectedDisplayAttr: KeyValueItem;
   public asTooltipLabel: string;
   public refsUpLabel: string;
   public sortGoodLabel: string;
@@ -52,11 +51,11 @@ export class ViewOptionsPanelComponent implements OnInit {
       JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
     this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
       this.corpusAttributes.forEach(attribute =>
-        this.attributeChekBox.push(new ButtonItem(attribute.value, this.translateService.instant(attribute.viewValue))));
+        this.attributeChekBox.push(new KeyValueItem(attribute.key, this.translateService.instant(attribute.value))));
 
       this.displayAttr = [
-        new ButtonItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN')),
-        new ButtonItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN'))
+        new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN')),
+        new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN'))
       ];
       this.selectedDisplayAttr = this.displayAttr.filter(da => da.key === this.viewOptionsQueryRequest.displayAttr)[0];
 
@@ -76,7 +75,7 @@ export class ViewOptionsPanelComponent implements OnInit {
   }
 
   public clickChangeViewOption(): void {
-    console.log('vai');
+    console.log('ok');
     localStorage.setItem(VIEW_OPTION_QUERY_REQUEST, JSON.stringify(this.viewOptionsQueryRequest));
   }
 

@@ -9,10 +9,13 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
+import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
 import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
+import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
 import { MyJobComponent } from './my-job/my-job.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
@@ -23,8 +26,6 @@ import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { WordListComponent } from './word-list/word-list.component';
-import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
-import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { MetadataPanelComponent } from './metadata-panel/metadata-panel.componen
     RightComponent,
     SortOptionsPanelComponent,
     FrequencyOptionsPanelComponent,
-    MetadataPanelComponent
+    MetadataPanelComponent,
+    CollocationOptionsPanelComponent
   ],
   imports: [
     BrowserModule,

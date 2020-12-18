@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { ButtonItem } from '../model/button-item';
 import { FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
-import { DropdownItem } from '../model/dropdown-item';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { KeyValueItem } from '../model/key-value-item';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
@@ -17,18 +16,19 @@ const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 export class FrequencyOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public freqOptionsQueryRequest: FreqOptionsQueryRequest;
 
-  public attributeList: DropdownItem[];
-  public levels: ButtonItem[];
-  public selectedLevel: ButtonItem;
-  public selectedAttribute: DropdownItem;
-  public selectedMultiAttribute: DropdownItem[];
+  public attributeList: KeyValueItem[] = [];
+  public levels: KeyValueItem[];
+  public selectedLevel: KeyValueItem;
+  public selectedAttribute: KeyValueItem;
+  public selectedMultiAttribute: KeyValueItem[];
   public ignoreCase: boolean[];
-  public positionList: DropdownItem[];
-  public selectedPosition: DropdownItem[];
+  public positionList: KeyValueItem[];
+  public selectedPosition: KeyValueItem[];
   public ignoreCaseLabel: string;
   public includeCatLabel: string;
 
@@ -37,6 +37,9 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.corpusAttributes?.length > 0) {
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
+    }
     this.ignoreCase = [false, false, false, false];
 
     this.freqOptionsQueryRequest = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST) ?
@@ -44,54 +47,52 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       INSTALLATION_LIST[environment.installation].freqOptionsQueryRequest;
 
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      this.attributeList = [
-        new DropdownItem('word', word),
-        new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
-        new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
-        new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
-      ];
-
       this.includeCatLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT');
-
+      this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
       this.levels = [
-        new ButtonItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL')),
-        new ButtonItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL')),
-        new ButtonItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL')),
-        new ButtonItem(FOURTH, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL'))
+        new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL')),
+        new KeyValueItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL')),
+        new KeyValueItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL')),
+        new KeyValueItem(FOURTH, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL'))
       ];
 
       this.positionList = [
-        new DropdownItem(L6, L6),
-        new DropdownItem(L5, L5),
-        new DropdownItem(L4, L4),
-        new DropdownItem(L3, L3),
-        new DropdownItem(L2, L2),
-        new DropdownItem(L1, L1),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(R6, R6),
-        new DropdownItem(R5, R5),
-        new DropdownItem(R4, R4),
-        new DropdownItem(R3, R3),
-        new DropdownItem(R2, R2),
-        new DropdownItem(R1, R1)
+        new KeyValueItem(L6, L6),
+        new KeyValueItem(L5, L5),
+        new KeyValueItem(L4, L4),
+        new KeyValueItem(L3, L3),
+        new KeyValueItem(L2, L2),
+        new KeyValueItem(L1, L1),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(R6, R6),
+        new KeyValueItem(R5, R5),
+        new KeyValueItem(R4, R4),
+        new KeyValueItem(R3, R3),
+        new KeyValueItem(R2, R2),
+        new KeyValueItem(R1, R1)
       ];
 
       this.selectedMultiAttribute = [
-        new DropdownItem('word', word),
-        new DropdownItem('word', word),
-        new DropdownItem('word', word),
-        new DropdownItem('word', word)
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word)
       ];
 
       this.selectedPosition = [
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE)
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE)
       ];
-    });
 
+      this.selectedLevel = this.levels.filter(l => l.key === this.freqOptionsQueryRequest.level.key)[0];
+      const index = this.selectedLevel.key === FIRST ? 0 :
+        (this.selectedLevel.key === SECOND ? 1 : (this.selectedLevel.key === THIRD ? 2 : 3));
+      this.selectedMultiAttribute[index] = this.freqOptionsQueryRequest.attribute;
+      this.selectedPosition[index] = this.freqOptionsQueryRequest.position;
+      this.ignoreCase[index] = this.freqOptionsQueryRequest.ignoreCase;
+    });
   }
 
   public closeSidebar(): void {
@@ -99,7 +100,15 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickFreqOption(): void {
+    this.freqOptionsQueryRequest.level = this.selectedLevel;
+    const index = this.freqOptionsQueryRequest.level.key === FIRST ? 0 :
+      (this.freqOptionsQueryRequest.level.key === SECOND ? 1 : (this.freqOptionsQueryRequest.level.key === THIRD ? 2 : 3));
+    this.freqOptionsQueryRequest.attribute = this.selectedMultiAttribute[index];
+    this.freqOptionsQueryRequest.ignoreCase = this.ignoreCase[index];
+    this.freqOptionsQueryRequest.position = this.selectedPosition[index];
 
+    localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
+    console.log('ok');
   }
 
 }

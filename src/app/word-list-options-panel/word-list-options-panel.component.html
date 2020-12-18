@@ -5,14 +5,11 @@
 <span class="p-component">
 
   <div class="p-field">
-    <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SUBCORPUS" | translate}}</label>
-    <p-dropdown [options]="subcorpusList" [(ngModel)]="selectedSubcorpus" optionLabel="name" [showClear]="true">
-    </p-dropdown>
-  </div>
-
-  <div class="p-field">
     <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.SEARCH_ATTR" | translate}}</label>
-    <p-dropdown [options]="searchAttrList" [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+    <p-dropdown [options]="searchAttrList" [(ngModel)]="selectedSearchAttr" [group]="true">
+      <ng-template let-attr pTemplate="group">
+        <div class="label-size"> {{attr.label}}</div>
+      </ng-template>
     </p-dropdown>
   </div>
 
@@ -23,8 +20,8 @@
       </p-checkbox>
     </div>
     <div class="p-col p-ai-center">
-      <label class="label-size">{{"PAGE.CONCORDANCE.WORD_OPTIONS.VALUE_OF" | translate}}</label>
-      <p-dropdown [options]="valueOfList" [(ngModel)]="selectedValueOf" optionLabel="name" [showClear]="true">
+      <label class="label-size p-mr-2">{{"PAGE.CONCORDANCE.WORD_OPTIONS.VALUE_OF" | translate}}</label>
+      <p-dropdown [options]="valueOfList" [(ngModel)]="selectedValueOf" optionLabel="value" [showClear]="true">
       </p-dropdown>
     </div>
   </div>
@@ -90,7 +87,7 @@
       <div *ngFor="let freq of frequencyFigures" class="p-field-checkbox" class="p-d-inline">
         <p-radioButton [inputId]="freq.key" name="displayAttr" [value]="freq" [(ngModel)]="selectedFrequencyFigure">
         </p-radioButton>
-        <label [for]="freq.key" class="p-mr-2 p-ml-1">{{freq.name}}</label>
+        <label [for]="freq.key" class="p-mr-2 p-ml-1">{{freq.value}}</label>
       </div>
     </div>
   </div>
@@ -105,26 +102,26 @@
         <p-radioButton [inputId]="outputTypes[0]?.key" name="displayAttr" [value]="outputTypes[0]"
           [(ngModel)]="selectedOutputType">
         </p-radioButton>
-        <label [for]="outputTypes[0]?.key" class="p-mr-2 p-ml-1">{{outputTypes[0]?.name}}</label>
+        <label [for]="outputTypes[0]?.key" class="p-mr-2 p-ml-1">{{outputTypes[0]?.value}}</label>
       </div>
 
       <div class="p-field-checkbox">
         <p-radioButton [inputId]="outputTypes[1]?.key" name="displayAttr" [value]="outputTypes[1]"
           [(ngModel)]="selectedOutputType">
         </p-radioButton>
-        <label [for]="outputTypes[1]?.key" class="p-mr-2 p-ml-1">{{outputTypes[1]?.name}}</label>
+        <label [for]="outputTypes[1]?.key" class="p-mr-2 p-ml-1">{{outputTypes[1]?.value}}</label>
       </div>
       <div class="p-mt-0 p-mb-3 p-ml-3">
         <div>
           <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.REFS_SUB' | translate}}</div>
           <div class="p-field p-d-inline p-mr-1">
             <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" [options]="searchAttrList"
-              [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+              [(ngModel)]="selectedSearchAttr" optionLabel="value" [showClear]="true">
             </p-dropdown>
           </div>
           <div class="p-field p-d-inline">
             <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" [options]="searchAttrList"
-              [(ngModel)]="selectedSearchAttr" optionLabel="name" [showClear]="true">
+              [(ngModel)]="selectedSearchAttr" optionLabel="value" [showClear]="true">
             </p-dropdown>
           </div>
         </div>
@@ -132,7 +129,7 @@
           <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.PREFER' | translate}}</div>
           <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.RARE_WORDS' | translate}}</div>
           <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" class="p-mr-2" [options]="rareWordsList"
-            [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+            [(ngModel)]="selectedRareWords" optionLabel="value" [showClear]="true" (onChange)="dropdownRareWords()">
           </p-dropdown>
           <div class="p-d-inline p-mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.COMMON_WORDS' | translate}}</div>
           <input [disabled]="selectedOutputType == outputTypes[1]" id="commonWords" pInputText style="width: 70px;"
@@ -144,17 +141,17 @@
         <p-radioButton [inputId]="outputTypes[2]?.key" name="displayAttr" [value]="outputTypes[2]"
           [(ngModel)]="selectedOutputType">
         </p-radioButton>
-        <label [for]="outputTypes[2]?.key" class="p-mr-2 p-ml-1">{{outputTypes[2]?.name}}</label>
+        <label [for]="outputTypes[2]?.key" class="p-mr-2 p-ml-1">{{outputTypes[2]?.value}}</label>
       </div>
       <div class="p-mt-0 p-mb-3 p-ml-3">
         <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="p-mr-2" [options]="rareWordsList"
-          [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+          [(ngModel)]="selectedRareWords" optionLabel="value" [showClear]="true" (onChange)="dropdownRareWords()">
         </p-dropdown>
         <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="p-mr-2" [options]="rareWordsList"
-          [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+          [(ngModel)]="selectedRareWords" optionLabel="value" [showClear]="true" (onChange)="dropdownRareWords()">
         </p-dropdown>
         <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="p-mr-2" [options]="rareWordsList"
-          [(ngModel)]="selectedRareWords" optionLabel="name" [showClear]="true" (onChange)="dropdownRareWords()">
+          [(ngModel)]="selectedRareWords" optionLabel="value" [showClear]="true" (onChange)="dropdownRareWords()">
         </p-dropdown>
       </div>
       <div class="p-mt-0 p-mb-3 p-ml-3">

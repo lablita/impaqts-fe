@@ -2,40 +2,53 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { ButtonItem } from '../model/button-item';
 import { ARF, CHANGE_OUT, DOC_COUNTS, HIT_COUNTS, KEYWORD, SIMPLE } from '../model/constants';
-import { DropdownItem } from '../model/dropdown-item';
+import { KeyValueItem } from '../model/key-value-item';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const WORD_LIST_OPTIONS_QUERY_REQUEST = 'wordListOptionsQueryRequest';
+class DropdownIG {
+  label: string;
+  value: string;
+  constructor(label: string, value: string) {
+    this.label = label;
+    this.value = value;
+  }
+}
 @Component({
   selector: 'app-word-list-options-panel',
   templateUrl: './word-list-options-panel.component.html',
   styleUrls: ['./word-list-options-panel.component.scss'],
   providers: [MessageService]
 })
+
+
 export class WordListOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: KeyValueItem[];
+  @Input() public textTypesAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
   public fileUploadedInfo: string;
   public nonWords: string;
-  public frequencyFigures: ButtonItem[] = [];
-  public selectedFrequencyFigure: ButtonItem;
-  public outputTypes: ButtonItem[] = [];
-  public selectedOutputType: ButtonItem;
-  public subcorpusList: DropdownItem[] = [];
-  public selectedSubcorpus: DropdownItem;
-  public searchAttrList: DropdownItem[] = [];
-  public selectedSearchAttr: DropdownItem;
+  public frequencyFigures: KeyValueItem[] = [];
+  public selectedFrequencyFigure: KeyValueItem;
+  public outputTypes: KeyValueItem[] = [];
+  public selectedOutputType: KeyValueItem;
+  public subcorpusList: KeyValueItem[] = [];
+  public selectedSubcorpus: KeyValueItem;
+  public searchAttrList: {}[] = [];
+  public selectedSearchAttr: KeyValueItem;
   public nGram: string;
-  public valueOfList: DropdownItem[] = [];
-  public selectedValueOf: DropdownItem;
-  public rareWordsList: DropdownItem[] = [];
-  public selectedRareWords: DropdownItem;
+  public valueOfList: KeyValueItem[] = [];
+  public selectedValueOf: KeyValueItem;
+  public rareWordsList: KeyValueItem[] = [];
+  public selectedRareWords: KeyValueItem;
+  public attributeList: DropdownIG[] = [];
+  public textTypeList: DropdownIG[] = [];
 
 
   constructor(
@@ -44,22 +57,40 @@ export class WordListOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.corpusAttributes?.length > 0) {
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new DropdownIG(ca.key, ca.value)));
+    }
+    if (this.corpusAttributes?.length > 0) {
+      this.textTypesAttributes.forEach(ca => this.textTypeList.push(new DropdownIG(ca.key, ca.value)));
+    }
+
+    this.searchAttrList.push(
+      {
+        label: 'Positional attributes',
+        value: 'Positional attributes',
+        items: this.attributeList
+      }, {
+      label: 'Text types',
+      value: 'Text types',
+      items: this.textTypeList
+    });
+
     this.valueOfList = [
-      new DropdownItem('2', '2'),
-      new DropdownItem('3', '3'),
-      new DropdownItem('4', '4'),
-      new DropdownItem('5', '5'),
-      new DropdownItem('6', '6'),
+      new KeyValueItem('2', '2'),
+      new KeyValueItem('3', '3'),
+      new KeyValueItem('4', '4'),
+      new KeyValueItem('5', '5'),
+      new KeyValueItem('6', '6'),
     ];
     this.rareWordsList = [
-      new DropdownItem('0,01', '0,01'),
-      new DropdownItem('0,1', '0,1'),
-      new DropdownItem('1', '1'),
-      new DropdownItem('10', '10'),
-      new DropdownItem('100', '100'),
-      new DropdownItem('1000', '1000'),
-      new DropdownItem('10000', '10000'),
-      new DropdownItem('100000', '100000'),
+      new KeyValueItem('0,01', '0,01'),
+      new KeyValueItem('0,1', '0,1'),
+      new KeyValueItem('1', '1'),
+      new KeyValueItem('10', '10'),
+      new KeyValueItem('100', '100'),
+      new KeyValueItem('1000', '1000'),
+      new KeyValueItem('10000', '10000'),
+      new KeyValueItem('100000', '100000'),
     ];
     this.wordListOptionsQueryRequest = localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST) ?
       JSON.parse(localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST)) :
@@ -70,15 +101,15 @@ export class WordListOptionsPanelComponent implements OnInit {
       this.nGram = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM');
 
       this.frequencyFigures = [
-        new ButtonItem(HIT_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS')),
-        new ButtonItem(DOC_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.DOC_COUNTS')),
-        new ButtonItem(ARF, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.ARF'))
+        new KeyValueItem(HIT_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS')),
+        new KeyValueItem(DOC_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.DOC_COUNTS')),
+        new KeyValueItem(ARF, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.ARF'))
       ];
 
       this.outputTypes = [
-        new ButtonItem(SIMPLE, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE')),
-        new ButtonItem(KEYWORD, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD')),
-        new ButtonItem(CHANGE_OUT, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT'))
+        new KeyValueItem(SIMPLE, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE')),
+        new KeyValueItem(KEYWORD, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD')),
+        new KeyValueItem(CHANGE_OUT, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT'))
       ];
     });
 
@@ -101,7 +132,7 @@ export class WordListOptionsPanelComponent implements OnInit {
   }
 
   public dropdownRareWords(): void {
-    this.wordListOptionsQueryRequest.commonWords = parseFloat(this.selectedRareWords.code);
+    this.wordListOptionsQueryRequest.commonWords = parseFloat(this.selectedRareWords.key);
   }
 
 }

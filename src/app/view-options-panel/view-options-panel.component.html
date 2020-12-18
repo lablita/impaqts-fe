@@ -10,7 +10,7 @@
       </span>
       <div *ngFor="let attr of attributeChekBox" class="p-field-checkbox">
         <div class="p-field-checkbox p-mb-0">
-          <p-checkbox name="optionAttributes" [value]="attr.key" [label]="attr.name"
+          <p-checkbox name="optionAttributes" [value]="attr.key" [label]="attr.value"
             [(ngModel)]="viewOptionsQueryRequest.attributes">
           </p-checkbox>
         </div>
@@ -22,7 +22,7 @@
       <div *ngFor="let display of displayAttr" class="p-field-checkbox">
         <p-radioButton [inputId]="display.key" name="displayAttr" [value]="display" [(ngModel)]="selectedDisplayAttr">
         </p-radioButton>
-        <label [for]="display.key" class="p-mr-2 p-ml-1">{{display.name}}</label>
+        <label [for]="display.key" class="p-mr-2 p-ml-1">{{display.value}}</label>
       </div>
 
       <div class="p-field-checkbox p-mb-0">
@@ -35,16 +35,16 @@
     <div class="p-col">
       <span class="p-text-center">
         <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.STRUCTURES' | translate}}</h3>
-        <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-          [(ngModel)]="viewOptionsQueryRequest.structures"></textarea>
+        <p-listbox [options]="attributeChekBox" [multiple]="true" [(ngModel)]="viewOptionsQueryRequest.structures"
+          optionLabel="value"></p-listbox>
       </span>
     </div>
     <div class="p-col">
       <span class="p-text-center">
         <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.REFERENCES' | translate}}</h3>
-        <textarea [rows]="20" [cols]="25" pInputTextarea autoResize="autoResize"
-          [(ngModel)]="viewOptionsQueryRequest.references"></textarea>
-        <div class="p-field-checkbox p-mb-0">
+        <p-listbox [options]="attributeChekBox" [multiple]="true" [(ngModel)]="viewOptionsQueryRequest.references"
+          optionLabel="value"></p-listbox>
+        <div class="p-field-checkbox p-mt-2">
           <p-checkbox name="refsUp" [binary]="true" [label]="refsUpLabel" [(ngModel)]="viewOptionsQueryRequest.refsUp">
           </p-checkbox>
         </div>

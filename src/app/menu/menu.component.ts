@@ -196,7 +196,7 @@ export class MenuComponent implements OnInit {
         ], false, false, null),
         new MenuItemObject(this.collocations, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(COLLOCATIONS));
-        }, null, null, false, false, COLLOCATIONS),
+        }, null, null, false, false, null),
         new MenuItemObject(this.concDesc, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(CONC_DECS));
         }, null, null, false, false, CONC_DECS),

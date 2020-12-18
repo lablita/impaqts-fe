@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { ButtonItem } from '../model/button-item';
 import { FIRST, L1, L2, L3, LEFT, NODE, R1, R2, R3, RIGHT, SECOND, THIRD } from '../model/constants';
-import { DropdownItem } from '../model/dropdown-item';
+import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
@@ -17,21 +16,22 @@ const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 export class SortOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
+  @Input() public corpusAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public sortOptionsQueryRequest: SortOptionsQueryRequest;
 
-  public attributeList: DropdownItem[];
-  public selectedAttribute: DropdownItem;
-  public selectedMultiAttribute: DropdownItem[];
-  public sortKeys: ButtonItem[];
-  public selectedSortKey: ButtonItem;
+  public attributeList: KeyValueItem[] = [];
+
+  public selectedMultiAttribute: KeyValueItem[];
+  public sortKeys: KeyValueItem[];
+  public selectedSortKey: KeyValueItem;
   public ignoreCaseLabel: string;
   public backwordLabel: string;
-  public levels: ButtonItem[];
-  public selectedLevel: ButtonItem;
-  public positionList: DropdownItem[];
-  public selectedPosition: DropdownItem[];
+  public levels: KeyValueItem[];
+  public selectedLevel: KeyValueItem;
+  public positionList: KeyValueItem[];
+  public selectedPosition: KeyValueItem[];
   public ignoreCase: boolean[];
   public backward: boolean[];
 
@@ -40,58 +40,61 @@ export class SortOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.ignoreCase = [false, false, false];
-    this.backward = [false, false, false];
-
-    this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
-
     this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      this.attributeList = [
-        new DropdownItem('word', word),
-        new DropdownItem('tag', this.translateService.instant('PAGE.CONCORDANCE.TAG')),
-        new DropdownItem('lemma', this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new DropdownItem('word_lc', this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC')),
-        new DropdownItem('lemma_lc', this.translateService.instant('PAGE.CONCORDANCE.LEMMA_LC')),
-      ];
-
       this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
       this.backwordLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD');
 
       this.sortKeys = [
-        new ButtonItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT')),
-        new ButtonItem(NODE, this.translateService.instant('MENU.NODE')),
-        new ButtonItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT'))
+        new KeyValueItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT')),
+        new KeyValueItem(NODE, this.translateService.instant('MENU.NODE')),
+        new KeyValueItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT'))
       ];
 
       this.levels = [
-        new ButtonItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL')),
-        new ButtonItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL')),
-        new ButtonItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL'))
+        new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL')),
+        new KeyValueItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL')),
+        new KeyValueItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL'))
       ];
 
       this.positionList = [
-        new DropdownItem(L3, L3),
-        new DropdownItem(L2, L2),
-        new DropdownItem(L1, L1),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(R3, R3),
-        new DropdownItem(R2, R2),
-        new DropdownItem(R1, R1)
+        new KeyValueItem(L3, L3),
+        new KeyValueItem(L2, L2),
+        new KeyValueItem(L1, L1),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(R3, R3),
+        new KeyValueItem(R2, R2),
+        new KeyValueItem(R1, R1)
       ];
 
       this.selectedMultiAttribute = [
-        new DropdownItem('word', word),
-        new DropdownItem('word', word),
-        new DropdownItem('word', word)
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word),
+        new KeyValueItem('word', word)
       ];
 
       this.selectedPosition = [
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE),
-        new DropdownItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
+        new KeyValueItem(NODE, NODE),
       ];
+
+      if (this.corpusAttributes?.length > 0) {
+        this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
+      }
+      this.ignoreCase = [false, false, false];
+      this.backward = [false, false, false];
+
+      this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
+        JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
+        INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
+
+      this.selectedSortKey = this.sortKeys.filter(sk => sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
+      this.selectedLevel = this.levels.filter(l => l.key === this.sortOptionsQueryRequest.level.key)[0];
+      const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
+      this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
+      this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
+      this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
+      this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
     });
   }
 
@@ -100,7 +103,16 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickSortOption(): void {
+    this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
+    this.sortOptionsQueryRequest.level = this.selectedLevel;
+    const index = this.sortOptionsQueryRequest.level.key === FIRST ? 0 : (this.sortOptionsQueryRequest.level.key === SECOND ? 1 : 2);
+    this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute[index];
+    this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase[index];
+    this.sortOptionsQueryRequest.backwardMulti = this.backward[index];
+    this.sortOptionsQueryRequest.position = this.selectedPosition[index];
 
+    localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
+    console.log('ok');
   }
 
 }
