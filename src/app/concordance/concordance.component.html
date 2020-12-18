@@ -68,28 +68,8 @@
       </div>
 
       <div *ngIf="contextStatus">
-        <div class="p-mt-4">
-          <h2>{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h2>
-        </div>
-        <div class="p-mt-1 p-ml-3">
-          <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
-          <div class="p-field">
-            <label class="label-size-reduced">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
-            <p-dropdown [options]="windows" [(ngModel)]="selectedWindow" optionLabel="value" [showClear]="true">
-            </p-dropdown>&nbsp;
-            <p-dropdown [options]="tokens" [(ngModel)]="selectedToken" optionLabel="value" [showClear]="true">
-            </p-dropdown>&nbsp;
-            <label class="label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
-
-            <div class="p-field p-mt-3">
-              <label for="lemmas" class="label-size-reduced">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
-              <input id="lemmas" type="text" pInputText style="width: 150px;" [(ngModel)]="lemma">&nbsp;
-              <p-dropdown [options]="items" [(ngModel)]="selectedItem" optionLabel="value" [showClear]="true">
-              </p-dropdown>&nbsp;
-              <label class="label-size">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
-            </div>
-          </div>
-        </div>
+        <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
+        </app-context-concordance>
         <div>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
             (click)="clickMakeConcordance()" class="p-mr-5"></button>
