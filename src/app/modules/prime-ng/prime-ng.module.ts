@@ -13,6 +13,7 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SidebarModule } from 'primeng/sidebar';
@@ -20,6 +21,7 @@ import { SliderModule } from 'primeng/slider';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { TreeModule } from 'primeng/tree';
+
 
 @NgModule({
   declarations: [],
@@ -44,7 +46,8 @@ import { TreeModule } from 'primeng/tree';
     ToastModule,
     ScrollPanelModule,
     TreeModule,
-    ListboxModule
+    ListboxModule,
+    ProgressSpinnerModule
   ],
   exports: [
     CommonModule,
@@ -67,7 +70,8 @@ import { TreeModule } from 'primeng/tree';
     ToastModule,
     ScrollPanelModule,
     TreeModule,
-    ListboxModule
+    ListboxModule,
+    ProgressSpinnerModule
   ]
 })
 export class PrimeNgModule { }
