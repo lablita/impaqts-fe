@@ -1,4 +1,7 @@
 <div>
+  <div *ngIf="loading > 0" class="p-text-center">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+  </div>
   <div>
     <a class="p-shadow-7 p-component right-button-meta"
       [ngClass]="{'right-button-meta': !isFilterOptions(), 'right-button-options': isFilterOptions() }"
@@ -24,14 +27,15 @@
         </div>
         <!-- Single selection -->
         <div *ngIf="(metadatum.tree?.length > 0) && !metadatum.multipleChoice">
-          <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection">
+          <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
+            (onNodeSelect)="selectedNode(metadatum)" stlye="color: red !importatnt;">
           </p-tree>
         </div>
       </div>
     </div>
   </p-scrollPanel>
 
-  <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
+  <button pButton type=" button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
     (click)="clickMakeConcordance()"></button>
 
 </div>

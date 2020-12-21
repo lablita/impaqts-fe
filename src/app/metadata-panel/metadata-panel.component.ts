@@ -29,6 +29,7 @@ export class MetadataPanelComponent implements OnInit {
   public res: KeyValueItem[] = [];
   public displayPanelMetadata = false;
   public selected: any;
+  public loading = 0;
 
   private textTypesRequest: TextTypesRequest;
 
@@ -56,7 +57,10 @@ export class MetadataPanelComponent implements OnInit {
     this.metadata.forEach((metadatum, index) => {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
+        metadatum.selected = false;
+        this.loading++;
         setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
+          this.loading--;
           if (res) {
             metadatum.subMetadata = res;
             const root: TreeNode = {
@@ -64,13 +68,25 @@ export class MetadataPanelComponent implements OnInit {
               selectable: false,
               children: []
             };
-            res.metadataValues.forEach(el => {
-              root.children.push({
-                label: el,
-                selectable: true,
-                parent: root,
+            if (!metadatum.multipleChoice) {
+              res.metadataValues.forEach(el => {
+                root.children.push({
+                  label: el,
+                  selectable: true,
+                  icon: "pi pi-circle-off",
+                  parent: root,
+                });
               });
-            });
+            }
+            else {
+              res.metadataValues.forEach(el => {
+                root.children.push({
+                  label: el,
+                  selectable: true,
+                  parent: root
+                });
+              });
+            }
             metadatum.tree = [];
             metadatum.tree.push(root);
           }
@@ -131,5 +147,13 @@ export class MetadataPanelComponent implements OnInit {
   public isFilterOptions(): boolean {
     return this.title === 'MENU.FILTER';
   }
+
+  public selectedNode(metadata: Metadatum): void {
+    metadata['tree'][0].children.forEach(el => {
+      el.icon = el.label === metadata.selection['label'] ? "pi pi-circle-on" : "pi pi-circle-off";
+    });
+    metadata.selection['icon'] = "pi pi-circle-on";
+  }
+
 
 }

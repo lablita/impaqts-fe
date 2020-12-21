@@ -4,9 +4,7 @@ import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-le
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { MainComponent } from './main/main.component';
-import { MyJobComponent } from './my-job/my-job.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
-import { SaveComponent } from './save/save.component';
 
 const routes: Routes = [
   {
@@ -25,20 +23,12 @@ const routes: Routes = [
         component: CorpusInfoComponent
       },
       {
-        path: 'my_jobs',
-        component: MyJobComponent
-      },
-      {
         path: 'all_words',
         component: AllWordsOrLemmasComponent
       },
       {
         path: 'all_lemmans',
         component: AllWordsOrLemmasComponent
-      },
-      {
-        path: 'save',
-        component: SaveComponent
       }
     ]
   },
