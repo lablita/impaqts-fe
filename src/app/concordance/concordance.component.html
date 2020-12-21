@@ -135,8 +135,7 @@
         [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
       </app-frequency-options-panel>
       <app-collocation-options-panel *ngIf="titleOption === collocationOptionsLabel"
-        [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
-        (closeSidebarEvent)="displayPanelOptions=false">
+        [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
       </app-collocation-options-panel>
       <app-filter-options-panel *ngIf="titleOption === filterOptionsLabel" [corpus]="selectedCorpus?.key"
         [metadata]="metadataTextTypes" (closeSidebarEvent)="displayPanelMetadata=false">

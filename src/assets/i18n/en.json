@@ -160,7 +160,14 @@
         "MIN_FREQ_R": "Minimum frequency in given range",
         "SHOW": "Show functions",
         "SORT_BY": "Sort by",
-        "MAKE_CANDIDATE_LIST": "Make candidate list"
+        "MAKE_CANDIDATE_LIST": "Make candidate list",
+        "T_SCORE": "T-score",
+        "MI": "MI",
+        "MI3": "MI3",
+        "LOG": "log likeihood",
+        "MIN": "min. sensitivity",
+        "LOG_DICE": "logDice",
+        "MI_LOG": "MI.log_f"
       },
       "FILTER_OPTIONS": {
         "CONCORDANCE_FILTER": "Concordance filter",

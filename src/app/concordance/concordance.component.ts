@@ -37,6 +37,7 @@ export class ConcordanceComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public metadataTextTypes: Metadatum[] = [];
 
+  public lemma: string;
   public selectedCorpus: KeyValueItem;
   public queryTypes: KeyValueItem[];
   public selectedQueryType: KeyValueItem;
