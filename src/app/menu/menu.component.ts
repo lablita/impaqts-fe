@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, CONC_DECS, CORPUS_INFO,
-  FILTER, FIRST_HIT_IN_DOC, FREQUENCY, KWIC, LEFT, MY_JOBS, NODE, NODE_FORMS, NODE_TAGS, OVERLAPS,
+  FILTER, FIRST_HIT_IN_DOC, FREQUENCY, KWIC, LEFT, NODE, NODE_FORMS, NODE_TAGS, OVERLAPS,
   RESULT_CONCORDANCE, RIGHT, SAMPLE, SAVE, SENTENCE, SHUFFLE, SORT, VIEW_OPTIONS, VISUALIZE, WORD_LIST
 } from '../model/constants';
 import { MenuEmitterService } from './menu-emitter.service';
@@ -30,7 +30,6 @@ export class MenuComponent implements OnInit {
   private concordance: string;
   private wordList: string;
   private corpusInfo: string;
-  private myJobs: string;
   private userGuide: string;
   private allWords: string;
   private allLemmans: string;
@@ -68,7 +67,6 @@ export class MenuComponent implements OnInit {
       this.concordance = concordance;
       this.wordList = this.translateService.instant('MENU.WOLRD_LIST') as string;
       this.corpusInfo = this.translateService.instant('MENU.CORPUS_INFO') as string;
-      this.myJobs = this.translateService.instant('MENU.MY_JOBS') as string;
       this.userGuide = this.translateService.instant('MENU.USER_GUIDE') as string;
       this.allWords = this.translateService.instant('MENU.ALL_WORDS') as string;
       this.allLemmans = this.translateService.instant('MENU.ALL_LEMMANS') as string;
@@ -112,9 +110,6 @@ export class MenuComponent implements OnInit {
       new MenuItemObject(this.corpusInfo, null, () => {
         this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
       }, null, null, false, false, CORPUS_INFO),
-      new MenuItemObject(this.myJobs, null, () => {
-        this.menuEmitterService.click.emit(new MenuEvent(MY_JOBS));
-      }, null, null, false, false, MY_JOBS),
       new MenuItemObject(null, 'pi pi-question-circle', null, 'https://www.sketchengine.co.uk/documentationmain-sketch-engine-links',
         null, false, false, null),
       new MenuItemObject(null, null, null, null, null, false, true, null),
@@ -213,8 +208,6 @@ export class MenuComponent implements OnInit {
 
     switch (page) {
       case CONCORDANCE:
-      case MY_JOBS:
-        return this.menuConcordance;
 
       case WORD_LIST:
       case ALL_WORDS:
