@@ -8,6 +8,18 @@
       <span class="p-text-center">
         <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTES' | translate}}</h3>
       </span>
+
+      <div class="p-grid p-ml-4 p-ai-center">
+        <div class="p-col-6">
+          <button pButton style="width: 100px;" type="button" label="{{'MENU.KWIC' | translate}}" (click)="clickKwic()"
+            class="p-mr-5"></button>
+        </div>
+        <div class="p-col-6">
+          <button pButton style="width: 100px;" type="button" label="{{'MENU.SENTENCE' | translate}}"
+            (click)="clickSentence()" class="p-mr-5"></button>
+        </div>
+      </div>
+
       <div *ngFor="let attr of attributeChekBox" class="p-field-checkbox">
         <div class="p-field-checkbox p-mb-0">
           <p-checkbox name="optionAttributes" [value]="attr.key" [label]="attr.value"

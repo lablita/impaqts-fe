@@ -115,4 +115,20 @@ export class SortOptionsPanelComponent implements OnInit {
     console.log('ok');
   }
 
+  public clickLeft(): void {
+
+  }
+
+  public clickRight(): void {
+
+  }
+
+  public clickNode(): void {
+
+  }
+
+  public clickShuffle(): void {
+
+  }
+
 }

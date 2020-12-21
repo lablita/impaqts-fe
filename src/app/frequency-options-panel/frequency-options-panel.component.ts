@@ -111,4 +111,12 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     console.log('ok');
   }
 
+  public clickNodeTags(): void {
+
+  }
+
+  public clickNodeForms(): void {
+
+  }
+
 }

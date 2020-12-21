@@ -83,4 +83,12 @@ export class ViewOptionsPanelComponent implements OnInit {
     this.closeSidebarEvent.emit(true);
   }
 
+  public clickKwic(): void {
+
+  }
+
+  public clickSentence(): void {
+
+  }
+
 }

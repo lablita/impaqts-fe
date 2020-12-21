@@ -6,6 +6,7 @@ import { Metadatum } from '../model/Metadatum';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 
+const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
 export class subMetadatum {
   currentSize: number;
   kwicLines: string[];
@@ -39,6 +40,9 @@ export class MetadataPanelComponent implements OnInit {
 
   ngOnInit(): void {
 
+    // recuro i dati savati nel localstorage
+    this.textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
+      JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
 
     // genero albero per componente multiselect check box
     this.metadata.forEach(md => {
@@ -59,8 +63,18 @@ export class MetadataPanelComponent implements OnInit {
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
         this.loading++;
+
         setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
+
+          //ripristino valori letti da local storage
+          const key = this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
+            this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0]?.values : null as string[];
+
+
+
           this.loading--;
+
+
           if (res) {
             metadatum.subMetadata = res;
             const root: TreeNode = {
@@ -73,7 +87,7 @@ export class MetadataPanelComponent implements OnInit {
                 root.children.push({
                   label: el,
                   selectable: true,
-                  icon: "pi pi-circle-off",
+                  icon: key.filter(k => k === el).length > 0 ? "pi pi-circle-on" : "pi pi-circle-off",
                   parent: root,
                 });
               });
@@ -90,11 +104,22 @@ export class MetadataPanelComponent implements OnInit {
             metadatum.tree = [];
             metadatum.tree.push(root);
           }
+
         }), 4000 * index);
       }
     });
-    console.log('test');
+
+
+    this.metadata.forEach(md => {
+      if (md.freeText) {
+        md.selection === this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value
+      }
+    });
+
   }
+
+
+
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
@@ -127,21 +152,25 @@ export class MetadataPanelComponent implements OnInit {
   public clickMakeConcordance() {
     this.textTypesRequest = new TextTypesRequest();
     this.metadata.forEach(md => {
-      if (md.freeText) {
-        //freetxt
-        this.textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
-      } else if (!md.multipleChoice && (md?.tree[0]?.children.length > 0)) {
-        //single
-        this.textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
-      } else {
-        //multi
-        const values: string[] = [];
-        (md.selection as TreeNode[]).forEach(m => {
-          values.push(m.label);
-        });
-        this.textTypesRequest.multiSelects.push(new Selection(md.name, null, values));
+      if (!!md.selection) {
+        if (md.freeText) {
+          //freetxt
+          this.textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
+        } else if (!md.multipleChoice && (md?.tree[0]?.children.length > 0)) {
+          //single
+          this.textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
+        } else {
+          //multi
+          const values: string[] = [];
+          (md.selection as TreeNode[]).forEach(m => {
+            values.push(m.label);
+          });
+          this.textTypesRequest.multiSelects.push(new Selection(md.name, null, values));
+        }
       }
     });
+    localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(this.textTypesRequest));
+    console.log('ok');
   }
 
   public isFilterOptions(): boolean {

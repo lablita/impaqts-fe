@@ -6,6 +6,25 @@
 <span class="p-component">
   <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SIMPLE_SORT' | translate}}</h3>
 
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-3">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.LEFT' | translate}}" (click)="clickLeft()"
+        class="p-mr-5"></button>
+    </div>
+    <div class="p-col-3">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.RIGHT' | translate}}" (click)="clickRight()"
+        class="p-mr-5"></button>
+    </div>
+    <div class="p-col-3">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.NODE' | translate}}" (click)="clickNode()"
+        class="p-mr-5"></button>
+    </div>
+    <div class="p-col-3">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.SHUFFLE' | translate}}"
+        (click)="clickShuffle()" class="p-mr-5"></button>
+    </div>
+  </div>
+
   <div class="p-field p-ml-2 p-mb-2">
     <p-dropdown [options]="attributeList" [(ngModel)]="sortOptionsQueryRequest.attribute" optionLabel="key"
       [showClear]="true">

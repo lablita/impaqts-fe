@@ -6,6 +6,17 @@
 <span class="p-component">
 
   <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}</h3>
+
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-6">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.NODE_TAGS' | translate}}"
+        (click)="clickNodeTags()" class="p-mr-5"></button>
+    </div>
+    <div class="p-col-6">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.NODE_FORMS' | translate}}"
+        (click)="clickNodeForms()" class="p-mr-5"></button>
+    </div>
+  </div>
   <div class="p-field p-ml-2">
     <label for="numToken" style="width: 145px;"
       class="p-mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>

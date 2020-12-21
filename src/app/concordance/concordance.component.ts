@@ -6,7 +6,7 @@ import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
   CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, LEMMA,
-  PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, WORD, WORD_LIST
+  PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, VIEW_OPTIONS, WORD, WORD_LIST
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -78,7 +78,7 @@ export class ConcordanceComponent implements OnInit {
   constructor(
     private readonly translateService: TranslateService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly emitterServices: EmitterService
+    private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
@@ -109,30 +109,40 @@ export class ConcordanceComponent implements OnInit {
       switch (event.item) {
         case WORD_LIST:
           this.titleOption = this.wordListOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case SORT:
           this.titleOption = this.sortOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case FREQUENCY:
           this.titleOption = this.freqOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case COLLOCATIONS:
           this.titleOption = this.collocationOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case FILTER:
           this.titleOption = this.filterOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
+          break;
+        case VIEW_OPTIONS:
+          this.titleOption = this.viewOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         default:
           this.titleOption = this.viewOptionsLabel;
+        // this.emitterService.clickPanelDisplayOptions.emit(true);
       }
-      this.emitterServices.clickLabel.emit(this.titleOption);
+      this.emitterService.clickLabel.emit(this.titleOption);
     });
 
-    this.emitterServices.clickPanelDisplayOptions.subscribe((event: boolean) => {
+    this.emitterService.clickPanelDisplayOptions.subscribe((event: boolean) => {
       this.displayPanelOptions = event;
     });
 
-    this.emitterServices.clickPanelDisplayMetadata.subscribe((event: boolean) => {
+    this.emitterService.clickPanelDisplayMetadata.subscribe((event: boolean) => {
       this.displayPanelMetadata = event;
     });
 
@@ -167,7 +177,7 @@ export class ConcordanceComponent implements OnInit {
 
   public clickTextType(): void {
     this.textTypeStatus = !this.textTypeStatus;
-    this.emitterServices.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
+    this.emitterService.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
   }
 
   public clickMakeConcordance(): void {
@@ -185,8 +195,8 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public dropdownCorpus(): void {
-    this.emitterServices.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
-    this.emitterServices.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+    this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
+    this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
     if (this.selectedCorpus) {
       this.metadataAttributes = [];
       this.textTypesAttributes = [];

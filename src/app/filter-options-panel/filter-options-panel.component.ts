@@ -58,4 +58,12 @@ export class FilterOptionsPanelComponent implements OnInit {
     console.log('ok');
   }
 
+  public clickOverlaps(): void {
+
+  }
+
+  public clickFirst(): void {
+
+  }
+
 }

@@ -2,6 +2,16 @@
   <div class="p-mt-4">
     <h2>{{"PAGE.CONCORDANCE.FILTER_OPTIONS.CONCORDANCE_FILTER" | translate}}</h2>
   </div>
+  <div class="p-grid p-ml-4 p-ai-center">
+    <div class="p-col-6">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.OVERLAPS' | translate}}"
+        (click)="clickOverlaps()" class="p-mr-5"></button>
+    </div>
+    <div class="p-col-6">
+      <button pButton style="width: 100px;" type="button" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}"
+        (click)="clickFirst()" class="p-mr-5"></button>
+    </div>
+  </div>
 
   <div class="p-d-flex p-ml-2">
     <label class="label-size">{{"MENU.FILTER" | translate}}</label>
