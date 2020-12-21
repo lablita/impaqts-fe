@@ -21,7 +21,6 @@ import { MetadataPanelComponent } from './metadata-panel/metadata-panel.componen
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { RightComponent } from './right/right.component';
-import { SaveComponent } from './save/save.component';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
 import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
@@ -37,7 +36,6 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     ConcordanceComponent,
     CorpusInfoComponent,
     AllWordsOrLemmasComponent,
-    SaveComponent,
     ViewOptionsPanelComponent,
     WordListOptionsPanelComponent,
     RightComponent,

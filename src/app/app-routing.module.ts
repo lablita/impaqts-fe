@@ -5,7 +5,6 @@ import { ConcordanceComponent } from './concordance/concordance.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { MainComponent } from './main/main.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
-import { SaveComponent } from './save/save.component';
 
 const routes: Routes = [
   {
@@ -30,10 +29,6 @@ const routes: Routes = [
       {
         path: 'all_lemmans',
         component: AllWordsOrLemmasComponent
-      },
-      {
-        path: 'save',
-        component: SaveComponent
       }
     ]
   },

@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, CONC_DECS, CORPUS_INFO,
   FILTER, FIRST_HIT_IN_DOC, FREQUENCY, KWIC, LEFT, NODE, NODE_FORMS, NODE_TAGS, OVERLAPS,
-  RESULT_CONCORDANCE, RIGHT, SAMPLE, SAVE, SENTENCE, SHUFFLE, SORT, VIEW_OPTIONS, VISUALIZE, WORD_LIST
+  RESULT_CONCORDANCE, RIGHT, SAMPLE, SENTENCE, SHUFFLE, SORT, VIEW_OPTIONS, VISUALIZE, WORD_LIST
 } from '../model/constants';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
@@ -70,7 +70,6 @@ export class MenuComponent implements OnInit {
       this.userGuide = this.translateService.instant('MENU.USER_GUIDE') as string;
       this.allWords = this.translateService.instant('MENU.ALL_WORDS') as string;
       this.allLemmans = this.translateService.instant('MENU.ALL_LEMMANS') as string;
-      this.save = this.translateService.instant('MENU.SAVE') as string;
       this.viewOption = this.translateService.instant('MENU.VIEW_OPTION') as string;
       this.KWIC = this.translateService.instant('MENU.KWIC') as string;
       this.sentence = this.translateService.instant('MENU.SENTENCE') as string;
@@ -133,13 +132,6 @@ export class MenuComponent implements OnInit {
     this.menuResultConcordance = this.menuConcordance.concat(
       [
         new MenuItemObject(null, null, null, null, null, false, true, null),
-        new MenuItemObject(this.save, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(SAVE));
-        }, null, [
-          new MenuItemObject(this.asSubcorpus, null, () => {
-            this.menuEmitterService.click.emit(new MenuEvent(AS_SUBCORPUS));
-          }, null, null, false, false, AS_SUBCORPUS),
-        ], false, false, SAVE),
         new MenuItemObject(this.viewOption, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(VIEW_OPTIONS));
         }, null, [
@@ -215,7 +207,6 @@ export class MenuComponent implements OnInit {
         return this.menuWordList;
 
       case RESULT_CONCORDANCE:
-      case SAVE:
       case AS_SUBCORPUS:
       case VIEW_OPTIONS:
       case KWIC:
