@@ -30,11 +30,8 @@ export class MenuComponent implements OnInit {
   private concordance: string;
   private wordList: string;
   private corpusInfo: string;
-  private userGuide: string;
   private allWords: string;
   private allLemmans: string;
-  private save: string;
-  private asSubcorpus: string;
   private viewOption: string;
   private KWIC: string;
   private sentence: string;
@@ -67,7 +64,6 @@ export class MenuComponent implements OnInit {
       this.concordance = concordance;
       this.wordList = this.translateService.instant('MENU.WOLRD_LIST') as string;
       this.corpusInfo = this.translateService.instant('MENU.CORPUS_INFO') as string;
-      this.userGuide = this.translateService.instant('MENU.USER_GUIDE') as string;
       this.allWords = this.translateService.instant('MENU.ALL_WORDS') as string;
       this.allLemmans = this.translateService.instant('MENU.ALL_LEMMANS') as string;
       this.viewOption = this.translateService.instant('MENU.VIEW_OPTION') as string;
@@ -108,11 +104,7 @@ export class MenuComponent implements OnInit {
       }, null, null, false, false, null),
       new MenuItemObject(this.corpusInfo, null, () => {
         this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
-      }, null, null, false, false, CORPUS_INFO),
-      new MenuItemObject(null, 'pi pi-question-circle', null, 'https://www.sketchengine.co.uk/documentationmain-sketch-engine-links',
-        null, false, false, null),
-      new MenuItemObject(null, null, null, null, null, false, true, null),
-      new MenuItemObject(this.userGuide, null, null, null, null, false, false, null),
+      }, null, null, false, false, CORPUS_INFO)
     ];
 
     this.menuWordList = this.menuConcordance.concat(
@@ -123,9 +115,7 @@ export class MenuComponent implements OnInit {
         }, null, null, false, false, ALL_WORDS),
         new MenuItemObject(this.allLemmans, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(ALL_LEMMANS));
-        }, null, null, false, false, ALL_LEMMANS),
-        new MenuItemObject(null, 'pi pi-question-circle', null, 'https://www.sketchengine.co.uk/documentationword-list',
-          null, false, false, null),
+        }, null, null, false, false, ALL_LEMMANS)
       ]
     );
 
