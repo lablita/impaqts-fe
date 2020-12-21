@@ -1,5 +1,6 @@
 import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
 import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
+import { FilterOptionsQueryRequest } from '../model/filter-options-query.request';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
@@ -63,10 +64,10 @@ export const INSTALLATION_LIST = {
       new KeyValueItem(NODE, NODE),
     ), new FreqOptionsQueryRequest(
       0,
-      FIRST,
-      WORD,
+      new KeyValueItem(FIRST, FIRST),
+      new KeyValueItem(WORD, WORD),
       false,
-      NODE,
+      new KeyValueItem(NODE, NODE),
       0,
       false,
       []
@@ -78,6 +79,12 @@ export const INSTALLATION_LIST = {
       3,
       [],
       null
+    ), new FilterOptionsQueryRequest(
+      new KeyValueItem('POSITIVE', 'POSITIVE'),
+      new KeyValueItem(FIRST, FIRST),
+      -5,
+      5,
+      false
     )
   )
   ,
@@ -137,10 +144,10 @@ export const INSTALLATION_LIST = {
       new KeyValueItem(NODE, NODE),
     ), new FreqOptionsQueryRequest(
       0,
-      FIRST,
-      WORD,
+      new KeyValueItem(FIRST, FIRST),
+      new KeyValueItem(WORD, WORD),
       false,
-      NODE,
+      new KeyValueItem(NODE, NODE),
       0,
       false,
       []
@@ -152,6 +159,12 @@ export const INSTALLATION_LIST = {
       3,
       [],
       null
+    ), new FilterOptionsQueryRequest(
+      new KeyValueItem('POSITIVE', 'POSITIVE'),
+      new KeyValueItem(FIRST, FIRST),
+      -5,
+      5,
+      false
     )
   )
 

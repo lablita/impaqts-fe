@@ -5,9 +5,10 @@ import { INSTALLATION } from '../app.component';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  ALL, ANY, BOTH, CHARACTER, COLLOCATIONS, CQL, FREQUENCY, LEFT, LEMMA,
-  NONE, PHRASE, RESULT_CONCORDANCE, RIGHT, SIMPLE, SORT, WORD, WORD_LIST
+  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, LEMMA,
+  PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, WORD, WORD_LIST
 } from '../model/constants';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
@@ -29,19 +30,14 @@ export class ConcordanceComponent implements OnInit {
 
   @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
 
+  public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
+
   public installation: Installation;
   /** public */
   public corpusList: KeyValueItem[] = [];
-  // public metadataCorpus: Metadatum[] = [];
   public metadataTextTypes: Metadatum[] = [];
 
   public selectedCorpus: KeyValueItem;
-  public windows: KeyValueItem[];
-  public selectedWindow: KeyValueItem;
-  public items: KeyValueItem[];
-  public selectedItem: KeyValueItem;
-  public tokens: KeyValueItem[] = [];
-  public selectedToken: KeyValueItem;
   public queryTypes: KeyValueItem[];
   public selectedQueryType: KeyValueItem;
   public selectCorpus: string = 'PAGE.CONCORDANCE.SELECT_CORPUS';
@@ -52,7 +48,6 @@ export class ConcordanceComponent implements OnInit {
   public CQL = CQL;
   public titleOption: string;
   public simple: string;
-  public lemma: string;
   public phrase: string;
   public word: string;
   public character: string;
@@ -66,6 +61,7 @@ export class ConcordanceComponent implements OnInit {
   public sortOptionsLabel: string;
   public freqOptionsLabel: string;
   public collocationOptionsLabel: string;
+  public filterOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public queryResponse: QueryResponse;
@@ -108,14 +104,6 @@ export class ConcordanceComponent implements OnInit {
     this.contextStatus = false;
     this.textTypeStatus = false;
 
-    for (let i = 1; i < 6; i++) {
-      this.tokens.push(new KeyValueItem('' + i, '' + i));
-    }
-    this.tokens.push(new KeyValueItem('7', '7'));
-    this.tokens.push(new KeyValueItem('10', '10'));
-    this.tokens.push(new KeyValueItem('15', '15'));
-    this.selectedToken = this.tokens[4];
-
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       switch (event.item) {
         case WORD_LIST:
@@ -129,6 +117,9 @@ export class ConcordanceComponent implements OnInit {
           break;
         case COLLOCATIONS:
           this.titleOption = this.collocationOptionsLabel;
+          break;
+        case FILTER:
+          this.titleOption = this.filterOptionsLabel;
           break;
         default:
           this.titleOption = this.viewOptionsLabel;
@@ -151,6 +142,7 @@ export class ConcordanceComponent implements OnInit {
       this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
       this.freqOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS');
       this.collocationOptionsLabel = this.translateService.instant('MENU.COLLOCATIONS');
+      this.filterOptionsLabel = this.translateService.instant('MENU.FILTER');
       this.titleOption = this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
       this.queryTypes = [
         new KeyValueItem(SIMPLE, simple),
@@ -161,20 +153,6 @@ export class ConcordanceComponent implements OnInit {
         new KeyValueItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
       ];
       this.selectedQueryType = this.queryTypes[0];
-
-      this.windows = [
-        new KeyValueItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.LEFT')),
-        new KeyValueItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.RIGHT')),
-        new KeyValueItem(BOTH, this.translateService.instant('PAGE.CONCORDANCE.BOTH'))
-      ];
-      this.selectedWindow = this.windows[2];
-
-      this.items = [
-        new KeyValueItem(ALL, this.translateService.instant('PAGE.CONCORDANCE.ALL')),
-        new KeyValueItem(ANY, this.translateService.instant('PAGE.CONCORDANCE.ANY')),
-        new KeyValueItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
-      ];
-      this.selectedItem = this.items[0];
     });
   }
 
@@ -226,7 +204,4 @@ export class ConcordanceComponent implements OnInit {
         metadata.filter(md => md.documentMetadatum);
     }
   }
-
-
-
 }

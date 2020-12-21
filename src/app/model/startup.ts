@@ -1,4 +1,5 @@
 import { CollocationOptionsQueryRequest } from './collocation-options-query-request';
+import { FilterOptionsQueryRequest } from './filter-options-query.request';
 import { FreqOptionsQueryRequest } from './freq-options-query_request';
 import { KeyValueItem } from './key-value-item';
 import { SortOptionsQueryRequest } from './sort-options-query-request';
@@ -12,6 +13,7 @@ export class Startup {
   sortOptionsQueryRequest: SortOptionsQueryRequest;
   freqOptionsQueryRequest: FreqOptionsQueryRequest;
   collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
+  filterOptionsQueryRequest: FilterOptionsQueryRequest;
 
   constructor(
     corpusList: KeyValueItem[],
@@ -19,7 +21,8 @@ export class Startup {
     wordListOptionsQueryRequest: WordListOptionsQueryRequest,
     sortOptionsQueryRequest: SortOptionsQueryRequest,
     freqOptionsQueryRequest: FreqOptionsQueryRequest,
-    collocationOptionsQueryRequest: CollocationOptionsQueryRequest
+    collocationOptionsQueryRequest: CollocationOptionsQueryRequest,
+    filterOptionsQueryRequest: FilterOptionsQueryRequest
   ) {
     this.corpusList = corpusList;
     this.viewOptionsQueryRequest = viewOptionsQueryRequest;
@@ -27,5 +30,6 @@ export class Startup {
     this.sortOptionsQueryRequest = sortOptionsQueryRequest;
     this.freqOptionsQueryRequest = freqOptionsQueryRequest;
     this.collocationOptionsQueryRequest = collocationOptionsQueryRequest;
+    this.filterOptionsQueryRequest = filterOptionsQueryRequest;
   }
 }

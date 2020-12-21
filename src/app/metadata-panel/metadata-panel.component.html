@@ -1,7 +1,9 @@
 <div>
   <div>
-    <a class="p-shadow-7 p-component right-button" (click)="closeSidebar()">
-      {{'PAGE.CONCORDANCE.METADATA' | translate}}</a>
+    <a class="p-shadow-7 p-component right-button-meta"
+      [ngClass]="{'right-button-meta': !isFilterOptions(), 'right-button-options': isFilterOptions() }"
+      (click)="closeSidebar()">
+      {{isFilterOptions() ? ('MENU.FILTER' | translate) : ('PAGE.CONCORDANCE.METADATA' | translate)}}</a>
   </div>
   <div class="p-mt-4">
     <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>

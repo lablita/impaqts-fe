@@ -162,6 +162,18 @@
         "SORT_BY": "Sort by",
         "MAKE_CANDIDATE_LIST": "Make candidate list"
       },
+      "FILTER_OPTIONS": {
+        "CONCORDANCE_FILTER": "Concordance filter",
+        "POSITIVE": "positive",
+        "NEGATIVE": "negative",
+        "SEL_TOKEN": "Selected token",
+        "FIRST": "first",
+        "LAST": "last",
+        "SEARCH_SPAN": "Search span",
+        "FROM": "from",
+        "KWIC": "include KWIC",
+        "FILTER_CON": "Filter concordance"
+      },
       "TEXT_TYPE_SECTION": {}
     },
     "CORPUS_INFO": {
