@@ -141,13 +141,15 @@ export class MetadataPanelComponent implements OnInit {
             const node = this.retrieveNodeFromTree(m.tree[0], md.name, 0);
             if (!!node) {
               node.children = md.tree[0].children.slice();
-              const selected = this.textTypesRequest.multiSelects.filter(ms => ms.key === m.name)[0]?.values;
-              selected.forEach(sel => {
-                const no = md.tree[0].children.filter(m => m.label === sel);
-                if (no?.length > 0) {
-                  (m.selection as TreeNode[]).push(no[0]);
-                }
-              });
+              const selected = this.textTypesRequest?.multiSelects?.filter(ms => ms.key === m.name)[0]?.values;
+              if (selected) {
+                selected.forEach(sel => {
+                  const no = md.tree[0].children.filter(m => m.label === sel);
+                  if (no?.length > 0) {
+                    (m.selection as TreeNode[]).push(no[0]);
+                  }
+                });
+              }
             }
           }
         });
@@ -161,10 +163,12 @@ export class MetadataPanelComponent implements OnInit {
       return tree;
     } else if (tree.children?.length > 0) {
       let result: TreeNode;
-      tree.children.forEach(subT => {
-        result = this.retrieveNodeFromTree(subT, label, iteration++);
-      });
-      return result;
+      for (const child of tree.children) {
+        result = this.retrieveNodeFromTree(child, label, iteration++);
+        if (result) {
+          return result;
+        }
+      }
     }
     return null;
   }
@@ -180,6 +184,9 @@ export class MetadataPanelComponent implements OnInit {
       selectable: true,
       children: []
     };
+    if (values?.indexOf(meta.name) > -1) {
+      selections.push(root);
+    }
     const expandBranch = (metadata: Metadatum, parentNode: TreeNode) => {
       metadata.subMetadata.forEach(md => {
         const node: TreeNode = {

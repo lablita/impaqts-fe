@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
   FILTER, FREQUENCY,
-  RESULT_CONCORDANCE, SAMPLE, SORT, VIEW_OPTIONS, WORD_LIST
+  RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../model/constants';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
@@ -99,13 +99,13 @@ export class MenuComponent implements OnInit {
         new MenuItemObject(null, null, null, null, null, false, true, null),
         new MenuItemObject(this.viewOption, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(VIEW_OPTIONS));
-        }, null, null, false, false, VIEW_OPTIONS),
+        }, null, null, false, false, null),
         new MenuItemObject(this.sort, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(SORT));
         }, null, null, false, false, null),
-        new MenuItemObject(this.sample, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
-        }, null, null, false, false, SAMPLE),
+        // new MenuItemObject(this.sample, null, () => {
+        //   this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
+        // }, null, null, false, false, null),
         new MenuItemObject(this.filter, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(FILTER));
         }, null, null, false, false, null),
@@ -133,7 +133,7 @@ export class MenuComponent implements OnInit {
       case AS_SUBCORPUS:
       case VIEW_OPTIONS:
       case SORT:
-      case SAMPLE:
+      // case SAMPLE:
       case FILTER:
       case FREQUENCY:
       case COLLOCATIONS:
