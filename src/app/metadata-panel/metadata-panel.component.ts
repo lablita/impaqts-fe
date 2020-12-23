@@ -48,14 +48,13 @@ export class MetadataPanelComponent implements OnInit {
     this.metadata.forEach(md => {
       if (md.subMetadata?.length > 0) {
         md.tree = [];
-        md.tree.push(this.generateTree(md));
+        const res = this.generateTree(md, (this.textTypesRequest?.multiSelects &&
+          this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
+          ? this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name)[0].values : null);
+        md.tree.push(res['tree']);
+        md.selection = res['selections'];
       }
     });
-    // elimino metadata che partecimano ad alberi 
-    this.metadata = this.metadata.filter(md => !md.child);
-
-    //ordinamento position 
-    this.metadata.sort((a, b) => a.position - b.position);
 
     // genero albero flat per componente multiselect check box e single select
     this.metadata.forEach((metadatum, index) => {
@@ -63,18 +62,14 @@ export class MetadataPanelComponent implements OnInit {
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
         this.loading++;
-
         setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
-
-          //ripristino valori letti da local storage
-          const key = this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
-            this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0]?.values : null as string[];
-
-
-
+          //ripristino valori letti da local storage 
+          const selectionated = this.textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
+            this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :
+            (this.textTypesRequest?.multiSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
+              this.textTypesRequest.multiSelects.filter(ss => ss.key === metadatum.name)[0] : null);
+          const selection: TreeNode[] = [];
           this.loading--;
-
-
           if (res) {
             metadatum.subMetadata = res;
             const root: TreeNode = {
@@ -84,48 +79,102 @@ export class MetadataPanelComponent implements OnInit {
             };
             if (!metadatum.multipleChoice) {
               res.metadataValues.forEach(el => {
-                root.children.push({
+                const node = {
                   label: el,
                   selectable: true,
-                  icon: key.filter(k => k === el).length > 0 ? "pi pi-circle-on" : "pi pi-circle-off",
+                  icon: selectionated?.value === el ? "pi pi-circle-on" : "pi pi-circle-off",
                   parent: root,
-                });
+                };
+                root.children.push(node);
+                if (selectionated?.value === el) {
+                  metadatum.selection = node;
+                }
               });
             }
             else {
               res.metadataValues.forEach(el => {
-                root.children.push({
+                const node = {
                   label: el,
                   selectable: true,
                   parent: root
-                });
+                };
+                root.children.push(node);
+                if (selectionated?.values.indexOf(el) > -1) {
+                  selection.push(node);
+                }
               });
             }
             metadatum.tree = [];
+            if (metadatum.multipleChoice) {
+              metadatum.selection = selection;
+            }
             metadatum.tree.push(root);
           }
-
+          if (this.loading === 0) {
+            //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
+            this.linkLeafs(this.metadata);
+            // elimino metadata che partecimano ad alberi 
+            this.metadata = this.metadata.filter(md => !md.child);
+          }
         }), 4000 * index);
       }
     });
 
-
-    this.metadata.forEach(md => {
-      if (md.freeText) {
-        md.selection === this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value
-      }
-    });
-
+    /** recupero freeText da localstorage */
+    if (this.textTypesRequest?.freeTexts) {
+      this.metadata.forEach(md => {
+        if (md?.freeText) {
+          md.selection = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0]?.value;
+        }
+      });
+    }
+    //ordinamento position 
+    this.metadata.sort((a, b) => a.position - b.position);
   }
 
+  //collego quanto recuperato cal corpus al nodo corretto
+  private linkLeafs(metadata: Metadatum[]): void {
+    metadata.forEach(md => {
+      if (md.child && md.retrieveValuesFromCorpus) {
+        this.metadata.forEach(m => {
+          if (m.tree?.length > 0) {
+            const node = this.retrieveNodeFromTree(m.tree[0], md.name, 0);
+            if (!!node) {
+              node.children = md.tree[0].children.slice();
+              const selected = this.textTypesRequest.multiSelects.filter(ms => ms.key === m.name)[0]?.values;
+              selected.forEach(sel => {
+                const no = md.tree[0].children.filter(m => m.label === sel);
+                if (no?.length > 0) {
+                  (m.selection as TreeNode[]).push(no[0]);
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  }
 
-
+  // recupero nodo da albero
+  private retrieveNodeFromTree(tree: TreeNode, label: string, iteration: number): TreeNode {
+    if (iteration > 0 && tree.label === label) {
+      return tree;
+    } else if (tree.children?.length > 0) {
+      let result: TreeNode;
+      tree.children.forEach(subT => {
+        result = this.retrieveNodeFromTree(subT, label, iteration++);
+      });
+      return result;
+    }
+    return null;
+  }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
   }
 
-  private generateTree(meta: Metadatum): TreeNode {
+  private generateTree(meta: Metadatum, values: string[]): { tree: TreeNode, selections: TreeNode[] } {
+    const selections: TreeNode[] = [];
     const root = {
       label: meta.name,
       selectable: true,
@@ -139,6 +188,9 @@ export class MetadataPanelComponent implements OnInit {
           selectable: true,
           children: []
         };
+        if (values?.indexOf(md.name) > -1) {
+          selections.push(node);
+        }
         parentNode.children.push(node);
         if (md.subMetadata.length > 0) {
           expandBranch(md, node);
@@ -146,7 +198,7 @@ export class MetadataPanelComponent implements OnInit {
       });
     };
     expandBranch(meta, root);
-    return root;
+    return { tree: root, selections: selections };
   }
 
   public clickMakeConcordance() {
