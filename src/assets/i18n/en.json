@@ -183,6 +183,12 @@
       },
       "TEXT_TYPE_SECTION": {}
     },
+    "CREDITS": {
+      "LABEL": "Credits"
+    },
+    "COPYRIGHT": {
+      "LABEL": "Copyright"
+    },
     "CORPUS_INFO": {
       "STAT_INFO": "statistics and info",
       "COUNTS": "Counts",
@@ -206,18 +212,6 @@
       "SUMMARY": "summary",
       "S": "s",
       "ARTICLE": "article"
-    },
-    "MY_JOBS": {
-      "MY_JOBS_LABEL": "My background jobs",
-      "AUTO_RELOAD": "Auto-reload every 10 seconds",
-      "RELOAD_NOW": "reload now",
-      "SHOW_COMPLET": "Show completed jobs",
-      "SHOW_HIDE": "Show/hide columns",
-      "DESCRIPTION": "Description",
-      "STARTED": "Started",
-      "ESTIMATION": "Estimation",
-      "STATUS": "Satus",
-      "PROGRESS": "Progress"
     }
   }
 }

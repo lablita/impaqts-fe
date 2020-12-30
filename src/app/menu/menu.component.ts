@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY,
+  ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
+  BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
+  FILTER, FREQUENCY, INSTALLATION,
   RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../model/constants';
+import { Installation } from '../model/installation';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
 
@@ -22,11 +24,12 @@ export class MenuEvent {
 })
 export class MenuComponent implements OnInit {
 
+  public items: MenuItemObject[] = [];
+  public urlBottomLeft: string;
+
   private menuConcordance: MenuItemObject[];
   private menuWordList: MenuItemObject[];
   private menuResultConcordance: MenuItemObject[];
-
-
   private concordance: string;
   private wordList: string;
   private corpusInfo: string;
@@ -39,14 +42,19 @@ export class MenuComponent implements OnInit {
   private frequency: string;
   private collocations: string;
 
-  public items: MenuItemObject[] = [];
-
   constructor(
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
+    const installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
+    installation.logos.forEach(logo => {
+      if (logo.position === BOTTOM_LEFT) {
+        this.urlBottomLeft = logo.url;
+      }
+    });
+
     this.translateService.get('MENU.CONCORDANCE').subscribe(concordance => {
       this.concordance = concordance;
       this.wordList = this.translateService.instant('MENU.WOLRD_LIST') as string;

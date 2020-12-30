@@ -25,6 +25,8 @@ import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-pan
 import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+import { CreditsComponent } from './credits/credits.component';
+import { CopyrightComponent } from './copyright/copyright.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     MetadataPanelComponent,
     CollocationOptionsPanelComponent,
     FilterOptionsPanelComponent,
-    ContextConcordanceComponent
+    ContextConcordanceComponent,
+    CreditsComponent,
+    CopyrightComponent
   ],
   imports: [
     BrowserModule,

@@ -1,1 +1,12 @@
-<p-panelMenu [model]="items" ngClass=""></p-panelMenu>
+<div style="height: 100%;">
+  <div>
+    <p-panelMenu [model]="items" ngClass=""></p-panelMenu>
+  </div>
+  <div style="position: fixed; bottom: 0px; left: 0px;">
+    <div class="p-d-flex p-jc-between p-component" style="width: 240px;">
+      <a class="p-ml-6" [routerLink]="['/credits']">credits</a>
+      <a class="p-mr-6" [routerLink]="['/copyright']">copyright</a>
+    </div>
+    <img *ngIf="!!urlBottomLeft" [src]="urlBottomLeft" style="height: 40px; margin-left: 20px; margin-top: 5px;">
+  </div>
+</div>

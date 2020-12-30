@@ -2,11 +2,10 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { INSTALLATION } from '../app.component';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, LEMMA,
+  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, INSTALLATION, LEMMA,
   PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, VIEW_OPTIONS, WORD, WORD_LIST
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';

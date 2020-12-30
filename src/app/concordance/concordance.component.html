@@ -1,5 +1,5 @@
 <p></p>
-<div class="p-d-flex p-flex-wrap" style="background-color: gray">
+<div class="p-d-flex p-flex-wrap">
   <div class="p-d-flex p-mb-3 p-mr-3 p-d-block">
     <p-card class="p-p-3">
       <div class="p-field p-d-flex">
@@ -87,7 +87,7 @@
 
       <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
         styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
-        currentPageReportTemplate="'{currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+        currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10,25,50]">
         <ng-template pTemplate="header">
           <tr>

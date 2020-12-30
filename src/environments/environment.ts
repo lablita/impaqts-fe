@@ -7,7 +7,8 @@ export const environment = {
   production: false,
   installation: 'uno',
   installationName: 'IMPAQTS1',
-  installationUrl: 'http://localhost:9001/impaqts-configurator'
+  installationUrl: 'http://localhost:9001/impaqts-configurator',
+  cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS1'
 };
 
 /*
