@@ -15,3 +15,9 @@
   </tr>
 </table>
 <div>Totale: {{totalResults}}</div>
+
+<button pButton type="button" label="Video" (click)="toggleVideoPlayer()"></button>
+
+
+<iframe title="youtubeVideo" *ngIf="ytPlayerVisible" style="border: 0px;" width="500" height="250"
+  src="https://www.youtube.com/embed/OBmlCZTF4Xs?autoplay=1&start=45&end=48" allowfullscreen></iframe>

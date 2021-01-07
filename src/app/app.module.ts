@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
@@ -44,7 +45,7 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     MetadataPanelComponent,
     CollocationOptionsPanelComponent,
     FilterOptionsPanelComponent,
-    ContextConcordanceComponent
+    ContextConcordanceComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,7 +62,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
         deps: [HttpClient]
       }
     }),
-    HttpClientModule
+    HttpClientModule,
+    YouTubePlayerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
