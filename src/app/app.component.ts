@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ConcordanceService } from './concordance/concordance.service';
-import { INSTALLATION } from './model/constants';
 import { Installation } from './model/installation';
 
 
@@ -16,15 +14,9 @@ export class AppComponent {
   public installation: Installation;
 
   constructor(
-    private readonly translateService: TranslateService,
-    private readonly concordanceService: ConcordanceService
+    private readonly translateService: TranslateService
   ) {
     this.translateService.setDefaultLang('en');
     this.translateService.use('en');
-    if (!localStorage.getItem(INSTALLATION)) {
-      this.concordanceService.getInstallation().subscribe(installation => {
-        localStorage.setItem(INSTALLATION, JSON.stringify(installation));
-      });
-    }
   }
 }

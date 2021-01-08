@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,11 +24,12 @@ import { MetadataPanelComponent } from './metadata-panel/metadata-panel.componen
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { RightComponent } from './right/right.component';
+import { AppInitializerService } from './services/app-initializer.service';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
 import { TopComponent } from './top/top.component';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-import { VideoPlayerComponent } from './video-player/video-player.component';
 
 @NgModule({
   declarations: [
@@ -71,11 +72,22 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
     HttpClientModule,
     YouTubePlayerModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: loadInstallation,
+      deps: [AppInitializerService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function loadInstallation(appInitializerService: AppInitializerService) {
+  return () => appInitializerService.loadInstallation();
 }

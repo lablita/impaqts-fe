@@ -13,16 +13,20 @@ export class TopComponent {
   public urlTopRight: string;
 
   constructor() {
-    const installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
-    installation.logos.forEach(logo => {
-      if (logo.position === TOP_LEFT) {
-        this.urlTopLeft = logo.url;
-      } else if (logo.position === TOP_RIGHT) {
-        this.urlTopRight = logo.url;
-      }
-    });
+    this.init();
   }
 
-
+  private init(): void {
+    const installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
+    if (installation.logos?.length > 0) {
+      installation.logos.forEach(logo => {
+        if (logo.position === TOP_LEFT) {
+          this.urlTopLeft = logo.url;
+        } else if (logo.position === TOP_RIGHT) {
+          this.urlTopRight = logo.url;
+        }
+      });
+    }
+  }
 
 }
