@@ -32,4 +32,5 @@ export class ConcordanceService {
     return this.http.get<any>(`${CONTEXT_CORPORA}/metadatum-values/${corpus}/${metadatum}`)
       .pipe(catchError(this.utils.handleErrorObservable('getMetadatumValues', FIND_FAILED, null)));
   }
+
 }
