@@ -1,2 +1,4 @@
-<!-- <img routerLink="/concordance" src="assets/images/NoSketchEngine.png"
-  style="height: 40px; margin-left: 20px; margin-top: 5px;"> -->
+<div class="p-d-flex p-jc-between">
+  <img *ngIf="!!urlTopLeft" [src]="urlTopLeft" style="height: 40px; margin-left: 20px; margin-top: 5px;">
+  <img *ngIf="!!urlTopRight" [src]="urlTopRight" style="height: 40px; margin-left: 20px; margin-top: 5px;">
+</div>

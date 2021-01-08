@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { INSTALLATION } from '../app.component';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, LEMMA,
+  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, INSTALLATION, LEMMA,
   PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, VIEW_OPTIONS, WORD, WORD_LIST
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
@@ -25,7 +25,7 @@ const WS_URL = '/test-query-ws-ext';
   templateUrl: './concordance.component.html',
   styleUrls: ['./concordance.component.scss']
 })
-export class ConcordanceComponent implements OnInit {
+export class ConcordanceComponent implements OnInit, AfterViewInit {
   public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
 
   @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
@@ -65,12 +65,18 @@ export class ConcordanceComponent implements OnInit {
   public filterOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
-  public queryResponse: QueryResponse;
+  // public queryResponse: QueryResponse;
   public totalResults = 0;
   public kwicLines: KWICline[];
+  public TotalKwicline: KWICline[];
 
   public metadataAttributes: KeyValueItem[];
   public textTypesAttributes: KeyValueItem[];
+
+  public loading: boolean;
+  public totalRecords: number;
+  public simpleResult: string;
+
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -81,8 +87,18 @@ export class ConcordanceComponent implements OnInit {
     private readonly emitterService: EmitterService
   ) { }
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
+    // this.cd.detectChanges();
+  }
+  refresh(): void {
 
+  }
+
+  ngOnInit(): void {
+    this.init();
+  }
+
+  private init(): void {
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
 
@@ -93,9 +109,12 @@ export class ConcordanceComponent implements OnInit {
       resp => {
         const qr = resp as QueryResponse;
         if (qr.kwicLines.length > 0) {
-          this.queryResponse = resp as QueryResponse;
+          // this.queryResponse = resp as QueryResponse;
+          this.kwicLines = (resp as QueryResponse).kwicLines;
         }
         this.totalResults = qr.currentSize;
+        this.simpleResult = this.simple;
+        // this.loading = false;
       },
       err => console.error(err),
       () => console.log('Activiti WS disconnected')
@@ -180,16 +199,6 @@ export class ConcordanceComponent implements OnInit {
     this.emitterService.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
   }
 
-  public clickMakeConcordance(): void {
-    const qr = new QueryRequest();
-    qr.start = 0;
-    qr.end = 500000;
-    qr.word = `[word="${this.simple}"]`;
-    qr.corpus = this.selectedCorpus.key;
-    this.websocket.next(qr);
-    this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
-  }
-
   public clickClearAll(): void {
 
   }
@@ -214,5 +223,21 @@ export class ConcordanceComponent implements OnInit {
       this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.filter(md => md.documentMetadatum);
     }
+  }
+
+  public loadConcordances(event?: LazyLoadEvent): void {
+    // this.loading = true;
+    const qr = new QueryRequest();
+    if (!event) {
+      qr.start = 0;
+      qr.end = 10;
+    } else {
+      qr.start = event.first;
+      qr.end = qr.start + event.rows;
+    }
+    qr.word = `[word="${this.simple}"]`;
+    qr.corpus = this.selectedCorpus.key;
+    this.websocket.next(qr);
+    this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
 }

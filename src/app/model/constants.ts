@@ -2,6 +2,13 @@
 export const CONTEXT_INSTALLATION = '/impaqts-configurator';
 export const CONTEXT_CORPORA = '';
 export const FIND_FAILED = 'FIND_FAILED';
+export const INSTALLATION = 'installation';
+
+/** */
+export const TOP_LEFT = 'TOP_LEFT';
+export const TOP_RIGHT = 'TOP_RIGHT';
+export const BOTTOM_LEFT = 'BOTTON_LEFT';
+export const BOTTOM_RIGHT = 'BOTTON_RIGHT';
 
 
 export const CONCORDANCE = 'concordance';

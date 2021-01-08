@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConcordanceService } from './concordance/concordance.service';
+import { INSTALLATION } from './model/constants';
 import { Installation } from './model/installation';
 
 
-export const INSTALLATION = 'installation';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

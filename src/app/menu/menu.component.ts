@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY,
-  RESULT_CONCORDANCE, SAMPLE, SORT, VIEW_OPTIONS, WORD_LIST
+  ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
+  BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
+  FILTER, FREQUENCY, INSTALLATION,
+  RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../model/constants';
+import { Installation } from '../model/installation';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
 
@@ -22,11 +24,12 @@ export class MenuEvent {
 })
 export class MenuComponent implements OnInit {
 
+  public items: MenuItemObject[] = [];
+  public urlBottomLeft: string;
+
   private menuConcordance: MenuItemObject[];
   private menuWordList: MenuItemObject[];
   private menuResultConcordance: MenuItemObject[];
-
-
   private concordance: string;
   private wordList: string;
   private corpusInfo: string;
@@ -39,14 +42,19 @@ export class MenuComponent implements OnInit {
   private frequency: string;
   private collocations: string;
 
-  public items: MenuItemObject[] = [];
-
   constructor(
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
+    const installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
+    installation.logos.forEach(logo => {
+      if (logo.position === BOTTOM_LEFT) {
+        this.urlBottomLeft = logo.url;
+      }
+    });
+
     this.translateService.get('MENU.CONCORDANCE').subscribe(concordance => {
       this.concordance = concordance;
       this.wordList = this.translateService.instant('MENU.WOLRD_LIST') as string;
@@ -99,13 +107,13 @@ export class MenuComponent implements OnInit {
         new MenuItemObject(null, null, null, null, null, false, true, null),
         new MenuItemObject(this.viewOption, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(VIEW_OPTIONS));
-        }, null, null, false, false, VIEW_OPTIONS),
+        }, null, null, false, false, null),
         new MenuItemObject(this.sort, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(SORT));
         }, null, null, false, false, null),
-        new MenuItemObject(this.sample, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
-        }, null, null, false, false, SAMPLE),
+        // new MenuItemObject(this.sample, null, () => {
+        //   this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
+        // }, null, null, false, false, null),
         new MenuItemObject(this.filter, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(FILTER));
         }, null, null, false, false, null),
@@ -133,7 +141,7 @@ export class MenuComponent implements OnInit {
       case AS_SUBCORPUS:
       case VIEW_OPTIONS:
       case SORT:
-      case SAMPLE:
+      // case SAMPLE:
       case FILTER:
       case FREQUENCY:
       case COLLOCATIONS:

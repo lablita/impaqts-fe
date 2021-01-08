@@ -1,5 +1,5 @@
 <p></p>
-<div class="p-d-flex p-flex-wrap" style="background-color: gray">
+<div class="p-d-flex p-flex-wrap">
   <div class="p-d-flex p-mb-3 p-mr-3 p-d-block">
     <p-card class="p-p-3">
       <div class="p-field p-d-flex">
@@ -23,7 +23,7 @@
         <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
         &nbsp;
         <button [disabled]="!selectedCorpus" pButton type="button"
-          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="clickMakeConcordance()"></button>
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="loadConcordances()"></button>
       </div>
       <div class="p-field">
         <label for="simple_query" class="label-size"></label>
@@ -72,7 +72,7 @@
         </app-context-concordance>
         <div>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-            (click)="clickMakeConcordance()" class="p-mr-5"></button>
+            (click)="loadConcordances()" class="p-mr-5"></button>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
             (click)="clickClearAll()"></button>
         </div>
@@ -81,11 +81,13 @@
 
   </div>
 
-  <div *ngIf="queryResponse?.kwicLines" class="p-d-block">
+  <div *ngIf="kwicLines" class="p-d-block">
     <p-card>
-      <h3>Query <span style="color:red;">{{simple}}</span>&nbsp;<b>{{queryResponse.kwicLines.length}}</b></h3>
-      <p-table [value]="queryResponse.kwicLines" styleClass="p-datatable-striped" [paginator]="true" [rows]="10"
-        [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b></h3>
+
+      <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
+        styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
+        currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10,25,50]">
         <ng-template pTemplate="header">
           <tr>
@@ -143,5 +145,3 @@
     </div>
   </p-sidebar>
 </div>
-
-{{titleOption}} - {{viewOptionsLabel}} - {{displayPanelOptions}}

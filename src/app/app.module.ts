@@ -13,7 +13,9 @@ import { AppComponent } from './app.component';
 import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { ContextConcordanceComponent } from './context-concordance/context-concordance.component';
+import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
+import { CreditsComponent } from './credits/credits.component';
 import { FilterOptionsPanelComponent } from './filter-options-panel/filter-options-panel.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
 import { MainComponent } from './main/main.component';
@@ -46,6 +48,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     CollocationOptionsPanelComponent,
     FilterOptionsPanelComponent,
     ContextConcordanceComponent,
+    CreditsComponent,
+    CopyrightComponent
   ],
   imports: [
     BrowserModule,
