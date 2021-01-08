@@ -13,15 +13,9 @@ const WS_URL = '/test-query-ws-ext';
 })
 export class QuerypocComponent implements OnInit, OnDestroy {
 
-  public ytPlayerVisible = false;
-
   public queryResponse: QueryResponse;
   public totalResults = 0;
   public wordFC = new FormControl('');
-
-  public readonly playerVars = {
-    autoplay: 1
-  };
 
   private websocket: WebSocketSubject<any>;
 
@@ -53,10 +47,6 @@ export class QuerypocComponent implements OnInit, OnDestroy {
     qr.end = 15;
     qr.word = `[word="${this.wordFC.value}"]`;
     this.websocket.next(qr);
-  }
-
-  public toggleVideoPlayer(): void {
-    this.ytPlayerVisible = !this.ytPlayerVisible;
   }
 
   private closeWebSocket(): void {

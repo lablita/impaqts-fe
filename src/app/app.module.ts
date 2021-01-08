@@ -28,6 +28,7 @@ import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-pan
 import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     FilterOptionsPanelComponent,
     ContextConcordanceComponent,
     CreditsComponent,
-    CopyrightComponent
+    CopyrightComponent,
+    VideoPlayerComponent
   ],
   imports: [
     BrowserModule,

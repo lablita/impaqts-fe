@@ -1,4 +1,7 @@
 {
+  "APP": {
+    "NO_VIDEO": "No video are present"
+  },
   "MENU": {
     "CONCORDANCE": "Concordance",
     "WOLRD_LIST": "Word list",
