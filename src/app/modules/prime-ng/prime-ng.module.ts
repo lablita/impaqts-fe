@@ -4,6 +4,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
@@ -47,7 +48,8 @@ import { TreeModule } from 'primeng/tree';
     ScrollPanelModule,
     TreeModule,
     ListboxModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    DialogModule
   ],
   exports: [
     CommonModule,
@@ -71,7 +73,8 @@ import { TreeModule } from 'primeng/tree';
     ScrollPanelModule,
     TreeModule,
     ListboxModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    DialogModule
   ]
 })
 export class PrimeNgModule { }

@@ -30,7 +30,6 @@ import { TopComponent } from './top/top.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-
 @NgModule({
   declarations: [
     AppComponent,
