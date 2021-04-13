@@ -38,6 +38,7 @@ export const COLLOCATIONS = 'collocations';
 export const CONC_DECS = 'conc_desc';
 export const VISUALIZE = 'visualize';
 export const CHENGE_OPTIONS = 'change_options';
+export const VISUAL_QUERY = 'visual_query';
 
 export const SIMPLE = 'simple';
 export const LEMMA = 'lemma';

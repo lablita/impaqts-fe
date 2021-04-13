@@ -4,7 +4,7 @@ import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
   FILTER, FREQUENCY, INSTALLATION,
-  RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, WORD_LIST
+  RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
 import { MenuEmitterService } from './menu-emitter.service';
@@ -41,6 +41,7 @@ export class MenuComponent implements OnInit {
   private filter: string;
   private frequency: string;
   private collocations: string;
+  private visualQuery: string;
 
   constructor(
     private readonly menuEmitterService: MenuEmitterService,
@@ -67,6 +68,7 @@ export class MenuComponent implements OnInit {
       this.filter = this.translateService.instant('MENU.FILTER') as string;
       this.frequency = this.translateService.instant('MENU.FREQUENCY') as string;
       this.collocations = this.translateService.instant('MENU.COLLOCATIONS') as string;
+      this.visualQuery = this.translateService.instant('MENU.VISUAL_QUERY') as string;
       this.menuDefine();
       this.items = this.getMenuItems(CONCORDANCE);
     });
@@ -87,7 +89,10 @@ export class MenuComponent implements OnInit {
       }, null, null, false, false, null),
       new MenuItemObject(this.corpusInfo, null, () => {
         this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
-      }, null, null, false, false, CORPUS_INFO)
+      }, null, null, false, false, CORPUS_INFO),
+      new MenuItemObject(this.visualQuery, null, () => {
+        this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
+      }, null, null, false, false, VISUAL_QUERY)
     ];
 
     this.menuWordList = this.menuConcordance.concat(

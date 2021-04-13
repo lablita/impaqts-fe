@@ -1,0 +1,9 @@
+<div class="p-jc-end p-grid p-mt-2">
+  <div *ngFor="let token of query" class="p-mr-2 p-col">
+    <div class="box">
+      <app-query-token [token]="token" [typeList]="typeList" [actionList]="actionList" (delete)="deleteToken($event)">
+      </app-query-token>
+    </div>
+  </div>
+</div>
+<button pButton type="button" label="Add Token" (click)="addToken()"><i class="pi pi-plus-circle"></i></button>

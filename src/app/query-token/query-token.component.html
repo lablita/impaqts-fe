@@ -1,0 +1,17 @@
+<p-card [style]="{'width': '30rem', 'margin-bottom': '2em'}">
+  <div class="p-d-flex p-jc-end">
+    <button pButton pRipple type="button" icon="pi pi-minus" class="p-button-rounded" (click)="deleteToken()"></button>
+  </div>
+
+  <div *ngFor="let andChunk of token.andChunkList" class="p-mb-3" style="background-color: bisque;">
+    <div *ngFor="let orChunk of andChunk.orChunkList" class="p-mb-1" style="background-color: aqua;">
+      <app-token-chunk [token]="token" [typeList]="typeList" [actionList]="actionList"
+        (delete)="deleteChunk(orChunk, andChunk)">
+      </app-token-chunk>
+    </div>
+    <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded"
+      (click)="addOrChunk(andChunk)"></button>
+  </div>
+
+  <button pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded" (click)="addAndChunk()"></button>
+</p-card>

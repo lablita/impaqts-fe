@@ -1,0 +1,21 @@
+<div class="p-grid">
+  <div class="p-col">
+    <button pButton pRipple type="button" icon="pi pi-minus" class="p-button-rounded"
+      (click)="deleteChunk($event)"></button>
+  </div>
+  <div class="p-col">
+    <div>
+      <p-dropdown [options]="typeList" [(ngModel)]="token.type" optionLabel="value" placeholder="Select a type"
+        class="p-mr-2 p-d-inline"></p-dropdown>
+      <p-dropdown [options]="actionList" [(ngModel)]="token.action" placeholder="Select an action" optionLabel="value"
+        class="p-d-inline"></p-dropdown>
+    </div>
+    <div>
+      <div class="p-field">
+        <input [id]="'chunkValue_'+ token.uid" type="text" pInputText style="width: 140px;" placeholder="<any word>"
+          [(ngModel)]="token.value">
+        <label [for]="'chunkValue_'+ token.uid" class="label-size-enlarged">Aa</label>
+      </div>
+    </div>
+  </div>
+</div>

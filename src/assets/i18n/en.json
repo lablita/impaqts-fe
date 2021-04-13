@@ -26,7 +26,8 @@
     "NODE_FORMS": "Node forms",
     "COLLOCATIONS": "Collocations",
     "CONC_DECS": "ConcDesc",
-    "VISUALIZE": "Visualize"
+    "VISUALIZE": "Visualize",
+    "VISUAL_QUERY": "Visual Query"
   },
   "PAGE": {
     "CONCORDANCE": {
