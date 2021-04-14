@@ -213,6 +213,16 @@
       "SUMMARY": "summary",
       "S": "s",
       "ARTICLE": "article"
+    },
+    "VISUAL_QUERY": {
+      "QUERY": "Query",
+      "METADATA": "Metadata",
+      "ADD_TOKEN": "Add Token",
+      "ADD_METADATA": "Add Metadata",
+      "OPTION": "Options",
+      "SEL_TYPE": "Select a type",
+      "SEL_ACTION": "Select an action",
+      "ANY_WORD": "any word"
     }
   }
 }

@@ -11,21 +11,35 @@ import { QueryToken } from '../model/query-token';
 export class VisualQueryComponent implements OnInit {
 
   public query: QueryToken[] = [];
-  public typeList: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
-  public actionList: KeyValueItem[] = [new KeyValueItem('a', 'a'), new KeyValueItem('b', 'b'), new KeyValueItem('c', 'c')];
+  public typeListQuery: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
+  public actionListQuery: KeyValueItem[] = [new KeyValueItem('a', 'a'), new KeyValueItem('b', 'b'), new KeyValueItem('c', 'c')];
+  public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
+
+  public metadata: QueryToken[] = [];
+  public typeListMetadata: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
+  public actionListMetadata: KeyValueItem[] = [new KeyValueItem('a', 'a'), new KeyValueItem('b', 'b'), new KeyValueItem('c', 'c')];
+
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
-  public addToken(): void {
+  public addTokenQuery(): void {
     const token = new QueryToken();
     this.query.push(token);
   }
 
-  public deleteToken(token: QueryToken): void {
+  public deleteTokenQuery(token: QueryToken): void {
     this.query.splice(this.query.indexOf(token), 1);
+  }
+
+  public addTokenMetadata(): void {
+    const token = new QueryToken();
+    this.metadata.push(token);
+  }
+
+  public deleteTokenMetadata(token: QueryToken): void {
+    this.metadata.splice(this.query.indexOf(token), 1);
   }
 
 }

@@ -1,9 +1,31 @@
-<div class="p-jc-end p-grid p-mt-2">
-  <div *ngFor="let token of query" class="p-mr-2 p-col">
+<span class="p-component">
+  <h2>{{"PAGE.VISUAL_QUERY.QUERY" | translate}}</h2>
+</span>
+<div class="p-jc-start p-mt-2">
+  <div *ngFor="let token of query" class="p-mr-2 p-d-inline-flex">
     <div class="box">
-      <app-query-token [token]="token" [typeList]="typeList" [actionList]="actionList" (delete)="deleteToken($event)">
+      <app-query-token [token]="token" [typeList]="typeListQuery" [actionList]="actionListQuery" [option]="true"
+        (delete)="deleteTokenQuery(token)">
       </app-query-token>
     </div>
   </div>
 </div>
-<button pButton type="button" label="Add Token" (click)="addToken()"><i class="pi pi-plus-circle"></i></button>
+<button pButton label=" " (click)="addTokenQuery()"><i
+    class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_TOKEN" | translate}}</button>
+
+<hr>
+
+<span class="p-component">
+  <h2>{{"PAGE.VISUAL_QUERY.METADATA" | translate}}</h2>
+</span>
+<div class="p-jc-start p-mt-2">
+  <div *ngFor="let token of metadata" class="p-mr-2">
+    <div class="box">
+      <app-query-token [token]="token" [typeList]="typeListMetadata" [actionList]="actionListMetadata"
+        (delete)="deleteTokenMetadata(token)">
+      </app-query-token>
+    </div>
+  </div>
+</div>
+<button pButton label=" " (click)="addTokenMetadata()" [disabled]="metadata.length > 0"><i
+    class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_METADATA" | translate}}</button>

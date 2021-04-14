@@ -10,6 +10,10 @@ export class AndChunkToken {
 }
 
 export class QueryToken {
+  sentenceStart: boolean;
+  sentenceEnd: boolean;
+  repeatIndex: number;
+  repeatTimes: number;
   andChunkList: AndChunkToken[] = [];
 
   addOrChunk(andToken: AndChunkToken): void {

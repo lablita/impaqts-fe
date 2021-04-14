@@ -13,8 +13,15 @@ export class QueryTokenComponent implements OnInit {
   @Input() token: QueryToken;
   @Input() typeList: KeyValueItem[];
   @Input() actionList: KeyValueItem[];
+  @Input() option: boolean;
 
   @Output() delete: EventEmitter<QueryToken> = new EventEmitter<QueryToken>();
+
+  public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')]
+  public optionSel: KeyValueItem;
+  public optionsSel: string[] = [];
+
+  public repeat = false;
 
   constructor() { }
 
@@ -31,13 +38,30 @@ export class QueryTokenComponent implements OnInit {
 
   public deleteChunk(chunk: ChunkToken, andToken: AndChunkToken): void {
     this.token.remove(chunk, andToken);
-    if (andToken.orChunkList.length === 0) {
-      this.token.andChunkList = [];
+    if (this.token.andChunkList.length === 0) {
+      this.delete.emit(this.token);
     }
   }
 
   public deleteToken(): void {
     this.delete.emit(this.token);
   }
+
+  public setOption(): void {
+    // document.getElementById('chips').click();
+    if (this.optionsSel.indexOf(this.optionSel.value) >= 0) {
+      this.optionsSel.splice(this.optionsSel.indexOf(this.optionSel.value), 1);
+    } else if (this.optionSel.key !== '1') {
+      this.optionsSel.push(this.optionSel.value);
+    } else {
+      this.repeat = !this.repeat;
+    }
+  }
+
+  // public onChange(event): boolean {
+  //   if (!(event.keyCode === 8 || event.keyCode === 46)) {
+  //     return false;
+  //   }
+  // }
 
 }
