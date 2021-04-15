@@ -12,7 +12,14 @@ export class VisualQueryComponent implements OnInit {
 
   public query: QueryToken[] = [];
   public typeListQuery: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
-  public actionListQuery: KeyValueItem[] = [new KeyValueItem('a', 'a'), new KeyValueItem('b', 'b'), new KeyValueItem('c', 'c')];
+  public actionListQuery: KeyValueItem[] = [
+    new KeyValueItem('IS', 'IS'),
+    new KeyValueItem('IS_NOT', 'IS_NOT'),
+    new KeyValueItem('BEGINS', 'BEGINS'),
+    new KeyValueItem('CONTAINS', 'CONTAINS'),
+    new KeyValueItem('ENDS', 'ENDS'),
+    new KeyValueItem('REGEXP', 'REGEXP'),
+    new KeyValueItem('NOT_REG', 'NOT_REG')];
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadata: QueryToken[] = [];

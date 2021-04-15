@@ -17,7 +17,7 @@ export class QueryTokenComponent implements OnInit {
 
   @Output() delete: EventEmitter<QueryToken> = new EventEmitter<QueryToken>();
 
-  public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')]
+  public optionList: KeyValueItem[] = [new KeyValueItem('REPEAT', 'REPEAT'), new KeyValueItem('START', 'START'), new KeyValueItem('END', 'END')];
   public optionSel: KeyValueItem;
   public optionsSel: string[] = [];
 
@@ -51,7 +51,7 @@ export class QueryTokenComponent implements OnInit {
     // document.getElementById('chips').click();
     if (this.optionsSel.indexOf(this.optionSel.value) >= 0) {
       this.optionsSel.splice(this.optionsSel.indexOf(this.optionSel.value), 1);
-    } else if (this.optionSel.key !== '1') {
+    } else if (this.optionSel.key !== 'REPEAT') {
       this.optionsSel.push(this.optionSel.value);
     } else {
       this.repeat = !this.repeat;

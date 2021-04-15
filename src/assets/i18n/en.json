@@ -222,7 +222,19 @@
       "OPTION": "Options",
       "SEL_TYPE": "Select a type",
       "SEL_ACTION": "Select an action",
-      "ANY_WORD": "any word"
+      "ANY_WORD": "any word",
+      "IS": "is",
+      "IS_NOT": "is not",
+      "BEGINS": "begins with",
+      "CONTAINS": "contains",
+      "ENDS": "ends with",
+      "REGEXP": "regexp",
+      "NOT_REG": "not regexp",
+      "REPEAT": "repeat",
+      "START": "sentence start",
+      "END": "sentence end",
+      "FOR": "for",
+      "TIMES": "times"
     }
   }
 }
