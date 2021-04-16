@@ -1,0 +1,35 @@
+<span class="p-component">
+  <div class="p-grid p-p-1">
+    <div class="p-col-1">
+      <button pButton pTooltip="Delete Tag" type="button" icon="pi pi-minus" class="p-button-rounded"
+        (click)="deleteTag($event)"></button>
+    </div>
+    <div class="p-col">
+      <div class="p-grid p-mb-1">
+        <div class="p-col">
+          <p-dropdown [options]="typeList" [(ngModel)]="tag.name" optionLabel="value"
+            [placeholder]="'PAGE.VISUAL_QUERY.SEL_TYPE' | translate">
+          </p-dropdown>
+        </div>
+        <div class="p-col">
+          <p-dropdown [(ngModel)]="action" (onchange)="setTagAttr()" [options]="actionList"
+            [placeholder]="'PAGE.VISUAL_QUERY.SEL_ACTION' | translate" optionLabel="value">
+            <ng-template pTemplate="selectedItem">
+              <div *ngIf="action">
+                {{'PAGE.VISUAL_QUERY.' + action.key | translate}}
+              </div>
+            </ng-template>
+            <ng-template let-action pTemplate="item">
+              {{'PAGE.VISUAL_QUERY.' + action.label | translate}}
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+      <div>
+        <input class="p-mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
+          [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
+        <label [for]="'tag'" class="label-size-enlarged">Aa</label>
+      </div>
+    </div>
+  </div>
+</span>
