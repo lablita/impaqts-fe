@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { LazyLoadEvent } from 'primeng/api';
+import { WebSocketSubject } from 'rxjs/webSocket';
+import { INSTALLATION } from '../model/constants';
+import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
+import { QueryPattern } from '../model/query-pattern';
+import { QueryRequest } from '../model/query-request';
 import { QueryToken } from '../model/query-token';
 
 @Component({
@@ -10,34 +16,38 @@ import { QueryToken } from '../model/query-token';
 
 export class VisualQueryComponent implements OnInit {
 
-  public query: QueryToken[] = [];
+  public queryPattern: QueryPattern = new QueryPattern();
   public typeListQuery: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
-  public actionListQuery: KeyValueItem[] = [
-    new KeyValueItem('IS', 'IS'),
-    new KeyValueItem('IS_NOT', 'IS_NOT'),
-    new KeyValueItem('BEGINS', 'BEGINS'),
-    new KeyValueItem('CONTAINS', 'CONTAINS'),
-    new KeyValueItem('ENDS', 'ENDS'),
-    new KeyValueItem('REGEXP', 'REGEXP'),
-    new KeyValueItem('NOT_REG', 'NOT_REG')];
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadata: QueryToken[] = [];
   public typeListMetadata: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
-  public actionListMetadata: KeyValueItem[] = [new KeyValueItem('a', 'a'), new KeyValueItem('b', 'b'), new KeyValueItem('c', 'c')];
 
+  public installation: Installation;
+  public corpusList: KeyValueItem[] = [];
+  public selectedCorpus: KeyValueItem;
+  public selectCorpus = 'PAGE.CONCORDANCE.SELECT_CORPUS';
+
+  private websocket: WebSocketSubject<any>;
 
   constructor() { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.init();
+  }
+
+  private init(): void {
+    this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
+    this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+  }
 
   public addTokenQuery(): void {
     const token = new QueryToken();
-    this.query.push(token);
+    this.queryPattern.tokPattern.push(token);
   }
 
   public deleteTokenQuery(token: QueryToken): void {
-    this.query.splice(this.query.indexOf(token), 1);
+    this.queryPattern.tokPattern.splice(this.queryPattern.tokPattern.indexOf(token), 1);
   }
 
   public addTokenMetadata(): void {
@@ -46,7 +56,23 @@ export class VisualQueryComponent implements OnInit {
   }
 
   public deleteTokenMetadata(token: QueryToken): void {
-    this.metadata.splice(this.query.indexOf(token), 1);
+    this.metadata.splice(this.queryPattern.tokPattern.indexOf(token), 1);
+  }
+
+  public loadConcordances(event?: LazyLoadEvent): void {
+    // this.loading = true;
+    const qr = new QueryRequest();
+    if (!event) {
+      qr.start = 0;
+      qr.end = 10;
+    } else {
+      qr.start = event.first;
+      qr.end = qr.start + event.rows;
+    }
+    // qr.word = `[word="${this.simple}"]`;
+    // qr.corpus = this.selectedCorpus.key;
+    this.websocket.next(qr);
+    // this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
 
 }

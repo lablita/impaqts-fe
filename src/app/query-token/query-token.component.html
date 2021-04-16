@@ -4,34 +4,30 @@
       (click)="deleteToken()"></button>
   </div>
 
-  <div *ngFor="let andChunk of token.andChunkList" class="p-mb-3" style="background-color: bisque;">
-    <div *ngFor="let orChunk of andChunk.orChunkList" class="p-mb-1">
-      <app-token-chunk [token]="token" [typeList]="typeList" [actionList]="actionList"
-        (delete)="deleteChunk(orChunk, andChunk)">
-      </app-token-chunk>
+  <div *ngFor="let andTag of token.tags" class="p-mb-3" style="background-color: bisque;">
+    <div *ngFor="let tag of andTag" class="p-mb-1">
+      <app-query-tag [tag]="tag" [typeList]="typeList" (delete)="deleteTag(tag, andTag)">
+      </app-query-tag>
     </div>
     <div class="p-ml-1">
       <button pButton pTooltip="Add in Or" type="button" icon="pi pi-plus" class="p-button-rounded"
-        (click)="addOrChunk(andChunk)"></button>
+        (click)="addTag(andTag)"></button>
     </div>
     &nbsp;
   </div>
 
   <div class="p-d-flex p-jc-between">
-    <button pButton pTooltip="Add in And" type="button" icon="pi pi-times" (click)="addAndChunk()"
+    <button pButton pTooltip="Add in And" type="button" icon="pi pi-plus" (click)="addAndTag()"
       class="p-button-rounded"></button>
 
     <div *ngIf="repeat" class="p-ml-3">
-      <label [for]="'repeatIndex_'+ token.uid"
-        class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.REPEAT' | translate}}</label>
-      <input class="p-mr-1" [id]="'repeatIndex_'+ token.uid" type="number" style="width: 50px;"
-        [(ngModel)]="token.repeatIndex">
-      <label [for]="'repeatTimes_'+ token.uid"
-        class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.FOR' | translate}}</label>
-      <input class="p-mr-1" [id]="'repeatTimes_'+ token.uid" type="number" style="width: 50px;"
-        [(ngModel)]="token.repeatTimes">
-      <label [for]="'repeatTimes_'+ token.uid"
-        class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.TIMES' | translate}}</label>
+      <label [for]="'minRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.REPEAT' | translate}}</label>
+      <input class="p-mr-1" [id]="'minRepetitions'" type="number" style="width: 50px;"
+        [(ngModel)]="token.minRepetitions">
+      <label [for]="'maxRepetitions_'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.FOR' | translate}}</label>
+      <input class="p-mr-1" [id]="'maxRepetitions'" type="number" style="width: 50px;"
+        [(ngModel)]="token.maxRepetitions">
+      <label [for]="'maxRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.TIMES' | translate}}</label>
     </div>
 
     <p-overlayPanel #op>
@@ -49,6 +45,5 @@
     <div *ngFor="let opt of optionsSel, let i = index">
       {{"PAGE.VISUAL_QUERY." + opt | translate}} {{i < (optionsSel.length  -1) ? ', ' : '' }}
     </div>
-    <!-- <p-chips [ngModel]="optionsSel" (keydown)="onChange($event)" id="chips"></p-chips> -->
   </div>
 </p-card>

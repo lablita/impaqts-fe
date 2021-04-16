@@ -1,40 +1,46 @@
-import { ChunkToken } from "./chunk-token";
-
-export class AndChunkToken {
-  orChunkList: ChunkToken[] = [];
+export class QueryElement {
+  tags: Array<Array<QueryTag>> = [];
 
   constructor() {
-    const chunk = new ChunkToken();
-    this.orChunkList.push(chunk);
+    const tag = new QueryTag();
+    const andTag: Array<QueryTag> = [];
+    andTag.push(tag);
+    this.tags.push(andTag);
   }
 }
-
-export class QueryToken {
+export class QueryTag {
+  name: string;
+  value: string;
+  structure = 'token';
+  startsWithValue = false;
+  endsWithValue = false;
+  containsValue = false;
+  matchCase = true;
+  negation = false;
+}
+export class QueryToken extends QueryElement {
   sentenceStart: boolean;
   sentenceEnd: boolean;
-  repeatIndex: number;
-  repeatTimes: number;
-  andChunkList: AndChunkToken[] = [];
+  minRepetitions = 0;
+  maxRepetitions = 0;
 
-  addOrChunk(andToken: AndChunkToken): void {
-    const orChunk = new ChunkToken();
-    andToken.orChunkList.push(orChunk);
+  addTag(andTag: Array<QueryTag>): void {
+    const tag = new QueryTag();
+    andTag.push(tag);
   }
 
-  remove(chunk: ChunkToken, andToken: AndChunkToken): void {
-    andToken.orChunkList.splice(andToken.orChunkList.indexOf(chunk), 1);
-    if (andToken.orChunkList.length === 0) {
-      this.andChunkList.splice(this.andChunkList.indexOf(andToken), 1);
+  remove(tag: QueryTag, andTag: Array<QueryTag>): void {
+    andTag.splice(andTag.indexOf(tag), 1);
+    if (andTag.length === 0) {
+      this.tags.splice(this.tags.indexOf(andTag), 1);
     }
   }
 
-  addAndChunk(): void {
-    const andChunkToken = new AndChunkToken();
-    this.andChunkList.push(andChunkToken);
-  }
-
-  constructor() {
-    this.addAndChunk();
+  addAndTag(): void {
+    const tag = new QueryTag();
+    const andTag: Array<QueryTag> = [];
+    andTag.push(tag);
+    this.tags.push(andTag);
   }
 
 }

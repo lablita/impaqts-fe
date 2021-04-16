@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ChunkToken } from '../model/chunk-token';
 import { KeyValueItem } from '../model/key-value-item';
-import { AndChunkToken, QueryToken } from '../model/query-token';
+import { QueryTag, QueryToken } from '../model/query-token';
 
 @Component({
   selector: 'app-query-token',
@@ -12,7 +11,6 @@ export class QueryTokenComponent implements OnInit {
 
   @Input() token: QueryToken;
   @Input() typeList: KeyValueItem[];
-  @Input() actionList: KeyValueItem[];
   @Input() option: boolean;
 
   @Output() delete: EventEmitter<QueryToken> = new EventEmitter<QueryToken>();
@@ -28,17 +26,17 @@ export class QueryTokenComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public addOrChunk(andChunk: AndChunkToken): void {
-    this.token.addOrChunk(andChunk);
+  public addTag(andTag: Array<QueryTag>): void {
+    this.token.addTag(andTag);
   }
 
-  public addAndChunk(): void {
-    this.token.addAndChunk();
+  public addAndTag(): void {
+    this.token.addAndTag();
   }
 
-  public deleteChunk(chunk: ChunkToken, andToken: AndChunkToken): void {
-    this.token.remove(chunk, andToken);
-    if (this.token.andChunkList.length === 0) {
+  public deleteTag(tag: QueryTag, andTag: Array<QueryTag>): void {
+    this.token.remove(tag, andTag);
+    if (this.token.tags.length === 0) {
       this.delete.emit(this.token);
     }
   }
@@ -48,7 +46,6 @@ export class QueryTokenComponent implements OnInit {
   }
 
   public setOption(): void {
-    // document.getElementById('chips').click();
     if (this.optionsSel.indexOf(this.optionSel.value) >= 0) {
       this.optionsSel.splice(this.optionsSel.indexOf(this.optionSel.value), 1);
     } else if (this.optionSel.key !== 'REPEAT') {
@@ -57,11 +54,4 @@ export class QueryTokenComponent implements OnInit {
       this.repeat = !this.repeat;
     }
   }
-
-  // public onChange(event): boolean {
-  //   if (!(event.keyCode === 8 || event.keyCode === 46)) {
-  //     return false;
-  //   }
-  // }
-
 }

@@ -21,6 +21,7 @@ import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
 import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
+import { QueryTagComponent } from './query-tag/query-tag.component';
 import { QueryTokenComponent } from './query-token/query-token.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { RightComponent } from './right/right.component';
@@ -30,7 +31,6 @@ import { TopComponent } from './top/top.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-import { TokenChunkComponent } from './token-chunk/token-chunk.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +55,7 @@ import { TokenChunkComponent } from './token-chunk/token-chunk.component';
     CopyrightComponent,
     VisualQueryComponent,
     QueryTokenComponent,
-    TokenChunkComponent
+    QueryTagComponent
   ],
   imports: [
     BrowserModule,

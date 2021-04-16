@@ -1,3 +1,4 @@
+import { QueryPattern } from "./query-pattern";
 
 export class WordListOption {
   subcorpus: string;
@@ -10,4 +11,7 @@ export class QueryRequest {
   corpusMetadatum: string;
   word: string;
   corpus: string;
+  cql: string;
+  queryInCql: boolean;
+  queryPattern: QueryPattern;
 }
