@@ -7,12 +7,12 @@
     <div class="p-col">
       <div class="p-grid p-mb-1">
         <div class="p-col">
-          <p-dropdown [options]="typeList" [(ngModel)]="tag.name" optionLabel="value"
+          <p-dropdown [options]="typeList" [(ngModel)]="tag.name" optionLabel="value" (onChange)="setTagName($event)"
             [placeholder]="'PAGE.VISUAL_QUERY.SEL_TYPE' | translate">
           </p-dropdown>
         </div>
         <div class="p-col">
-          <p-dropdown [(ngModel)]="action" (onchange)="setTagAttr()" [options]="actionList"
+          <p-dropdown [(ngModel)]="action" (onChange)="setTagAttr($event)" [options]="actionList"
             [placeholder]="'PAGE.VISUAL_QUERY.SEL_ACTION' | translate" optionLabel="value">
             <ng-template pTemplate="selectedItem">
               <div *ngIf="action">

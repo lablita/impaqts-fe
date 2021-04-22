@@ -98,7 +98,7 @@ export class VisualQueryComponent implements OnInit {
       qr.end = qr.start + event.rows;
     }
     // qr.word = `[word="${this.simple}"]`;
-    // qr.corpus = this.selectedCorpus.key;
+    qr.corpus = this.selectedCorpus.key;
     this.websocket.next(qr);
     // this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }

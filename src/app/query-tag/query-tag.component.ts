@@ -23,7 +23,8 @@ export class QueryTagComponent implements OnInit {
     new KeyValueItem('REGEXP', 'REGEXP'),
     new KeyValueItem('NOT_REG', 'NOT_REG')];
 
-  public action: string;
+  public action: KeyValueItem;
+  public tagName: KeyValueItem;
 
   constructor() { }
 
@@ -34,8 +35,12 @@ export class QueryTagComponent implements OnInit {
     this.delete.emit(tag);
   }
 
-  public setTagAttr(): void {
-    switch (this.action) {
+  public setTagName(event): void {
+    this.tag.name = event.value.key;
+  }
+
+  public setTagAttr(event): void {
+    switch (event.value.key) {
       case 'IS':
         this.tag.negation = false;
         break;
