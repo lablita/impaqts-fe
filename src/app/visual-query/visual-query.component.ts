@@ -20,7 +20,7 @@ const WS_URL = '/test-query-ws-ext';
 export class VisualQueryComponent implements OnInit {
 
   public queryPattern: QueryPattern = new QueryPattern();
-  public typeListQuery: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
+  public typeListQuery: KeyValueItem[] = [new KeyValueItem('word', 'word'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadata: QueryToken[] = [];
