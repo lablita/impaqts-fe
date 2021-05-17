@@ -8,6 +8,7 @@ export class QueryElement {
     this.tags.push(andTag);
   }
 }
+
 export class QueryTag {
   name: string;
   value: string;
