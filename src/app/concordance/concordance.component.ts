@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
@@ -27,7 +27,7 @@ const WS_URL = '/test-query-ws-ext';
   templateUrl: './concordance.component.html',
   styleUrls: ['./concordance.component.scss']
 })
-export class ConcordanceComponent implements OnInit, AfterViewInit {
+export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
 
   @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
@@ -89,11 +89,14 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     private readonly emitterService: EmitterService
   ) { }
 
+  ngOnDestroy(): void {
+    this.websocket.unsubscribe();
+  }
+
   ngAfterViewInit(): void {
     // this.cd.detectChanges();
   }
   refresh(): void {
-
   }
 
   ngOnInit(): void {

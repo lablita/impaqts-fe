@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { INSTALLATION } from '../model/constants';
@@ -17,7 +17,7 @@ const WS_URL = '/test-query-ws-ext';
   styleUrls: ['./visual-query.component.scss']
 })
 
-export class VisualQueryComponent implements OnInit {
+export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public queryPattern: QueryPattern = new QueryPattern();
   public typeListQuery: KeyValueItem[] = [new KeyValueItem('word', 'word'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
@@ -36,10 +36,14 @@ export class VisualQueryComponent implements OnInit {
   public kwicLines: KWICline[];
   public TotalKwicline: KWICline[];
 
-  private websocket: WebSocketSubject<any>;
+  private websocketVQ: WebSocketSubject<any>;
   private simple: string;
 
   constructor() { }
+
+  ngOnDestroy(): void {
+    this.websocketVQ.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.init();
@@ -51,8 +55,8 @@ export class VisualQueryComponent implements OnInit {
 
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;
-    this.websocket = webSocket(url);
-    this.websocket.asObservable().subscribe(
+    this.websocketVQ = webSocket(url);
+    this.websocketVQ.asObservable().subscribe(
       resp => {
         const qr = resp as QueryResponse;
         if (qr.kwicLines.length > 0) {
@@ -87,7 +91,6 @@ export class VisualQueryComponent implements OnInit {
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
-    // this.loading = true;
     const qr = new QueryRequest();
     qr.queryPattern = this.queryPattern;
     if (!event) {
@@ -97,10 +100,8 @@ export class VisualQueryComponent implements OnInit {
       qr.start = event.first;
       qr.end = qr.start + event.rows;
     }
-    // qr.word = `[word="${this.simple}"]`;
     qr.corpus = this.selectedCorpus.key;
-    this.websocket.next(qr);
-    // this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
+    this.websocketVQ.next(qr);
   }
 
 }
