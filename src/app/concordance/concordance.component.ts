@@ -13,8 +13,10 @@ import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/Metadatum';
+import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
+import { QueryTag, QueryToken } from '../model/query-token';
 import { EmitterService } from '../utils/emitter.service';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
@@ -235,7 +237,14 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       qr.start = event.first;
       qr.end = qr.start + event.rows;
     }
-    qr.word = `[word="${this.simple}"]`;
+    qr.queryPattern = new QueryPattern();
+    qr.queryPattern.tokPattern = new Array<QueryToken>();
+    const simpleQueryToken = new QueryToken();
+    const simpleQueryTag = new QueryTag();
+    simpleQueryTag.name = 'word';
+    simpleQueryTag.value = this.simple;
+    simpleQueryToken.tags[0][0] = simpleQueryTag;
+    qr.queryPattern.tokPattern.push(simpleQueryToken);
     qr.corpus = this.selectedCorpus.key;
     this.websocket.next(qr);
     this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
