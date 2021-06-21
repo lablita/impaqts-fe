@@ -24,7 +24,7 @@ export class AppInitializerService {
     return this.http.get<Installation>(`${CONTEXT_INSTALLATION}/installation?installationName=${this.installationName}`)
       .toPromise()
       .then((installation: Installation) => {
-        if (!localStorage.getItem(INSTALLATION)) {
+        if (installation) {
           localStorage.setItem(INSTALLATION, JSON.stringify(installation));
         }
         return installation;
