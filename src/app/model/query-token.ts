@@ -22,8 +22,8 @@ export class QueryTag {
 export class QueryToken extends QueryElement {
   sentenceStart: boolean;
   sentenceEnd: boolean;
-  minRepetitions = 0;
-  maxRepetitions = 0;
+  minRepetitions = 1;
+  maxRepetitions = 1;
 
   addTag(andTag: Array<QueryTag>): void {
     const tag = new QueryTag();
