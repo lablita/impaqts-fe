@@ -53,7 +53,8 @@ import { TreeModule } from 'primeng/tree';
     ProgressSpinnerModule,
     TooltipModule,
     OverlayPanelModule,
-    ChipsModule
+    ChipsModule,
+    OverlayPanelModule
   ],
   exports: [
     CommonModule,
@@ -80,7 +81,8 @@ import { TreeModule } from 'primeng/tree';
     ProgressSpinnerModule,
     TooltipModule,
     OverlayPanelModule,
-    ChipsModule
+    ChipsModule,
+    OverlayPanelModule
   ]
 })
 export class PrimeNgModule { }

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { KeyValueItem } from '../model/key-value-item';
+import { Metadatum } from '../model/Metadatum';
 import { QueryTag, QueryToken } from '../model/query-token';
 
 @Component({
@@ -11,19 +12,27 @@ export class QueryTokenComponent implements OnInit {
 
   @Input() token: QueryToken;
   @Input() typeList: KeyValueItem[];
+  @Input() metaList: KeyValueItem[];
   @Input() option: boolean;
-
+  @Input() metadata: boolean;
+  @Input() metadatumTextTypes: Metadatum[];
   @Output() delete: EventEmitter<QueryToken> = new EventEmitter<QueryToken>();
+
 
   public optionList: KeyValueItem[] = [new KeyValueItem('REPEAT', 'REPEAT'), new KeyValueItem('START', 'START'), new KeyValueItem('END', 'END')];
   public optionSel: KeyValueItem;
   public optionsSel: string[] = [];
+
+  public metaSel: KeyValueItem;
 
   public repeat = false;
 
   constructor() { }
 
   ngOnInit(): void {
+    if (this.metadata) {
+      this.metaList = this.metadatumTextTypes.map(mt => new KeyValueItem(mt.name, mt.name));
+    }
   }
 
   public addTag(andTag: Array<QueryTag>): void {
@@ -54,4 +63,9 @@ export class QueryTokenComponent implements OnInit {
       this.repeat = !this.repeat;
     }
   }
+
+  public setMeta(): void {
+
+  }
+
 }

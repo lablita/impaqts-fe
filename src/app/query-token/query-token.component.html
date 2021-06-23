@@ -6,7 +6,7 @@
 
   <div *ngFor="let andTag of token.tags" class="p-mb-3" style="background-color: bisque;">
     <div *ngFor="let tag of andTag" class="p-mb-1">
-      <app-query-tag [tag]="tag" [typeList]="typeList" (delete)="deleteTag(tag, andTag)">
+      <app-query-tag [tag]="tag" [typeList]="typeList" (delete)="deleteTag(tag, andTag)" [metadata]="metadata">
       </app-query-tag>
     </div>
     <div class="p-ml-1">
@@ -20,7 +20,7 @@
     <button pButton pTooltip="Add in And" type="button" icon="pi pi-plus" (click)="addAndTag()"
       class="p-button-rounded"></button>
 
-    <div *ngIf="repeat" class="p-ml-3">
+    <div *ngIf="repeat && !metadata" class="p-ml-3">
       <label [for]="'minRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.REPEAT' | translate}}</label>
       <input class="p-mr-1" [id]="'minRepetitions'" type="number" style="width: 50px;"
         [(ngModel)]="token.minRepetitions">

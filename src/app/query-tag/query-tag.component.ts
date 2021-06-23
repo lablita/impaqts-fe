@@ -11,6 +11,7 @@ export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag;
   @Input() typeList: KeyValueItem[];
+  @Input() metadata: boolean;
 
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
@@ -33,6 +34,10 @@ export class QueryTagComponent implements OnInit {
 
   public deleteTag(tag: QueryTag): void {
     this.delete.emit(tag);
+  }
+
+  public openTypeDialog(): void {
+    // this.delete.emit(tag);
   }
 
   public setTagName(event): void {

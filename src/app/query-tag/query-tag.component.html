@@ -5,7 +5,7 @@
         (click)="deleteTag($event)"></button>
     </div>
     <div class="p-col">
-      <div class="p-grid p-mb-1">
+      <div class="p-grid p-mb-1" *ngIf="!metadata">
         <div class="p-col">
           <p-dropdown [options]="typeList" [(ngModel)]="tagName" optionLabel="value" (onChange)="setTagName($event)"
             [placeholder]="'PAGE.VISUAL_QUERY.SEL_TYPE' | translate">
@@ -25,11 +25,45 @@
           </p-dropdown>
         </div>
       </div>
-      <div>
+      <div *ngIf="!metadata">
         <input class="p-mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
           [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
         <label [for]="'tag'" class="label-size-enlarged">Aa</label>
       </div>
+      <div class="p-d-flex p-jc-center" *ngIf="metadata">
+        <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
+      </div>
+
+      <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '450px'}">
+        <ng-template pTemplate>
+          <!-- <div *ngFor="let token of tokens" class="p-field-checkbox">
+            <p-radioButton [inputId]="token.key" name="filter" [value]="token" [(ngModel)]="selectedToken">
+            </p-radioButton>
+            <label [for]="token.key" class="p-mr-2 p-ml-1">{{token.value}}</label>
+          </div> -->
+
+          <div *ngFor="let metadatum of metadata, let i = index" class="p-field p-mb-2">
+            <!-- FreeText-->
+            <label *ngIf="!metadatum.multipleChoice && metadatum.freeText"
+              class="label-size">{{metadatum.name | translate}}</label>
+            <input *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText style="width: 200px;"
+              [(ngModel)]="metadatum.selection">
+            <!-- Tree & checkbox-->
+            <div *ngIf="(metadatum.tree?.length > 0) && metadatum.multipleChoice">
+              <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
+              </p-tree>
+            </div>
+            <!-- Single selection -->
+            <div *ngIf="(metadatum.tree?.length > 0) && !metadatum.multipleChoice">
+              <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
+                (onNodeSelect)="selectedNode(metadatum)" stlye="color: red !importatnt;">
+              </p-tree>
+            </div>
+          </div>
+
+        </ng-template>
+      </p-overlayPanel>
+
     </div>
   </div>
 </span>
