@@ -120,7 +120,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.filter(md => md.documentMetadatum);
 
-      this.loading = this.metadataTextTypes.length;
 
       // recuro i dati salvati nel localstorage
       const textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
@@ -138,6 +137,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         }
       });
 
+      this.loading = this.metadataTextTypes.length;
       this.metadataTextTypes.forEach((metadatum, index) => {
         this.res.push(new KeyValueItem(metadatum.name, ''));
         if (metadatum.retrieveValuesFromCorpus) {
@@ -158,7 +158,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
               // elimino metadata che partecimano ad alberi 
               this.metadataTextTypes = this.metadataTextTypes.filter(md => !md.child);
             }
-          }), 1000 * index);
+          }), 4000 * index);
         } else {
           this.loading--;
         }
