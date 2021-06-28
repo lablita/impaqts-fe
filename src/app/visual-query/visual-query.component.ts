@@ -24,7 +24,7 @@ const WS_URL = '/test-query-ws-ext';
 export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public queryPattern: QueryPattern = new QueryPattern();
-  public typeListQuery: KeyValueItem[] = [new KeyValueItem('word', 'word'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
+  public typeListQuery: KeyValueItem[] = [new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'), new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadataTextTypes: Metadatum[];
