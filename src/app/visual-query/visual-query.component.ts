@@ -120,14 +120,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.filter(md => md.documentMetadatum);
 
-
       // recuro i dati salvati nel localstorage
       const textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
         JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
 
       // genero albero per componente multiselect check box
       this.metadataTextTypes.forEach(md => {
-        if (md.subMetadata?.length > 0) {
+        if (md.subMetadata?.length >= 0) {
           md.tree = [];
           const res = this.metadataUtilService.generateTree(md, (textTypesRequest?.multiSelects &&
             textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
@@ -157,8 +156,10 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
               this.metadataUtilService.linkLeafs(this.metadataTextTypes, textTypesRequest);
               // elimino metadata che partecimano ad alberi 
               this.metadataTextTypes = this.metadataTextTypes.filter(md => !md.child);
+
+
             }
-          }), 4000 * index);
+          }), 2000 * index);
         } else {
           this.loading--;
         }
@@ -180,6 +181,5 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public getMetadatumTextTypes(): Metadatum[] {
     return this.metadataTextTypes;
   }
-
 
 }

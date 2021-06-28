@@ -30,36 +30,45 @@
           [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
         <label [for]="'tag'" class="label-size-enlarged">Aa</label>
       </div>
-      <div class="p-d-flex p-jc-center" *ngIf="metadata">
-        <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
+      <div class="p-grid">
+        <div class="p-col">
+
+          <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
+        </div>
+
+        <div class="p-col p-d-flex p-ai-center">{{selectedMetadata}}</div>
       </div>
 
-      <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '450px'}">
-        <ng-template pTemplate>
-          <!-- <div *ngFor="let token of tokens" class="p-field-checkbox">
-            <p-radioButton [inputId]="token.key" name="filter" [value]="token" [(ngModel)]="selectedToken">
-            </p-radioButton>
-            <label [for]="token.key" class="p-mr-2 p-ml-1">{{token.value}}</label>
-          </div> -->
+      <div *ngIf="freeText">
+        <input type="text" pInputText style="width: 200px;" [(ngModel)]="freeInputText">
+      </div>
 
-          <div *ngFor="let metadatum of metadata, let i = index" class="p-field p-mb-2">
-            <!-- FreeText-->
-            <label *ngIf="!metadatum.multipleChoice && metadatum.freeText"
-              class="label-size">{{metadatum.name | translate}}</label>
-            <input *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText style="width: 200px;"
-              [(ngModel)]="metadatum.selection">
-            <!-- Tree & checkbox-->
-            <div *ngIf="(metadatum.tree?.length > 0) && metadatum.multipleChoice">
-              <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
-              </p-tree>
+
+      <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '350px'}">
+        <ng-template pTemplate>
+          <p-scrollPanel [style]="{width: '100%', height: '400px'}" styleClass="custombar">
+            <div class="p-mt-1 p-ml-3 p-component">
+
+              <div *ngFor="let metadatum of metadatumTextTypes, let i = index" class="p-field p-mb-2">
+                <!-- FreeText-->
+                <!-- <label *ngIf="!metadatum.multipleChoice && metadatum.freeText"
+                  class="label-size">{{metadatum.name | translate}}</label>
+                <input *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText
+                  style="width: 200px;" [(ngModel)]="metadatum.selection"> -->
+                <!-- Tree & checkbox-->
+                <!-- <div *ngIf="(metadatum.tree?.length > 0) && metadatum.multipleChoice">
+                  <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
+                  </p-tree>
+                </div> -->
+                <!-- Single selection -->
+                <div>
+                  <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
+                    (onNodeSelect)="selectedNode(metadatum)" stlye="color: red !importatnt;">
+                  </p-tree>
+                </div>
+              </div>
             </div>
-            <!-- Single selection -->
-            <div *ngIf="(metadatum.tree?.length > 0) && !metadatum.multipleChoice">
-              <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
-                (onNodeSelect)="selectedNode(metadatum)" stlye="color: red !importatnt;">
-              </p-tree>
-            </div>
-          </div>
+          </p-scrollPanel>
 
         </ng-template>
       </p-overlayPanel>

@@ -51,7 +51,7 @@ export class MetadataPanelComponent implements OnInit {
 
     // genero albero per componente multiselect check box
     this.metadata.forEach(md => {
-      if (md.subMetadata?.length > 0) {
+      if ((md.subMetadata?.length >= 0) && !md.freeText) {
         md.tree = [];
         const res = this.metadataUtilService.generateTree(md, (this.textTypesRequest?.multiSelects &&
           this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
@@ -134,10 +134,7 @@ export class MetadataPanelComponent implements OnInit {
   }
 
   public selectedNode(metadata: Metadatum): void {
-    metadata['tree'][0].children.forEach(el => {
-      el.icon = el.label === metadata.selection['label'] ? "pi pi-circle-on" : "pi pi-circle-off";
-    });
-    metadata.selection['icon'] = "pi pi-circle-on";
+    this.metadataUtilService.setOnOffRadio(metadata.tree[0], metadata.selection['label']);
   }
 
 }

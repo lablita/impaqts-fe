@@ -155,4 +155,18 @@ export class MetadataUtilService {
     return { tree: root, selections: selections };
   }
 
+  public setOnOffRadio(node: TreeNode, label: string): void {
+    if (node.children?.length > 0) {
+      node.children.forEach(md => {
+        this.setOnOffRadio(md, label);
+      });
+    } else {
+      if (!node.icon || node.icon === '') {
+        node.icon = node.label === label ? 'pi pi-circle-on' : '';
+      } else {
+        node.icon = '';
+      }
+    }
+  }
+
 }

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { KeyValueItem } from '../model/key-value-item';
+import { Metadatum } from '../model/Metadatum';
 import { QueryTag } from '../model/query-token';
+import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
   selector: 'app-query-tag',
@@ -12,8 +14,13 @@ export class QueryTagComponent implements OnInit {
   @Input() tag: QueryTag;
   @Input() typeList: KeyValueItem[];
   @Input() metadata: boolean;
+  @Input() metadatumTextTypes: Metadatum[];
 
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
+
+  public selectedMetadata = '';
+  public freeText = false;
+  public freeInputText = '';
 
   public actionList: KeyValueItem[] = [
     new KeyValueItem('IS', 'IS'),
@@ -27,10 +34,11 @@ export class QueryTagComponent implements OnInit {
   public action: KeyValueItem;
   public tagName: KeyValueItem;
 
-  constructor() { }
+  constructor(
+    private readonly metadataUtilService: MetadataUtilService
+  ) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   public deleteTag(tag: QueryTag): void {
     this.delete.emit(tag);
@@ -42,6 +50,22 @@ export class QueryTagComponent implements OnInit {
 
   public setTagName(event): void {
     this.tag.name = event.value.key;
+  }
+
+  public selectedNode(metadata: Metadatum): void {
+    if (this.selectedMetadata !== metadata.selection['label'] && !(metadata.selection['children']?.length > 0)) {
+      this.selectedMetadata = metadata.selection['label'];
+    } else if (!(metadata.selection['children']?.length > 0)) {
+      this.selectedMetadata = '';
+    }
+    if (!(metadata.selection['children']?.length > 0)) {
+      this.metadatumTextTypes.forEach(md => {
+        this.metadataUtilService.setOnOffRadio(md.tree[0], metadata.selection['label']);
+      });
+    }
+    if (metadata.freeText) {
+      this.freeText = !this.freeText;
+    }
   }
 
   public setTagAttr(event): void {

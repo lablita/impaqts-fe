@@ -30,9 +30,6 @@ export class QueryTokenComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    if (this.metadata) {
-      this.metaList = this.metadatumTextTypes.map(mt => new KeyValueItem(mt.name, mt.name));
-    }
   }
 
   public addTag(andTag: Array<QueryTag>): void {
