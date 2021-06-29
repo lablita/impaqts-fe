@@ -33,11 +33,11 @@ export class QueryTokenComponent implements OnInit {
   }
 
   public addTag(andTag: Array<QueryTag>): void {
-    this.token.addTag(andTag);
+    this.token.addTag(andTag, this.metadata ? 'metadata' : 'token');
   }
 
   public addAndTag(): void {
-    this.token.addAndTag();
+    this.token.addAndTag(this.metadata ? 'metadata' : 'token');
   }
 
   public deleteTag(tag: QueryTag, andTag: Array<QueryTag>): void {

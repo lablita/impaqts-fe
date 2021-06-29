@@ -29,7 +29,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public metadataTextTypes: Metadatum[];
   public metadata: QueryToken[] = [];
-  public typeListMetadata: KeyValueItem[] = [new KeyValueItem('1', 'uno'), new KeyValueItem('2', 'due'), new KeyValueItem('3', 'tre')];
 
   public installation: Installation;
   public corpusList: KeyValueItem[] = [];
@@ -84,7 +83,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public addTokenQuery(): void {
-    const token = new QueryToken();
+    const token = new QueryToken('token');
     this.queryPattern.tokPattern.push(token);
   }
 
@@ -93,7 +92,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public addTokenMetadata(): void {
-    const token = new QueryToken();
+    const token = new QueryToken('metadata');
     this.metadata.push(token);
   }
 
@@ -102,6 +101,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
+    //TODO
+    const len = this.metadata.length;
     const qr = new QueryRequest();
     qr.queryPattern = this.queryPattern;
     if (!event) {
@@ -119,11 +120,9 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     if (this.selectedCorpus) {
       this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.filter(md => md.documentMetadatum);
-
       // recuro i dati salvati nel localstorage
       const textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
         JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
-
       // genero albero per componente multiselect check box
       this.metadataTextTypes.forEach(md => {
         if (md.subMetadata?.length >= 0) {
@@ -135,7 +134,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           md.selection = res['selections'];
         }
       });
-
       this.loading = this.metadataTextTypes.length;
       this.metadataTextTypes.forEach((metadatum, index) => {
         this.res.push(new KeyValueItem(metadatum.name, ''));
@@ -148,23 +146,18 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
               (textTypesRequest?.multiSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
                 textTypesRequest.multiSelects.filter(ss => ss.key === metadatum.name)[0] : null);
             this.loading--;
-
             metadatum = this.metadataUtilService.mergeMetedata(res, metadatum, selectionated);
-
             if (this.loading === 0) {
               //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
               this.metadataUtilService.linkLeafs(this.metadataTextTypes, textTypesRequest);
               // elimino metadata che partecimano ad alberi 
               this.metadataTextTypes = this.metadataTextTypes.filter(md => !md.child);
-
-
             }
           }), 2000 * index);
         } else {
           this.loading--;
         }
       });
-
       /** recupero freeText da localstorage */
       if (textTypesRequest?.freeTexts) {
         this.metadataTextTypes.forEach(md => {

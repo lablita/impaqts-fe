@@ -66,6 +66,7 @@ export class QueryTagComponent implements OnInit {
     if (metadata.freeText) {
       this.freeText = !this.freeText;
     }
+    this.tag.name = this.selectedMetadata;
   }
 
   public setTagAttr(event): void {

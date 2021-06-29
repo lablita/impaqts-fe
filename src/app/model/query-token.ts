@@ -1,8 +1,8 @@
 export class QueryElement {
   tags: Array<Array<QueryTag>> = [];
 
-  constructor() {
-    const tag = new QueryTag();
+  constructor(struct: string) {
+    const tag = new QueryTag(struct);
     const andTag: Array<QueryTag> = [];
     andTag.push(tag);
     this.tags.push(andTag);
@@ -12,12 +12,16 @@ export class QueryElement {
 export class QueryTag {
   name: string;
   value: string;
-  structure = 'token';
+  structure: 'token' | 'metadata';
   startsWithValue = false;
   endsWithValue = false;
   containsValue = false;
   matchCase = true;
   negation = false;
+
+  constructor(struct: string) {
+    this.structure = struct === 'token' ? 'token' : 'metadata';
+  }
 }
 export class QueryToken extends QueryElement {
   sentenceStart: boolean;
@@ -25,8 +29,8 @@ export class QueryToken extends QueryElement {
   minRepetitions = 1;
   maxRepetitions = 1;
 
-  addTag(andTag: Array<QueryTag>): void {
-    const tag = new QueryTag();
+  addTag(andTag: Array<QueryTag>, struct: string): void {
+    const tag = new QueryTag(struct);
     andTag.push(tag);
   }
 
@@ -37,11 +41,12 @@ export class QueryToken extends QueryElement {
     }
   }
 
-  addAndTag(): void {
-    const tag = new QueryTag();
+  addAndTag(struct: string): void {
+    const tag = new QueryTag(struct);
     const andTag: Array<QueryTag> = [];
     andTag.push(tag);
     this.tags.push(andTag);
   }
-
 }
+
+

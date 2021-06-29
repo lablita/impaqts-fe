@@ -242,8 +242,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     qr.queryPattern = new QueryPattern();
     qr.queryPattern.tokPattern = new Array<QueryToken>();
-    const simpleQueryToken = new QueryToken();
-    const simpleQueryTag = new QueryTag();
+    const simpleQueryToken = new QueryToken('token');
+    const simpleQueryTag = new QueryTag('token');
     simpleQueryTag.name = 'word';
     simpleQueryTag.value = this.simple;
     simpleQueryToken.tags[0][0] = simpleQueryTag;
