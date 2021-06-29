@@ -6,10 +6,27 @@
 export const environment = {
   production: false,
   installation: 'uno',
-  installationName: 'IMPAQTS1',
+  installationName: 'IMPAQTS2',
   installationUrl: 'http://localhost:9001/impaqts-configurator',
-  cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS1'
+  cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS2'
 };
+
+// export const environment = {
+//   production: false,
+//   installation: 'due',
+//   installationName: 'IMPAQTS2',
+//   installationUrl: 'http://localhost:9001/impaqts-configurator',
+//   cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS2'
+// };
+
+// export const environment = {
+//   production: false,
+//   installation: 'tre',
+//   installationName: 'IMPAQTS3',
+//   installationUrl: 'http://localhost:9001/impaqts-configurator',
+//   cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS3'
+// };
+
 
 /*
  * For easier debugging in development mode, you can import the following file

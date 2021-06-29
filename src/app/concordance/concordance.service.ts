@@ -13,14 +13,12 @@ import { UtilService } from '../utils/util.service';
 export class ConcordanceService {
 
   private installationName: string;
-  private installationUrl: string;
 
   constructor(
     private readonly http: HttpClient,
     private readonly utils: UtilService
   ) {
     this.installationName = environment.installationName;
-    this.installationUrl = environment.installationUrl;
   }
 
   public getInstallation(): Observable<Installation> {
