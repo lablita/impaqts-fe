@@ -31,8 +31,8 @@
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickQueryType()"></button>&nbsp;
         <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}" [disabled]="!selectedCorpus"
           class="p-button-text" (click)="clickContext()"></button>&nbsp;
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.TEXT_TYPE' | translate}}" [disabled]="!selectedCorpus"
-          class="p-button-text" (click)="clickTextType()"></button>
+        <!-- <button pButton type="button" label="{{'PAGE.CONCORDANCE.TEXT_TYPE' | translate}}" [disabled]="!selectedCorpus"
+          class="p-button-text" (click)="clickTextType()"></button> -->
       </div>
 
       <div *ngIf="queryTypeStatus">

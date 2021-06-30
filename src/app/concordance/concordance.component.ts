@@ -209,6 +209,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public dropdownCorpus(): void {
+    this.clickTextType();
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
     if (this.selectedCorpus) {
