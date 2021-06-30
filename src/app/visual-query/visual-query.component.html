@@ -32,7 +32,9 @@
       class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_TOKEN" | translate}}</button>
 
   <hr>
-
+  <div *ngIf="loading > 0" class="p-text-center">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+  </div>
   <span class="p-component">
     <h2>{{"PAGE.VISUAL_QUERY.METADATA" | translate}}</h2>
   </span>
@@ -48,8 +50,6 @@
   <button pButton label=" " (click)="addTokenMetadata()"
     [disabled]="metadata?.length > 0 || metadataTextTypes?.length <= 0 || loading > 0 || !selectedCorpus"><i
       class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_METADATA" | translate}}</button>
-
-
 
   <div class="p-mt-6 p-text-center">
     <button [disabled]="queryPattern.tokPattern.length === 0 || !selectedCorpus" pButton type="button"

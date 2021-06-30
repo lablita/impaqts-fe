@@ -34,11 +34,20 @@ export class QueryTagComponent implements OnInit {
   public action: KeyValueItem;
   public tagName: KeyValueItem;
 
+  public root: Metadatum = new Metadatum();
+
   constructor(
     private readonly metadataUtilService: MetadataUtilService
   ) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    if (this.metadata) {
+      this.root.subMetadata = this.metadatumTextTypes;
+      this.metadatumTextTypes.forEach(md => {
+        this.root.tree = this.root.tree.concat(md.tree);
+      });
+    }
+  }
 
   public deleteTag(tag: QueryTag): void {
     this.delete.emit(tag);
@@ -57,11 +66,6 @@ export class QueryTagComponent implements OnInit {
       this.selectedMetadata = metadata.selection['label'];
     } else if (!(metadata.selection['children']?.length > 0)) {
       this.selectedMetadata = '';
-    }
-    if (!(metadata.selection['children']?.length > 0)) {
-      this.metadatumTextTypes.forEach(md => {
-        this.metadataUtilService.setOnOffRadio(md.tree[0], metadata.selection['label']);
-      });
     }
     if (metadata.freeText) {
       this.freeText = !this.freeText;

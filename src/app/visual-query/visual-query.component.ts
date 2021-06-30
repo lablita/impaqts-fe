@@ -152,6 +152,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
               this.metadataUtilService.linkLeafs(this.metadataTextTypes, textTypesRequest);
               // elimino metadata che partecimano ad alberi 
               this.metadataTextTypes = this.metadataTextTypes.filter(md => !md.child);
+              this.metadataTextTypes.forEach(md => this.metadataUtilService.setUnselectable(md.tree[0]));
             }
           }), 2000 * index);
         } else {

@@ -27,12 +27,12 @@ export class MetadataUtilService {
       metadatum.subMetadata = res;
       const root: TreeNode = {
         label: metadatum.name,
-        selectable: false,
+        selectable: true,
         children: []
       };
       const rootParent: TreeNode = {
         label: metadatum.name,
-        selectable: false,
+        selectable: true,
         children: []
       };
       if (!metadatum.multipleChoice) {
@@ -40,7 +40,7 @@ export class MetadataUtilService {
           const node = {
             label: el,
             selectable: true,
-            icon: selectionated?.value === el ? "pi pi-circle-on" : "pi pi-circle-off",
+            // icon: selectionated?.value === el ? "pi pi-circle-on" : "pi pi-circle-off",
             parent: rootParent,
           };
           root.children.push(node);
@@ -166,6 +166,15 @@ export class MetadataUtilService {
       } else {
         node.icon = '';
       }
+    }
+  }
+
+  public setUnselectable(node: TreeNode): void {
+    if (node.children?.length > 0) {
+      node.selectable = false;
+      node.children.forEach(md => {
+        this.setUnselectable(md);
+      });
     }
   }
 

@@ -6,9 +6,8 @@
 export const environment = {
   production: false,
   installation: 'uno',
-  installationName: 'IMPAQTS2',
+  installationName: 'IMPAQTS1',
   installationUrl: 'http://localhost:9001/impaqts-configurator',
-  cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS2'
 };
 
 // export const environment = {
@@ -16,7 +15,6 @@ export const environment = {
 //   installation: 'due',
 //   installationName: 'IMPAQTS2',
 //   installationUrl: 'http://localhost:9001/impaqts-configurator',
-//   cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS2'
 // };
 
 // export const environment = {
@@ -24,7 +22,6 @@ export const environment = {
 //   installation: 'tre',
 //   installationName: 'IMPAQTS3',
 //   installationUrl: 'http://localhost:9001/impaqts-configurator',
-//   cssUrl: 'http://localhost:9001/impaqts-configurator/css?installationName=IMPAQTS3'
 // };
 
 

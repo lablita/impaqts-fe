@@ -82,6 +82,11 @@ export class MetadataPanelComponent implements OnInit {
             this.metadataUtilService.linkLeafs(this.metadata, this.textTypesRequest);
             // elimino metadata che partecimano ad alberi 
             this.metadata = this.metadata.filter(md => !md.child);
+            this.metadata.forEach(md => {
+              if (!md.multipleChoice && !md.freeText) {
+                this.metadataUtilService.setUnselectable(md.tree[0]);
+              };
+            });
           }
         }), 4000 * index);
       } else {
@@ -131,10 +136,6 @@ export class MetadataPanelComponent implements OnInit {
 
   public isFilterOptions(): boolean {
     return this.title === 'MENU.FILTER';
-  }
-
-  public selectedNode(metadata: Metadatum): void {
-    this.metadataUtilService.setOnOffRadio(metadata.tree[0], metadata.selection['label']);
   }
 
 }

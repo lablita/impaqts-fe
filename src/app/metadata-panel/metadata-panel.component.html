@@ -28,7 +28,7 @@
         <!-- Single selection -->
         <div *ngIf="(metadatum.tree?.length > 0) && !metadatum.multipleChoice">
           <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
-            (onNodeSelect)="selectedNode(metadatum)" stlye="color: red !importatnt;">
+            stlye="color: red !importatnt;">
           </p-tree>
         </div>
       </div>
