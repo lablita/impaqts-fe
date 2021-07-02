@@ -21,6 +21,7 @@ export class QueryTagComponent implements OnInit {
   public selectedMetadata = '';
   public freeText = false;
   public freeInputText = '';
+  public metadatumSel: Metadatum = null;
 
   public actionList: KeyValueItem[] = [
     new KeyValueItem('IS', 'IS'),
@@ -67,10 +68,21 @@ export class QueryTagComponent implements OnInit {
     } else if (!(metadata.selection['children']?.length > 0)) {
       this.selectedMetadata = '';
     }
-    if (metadata.freeText) {
+
+    this.retriveMetadatumFromTreeNode(metadata.selection['label'], this.root);
+    if (this.metadatumSel?.freeText) {
       this.freeText = !this.freeText;
     }
     this.tag.name = this.selectedMetadata;
+  }
+
+  private retriveMetadatumFromTreeNode(label: string, metadatum: Metadatum): void {
+    if (metadatum.subMetadata?.length > 0) {
+      metadatum.subMetadata.forEach(md => this.retriveMetadatumFromTreeNode(label, md));
+    }
+    if (metadatum.name === label) {
+      this.metadatumSel = metadatum;
+    }
   }
 
   public setTagAttr(event): void {

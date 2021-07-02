@@ -138,4 +138,8 @@ export class MetadataPanelComponent implements OnInit {
     return this.title === 'MENU.FILTER';
   }
 
+  public nodeSelect(event: any): void {
+    console.log('');
+  }
+
 }

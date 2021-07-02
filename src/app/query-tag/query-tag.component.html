@@ -30,9 +30,8 @@
           [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
         <label [for]="'tag'" class="label-size-enlarged">Aa</label>
       </div>
-      <div class="p-grid">
+      <div class="p-grid" *ngIf="metadata">
         <div class="p-col">
-
           <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
         </div>
 
