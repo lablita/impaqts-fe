@@ -92,7 +92,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public addTokenMetadata(): void {
-    const token = new QueryToken('metadata');
+    const token = new QueryToken('document');
     this.metadata.push(token);
   }
 
@@ -101,8 +101,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
-    //TODO
-    const len = this.metadata.length;
+    this.queryPattern.structPattern = this.metadata[0];
+
     const qr = new QueryRequest();
     qr.queryPattern = this.queryPattern;
     if (!event) {

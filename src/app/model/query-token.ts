@@ -1,28 +1,5 @@
-export class QueryElement {
-  tags: Array<Array<QueryTag>> = [];
-
-  constructor(struct: string) {
-    const tag = new QueryTag(struct);
-    const andTag: Array<QueryTag> = [];
-    andTag.push(tag);
-    this.tags.push(andTag);
-  }
-}
-
-export class QueryTag {
-  name: string;
-  value: string;
-  structure: 'token' | 'metadata';
-  startsWithValue = false;
-  endsWithValue = false;
-  containsValue = false;
-  matchCase = true;
-  negation = false;
-
-  constructor(struct: string) {
-    this.structure = struct === 'token' ? 'token' : 'metadata';
-  }
-}
+import { QueryElement } from "./query-element";
+import { QueryTag } from "./query-tag";
 export class QueryToken extends QueryElement {
   sentenceStart: boolean;
   sentenceEnd: boolean;

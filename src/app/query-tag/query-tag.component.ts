@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { TreeNode } from 'primeng/api';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
-import { QueryTag } from '../model/query-token';
+import { QueryTag } from '../model/query-tag';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -19,6 +20,7 @@ export class QueryTagComponent implements OnInit {
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
   public selectedMetadata = '';
+  public selectedMetadataPath = '';
   public freeText = false;
   public freeInputText = '';
   public metadatumSel: Metadatum = null;
@@ -70,10 +72,13 @@ export class QueryTagComponent implements OnInit {
     }
 
     this.retriveMetadatumFromTreeNode(metadata.selection['label'], this.root);
+    this.root.tree.forEach(node => this.retrieveMatadataPath(metadata.selection['label'], node, ''));
     if (this.metadatumSel?.freeText) {
       this.freeText = !this.freeText;
     }
-    this.tag.name = this.selectedMetadata;
+    this.tag.name = this.selectedMetadataPath;
+    this.tag.value = this.selectedMetadata;
+    // this.tag.name = this.selectedMetadata;
   }
 
   private retriveMetadatumFromTreeNode(label: string, metadatum: Metadatum): void {
@@ -82,6 +87,15 @@ export class QueryTagComponent implements OnInit {
     }
     if (metadatum.name === label) {
       this.metadatumSel = metadatum;
+    }
+  }
+
+  private retrieveMatadataPath(label: string, node: TreeNode, path: string) {
+    if (node.children?.length > 0) {
+      node.children.forEach(n => this.retrieveMatadataPath(label, n, path.length > 0 ? (path + '.' + node?.label) : node?.label));
+    }
+    if (node.label === label) {
+      this.selectedMetadataPath = path;
     }
   }
 

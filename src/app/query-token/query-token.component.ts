@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
-import { QueryTag, QueryToken } from '../model/query-token';
+import { QueryTag } from '../model/query-tag';
+import { QueryToken } from '../model/query-token';
 
 @Component({
   selector: 'app-query-token',
@@ -33,11 +34,11 @@ export class QueryTokenComponent implements OnInit {
   }
 
   public addTag(andTag: Array<QueryTag>): void {
-    this.token.addTag(andTag, this.metadata ? 'metadata' : 'token');
+    this.token.addTag(andTag, this.metadata ? 'document' : 'token');
   }
 
   public addAndTag(): void {
-    this.token.addAndTag(this.metadata ? 'metadata' : 'token');
+    this.token.addAndTag(this.metadata ? 'document' : 'token');
   }
 
   public deleteTag(tag: QueryTag, andTag: Array<QueryTag>): void {

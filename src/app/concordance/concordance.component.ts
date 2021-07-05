@@ -16,7 +16,8 @@ import { Metadatum } from '../model/Metadatum';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
-import { QueryTag, QueryToken } from '../model/query-token';
+import { QueryTag } from '../model/query-tag';
+import { QueryToken } from '../model/query-token';
 import { EmitterService } from '../utils/emitter.service';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
