@@ -18,10 +18,12 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
+import { TextTypesRequest } from '../model/text-types-request';
 import { EmitterService } from '../utils/emitter.service';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
 const WS_URL = '/test-query-ws-ext';
+const STRUCT_DOC = 'document';
 
 @Component({
   selector: 'app-concordance',
@@ -83,6 +85,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** private */
   private websocket: WebSocketSubject<any>;
+  private metadataQuery: QueryToken = null;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -250,8 +253,42 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
     simpleQueryTag.value = this.simple;
     simpleQueryToken.tags[0][0] = simpleQueryTag;
     qr.queryPattern.tokPattern.push(simpleQueryToken);
+    if (this.metadataQuery) {
+      qr.queryPattern.structPattern = this.metadataQuery;
+    }
     qr.corpus = this.selectedCorpus.key;
     this.websocket.next(qr);
     this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
+  }
+
+  public setMetadataQuery(textTypesRequest: TextTypesRequest): void {
+    //Tutto in OR
+    this.metadataQuery = new QueryToken();
+    if (textTypesRequest.freeTexts?.length > 0) {
+      textTypesRequest.freeTexts.forEach(ft => {
+        const tag = new QueryTag(STRUCT_DOC);
+        tag.name = ft.key;
+        tag.value = ft.value;
+        this.metadataQuery.tags.push([tag]);
+      });
+    }
+    if (textTypesRequest.multiSelects?.length > 0) {
+      textTypesRequest.multiSelects.forEach(ms => {
+        ms.values.forEach(v => {
+          const tag = new QueryTag(STRUCT_DOC);
+          tag.name = ms.key;
+          tag.value = v;
+          this.metadataQuery.tags.push([tag]);
+        });
+      });
+    }
+    if (textTypesRequest.singleSelects?.length > 0) {
+      const tag = new QueryTag(STRUCT_DOC);
+      tag.name = textTypesRequest.singleSelects[0].key;
+      tag.value = textTypesRequest.singleSelects[0].value;
+      this.metadataQuery.tags.push([tag]);
+    }
+    this.loadConcordances();
+    console.log('ko!!!');
   }
 }

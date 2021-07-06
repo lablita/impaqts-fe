@@ -36,6 +36,6 @@
   </p-scrollPanel>
 
   <button pButton type=" button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-    (click)="clickMakeConcordance()"></button>
+    [disabled]="(this.loading > 0)" (click)="clickMakeConcordance()"></button>
 
 </div>

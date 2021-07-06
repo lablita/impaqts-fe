@@ -42,6 +42,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public loading = 0;
   public res: KeyValueItem[] = [];
+  public enableAddToken = false;
 
   private websocketVQ: WebSocketSubject<any>;
   private simple: string;
@@ -118,6 +119,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public dropdownCorpus(): void {
     if (this.selectedCorpus) {
+      this.enableAddToken = true;
       this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
         metadata.filter(md => md.documentMetadatum);
       // recuro i dati salvati nel localstorage
@@ -174,6 +176,16 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public getMetadatumTextTypes(): Metadatum[] {
     return this.metadataTextTypes;
+  }
+
+  public queryTokenOK(): boolean {
+    let result = false;
+    this.queryPattern.tokPattern.forEach(pt => pt.tags.forEach(tg => tg.forEach(t => {
+      if (t?.name?.length) {
+        result = true;
+      }
+    })));
+    return result;
   }
 
 }

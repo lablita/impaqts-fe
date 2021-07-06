@@ -114,7 +114,7 @@
     blockScroll="false">
     <div class="p-ml-3" *ngIf="selectedCorpus">
       <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.key" [metadata]="metadataTextTypes"
-        (closeSidebarEvent)="displayPanelMetadata=false">
+        (closeSidebarEvent)="displayPanelMetadata=false" (setMetadataQuery)="setMetadataQuery($event)">
       </app-metadata-panel>
     </div>
   </p-sidebar>

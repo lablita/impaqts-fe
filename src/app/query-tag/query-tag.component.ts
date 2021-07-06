@@ -78,7 +78,6 @@ export class QueryTagComponent implements OnInit {
     }
     this.tag.name = this.selectedMetadataPath;
     this.tag.value = this.selectedMetadata;
-    // this.tag.name = this.selectedMetadata;
   }
 
   private retriveMetadatumFromTreeNode(label: string, metadatum: Metadatum): void {

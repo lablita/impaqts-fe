@@ -26,6 +26,7 @@ export class MetadataPanelComponent implements OnInit {
   @Input() public corpus: string;
   @Input() public title: string;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
+  @Output() public setMetadataQuery = new EventEmitter<TextTypesRequest>();
 
   public simple: string;
   public res: KeyValueItem[] = [];
@@ -131,6 +132,8 @@ export class MetadataPanelComponent implements OnInit {
       }
     });
     localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(this.textTypesRequest));
+    this.setMetadataQuery.emit(this.textTypesRequest);
+    this.closeSidebarEvent.emit(true);
     console.log('ok');
   }
 
