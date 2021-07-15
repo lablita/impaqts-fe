@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { from, Observable, of } from 'rxjs';
+import { concatMap, delay } from 'rxjs/operators';
+import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { ConcordanceService } from '../concordance/concordance.service';
+import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
-
-const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +15,113 @@ const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
 
 export class MetadataUtilService {
 
-
+  public res: KeyValueItem[] = [];
+  public loading = 0;
+  private textTypesRequest: TextTypesRequest;
 
   constructor(
     private readonly concordanceService: ConcordanceService
   ) { }
 
+  // public createMatadataTree(corpus: string, metadata: Metadatum[]): Observable<Metadatum[]> {
 
+  //   return of(metadata);
+  // }
+
+  public createMatadataTree(corpus: string, metadata: Metadatum[]): Observable<any> {
+
+    this.loading = metadata.length;
+
+    // recuro i dati salvati nel localstorage
+    this.textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
+      JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
+
+    // genero albero per componente multiselect check box
+    metadata.forEach(md => {
+      if ((md.subMetadata?.length >= 0) && !md.freeText) {
+        md.tree = [];
+        const res = this.generateTree(md, (this.textTypesRequest?.multiSelects &&
+          this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
+          ? this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name)[0].values : null);
+        md.tree.push(res['tree']);
+        md.selection = res['selections'];
+      }
+    });
+
+    /** recupero freeText da localstorage */
+    if (this.textTypesRequest?.freeTexts) {
+      metadata.forEach(md => {
+        if (md?.freeText) {
+          md.selection = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0]?.value;
+        }
+      });
+    }
+
+    // genero albero flat per componente multiselect check box e single select
+    this.loading = metadata.length;
+    const obsArray = [];
+    let i = 0;
+    metadata.forEach(metadatum => {
+      this.res.push(new KeyValueItem(metadatum.name, ''));
+      if (metadatum.retrieveValuesFromCorpus) {
+        metadatum.selected = false;
+        // setTimeout(() => this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum).subscribe(res =>
+        //   this.setInnerTree(res.res, metadata, res.metadatum)), 4000 * index);
+        // setTimeout(() => this.concordanceService.getMetadatumValues(corpus, `${STRUCT_DOC}.${metadatum.name}`).subscribe(res =>
+        //   this.setInnerTree(res, metadata, metadatum)), 4000 * index);
+
+        // obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
+
+        // obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum).pipe(delay(4000 * i)));
+
+        obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
+        i++;
+      } else {
+        this.loading--;
+      }
+    });
+    if (obsArray.length > 0) {
+      return from(obsArray).pipe(concatMap(item => item.pipe(delay(4000))));
+
+      // from(obsArray).pipe(concatMap(item => item.pipe(delay(4000)))).subscribe(res => {
+      //   console.log('metadatum: ');
+      //   this.setInnerTree(res['res'], metadata, res['metadatum']);
+      // });
+    } else {
+      return of(metadata);
+    }
+
+
+
+    // if (this.loading === 0) {
+    //   //ordinamento position 
+    //   metadata.sort((a, b) => a.position - b.position);
+    //   return of(metadata);
+    // }
+  }
+
+  private setInnerTree(res: any, metadata: Metadatum[], metadatum: Metadatum) {
+    //ripristino valori letti da local storage 
+    const selectionated = this.textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
+      this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :
+      (this.textTypesRequest?.multiSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
+        this.textTypesRequest.multiSelects.filter(ss => ss.key === metadatum.name)[0] : null);
+    this.loading--;
+
+    metadatum = this.mergeMetedata(res, metadatum, selectionated);
+
+    if (this.loading === 0) {
+      //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
+      this.linkLeafs(metadata, this.textTypesRequest);
+      // elimino metadata che partecimano ad alberi 
+      metadata = metadata.filter(md => !md.child);
+      metadata.forEach(md => {
+        if (!md.multipleChoice && !md.freeText) {
+          this.setUnselectable(md.tree[0]);
+        }
+      });
+    }
+  }
 
   public mergeMetedata(res: any, metadatum: Metadatum, selectionated: Selection): Metadatum {
     const selection: TreeNode[] = [];

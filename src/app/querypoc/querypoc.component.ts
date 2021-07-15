@@ -1,10 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { WS_URL } from '../common/constants';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
-
-const WS_URL = '/test-query-ws-ext';
 
 @Component({
   selector: 'app-querypoc',

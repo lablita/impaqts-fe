@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
 import { QueryTag } from '../model/query-tag';
@@ -34,11 +35,11 @@ export class QueryTokenComponent implements OnInit {
   }
 
   public addTag(andTag: Array<QueryTag>): void {
-    this.token.addTag(andTag, this.metadata ? 'document' : 'token');
+    this.token.addTag(andTag, this.metadata ? STRUCT_DOC : TOKEN);
   }
 
   public addAndTag(): void {
-    this.token.addAndTag(this.metadata ? 'document' : 'token');
+    this.token.addAndTag(this.metadata ? STRUCT_DOC : TOKEN);
   }
 
   public deleteTag(tag: QueryTag, andTag: Array<QueryTag>): void {

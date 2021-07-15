@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN, WS_URL } from '../common/constants';
 import { ConcordanceService } from '../concordance/concordance.service';
 import { INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
@@ -13,8 +14,6 @@ import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
-const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
-const WS_URL = '/test-query-ws-ext';
 @Component({
   selector: 'app-visual-query',
   templateUrl: './visual-query.component.html',
@@ -84,7 +83,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public addTokenQuery(): void {
-    const token = new QueryToken('token');
+    const token = new QueryToken(TOKEN);
     this.queryPattern.tokPattern.push(token);
   }
 
@@ -93,7 +92,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public addTokenMetadata(): void {
-    const token = new QueryToken('document');
+    const token = new QueryToken(STRUCT_DOC);
     this.metadata.push(token);
   }
 
@@ -141,7 +140,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         this.res.push(new KeyValueItem(metadatum.name, ''));
         if (metadatum.retrieveValuesFromCorpus) {
           metadatum.selected = false;
-          setTimeout(() => this.concordanceService.getMetadatumValues(this.selectedCorpus.value, metadatum.name).subscribe(res => {
+          setTimeout(() => this.concordanceService.getMetadatumValues(this.selectedCorpus.value, `${STRUCT_DOC}.${metadatum.name}`).subscribe(res => {
             //ripristino valori letti da local storage 
             const selectionated = textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
               textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :

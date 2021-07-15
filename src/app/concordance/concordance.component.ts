@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
@@ -21,9 +22,6 @@ import { QueryToken } from '../model/query-token';
 import { TextTypesRequest } from '../model/text-types-request';
 import { EmitterService } from '../utils/emitter.service';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
-
-const WS_URL = '/test-query-ws-ext';
-const STRUCT_DOC = 'document';
 
 @Component({
   selector: 'app-concordance',
@@ -247,8 +245,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     qr.queryPattern = new QueryPattern();
     qr.queryPattern.tokPattern = new Array<QueryToken>();
-    const simpleQueryToken = new QueryToken('token');
-    const simpleQueryTag = new QueryTag('token');
+    const simpleQueryToken = new QueryToken(TOKEN);
+    const simpleQueryTag = new QueryTag(TOKEN);
     simpleQueryTag.name = 'word';
     simpleQueryTag.value = this.simple;
     simpleQueryToken.tags[0][0] = simpleQueryTag;
@@ -289,6 +287,5 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
       this.metadataQuery.tags.push([tag]);
     }
     this.loadConcordances();
-    console.log('ko!!!');
   }
 }

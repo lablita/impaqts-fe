@@ -20,7 +20,7 @@ export class QueryTagComponent implements OnInit {
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
   public selectedMetadata = '';
-  public selectedMetadataPath = '';
+  // public selectedMetadataPath = '';
   public freeText = false;
   public freeInputText = '';
   public metadatumSel: Metadatum = null;
@@ -72,11 +72,12 @@ export class QueryTagComponent implements OnInit {
     }
 
     this.retriveMetadatumFromTreeNode(metadata.selection['label'], this.root);
-    this.root.tree.forEach(node => this.retrieveMatadataPath(metadata.selection['label'], node, ''));
+    // this.root.tree.forEach(node => this.retrieveMatadataPath(metadata.selection['label'], node, ''));
     if (this.metadatumSel?.freeText) {
       this.freeText = !this.freeText;
     }
-    this.tag.name = this.selectedMetadataPath;
+    // this.tag.name = this.selectedMetadataPath;
+    this.tag.name = (metadata.selection as TreeNode).parent.label.indexOf('doc.') >= 0 ? (metadata.selection as TreeNode).parent.label.replace('doc.', '') : (metadata.selection as TreeNode).parent.label;
     this.tag.value = this.selectedMetadata;
   }
 
@@ -89,14 +90,14 @@ export class QueryTagComponent implements OnInit {
     }
   }
 
-  private retrieveMatadataPath(label: string, node: TreeNode, path: string) {
-    if (node.children?.length > 0) {
-      node.children.forEach(n => this.retrieveMatadataPath(label, n, path.length > 0 ? (path + '.' + node?.label) : node?.label));
-    }
-    if (node.label === label) {
-      this.selectedMetadataPath = path;
-    }
-  }
+  // private retrieveMatadataPath(label: string, node: TreeNode, path: string) {
+  //   if (node.children?.length > 0) {
+  //     node.children.forEach(n => this.retrieveMatadataPath(label, n, path.length > 0 ? (path + '.' + node?.label) : node?.label));
+  //   }
+  //   if (node.label === label) {
+  //     this.selectedMetadataPath = path;
+  //   }
+  // }
 
   public setTagAttr(event): void {
     switch (event.value.key) {

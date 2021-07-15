@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { ConcordanceService } from '../concordance/concordance.service';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
@@ -7,7 +8,6 @@ import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
-const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
 export class subMetadatum {
   currentSize: number;
   kwicLines: string[];
@@ -42,9 +42,17 @@ export class MetadataPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.metadataUtilService.createMatadataTree(this.corpus, this.metadata).subscribe(res => {
+      console.log('uno');
+      this.metadata = res;
+    });
 
+    //this.init();
+
+  }
+
+  private init(): void {
     this.loading = this.metadata.length;
-
 
     // recuro i dati salvati nel localstorage
     this.textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
@@ -68,7 +76,7 @@ export class MetadataPanelComponent implements OnInit {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
-        setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, metadatum.name).subscribe(res => {
+        setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, `${STRUCT_DOC}.${metadatum.name}`).subscribe(res => {
           //ripristino valori letti da local storage 
           const selectionated = this.textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
             this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :
