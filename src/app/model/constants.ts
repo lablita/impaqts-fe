@@ -3,6 +3,7 @@ export const CONTEXT_INSTALLATION = '/impaqts-configurator';
 export const CONTEXT_CORPORA = '';
 export const FIND_FAILED = 'FIND_FAILED';
 export const INSTALLATION = 'installation';
+export const INTERFACE_LANGUAGE = 'interface_language';
 
 /** */
 export const TOP_LEFT = 'TOP_LEFT';

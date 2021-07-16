@@ -30,20 +30,22 @@ export class CollocationOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.translateService.get('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.T_SCORE').subscribe(tScore => {
+    this.translateService.stream('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.T_SCORE').subscribe(res => {
       showList.forEach((show, index) => {
         if (index === 0) {
-          this.attributeList.push(new KeyValueItem(show, tScore));
+          this.attributeList = [];
+          this.attributeList.push(new KeyValueItem(show, res));
         } else {
-          this.attributeList.push(new KeyValueItem(show, this.translateService.instant('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + show)));
+          this.translateService.stream('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + show).subscribe(r =>
+            this.attributeList.push(new KeyValueItem(show, r))
+          );
         }
       });
-
-      this.collocationOptionsQueryRequest = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST) ?
-        JSON.parse(localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST)) :
-        INSTALLATION_LIST[environment.installation].collocationOptionsQueryRequest;
-
     });
+
+    this.collocationOptionsQueryRequest = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST) ?
+      JSON.parse(localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST)) :
+      INSTALLATION_LIST[environment.installation].collocationOptionsQueryRequest;
   }
 
   public closeSidebar(): void {

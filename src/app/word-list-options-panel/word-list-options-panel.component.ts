@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { ARF, CHANGE_OUT, DOC_COUNTS, HIT_COUNTS, KEYWORD, SIMPLE } from '../model/constants';
+import { HIT_COUNTS } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -95,23 +95,24 @@ export class WordListOptionsPanelComponent implements OnInit {
     this.wordListOptionsQueryRequest = localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST) ?
       JSON.parse(localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST)) :
       INSTALLATION_LIST[environment.installation].wordListOptionsQueryRequest;
-    this.translateService.get('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(translated => {
-      this.fileUploadedInfo = translated;
-      this.nonWords = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS');
-      this.nGram = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM');
 
-      this.frequencyFigures = [
-        new KeyValueItem(HIT_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS')),
-        new KeyValueItem(DOC_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.DOC_COUNTS')),
-        new KeyValueItem(ARF, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.ARF'))
-      ];
+    this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(res => this.fileUploadedInfo = res);
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.nonWords = res);
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM').subscribe(res => this.nGram = res);
 
-      this.outputTypes = [
-        new KeyValueItem(SIMPLE, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE')),
-        new KeyValueItem(KEYWORD, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD')),
-        new KeyValueItem(CHANGE_OUT, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT'))
-      ];
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS').subscribe(res => {
+      this.frequencyFigures = [];
+      this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res))
+      this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res)));
+      this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.ARF').subscribe(res => this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res)));
     });
+
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE').subscribe(res => {
+      this.outputTypes = [];
+      this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res))
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD').subscribe(res => this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT').subscribe(res => this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res)));
 
   }
 

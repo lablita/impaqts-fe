@@ -18,6 +18,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { SidebarModule } from 'primeng/sidebar';
 import { SliderModule } from 'primeng/slider';
 import { TableModule } from 'primeng/table';
@@ -54,7 +55,8 @@ import { TreeModule } from 'primeng/tree';
     TooltipModule,
     OverlayPanelModule,
     ChipsModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    SelectButtonModule
   ],
   exports: [
     CommonModule,
@@ -82,7 +84,8 @@ import { TreeModule } from 'primeng/tree';
     TooltipModule,
     OverlayPanelModule,
     ChipsModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    SelectButtonModule
   ]
 })
 export class PrimeNgModule { }

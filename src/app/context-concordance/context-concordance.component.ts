@@ -34,20 +34,24 @@ export class ContextConcordanceComponent implements OnInit {
     this.tokens.push(new KeyValueItem('15', '15'));
     this.contextConcordanceQueryRequest.token = this.tokens[4];
 
-    this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
-      this.windows = [
-        new KeyValueItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.LEFT')),
-        new KeyValueItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.RIGHT')),
-        new KeyValueItem(BOTH, this.translateService.instant('PAGE.CONCORDANCE.BOTH'))
-      ];
-      this.contextConcordanceQueryRequest.window = this.windows[2];
+    this.translateService.stream('PAGE.CONCORDANCE.LEFT').subscribe(res => {
+      this.windows = [];
+      this.windows.push(new KeyValueItem(LEFT, res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.RIGHT').subscribe(res => this.windows.push(new KeyValueItem(RIGHT, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.BOTH').subscribe(res => {
+      this.windows.push(new KeyValueItem(BOTH, res));
+      this.contextConcordanceQueryRequest.window = res;
+    });
 
-      this.items = [
-        new KeyValueItem(ALL, this.translateService.instant('PAGE.CONCORDANCE.ALL')),
-        new KeyValueItem(ANY, this.translateService.instant('PAGE.CONCORDANCE.ANY')),
-        new KeyValueItem(NONE, this.translateService.instant('PAGE.CONCORDANCE.NONE'))
-      ];
-      this.contextConcordanceQueryRequest.item = this.items[0];
+    this.translateService.stream('PAGE.CONCORDANCE.ALL').subscribe(res => {
+      this.items = [];
+      this.items.push(new KeyValueItem(ALL, res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.ANY').subscribe(res => this.items.push(new KeyValueItem(ANY, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.NONE').subscribe(res => {
+      this.items.push(new KeyValueItem(NONE, res));
+      this.contextConcordanceQueryRequest.item = res;
     });
   }
 

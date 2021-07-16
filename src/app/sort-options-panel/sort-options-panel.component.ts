@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { FIRST, L1, L2, L3, LEFT, NODE, R1, R2, R3, RIGHT, SECOND, THIRD } from '../model/constants';
+import { FIRST, L1, L2, L3, NODE, R1, R2, R3, SECOND } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -40,62 +40,66 @@ export class SortOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
-      this.backwordLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD');
 
-      this.sortKeys = [
-        new KeyValueItem(LEFT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT')),
-        new KeyValueItem(NODE, this.translateService.instant('MENU.NODE')),
-        new KeyValueItem(RIGHT, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT'))
-      ];
-
-      this.levels = [
-        new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL')),
-        new KeyValueItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL')),
-        new KeyValueItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL'))
-      ];
-
-      this.positionList = [
-        new KeyValueItem(L3, L3),
-        new KeyValueItem(L2, L2),
-        new KeyValueItem(L1, L1),
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(R3, R3),
-        new KeyValueItem(R2, R2),
-        new KeyValueItem(R1, R1)
-      ];
-
+    const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
+    this.translateService.stream('PAGE.CONCORDANCE.WORD').subscribe(res => {
       this.selectedMultiAttribute = [
-        new KeyValueItem('word', word),
-        new KeyValueItem('word', word),
-        new KeyValueItem('word', word)
+        new KeyValueItem('word', res),
+        new KeyValueItem('word', res),
+        new KeyValueItem('word', res)
       ];
-
-      this.selectedPosition = [
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(NODE, NODE),
-      ];
-
-      if (this.corpusAttributes?.length > 0) {
-        this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
-      }
-      this.ignoreCase = [false, false, false];
-      this.backward = [false, false, false];
-
-      this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
-        JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
-        INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
-
-      this.selectedSortKey = this.sortKeys.filter(sk => sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
-      this.selectedLevel = this.levels.filter(l => l.key === this.sortOptionsQueryRequest.level.key)[0];
-      const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
       this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
-      this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
-      this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
-      this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
     });
+
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE').subscribe(res => this.ignoreCaseLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD').subscribe(res => this.backwordLabel = res);
+
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT').subscribe(res => {
+      this.sortKeys = [];
+      this.sortKeys.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT', res));
+    });
+    this.translateService.stream('MENU.NODE').subscribe(res => this.sortKeys.push(new KeyValueItem('MENU.NODE', res)));
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT').subscribe(res => this.sortKeys.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT', res)));
+
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL').subscribe(res => {
+      this.levels = [];
+      this.levels.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL', res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL').subscribe(res => this.levels.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL', res)));
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL').subscribe(res => this.levels.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL', res)));
+
+    this.positionList = [
+      new KeyValueItem(L3, L3),
+      new KeyValueItem(L2, L2),
+      new KeyValueItem(L1, L1),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(R3, R3),
+      new KeyValueItem(R2, R2),
+      new KeyValueItem(R1, R1)
+    ];
+
+    this.selectedPosition = [
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE),
+    ];
+
+    if (this.corpusAttributes?.length > 0) {
+      this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
+    }
+    this.ignoreCase = [false, false, false];
+    this.backward = [false, false, false];
+
+    this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
+      JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
+      INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
+
+    this.selectedSortKey = this.sortKeys.filter(sk => sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
+    this.selectedLevel = this.levels.filter(l => l.key === this.sortOptionsQueryRequest.level.key)[0];
+    this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
+    this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
+    this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
+
   }
 
   public closeSidebar(): void {

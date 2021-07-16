@@ -44,7 +44,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   public selectedCorpus: KeyValueItem;
   public queryTypes: KeyValueItem[];
   public selectedQueryType: KeyValueItem;
-  public selectCorpus: string = 'PAGE.CONCORDANCE.SELECT_CORPUS';
+  public selectCorpus = 'PAGE.CONCORDANCE.SELECT_CORPUS';
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
@@ -68,7 +68,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   public filterOptionsLabel: string;
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
-  // public queryResponse: QueryResponse;
   public totalResults = 0;
   public kwicLines: KWICline[];
   public TotalKwicline: KWICline[];
@@ -96,7 +95,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // this.cd.detectChanges();
   }
   refresh(): void {
   }
@@ -172,25 +170,23 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
       this.displayPanelMetadata = event;
     });
 
-    this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
-
-      this.selectCorpus = this.translateService.instant('PAGE.CONCORDANCE.SELECT_CORPUS');
-      this.wordListOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS');
-      this.sortOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS');
-      this.freqOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS');
-      this.collocationOptionsLabel = this.translateService.instant('MENU.COLLOCATIONS');
-      this.filterOptionsLabel = this.translateService.instant('MENU.FILTER');
-      this.titleOption = this.viewOptionsLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS');
-      this.queryTypes = [
-        new KeyValueItem(SIMPLE, simple),
-        new KeyValueItem(LEMMA, this.translateService.instant('PAGE.CONCORDANCE.LEMMA')),
-        new KeyValueItem(PHRASE, this.translateService.instant('PAGE.CONCORDANCE.PHRASE')),
-        new KeyValueItem(WORD, this.translateService.instant('PAGE.CONCORDANCE.WORD')),
-        new KeyValueItem(CHARACTER, this.translateService.instant('PAGE.CONCORDANCE.CHARACTER')),
-        new KeyValueItem(CQL, this.translateService.instant('PAGE.CONCORDANCE.CQL'))
-      ];
-      this.selectedQueryType = this.queryTypes[0];
+    this.translateService.stream('PAGE.CONCORDANCE.SELECT_CORPUS').subscribe(res => this.selectCorpus = res);
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS').subscribe(res => this.wordListOptionsLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS').subscribe(res => this.sortOptionsLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS').subscribe(res => this.freqOptionsLabel = res);
+    this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocationOptionsLabel = res);
+    this.translateService.stream('MENU.FILTER').subscribe(res => this.filterOptionsLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS').subscribe(res => this.titleOption = this.viewOptionsLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.SIMPLE').subscribe(res => {
+      this.queryTypes = [];
+      this.queryTypes.push(new KeyValueItem(SIMPLE, res));
+      this.selectedQueryType = res;
     });
+    this.translateService.stream('PAGE.CONCORDANCE.LEMMA').subscribe(res => this.queryTypes.push(new KeyValueItem(LEMMA, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.PHRASE').subscribe(res => this.queryTypes.push(new KeyValueItem(PHRASE, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.WORD').subscribe(res => this.queryTypes.push(new KeyValueItem(WORD, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.CHARACTER').subscribe(res => this.queryTypes.push(new KeyValueItem(CHARACTER, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.CQL').subscribe(res => this.queryTypes.push(new KeyValueItem(CQL, res)));
   }
 
   public clickQueryType(): void {

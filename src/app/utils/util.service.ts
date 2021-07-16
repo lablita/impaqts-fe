@@ -108,12 +108,12 @@ export class UtilService implements OnDestroy {
   }
 
   public notifyErrorTranslation(translation: string): void {
-    this.translateService.get(translation)
+    this.translateService.stream(translation)
       .subscribe((message: string) => this.notifyError(message));
   }
 
   public notifySuccessTranslation(translation: string): void {
-    this.translateService.get(translation)
+    this.translateService.stream(translation)
       .subscribe((message: string) =>
         console.log(message)
         // this.toastr.success(message)
@@ -123,7 +123,5 @@ export class UtilService implements OnDestroy {
   public setContentLanguage(language: string): void {
     this.contentLanguageSet = language;
   }
-
-
 
 }

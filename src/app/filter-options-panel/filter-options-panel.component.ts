@@ -38,18 +38,17 @@ export class FilterOptionsPanelComponent implements OnInit {
       JSON.parse(localStorage.getItem(FILTER_OPTIONS_QUERY_REQUEST)) :
       INSTALLATION_LIST[environment.installation].filterOptionsQueryRequest;
 
-    this.translateService.get('PAGE.CONCORDANCE.FILTER_OPTIONS.POSITIVE').subscribe(positive => {
-
-      this.filters = [
-        new KeyValueItem(POSITIVE, positive),
-        new KeyValueItem(NEGATIVE, this.translateService.instant('PAGE.CONCORDANCE.FILTER_OPTIONS.NEGATIVE')),
-      ];
-
-      this.tokens = [
-        new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.FILTER_OPTIONS.FIRST')),
-        new KeyValueItem(LAST, this.translateService.instant('PAGE.CONCORDANCE.FILTER_OPTIONS.LAST')),
-      ];
+    this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.POSITIVE').subscribe(res => {
+      this.filters = [];
+      this.filters.push(new KeyValueItem(POSITIVE, res));
     });
+    this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.NEGATIVE').subscribe(res => this.filters.push(new KeyValueItem(NEGATIVE, res)));
+
+    this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.FIRST').subscribe(res => {
+      this.tokens = [];
+      this.tokens.push(new KeyValueItem(FIRST, res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.LAST').subscribe(res => this.tokens.push(new KeyValueItem(LAST, res)));
   }
 
   public clickMakeFilter(): void {

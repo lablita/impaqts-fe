@@ -49,29 +49,35 @@ export class ViewOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
     this.viewOptionsQueryRequest = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST) ?
       JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
-    this.translateService.get('PAGE.CONCORDANCE.SIMPLE').subscribe(simple => {
-      this.corpusAttributes.forEach(attribute =>
-        this.attributeChekBox.push(new KeyValueItem(attribute.key, this.translateService.instant(attribute.value))));
 
-      this.displayAttr = [
-        new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN')),
-        new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN'))
-      ];
-      this.selectedDisplayAttr = this.displayAttr.filter(da => da.key === this.viewOptionsQueryRequest.displayAttr)[0];
-
-      this.asTooltipLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS');
-      this.refsUpLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP');
-      this.sortGoodLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS');
-      this.showGDEXLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP');
-      this.iconForOneLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.ICON_FOR');
-      this.allowMultiLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.ALLOW_MULT');
-      this.flashCopingLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.COPYING_CLIP');
-      this.checkSelLinesLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.CHECK_SEL_LINES');
-      this.showLinesNumLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.SHOW_LINE');
-      this.shortLongRefLabel = this.translateService.instant('PAGE.CONCORDANCE.VIEW_OPTIONS.SHORT_LONG');
+    this.corpusAttributes.forEach((attribute, index) => {
+      this.translateService.stream(attribute.value).subscribe(res => {
+        if (index === 0) {
+          this.attributeChekBox = [];
+        }
+        this.attributeChekBox.push(new KeyValueItem(attribute.key, res));
+      });
     });
 
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN').subscribe(res => {
+      this.displayAttr = [];
+      this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN').subscribe(res => {
+      this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, res));
+      this.selectedDisplayAttr = this.displayAttr.filter(da => da.key === this.viewOptionsQueryRequest.displayAttr)[0];
+    });
 
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe(res => this.asTooltipLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe(res => this.refsUpLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe(res => this.sortGoodLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe(res => this.showGDEXLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ICON_FOR').subscribe(res => this.iconForOneLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ALLOW_MULT').subscribe(res => this.allowMultiLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.COPYING_CLIP').subscribe(res => this.flashCopingLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.CHECK_SEL_LINES').subscribe(res => this.checkSelLinesLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHOW_LINE').subscribe(res => this.showLinesNumLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHORT_LONG').subscribe(res => this.shortLongRefLabel = res);
   }
 
   public clickChangeViewOption(): void {

@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { INSTALLATION } from './model/constants';
+import { INSTALLATION, INTERFACE_LANGUAGE } from './model/constants';
 import { Installation } from './model/installation';
 
 
@@ -19,8 +19,10 @@ export class AppComponent implements OnInit {
     private readonly translateService: TranslateService,
     @Inject(DOCUMENT) private document: Document
   ) {
-    this.translateService.setDefaultLang('en');
-    this.translateService.use('en');
+    const lang = !!localStorage.getItem(INTERFACE_LANGUAGE) ? localStorage.getItem(INTERFACE_LANGUAGE) : 'en';
+    this.translateService.addLangs(['en', 'it']);
+    this.translateService.setDefaultLang(lang);
+    this.translateService.use(lang);
   }
 
   ngOnInit(): void {

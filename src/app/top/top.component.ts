@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { INSTALLATION, TOP_LEFT, TOP_RIGHT } from '../model/constants';
+import { TranslateService } from '@ngx-translate/core';
+import { INSTALLATION, INTERFACE_LANGUAGE, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
+import { KeyValueItem } from '../model/key-value-item';
 
 @Component({
   selector: 'app-top',
@@ -11,8 +13,12 @@ export class TopComponent {
 
   public urlTopLeft: string;
   public urlTopRight: string;
+  public languages: KeyValueItem[] = [new KeyValueItem('en', 'en'), new KeyValueItem('it', 'it'), new KeyValueItem('fr', 'fr')];
+  public selectedLanguage: KeyValueItem;
 
-  constructor() {
+  constructor(
+    private readonly translateService: TranslateService
+  ) {
     this.init();
   }
 
@@ -27,6 +33,12 @@ export class TopComponent {
         }
       });
     }
+    this.selectedLanguage = this.languages.filter(lang => lang.key === localStorage.getItem(INTERFACE_LANGUAGE))[0];
+  }
+
+  public selectLanguage(): void {
+    localStorage.setItem(INTERFACE_LANGUAGE, this.selectedLanguage.key);
+    this.translateService.use(this.selectedLanguage.key);
   }
 
 }

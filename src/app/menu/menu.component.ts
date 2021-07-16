@@ -56,22 +56,25 @@ export class MenuComponent implements OnInit {
       }
     });
 
-    this.translateService.get('MENU.CONCORDANCE').subscribe(concordance => {
-      this.concordance = concordance;
-      this.wordList = this.translateService.instant('MENU.WOLRD_LIST') as string;
-      this.corpusInfo = this.translateService.instant('MENU.CORPUS_INFO') as string;
-      this.allWords = this.translateService.instant('MENU.ALL_WORDS') as string;
-      this.allLemmans = this.translateService.instant('MENU.ALL_LEMMANS') as string;
-      this.viewOption = this.translateService.instant('MENU.VIEW_OPTION') as string;
-      this.sort = this.translateService.instant('MENU.SORT') as string;
-      this.sample = this.translateService.instant('MENU.SAMPLE') as string;
-      this.filter = this.translateService.instant('MENU.FILTER') as string;
-      this.frequency = this.translateService.instant('MENU.FREQUENCY') as string;
-      this.collocations = this.translateService.instant('MENU.COLLOCATIONS') as string;
-      this.visualQuery = this.translateService.instant('MENU.VISUAL_QUERY') as string;
+    this.translateService.stream('MENU.CONCORDANCE').subscribe(res => this.concordance = res);
+    this.translateService.stream('MENU.WOLRD_LIST').subscribe(res => this.wordList = res);
+    this.translateService.stream('MENU.CORPUS_INFO').subscribe(res => this.corpusInfo = res);
+    this.translateService.stream('MENU.ALL_WORDS').subscribe(res => this.allWords = res);
+    this.translateService.stream('MENU.ALL_LEMMANS').subscribe(res => this.allLemmans = res);
+    this.translateService.stream('MENU.VIEW_OPTION').subscribe(res => this.viewOption = res);
+    this.translateService.stream('MENU.SORT').subscribe(res => this.sort = res);
+    this.translateService.stream('MENU.SAMPLE').subscribe(res => this.sample = res);
+    this.translateService.stream('MENU.FILTER').subscribe(res => this.filter = res);
+    this.translateService.stream('MENU.FREQUENCY').subscribe(res => this.frequency = res);
+    this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocations = res);
+    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => {
+      this.visualQuery = res;
+
       this.menuDefine();
       this.items = this.getMenuItems(CONCORDANCE);
     });
+
+
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (event.item) {
         this.items = this.getMenuItems(event.item);
