@@ -1,12 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
-import { ConcordanceService } from '../concordance/concordance.service';
+import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
-import { MetadataUtilService } from '../utils/metadata-util.service';
 
 export class subMetadatum {
   currentSize: number;
@@ -36,83 +34,9 @@ export class MetadataPanelComponent implements OnInit {
 
   private textTypesRequest: TextTypesRequest;
 
-  constructor(
-    private readonly concordanceService: ConcordanceService,
-    private readonly metadataUtilService: MetadataUtilService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
-    this.metadataUtilService.createMatadataTree(this.corpus, this.metadata).subscribe(res => {
-      console.log('uno');
-      this.metadata = res;
-    });
-
-    //this.init();
-
-  }
-
-  private init(): void {
-    this.loading = this.metadata.length;
-
-    // recuro i dati salvati nel localstorage
-    this.textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
-
-    // genero albero per componente multiselect check box
-    this.metadata.forEach(md => {
-      if ((md.subMetadata?.length >= 0) && !md.freeText) {
-        md.tree = [];
-        const res = this.metadataUtilService.generateTree(md, (this.textTypesRequest?.multiSelects &&
-          this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
-          ? this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name)[0].values : null);
-        md.tree.push(res['tree']);
-        md.selection = res['selections'];
-      }
-    });
-
-    // genero albero flat per componente multiselect check box e single select
-    this.loading = this.metadata.length;
-    this.metadata.forEach((metadatum, index) => {
-      this.res.push(new KeyValueItem(metadatum.name, ''));
-      if (metadatum.retrieveValuesFromCorpus) {
-        metadatum.selected = false;
-        setTimeout(() => this.concordanceService.getMetadatumValues(this.corpus, `${STRUCT_DOC}.${metadatum.name}`).subscribe(res => {
-          //ripristino valori letti da local storage 
-          const selectionated = this.textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
-            this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :
-            (this.textTypesRequest?.multiSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
-              this.textTypesRequest.multiSelects.filter(ss => ss.key === metadatum.name)[0] : null);
-          this.loading--;
-
-          metadatum = this.metadataUtilService.mergeMetedata(res, metadatum, selectionated);
-
-          if (this.loading === 0) {
-            //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
-            this.metadataUtilService.linkLeafs(this.metadata, this.textTypesRequest);
-            // elimino metadata che partecimano ad alberi 
-            this.metadata = this.metadata.filter(md => !md.child);
-            this.metadata.forEach(md => {
-              if (!md.multipleChoice && !md.freeText) {
-                this.metadataUtilService.setUnselectable(md.tree[0]);
-              };
-            });
-          }
-        }), 4000 * index);
-      } else {
-        this.loading--;
-      }
-    });
-
-    /** recupero freeText da localstorage */
-    if (this.textTypesRequest?.freeTexts) {
-      this.metadata.forEach(md => {
-        if (md?.freeText) {
-          md.selection = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0]?.value;
-        }
-      });
-    }
-    //ordinamento position 
-    this.metadata.sort((a, b) => a.position - b.position);
   }
 
   public closeSidebar(): void {

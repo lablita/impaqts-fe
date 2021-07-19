@@ -21,6 +21,7 @@ import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { TextTypesRequest } from '../model/text-types-request';
 import { EmitterService } from '../utils/emitter.service';
+import { MetadataUtilService } from '../utils/metadata-util.service';
 import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
 @Component({
@@ -79,6 +80,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   public totalRecords: number;
   public simpleResult: string;
 
+  public endedMetadataProcess: false;
+
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -87,7 +90,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private readonly translateService: TranslateService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly metadataUtilService: MetadataUtilService
   ) { }
 
   ngOnDestroy(): void {
@@ -209,7 +213,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   public dropdownCorpus(): void {
     this.clickTextType();
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
-    this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+    this.emitterService.clickLabelMetadataDisabled.emit(true);
     if (this.selectedCorpus) {
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
@@ -224,8 +228,16 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
             this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
           }
         });
-      this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
-        metadata.filter(md => md.documentMetadatum);
+      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation).subscribe(res => {
+        this.metadataTextTypes = res['md'];
+        this.endedMetadataProcess = res['ended'];
+        if (this.endedMetadataProcess) {
+          this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+          //ordinamento position 
+          this.metadataTextTypes.sort((a, b) => a.position - b.position);
+        }
+      });
+
     }
   }
 
