@@ -236,5 +236,9 @@
       "FOR": "for",
       "TIMES": "times"
     }
+  },
+  "LANGUAGE": {
+    "IT": "ITA",
+    "EN": "ENG"
   }
 }

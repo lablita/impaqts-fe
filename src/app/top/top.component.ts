@@ -13,7 +13,7 @@ export class TopComponent {
 
   public urlTopLeft: string;
   public urlTopRight: string;
-  public languages: KeyValueItem[] = [new KeyValueItem('en', 'en'), new KeyValueItem('it', 'it'), new KeyValueItem('fr', 'fr')];
+  public languages: KeyValueItem[] = [new KeyValueItem('en', 'EN'), new KeyValueItem('it', 'IT')];
   public selectedLanguage: KeyValueItem;
 
   constructor(
