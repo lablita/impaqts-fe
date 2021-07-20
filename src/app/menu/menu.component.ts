@@ -37,7 +37,6 @@ export class MenuComponent implements OnInit {
   private allLemmans: string;
   private viewOption: string;
   private sort: string;
-  private sample: string;
   private filter: string;
   private frequency: string;
   private collocations: string;
@@ -63,7 +62,6 @@ export class MenuComponent implements OnInit {
     this.translateService.stream('MENU.ALL_LEMMANS').subscribe(res => this.allLemmans = res);
     this.translateService.stream('MENU.VIEW_OPTION').subscribe(res => this.viewOption = res);
     this.translateService.stream('MENU.SORT').subscribe(res => this.sort = res);
-    this.translateService.stream('MENU.SAMPLE').subscribe(res => this.sample = res);
     this.translateService.stream('MENU.FILTER').subscribe(res => this.filter = res);
     this.translateService.stream('MENU.FREQUENCY').subscribe(res => this.frequency = res);
     this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocations = res);
@@ -119,9 +117,6 @@ export class MenuComponent implements OnInit {
         new MenuItemObject(this.sort, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(SORT));
         }, null, null, false, false, null),
-        // new MenuItemObject(this.sample, null, () => {
-        //   this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
-        // }, null, null, false, false, null),
         new MenuItemObject(this.filter, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(FILTER));
         }, null, null, false, false, null),
@@ -141,6 +136,7 @@ export class MenuComponent implements OnInit {
       case CONCORDANCE:
 
       case WORD_LIST:
+      case VISUAL_QUERY:
       case ALL_WORDS:
       case ALL_LEMMANS:
         return this.menuWordList;
@@ -149,7 +145,6 @@ export class MenuComponent implements OnInit {
       case AS_SUBCORPUS:
       case VIEW_OPTIONS:
       case SORT:
-      // case SAMPLE:
       case FILTER:
       case FREQUENCY:
       case COLLOCATIONS:

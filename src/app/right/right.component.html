@@ -1,4 +1,5 @@
-<a p-button class="p-shadow-7 p-component right-button disabled" style="top: 200px" (click)="openSidebarMetadata()"
+<a *ngIf="!hideMetadataLabel" p-button class="p-shadow-7 p-component right-button disabled" style="top: 200px"
+  (click)="openSidebarMetadata()"
   [ngClass]="{'disabled': labelMetadataDisabled}">{{'PAGE.CONCORDANCE.METADATA' | translate}}</a>
 
 <a p-button class="p-shadow-7 p-component right-button disabled" style="top: 276px;" (click)="openSidebarOptions()"

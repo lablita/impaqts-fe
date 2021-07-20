@@ -7,7 +7,7 @@ import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
   CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, INSTALLATION, LEMMA,
-  PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, VIEW_OPTIONS, WORD, WORD_LIST
+  PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD, WORD_LIST
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -63,6 +63,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
   public attributesSelection: string[] = [];
   public viewOptionsLabel: string;
   public wordListOptionsLabel: string;
+  public visualQueryOptionsLabel: string;
   public sortOptionsLabel: string;
   public freqOptionsLabel: string;
   public collocationOptionsLabel: string;
@@ -139,6 +140,10 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
           this.titleOption = this.wordListOptionsLabel;
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
+        case VISUAL_QUERY:
+          this.titleOption = this.visualQueryOptionsLabel;
+          this.emitterService.clickPanelDisplayOptions.emit(true);
+          break;
         case SORT:
           this.titleOption = this.sortOptionsLabel;
           this.emitterService.clickPanelDisplayOptions.emit(true);
@@ -176,6 +181,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.translateService.stream('PAGE.CONCORDANCE.SELECT_CORPUS').subscribe(res => this.selectCorpus = res);
     this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS').subscribe(res => this.wordListOptionsLabel = res);
+    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => this.visualQueryOptionsLabel = res);
     this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS').subscribe(res => this.sortOptionsLabel = res);
     this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS').subscribe(res => this.freqOptionsLabel = res);
     this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocationOptionsLabel = res);

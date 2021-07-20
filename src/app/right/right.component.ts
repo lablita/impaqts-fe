@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
@@ -11,14 +12,26 @@ export class RightComponent implements OnInit {
   public titleLabel = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
   public labelOptionsDisabled = true;
   public labelMetadataDisabled = true;
+  public visualQueryOptionsLabel: string;
+  public viewOptionsLabel: string;
+  public hideMetadataLabel = false;
 
   constructor(
+    private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
+    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => this.visualQueryOptionsLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS').subscribe(res => this.viewOptionsLabel = res);
     this.emitterService.clickLabel.subscribe((event: string) => {
-      this.titleLabel = event;
+      if (event === this.visualQueryOptionsLabel) {
+        this.hideMetadataLabel = true;
+        this.titleLabel = this.viewOptionsLabel;
+      } else {
+        this.hideMetadataLabel = false;
+        this.titleLabel = event;
+      }
     });
     this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => {
       this.labelOptionsDisabled = event;
