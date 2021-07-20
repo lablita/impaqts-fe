@@ -36,8 +36,7 @@ export class MetadataPanelComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);

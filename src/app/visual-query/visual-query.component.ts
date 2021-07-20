@@ -120,11 +120,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public dropdownCorpus(): void {
     if (this.selectedCorpus) {
       this.enableAddToken = true;
-      // this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
-      //   metadata.filter(md => md.documentMetadatum);
-      // const textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
-      //   JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
-      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation).subscribe(res => {
+      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, true).subscribe(res => {
         this.metadataTextTypes = res['md'];
         this.enableAddMetadata = res['ended'];
         if (this.enableAddMetadata) {
@@ -132,57 +128,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           this.metadataTextTypes.sort((a, b) => a.position - b.position);
         }
       });
-      // this.metadataTextTypes = this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
-      //   metadata.filter(md => md.documentMetadatum);
-      // // recuro i dati salvati nel localstorage
-      // const textTypesRequest = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST) ?
-      //   JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
-      // genero albero per componente multiselect check box
-      // this.metadataTextTypes.forEach(md => {
-      //   if (md.subMetadata?.length >= 0) {
-      //     md.tree = [];
-      //     const res = this.metadataUtilService.generateTree(md, (textTypesRequest?.multiSelects &&
-      //       textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
-      //       ? textTypesRequest.multiSelects.filter(ms => ms.key === md.name)[0].values : null);
-      //     md.tree.push(res['tree']);
-      //     md.selection = res['selections'];
-      //   }
-      // });
-      // this.loading = this.metadataTextTypes.length;
-      // this.metadataTextTypes.forEach((metadatum, index) => {
-      //   this.res.push(new KeyValueItem(metadatum.name, ''));
-      //   if (metadatum.retrieveValuesFromCorpus) {
-      //     metadatum.selected = false;
-      //     setTimeout(() => this.concordanceService.getMetadatumValues(this.selectedCorpus.value, `${STRUCT_DOC}.${metadatum.name}`).subscribe(res => {
-      //       //ripristino valori letti da local storage 
-      //       const selectionated = textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
-      //         textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :
-      //         (textTypesRequest?.multiSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
-      //           textTypesRequest.multiSelects.filter(ss => ss.key === metadatum.name)[0] : null);
-      //       this.loading--;
-      //       metadatum = this.metadataUtilService.mergeMetadata(res, metadatum, selectionated);
-      //       if (this.loading === 0) {
-      //         //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
-      //         this.metadataUtilService.linkLeafs(this.metadataTextTypes, textTypesRequest);
-      //         // elimino metadata che partecimano ad alberi 
-      //         this.metadataTextTypes = this.metadataTextTypes.filter(md => !md.child);
-      //         this.metadataTextTypes.forEach(md => this.metadataUtilService.setUnselectable(md.tree[0]));
-      //       }
-      //     }), 2000 * index);
-      //   } else {
-      //     this.loading--;
-      //   }
-      // });
-      // /** recupero freeText da localstorage */
-      // if (textTypesRequest?.freeTexts) {
-      //   this.metadataTextTypes.forEach(md => {
-      //     if (md?.freeText) {
-      //       md.selection = textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0]?.value;
-      //     }
-      //   });
-      // }
-      // //ordinamento position 
-      // this.metadataTextTypes.sort((a, b) => a.position - b.position);
     } else {
       this.enableAddToken = false;
       this.enableAddMetadata = false;

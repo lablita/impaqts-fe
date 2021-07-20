@@ -47,7 +47,7 @@
       </div>
     </div>
   </div>
-  <button pButton label=" " (click)="addTokenMetadata()" [disabled]="loading > 0"><i
+  <button pButton label=" " (click)="addTokenMetadata()" [disabled]="!enableAddMetadata"><i
       class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_METADATA" | translate}}</button>
 
   <div class="p-mt-6 p-text-center">

@@ -228,7 +228,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
             this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
           }
         });
-      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation).subscribe(res => {
+      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(res => {
         this.metadataTextTypes = res['md'];
         this.endedMetadataProcess = res['ended'];
         if (this.endedMetadataProcess) {

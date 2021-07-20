@@ -23,7 +23,7 @@ export class MetadataUtilService {
     private readonly concordanceService: ConcordanceService
   ) { }
 
-  public createMatadataTree(corpus: string, installation: Installation): Observable<any> {
+  public createMatadataTree(corpus: string, installation: Installation, visualQueryFlag: boolean): Observable<any> {
     let metadata = installation.corpora.filter(c => c.name === corpus)[0].
       metadata.filter(md => md.documentMetadatum);
     // recuro i dati salvati nel localstorage
@@ -31,7 +31,7 @@ export class MetadataUtilService {
       JSON.parse(localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)) : null;
     // genero albero per componente multiselect check box
     metadata.forEach(md => {
-      if ((md.subMetadata?.length >= 0) && !md.freeText) {
+      if (visualQueryFlag || (md.subMetadata?.length >= 0) && !md.freeText) {
         md.tree = [];
         const res = this.generateTree(md, (this.textTypesRequest?.multiSelects &&
           this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name).length > 0)
@@ -57,10 +57,12 @@ export class MetadataUtilService {
         obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
       }
     });
+    //elimino metadata che partecimano ad alberi 
+    metadata = metadata.filter(md => !md.child);
     const lenObsArray = obsArray.length;
     if (lenObsArray > 0) {
       return concat(...obsArray).pipe(map((res, index) => {
-        metadata = this.setInnerTree(res['res'], metadata, res['metadatum'], lenObsArray === (index + 1));
+        metadata = this.setInnerTree(res['res'], metadata, res['metadatum']['id'], lenObsArray === (index + 1));
         return { md: metadata, ended: lenObsArray === (index + 1) };
       }));
     } else {
@@ -68,19 +70,24 @@ export class MetadataUtilService {
     }
   }
 
-  private setInnerTree(res: any, metadata: Metadatum[], metadatum: Metadatum, pruneTree: boolean): Metadatum[] {
-    //ripristino valori letti da local storage 
+  private setInnerTree(res: any, metadata: Metadatum[], metadatumId: number, pruneTree: boolean): Metadatum[] {
+    let metadatum = null;
+    for (const md of metadata) {
+      const result = this.retrieveMetadatumFromMetadata(md, metadatumId);
+      if (!!result) {
+        metadatum = result;
+        break;
+      }
+    }
     const selectionated = this.textTypesRequest?.singleSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
       this.textTypesRequest.singleSelects.filter(ss => ss.key === metadatum.name)[0] :
       (this.textTypesRequest?.multiSelects.filter(ss => ss.key === metadatum.name).length > 0 ?
         this.textTypesRequest.multiSelects.filter(ss => ss.key === metadatum.name)[0] : null);
 
-    metadatum = this.mergeMetadata(res, metadatum, selectionated);
+    metadatum = this.mergeMetadata(res, metadatum, selectionated, metadata);
     if (pruneTree) {
       //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
-      this.linkLeafs(metadata, this.textTypesRequest);
-      // // elimino metadata che partecimano ad alberi 
-      metadata = metadata.filter(md => !md.child);
+      metadata = this.linkLeafs(metadata, this.textTypesRequest);
       metadata.forEach(md => {
         if (!md.multipleChoice && !md.freeText) {
           this.setUnselectable(md.tree[0]);
@@ -90,7 +97,7 @@ export class MetadataUtilService {
     return metadata;
   }
 
-  public mergeMetadata(res: any, metadatum: Metadatum, selectionated: Selection): Metadatum {
+  private mergeMetadata(res: any, metadatum: Metadatum, selectionated: Selection, metadata: Metadatum[]): Metadatum {
     const selection: TreeNode[] = [];
     if (res) {
       metadatum.subMetadata = res;
@@ -116,8 +123,7 @@ export class MetadataUtilService {
             metadatum.selection = node;
           }
         });
-      }
-      else {
+      } else {
         res.metadataValues.forEach(el => {
           const node = {
             label: el,
@@ -135,8 +141,24 @@ export class MetadataUtilService {
         metadatum.selection = selection;
       }
       metadatum.tree.push(root);
+      metadata.forEach(md => {
+        this.setChildrenToTreeNode(md.tree, metadatum.name, metadatum.tree[0].children);
+      });
     }
     return metadatum;
+  }
+
+  private setChildrenToTreeNode(tree: TreeNode[], label: string, children: TreeNode[]): void {
+    if (tree?.length > 0) {
+      for (const node of tree) {
+        if (node.label === label) {
+          node.children = children;
+          return;
+        } else if (node.children?.length > 0) {
+          this.setChildrenToTreeNode(node.children, label, children);
+        }
+      }
+    }
   }
 
   // recupero nodo da albero
@@ -155,8 +177,24 @@ export class MetadataUtilService {
     return null;
   }
 
+  // recupero metadatum da metadata
+  private retrieveMetadatumFromMetadata(metadatum: Metadatum, metadatumId: number): Metadatum {
+    if (metadatum.id === metadatumId) {
+      return metadatum;
+    } else if (metadatum.subMetadata?.length > 0) {
+      let result: Metadatum;
+      for (const child of metadatum.subMetadata) {
+        result = this.retrieveMetadatumFromMetadata(child, metadatumId);
+        if (result) {
+          return result;
+        }
+      }
+    }
+    return null;
+  }
+
   //collego quanto recuperato dal corpus al nodo corretto
-  public linkLeafs(metadata: Metadatum[], textTypesRequest: TextTypesRequest): void {
+  private linkLeafs(metadata: Metadatum[], textTypesRequest: TextTypesRequest): Metadatum[] {
     metadata.forEach(md => {
       if (md.child && md.retrieveValuesFromCorpus) {
         metadata.forEach(m => {
@@ -178,9 +216,10 @@ export class MetadataUtilService {
         });
       }
     });
+    return metadata;
   }
 
-  public generateTree(meta: Metadatum, values: string[]): { tree: TreeNode, selections: TreeNode[] } {
+  private generateTree(meta: Metadatum, values: string[]): { tree: TreeNode, selections: TreeNode[] } {
     const selections: TreeNode[] = [];
     const root = {
       label: meta.name,
@@ -220,20 +259,6 @@ export class MetadataUtilService {
     };
     expandBranch(meta, root, rootParent);
     return { tree: root, selections: selections };
-  }
-
-  public setOnOffRadio(node: TreeNode, label: string): void {
-    if (node.children?.length > 0) {
-      node.children.forEach(md => {
-        this.setOnOffRadio(md, label);
-      });
-    } else {
-      if (!node.icon || node.icon === '') {
-        node.icon = node.label === label ? 'pi pi-circle-on' : '';
-      } else {
-        node.icon = '';
-      }
-    }
   }
 
   public setUnselectable(node: TreeNode): void {
