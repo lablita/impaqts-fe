@@ -15,6 +15,7 @@ export class RightComponent implements OnInit {
   public visualQueryOptionsLabel: string;
   public viewOptionsLabel: string;
   public hideMetadataLabel = false;
+  public spinnerMetadata = false;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -33,12 +34,9 @@ export class RightComponent implements OnInit {
         this.titleLabel = event;
       }
     });
-    this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => {
-      this.labelOptionsDisabled = event;
-    });
-    this.emitterService.clickLabelMetadataDisabled.subscribe((event: boolean) => {
-      this.labelMetadataDisabled = event;
-    });
+    this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => this.labelOptionsDisabled = event);
+    this.emitterService.clickLabelMetadataDisabled.subscribe((event: boolean) => this.labelMetadataDisabled = event);
+    this.emitterService.spinnerMetadata.subscribe((event: boolean) => this.spinnerMetadata = event);
   }
 
   public openSidebarOptions(): void {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
@@ -29,7 +29,7 @@ import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-pa
   templateUrl: './concordance.component.html',
   styleUrls: ['./concordance.component.scss']
 })
-export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ConcordanceComponent implements OnInit, OnDestroy {
   public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
 
   @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
@@ -97,11 +97,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.websocket.unsubscribe();
-  }
-
-  ngAfterViewInit(): void {
-  }
-  refresh(): void {
   }
 
   ngOnInit(): void {
@@ -212,12 +207,11 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
     this.emitterService.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
   }
 
-  public clickClearAll(): void {
-
-  }
+  public clickClearAll(): void { }
 
   public dropdownCorpus(): void {
     this.clickTextType();
+    this.emitterService.spinnerMetadata.emit(true);
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterService.clickLabelMetadataDisabled.emit(true);
     if (this.selectedCorpus) {
@@ -241,6 +235,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit, OnDestroy {
           this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
           //ordinamento position 
           this.metadataTextTypes.sort((a, b) => a.position - b.position);
+          this.emitterService.spinnerMetadata.emit(false);
         }
       });
 

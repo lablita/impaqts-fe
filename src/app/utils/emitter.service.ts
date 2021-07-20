@@ -10,6 +10,7 @@ export class EmitterService {
   public clickLabelMetadataDisabled: EventEmitter<boolean> = new EventEmitter<boolean>();
   public clickPanelDisplayOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
   public clickPanelDisplayMetadata: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public spinnerMetadata?: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
 }
