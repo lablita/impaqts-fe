@@ -109,7 +109,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.freqOptionsQueryRequest.position = this.selectedPosition[index];
 
     localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
-    console.log('ok');
   }
 
   public clickNodeTags(): void {

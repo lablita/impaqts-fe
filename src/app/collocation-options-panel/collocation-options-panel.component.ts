@@ -16,7 +16,6 @@ const showList = ['T_SCORE', 'MI', 'MI3', 'LOG', 'MIN', 'LOG_DICE', 'MI_LOG'];
 export class CollocationOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean;
-  // @Input() public corpusAttributes: KeyValueItem[];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
@@ -54,7 +53,6 @@ export class CollocationOptionsPanelComponent implements OnInit {
 
   public clickCollocationOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
-    console.log('ok');
   }
 
 }

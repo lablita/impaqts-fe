@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-// import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, throwError } from 'rxjs';
 
 
@@ -18,7 +17,6 @@ export class UtilService implements OnDestroy {
 
   constructor(
     private readonly translateService: TranslateService,
-    // private readonly toastr: ToastrService,
     private readonly router: Router,
   ) {
     this.changeContentLanguage.subscribe(lang => {
@@ -104,7 +102,6 @@ export class UtilService implements OnDestroy {
 
   public notifyError(message: string): void {
     console.log(message);
-    // this.toastr.error('', message);
   }
 
   public notifyErrorTranslation(translation: string): void {
@@ -116,7 +113,6 @@ export class UtilService implements OnDestroy {
     this.translateService.stream(translation)
       .subscribe((message: string) =>
         console.log(message)
-        // this.toastr.success(message)
       );
   }
 

@@ -3,7 +3,6 @@ import { TreeNode } from 'primeng/api';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/Metadatum';
 import { QueryTag } from '../model/query-tag';
-import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
   selector: 'app-query-tag',
@@ -39,9 +38,7 @@ export class QueryTagComponent implements OnInit {
 
   public root: Metadatum = new Metadatum();
 
-  constructor(
-    private readonly metadataUtilService: MetadataUtilService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
     if (this.metadata) {
@@ -57,7 +54,6 @@ export class QueryTagComponent implements OnInit {
   }
 
   public openTypeDialog(): void {
-    // this.delete.emit(tag);
   }
 
   public setTagName(event): void {
@@ -72,11 +68,9 @@ export class QueryTagComponent implements OnInit {
     }
 
     this.retriveMetadatumFromTreeNode(metadata.selection['label'], this.root);
-    // this.root.tree.forEach(node => this.retrieveMatadataPath(metadata.selection['label'], node, ''));
     if (this.metadatumSel?.freeText) {
       this.freeText = !this.freeText;
     }
-    // this.tag.name = this.selectedMetadataPath;
     this.tag.name = (metadata.selection as TreeNode).parent.label.indexOf('doc.') >= 0 ? (metadata.selection as TreeNode).parent.label.replace('doc.', '') : (metadata.selection as TreeNode).parent.label;
     this.tag.value = this.selectedMetadata;
   }
@@ -89,15 +83,6 @@ export class QueryTagComponent implements OnInit {
       this.metadatumSel = metadatum;
     }
   }
-
-  // private retrieveMatadataPath(label: string, node: TreeNode, path: string) {
-  //   if (node.children?.length > 0) {
-  //     node.children.forEach(n => this.retrieveMatadataPath(label, n, path.length > 0 ? (path + '.' + node?.label) : node?.label));
-  //   }
-  //   if (node.label === label) {
-  //     this.selectedMetadataPath = path;
-  //   }
-  // }
 
   public setTagAttr(event): void {
     switch (event.value.key) {

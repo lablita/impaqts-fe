@@ -81,7 +81,6 @@ export class ViewOptionsPanelComponent implements OnInit {
   }
 
   public clickChangeViewOption(): void {
-    console.log('ok');
     localStorage.setItem(VIEW_OPTION_QUERY_REQUEST, JSON.stringify(this.viewOptionsQueryRequest));
   }
 

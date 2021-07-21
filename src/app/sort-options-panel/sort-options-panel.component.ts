@@ -118,7 +118,6 @@ export class SortOptionsPanelComponent implements OnInit {
     this.sortOptionsQueryRequest.position = this.selectedPosition[index];
 
     localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
-    console.log('ok');
   }
 
   public clickLeft(): void {

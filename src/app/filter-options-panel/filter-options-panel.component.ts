@@ -54,7 +54,6 @@ export class FilterOptionsPanelComponent implements OnInit {
   public clickMakeFilter(): void {
     this.filterOptionsQueryRequest.contextConcordance = this.contextConcordanceQueryRequest;
     localStorage.setItem(FILTER_OPTIONS_QUERY_REQUEST, JSON.stringify(this.filterOptionsQueryRequest));
-    console.log('ok');
   }
 
   public clickOverlaps(): void {

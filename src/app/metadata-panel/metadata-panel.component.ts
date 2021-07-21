@@ -65,15 +65,10 @@ export class MetadataPanelComponent implements OnInit {
     localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(this.textTypesRequest));
     this.setMetadataQuery.emit(this.textTypesRequest);
     this.closeSidebarEvent.emit(true);
-    console.log('ok');
   }
 
   public isFilterOptions(): boolean {
     return this.title === 'MENU.FILTER';
-  }
-
-  public nodeSelect(event: any): void {
-    console.log('');
   }
 
 }
