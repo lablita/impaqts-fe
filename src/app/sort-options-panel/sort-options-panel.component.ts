@@ -95,12 +95,13 @@ export class SortOptionsPanelComponent implements OnInit {
 
     this.selectedSortKey = this.sortKeys.filter(sk => sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
     this.selectedLevel = this.levels.filter(l => l.key === this.sortOptionsQueryRequest.level.key)[0];
-    const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
-    this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
-    this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
-    this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
-    this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
-
+    if (!!this.selectedLevel) {
+      const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
+      this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
+      this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
+      this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
+      this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
+    }
   }
 
   public closeSidebar(): void {

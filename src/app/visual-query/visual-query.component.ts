@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
-import { INSTALLATION } from '../model/constants';
+import { INSTALLATION, MENU_VISUAL_QUERY } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
@@ -69,7 +69,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   private init(): void {
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
-    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => this.emitterService.clickLabel.emit(res));
+    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(MENU_VISUAL_QUERY, res)));
 
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;

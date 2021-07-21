@@ -6,8 +6,7 @@ import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, INSTALLATION, LEMMA,
-  PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD, WORD_LIST
+  CHARACTER, COLLOCATIONS, CQL, FILTER, FREQUENCY, FREQ_OPTIONS_LABEL, INSTALLATION, LEMMA, MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, PHRASE, RESULT_CONCORDANCE, SIMPLE, SORT, SORT_OPTIONS_LABEL, VIEW_OPTIONS, VIEW_OPTIONS_LABEL, VISUAL_QUERY, WORD, WORD_LIST, WORD_OPTIONS_LABEL
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -51,7 +50,7 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
-  public titleOption: string;
+  public titleOption: KeyValueItem;
   public simple: string;
   public phrase: string;
   public word: string;
@@ -83,7 +82,6 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
 
   public endedMetadataProcess: false;
 
-
   /** private */
   private websocket: WebSocketSubject<any>;
   private metadataQuery: QueryToken = null;
@@ -100,6 +98,7 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
     this.init();
   }
 
@@ -114,12 +113,10 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
       resp => {
         const qr = resp as QueryResponse;
         if (qr.kwicLines.length > 0) {
-          // this.queryResponse = resp as QueryResponse;
           this.kwicLines = (resp as QueryResponse).kwicLines;
         }
         this.totalResults = qr.currentSize;
         this.simpleResult = this.simple;
-        // this.loading = false;
       },
       err => console.error(err),
       () => console.log('Activiti WS disconnected')
@@ -132,36 +129,35 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       switch (event.item) {
         case WORD_LIST:
-          this.titleOption = this.wordListOptionsLabel;
+          this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case VISUAL_QUERY:
-          this.titleOption = this.visualQueryOptionsLabel;
+          this.titleOption = new KeyValueItem(MENU_VISUAL_QUERY, this.visualQueryOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case SORT:
-          this.titleOption = this.sortOptionsLabel;
+          this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case FREQUENCY:
-          this.titleOption = this.freqOptionsLabel;
+          this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case COLLOCATIONS:
-          this.titleOption = this.collocationOptionsLabel;
+          this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case FILTER:
-          this.titleOption = this.filterOptionsLabel;
+          this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         case VIEW_OPTIONS:
-          this.titleOption = this.viewOptionsLabel;
+          this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
           this.emitterService.clickPanelDisplayOptions.emit(true);
           break;
         default:
-          this.titleOption = this.viewOptionsLabel;
-        // this.emitterService.clickPanelDisplayOptions.emit(true);
+          this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
       }
       this.emitterService.clickLabel.emit(this.titleOption);
     });
@@ -175,13 +171,13 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
     });
 
     this.translateService.stream('PAGE.CONCORDANCE.SELECT_CORPUS').subscribe(res => this.selectCorpus = res);
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS').subscribe(res => this.wordListOptionsLabel = res);
-    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => this.visualQueryOptionsLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS').subscribe(res => this.sortOptionsLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS').subscribe(res => this.freqOptionsLabel = res);
-    this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocationOptionsLabel = res);
-    this.translateService.stream('MENU.FILTER').subscribe(res => this.filterOptionsLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS').subscribe(res => this.titleOption = this.viewOptionsLabel = res);
+    this.translateService.stream(WORD_OPTIONS_LABEL).subscribe(res => this.wordListOptionsLabel = res);
+    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.visualQueryOptionsLabel = res);
+    this.translateService.stream(SORT_OPTIONS_LABEL).subscribe(res => this.sortOptionsLabel = res);
+    this.translateService.stream(FREQ_OPTIONS_LABEL).subscribe(res => this.freqOptionsLabel = res);
+    this.translateService.stream(MENU_COLL_OPTIONS).subscribe(res => this.collocationOptionsLabel = res);
+    this.translateService.stream(MENU_FILTER).subscribe(res => this.filterOptionsLabel = res);
+    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.titleOption = this.viewOptionsLabel = res);
     this.translateService.stream('PAGE.CONCORDANCE.SIMPLE').subscribe(res => {
       this.queryTypes = [];
       this.queryTypes.push(new KeyValueItem(SIMPLE, res));
@@ -211,10 +207,10 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
 
   public dropdownCorpus(): void {
     this.clickTextType();
-    this.emitterService.spinnerMetadata.emit(true);
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterService.clickLabelMetadataDisabled.emit(true);
     if (this.selectedCorpus) {
+      this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
       this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].

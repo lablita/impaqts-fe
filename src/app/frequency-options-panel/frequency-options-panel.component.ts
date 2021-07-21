@@ -46,6 +46,29 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       JSON.parse(localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)) :
       INSTALLATION_LIST[environment.installation].freqOptionsQueryRequest;
 
+    this.positionList = [
+      new KeyValueItem(L6, L6),
+      new KeyValueItem(L5, L5),
+      new KeyValueItem(L4, L4),
+      new KeyValueItem(L3, L3),
+      new KeyValueItem(L2, L2),
+      new KeyValueItem(L1, L1),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(R6, R6),
+      new KeyValueItem(R5, R5),
+      new KeyValueItem(R4, R4),
+      new KeyValueItem(R3, R3),
+      new KeyValueItem(R2, R2),
+      new KeyValueItem(R1, R1)
+    ];
+
+    this.selectedPosition = [
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE)
+    ];
+
     this.translateService.stream('PAGE.CONCORDANCE.WORD').subscribe(res => {
       this.selectedMultiAttribute = [];
       this.selectedMultiAttribute.push(new KeyValueItem('word', res));
@@ -71,29 +94,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       this.selectedPosition[index] = this.freqOptionsQueryRequest.position;
       this.ignoreCase[index] = this.freqOptionsQueryRequest.ignoreCase;
     });
-
-    this.positionList = [
-      new KeyValueItem(L6, L6),
-      new KeyValueItem(L5, L5),
-      new KeyValueItem(L4, L4),
-      new KeyValueItem(L3, L3),
-      new KeyValueItem(L2, L2),
-      new KeyValueItem(L1, L1),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(R6, R6),
-      new KeyValueItem(R5, R5),
-      new KeyValueItem(R4, R4),
-      new KeyValueItem(R3, R3),
-      new KeyValueItem(R2, R2),
-      new KeyValueItem(R1, R1)
-    ];
-
-    this.selectedPosition = [
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE)
-    ];
   }
 
   public closeSidebar(): void {
