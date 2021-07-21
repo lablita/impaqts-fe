@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { MENU_VISUAL_QUERY, VIEW_OPTIONS_LABEL } from '../model/constants';
+import { ALL_LEMMANS, COPYRIGHT, CORPUS_INFO, CREDITS, MENU_VISUAL_QUERY, VIEW_OPTIONS_LABEL } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { EmitterService } from '../utils/emitter.service';
 
@@ -16,6 +16,7 @@ export class RightComponent implements OnInit {
   public labelMetadataDisabled = true;
   public viewOptionsLabel: string;
   public hideMetadataLabel = false;
+  public hideOptionsLabel = false;
   public spinnerMetadata = false;
 
   constructor(
@@ -28,9 +29,14 @@ export class RightComponent implements OnInit {
     this.emitterService.clickLabel.subscribe((event: KeyValueItem) => {
       if (event.key === MENU_VISUAL_QUERY) {
         this.hideMetadataLabel = true;
+        this.hideOptionsLabel = false;
         this.titleLabel = this.viewOptionsLabel;
+      } else if (event.key === CORPUS_INFO || event.key === ALL_LEMMANS || event.key === CREDITS || event.key === COPYRIGHT) {
+        this.hideMetadataLabel = true;
+        this.hideOptionsLabel = true;
       } else {
         this.hideMetadataLabel = false;
+        this.hideOptionsLabel = false;
         this.titleLabel = event.value;
       }
     });

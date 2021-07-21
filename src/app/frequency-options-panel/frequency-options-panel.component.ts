@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
+import { CONCORDANCE_WORD, FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -69,7 +69,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       new KeyValueItem(NODE, NODE)
     ];
 
-    this.translateService.stream('PAGE.CONCORDANCE.WORD').subscribe(res => {
+    this.translateService.stream(CONCORDANCE_WORD).subscribe(res => {
       this.selectedMultiAttribute = [];
       this.selectedMultiAttribute.push(new KeyValueItem('word', res));
       this.selectedMultiAttribute.push(new KeyValueItem('word', res));

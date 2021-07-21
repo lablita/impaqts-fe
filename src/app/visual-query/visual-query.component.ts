@@ -3,7 +3,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
-import { INSTALLATION, MENU_VISUAL_QUERY } from '../model/constants';
+import { MenuEmitterService } from '../menu/menu-emitter.service';
+import { MenuEvent } from '../menu/menu.component';
+import { INSTALLATION, MENU_VISUAL_QUERY, SELECT_CORPUS, VISUAL_QUERY } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
@@ -33,7 +35,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public installation: Installation;
   public corpusList: KeyValueItem[] = [];
   public selectedCorpus: KeyValueItem;
-  public selectCorpus = 'PAGE.CONCORDANCE.SELECT_CORPUS';
+  public selectCorpus = SELECT_CORPUS;
 
   public totalResults = 0;
   public simpleResult: string;
@@ -55,6 +57,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   constructor(
     private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService,
+    private readonly menuEmitterService: MenuEmitterService,
     private readonly metadataUtilService: MetadataUtilService
   ) { }
 
@@ -63,13 +66,16 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.menuEmitterService.corpusSelected = false;
+    this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
     this.init();
   }
 
   private init(): void {
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
-    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(MENU_VISUAL_QUERY, res)));
+    this.translateService.stream(MENU_VISUAL_QUERY).
+      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(MENU_VISUAL_QUERY, res)));
 
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;
@@ -124,6 +130,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public dropdownCorpus(): void {
     if (this.selectedCorpus) {
+      this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
       this.enableAddToken = true;
       this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, true).subscribe(res => {
@@ -139,7 +146,9 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.enableAddToken = false;
       this.enableAddMetadata = false;
       this.enableSpinner = false;
+      this.menuEmitterService.corpusSelected = false;
     }
+    this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
   }
 
   public getMetadatumTextTypes(): Metadatum[] {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
@@ -9,7 +10,6 @@ import {
 import { Installation } from '../model/installation';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
-
 export class MenuEvent {
   constructor(
     public item: string,
@@ -69,13 +69,20 @@ export class MenuComponent implements OnInit {
       this.visualQuery = res;
 
       this.menuDefine();
-      this.items = this.getMenuItems(CONCORDANCE);
+      this.items = _.clone(this.getMenuItems(CONCORDANCE));
+      if (!this.menuEmitterService.corpusSelected) {
+        this.items.splice(1, 1);
+      }
     });
 
-
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (event.item) {
-        this.items = this.getMenuItems(event.item);
+      if (event?.item) {
+        this.items = _.clone(this.getMenuItems(event.item));
+      }
+      if (!this.menuEmitterService.corpusSelected && !!this.items) {
+        this.items.splice(1, 1);
+      } else {
+        this.items = _.clone(this.getMenuItems(CONCORDANCE));
       }
     });
   }
@@ -131,9 +138,9 @@ export class MenuComponent implements OnInit {
   }
 
   public getMenuItems(page: string): MenuItemObject[] {
-
     switch (page) {
       case CONCORDANCE:
+      // return this.menuConcordance;
 
       case WORD_LIST:
       case VISUAL_QUERY:

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { CONCORDANCE_LEMMA, CONCORDANCE_WORD, CORPUS_INFO } from '../model/constants';
 import { CorpusInfoObj } from '../model/corpus-info-obj';
+import { KeyValueItem } from '../model/key-value-item';
+import { EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-corpus-info',
@@ -18,9 +21,12 @@ export class CorpusInfoComponent implements OnInit {
   public structArt: CorpusInfoObj[];
 
 
-  constructor() { }
+  constructor(
+    private readonly emitterService: EmitterService
+  ) { }
 
   ngOnInit(): void {
+    this.emitterService.clickLabel.emit(new KeyValueItem(CORPUS_INFO, CORPUS_INFO));
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
     this.counts = [
       new CorpusInfoObj('PAGE.CONCORDANCE.TOKENS', '380,823,725'),
@@ -41,9 +47,9 @@ export class CorpusInfoComponent implements OnInit {
 
     this.lexiconSizesLabel = 'PAGE.CORPUS_INFO.LEXICON_SIZES';
     this.lexiconSizes = [
-      new CorpusInfoObj('PAGE.CONCORDANCE.WORD', '1,383,319'),
+      new CorpusInfoObj(CONCORDANCE_WORD, '1,383,319'),
       new CorpusInfoObj('PAGE.CONCORDANCE.TAG', '53'),
-      new CorpusInfoObj('PAGE.CONCORDANCE.LEMMA', '965,977'),
+      new CorpusInfoObj(CONCORDANCE_LEMMA, '965,977'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.LC', '1,138,924'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.LEMMA_LC', '866,034')
     ];

@@ -8,5 +8,5 @@
   </div>
 </a>
 
-<a p-button class="p-shadow-7 p-component right-button disabled" style="top: 276px;" (click)="openSidebarOptions()"
-  [ngClass]="{'disabled': labelOptionsDisabled}">{{titleLabel | translate}}</a>
+<a *ngIf="!hideOptionsLabel" p-button class="p-shadow-7 p-component right-button disabled" style="top: 276px;"
+  (click)="openSidebarOptions()" [ngClass]="{'disabled': labelOptionsDisabled}">{{titleLabel | translate}}</a>

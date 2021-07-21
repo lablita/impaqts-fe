@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { FIRST, L1, L2, L3, NODE, R1, R2, R3, SECOND } from '../model/constants';
+import { CONCORDANCE_WORD, FIRST, L1, L2, L3, NODE, R1, R2, R3, SECOND } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -42,7 +42,7 @@ export class SortOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
 
 
-    this.translateService.stream('PAGE.CONCORDANCE.WORD').subscribe(res => {
+    this.translateService.stream(CONCORDANCE_WORD).subscribe(res => {
       this.selectedMultiAttribute = [
         new KeyValueItem('word', res),
         new KeyValueItem('word', res),
