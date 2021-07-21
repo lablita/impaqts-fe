@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
-import { ConcordanceService } from '../concordance/concordance.service';
 import { INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
@@ -12,6 +12,7 @@ import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
+import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -43,12 +44,17 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public res: KeyValueItem[] = [];
   public enableAddToken = false;
   public enableAddMetadata = false;
+  public enableSpinner = false;
+
+  public visualQueryOptionsLabel: string;
+  public viewOptionsLabel: string;
 
   private websocketVQ: WebSocketSubject<any>;
   private simple: string;
 
   constructor(
-    private readonly concordanceService: ConcordanceService,
+    private readonly translateService: TranslateService,
+    private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService
   ) { }
 
@@ -63,6 +69,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   private init(): void {
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => this.emitterService.clickLabel.emit(res));
 
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;
@@ -71,12 +78,10 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       resp => {
         const qr = resp as QueryResponse;
         if (qr.kwicLines.length > 0) {
-          // this.queryResponse = resp as QueryResponse;
           this.kwicLines = (resp as QueryResponse).kwicLines;
         }
         this.totalResults = qr.currentSize;
         this.simpleResult = this.simple;
-        // this.loading = false;
       },
       err => console.error(err),
       () => console.log('Activiti WS disconnected')
@@ -119,6 +124,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public dropdownCorpus(): void {
     if (this.selectedCorpus) {
+      this.enableSpinner = true;
       this.enableAddToken = true;
       this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, true).subscribe(res => {
         this.metadataTextTypes = res['md'];
@@ -126,11 +132,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         if (this.enableAddMetadata) {
           //ordinamento position 
           this.metadataTextTypes.sort((a, b) => a.position - b.position);
+          this.enableSpinner = false;
         }
       });
     } else {
       this.enableAddToken = false;
       this.enableAddMetadata = false;
+      this.enableSpinner = false;
     }
   }
 
