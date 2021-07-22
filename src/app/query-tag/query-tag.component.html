@@ -48,7 +48,7 @@
             <div class="p-mt-1 p-ml-3 p-component">
               <div>
                 <p-tree [value]="root.tree" selectionMode="single" [(selection)]="root.selection"
-                  stlye="color: red !importatnt;">
+                  (onNodeSelect)="selectedNode(root)" stlye="color: red !importatnt;">
                 </p-tree>
               </div>
             </div>

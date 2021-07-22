@@ -53,14 +53,13 @@
       <p-progressSpinner [style]="{width: '25px', height: '25px'}"></p-progressSpinner>
     </div>
   </button>
-
   <div class="p-mt-6 p-text-center">
-    <button [disabled]="!queryTokenOK()" pButton type="button"
+    <button [disabled]="!queryTokenOK() || metadata.length === 0" pButton type="button"
       label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="loadConcordances()">
     </button>
   </div>
 
-  <div *ngIf="kwicLines" class="p-d-block">
+  <div *ngIf="!!kwicLines" class="p-d-block">
     <p-card>
       <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b></h3>
 

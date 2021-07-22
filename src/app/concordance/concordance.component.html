@@ -22,7 +22,7 @@
         <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
         &nbsp;
-        <button [disabled]="!selectedCorpus" pButton type="button"
+        <button [disabled]="!selectedCorpus || !endedMetadataProcess" pButton type="button"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="loadConcordances()"></button>
       </div>
       <div class="p-field">

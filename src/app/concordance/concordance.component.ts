@@ -86,7 +86,8 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   public totalRecords: number;
   public simpleResult: string;
 
-  public endedMetadataProcess: false;
+  public endedMetadataProcess = false;
+  public holdSelectedCorpusStr: string;
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -240,45 +241,56 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
             this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
           }
         });
-      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(res => {
-        this.metadataTextTypes = res['md'];
-        this.endedMetadataProcess = res['ended'];
-        if (this.endedMetadataProcess) {
-          this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
-          //ordinamento position 
-          this.metadataTextTypes.sort((a, b) => a.position - b.position);
-          this.emitterService.spinnerMetadata.emit(false);
-        }
-      });
+      if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
+        this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(res => {
+          this.metadataTextTypes = res['md'];
+          this.endedMetadataProcess = res['ended'];
+          if (this.endedMetadataProcess) {
+            this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+            //ordinamento position 
+            this.metadataTextTypes.sort((a, b) => a.position - b.position);
+            this.emitterService.spinnerMetadata.emit(false);
+          }
+        });
+        this.holdSelectedCorpusStr = this.selectedCorpus.key;
+      } else {
+        this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+        this.emitterService.spinnerMetadata.emit(false);
+        this.endedMetadataProcess = true;
+      }
     } else {
       this.menuEmitterService.corpusSelected = false;
+      this.simple = '';
+      this.kwicLines = null;
     }
     this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
-    const qr = new QueryRequest();
-    if (!event) {
-      qr.start = 0;
-      qr.end = 10;
-    } else {
-      qr.start = event.first;
-      qr.end = qr.start + event.rows;
+    if (!!this.selectedCorpus) {
+      const qr = new QueryRequest();
+      if (!event) {
+        qr.start = 0;
+        qr.end = 10;
+      } else {
+        qr.start = event.first;
+        qr.end = qr.start + event.rows;
+      }
+      qr.queryPattern = new QueryPattern();
+      qr.queryPattern.tokPattern = new Array<QueryToken>();
+      const simpleQueryToken = new QueryToken(TOKEN);
+      const simpleQueryTag = new QueryTag(TOKEN);
+      simpleQueryTag.name = 'word';
+      simpleQueryTag.value = this.simple;
+      simpleQueryToken.tags[0][0] = simpleQueryTag;
+      qr.queryPattern.tokPattern.push(simpleQueryToken);
+      if (this.metadataQuery) {
+        qr.queryPattern.structPattern = this.metadataQuery;
+      }
+      qr.corpus = this.selectedCorpus.key;
+      this.websocket.next(qr);
+      this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
     }
-    qr.queryPattern = new QueryPattern();
-    qr.queryPattern.tokPattern = new Array<QueryToken>();
-    const simpleQueryToken = new QueryToken(TOKEN);
-    const simpleQueryTag = new QueryTag(TOKEN);
-    simpleQueryTag.name = 'word';
-    simpleQueryTag.value = this.simple;
-    simpleQueryToken.tags[0][0] = simpleQueryTag;
-    qr.queryPattern.tokPattern.push(simpleQueryToken);
-    if (this.metadataQuery) {
-      qr.queryPattern.structPattern = this.metadataQuery;
-    }
-    qr.corpus = this.selectedCorpus.key;
-    this.websocket.next(qr);
-    this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
   }
 
   public setMetadataQuery(textTypesRequest: TextTypesRequest): void {

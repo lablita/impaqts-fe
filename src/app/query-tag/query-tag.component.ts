@@ -19,7 +19,6 @@ export class QueryTagComponent implements OnInit {
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
   public selectedMetadata = '';
-  // public selectedMetadataPath = '';
   public freeText = false;
   public freeInputText = '';
   public metadatumSel: Metadatum = null;
@@ -71,7 +70,12 @@ export class QueryTagComponent implements OnInit {
     if (this.metadatumSel?.freeText) {
       this.freeText = !this.freeText;
     }
-    this.tag.name = (metadata.selection as TreeNode).parent.label.indexOf('doc.') >= 0 ? (metadata.selection as TreeNode).parent.label.replace('doc.', '') : (metadata.selection as TreeNode).parent.label;
+    if ((metadata.selection as TreeNode).parent) {
+      this.tag.name = (metadata.selection as TreeNode).parent.label.indexOf('doc.') >= 0
+        ? (metadata.selection as TreeNode).parent.label.replace('doc.', '') : (metadata.selection as TreeNode).parent.label;
+    } else {
+      this.tag.name = (metadata.selection as TreeNode).label;
+    }
     this.tag.value = this.selectedMetadata;
   }
 

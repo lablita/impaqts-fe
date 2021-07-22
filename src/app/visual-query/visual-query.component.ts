@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
@@ -35,6 +36,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public installation: Installation;
   public corpusList: KeyValueItem[] = [];
   public selectedCorpus: KeyValueItem;
+  public holdSelectedCorpusStr: string;
   public selectCorpus = SELECT_CORPUS;
 
   public totalResults = 0;
@@ -106,15 +108,16 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public addTokenMetadata(): void {
     const token = new QueryToken(STRUCT_DOC);
     this.metadata.push(token);
+    this.enableAddMetadata = false;
   }
 
   public deleteTokenMetadata(token: QueryToken): void {
     this.metadata.splice(this.queryPattern.tokPattern.indexOf(token), 1);
+    this.enableAddMetadata = true;
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
     this.queryPattern.structPattern = this.metadata[0];
-
     const qr = new QueryRequest();
     qr.queryPattern = this.queryPattern;
     if (!event) {
@@ -133,20 +136,29 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
       this.enableAddToken = true;
-      this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, true).subscribe(res => {
-        this.metadataTextTypes = res['md'];
-        this.enableAddMetadata = res['ended'];
-        if (this.enableAddMetadata) {
-          //ordinamento position 
-          this.metadataTextTypes.sort((a, b) => a.position - b.position);
-          this.enableSpinner = false;
-        }
-      });
+      if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
+        this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, _.cloneDeep(this.installation), true).subscribe(res => {
+          this.metadataTextTypes = res['md'];
+          this.enableAddMetadata = res['ended'];
+          if (this.enableAddMetadata) {
+            //ordinamento position 
+            this.metadataTextTypes.sort((a, b) => a.position - b.position);
+            this.enableSpinner = false;
+          }
+        });
+        this.holdSelectedCorpusStr = this.selectedCorpus.key;
+      } else {
+        this.enableSpinner = false;
+        this.enableAddMetadata = true;
+      }
     } else {
       this.enableAddToken = false;
       this.enableAddMetadata = false;
       this.enableSpinner = false;
       this.menuEmitterService.corpusSelected = false;
+      this.kwicLines = null;
+      this.metadata = [];
+      this.queryPattern.tokPattern = [];
     }
     this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
   }
