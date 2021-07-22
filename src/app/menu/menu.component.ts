@@ -140,9 +140,9 @@ export class MenuComponent implements OnInit {
   public getMenuItems(page: string): MenuItemObject[] {
     switch (page) {
       case CONCORDANCE:
+      case VISUAL_QUERY:
 
       case WORD_LIST:
-      case VISUAL_QUERY:
       case ALL_WORDS:
       case ALL_LEMMANS:
         return this.menuWordList;
