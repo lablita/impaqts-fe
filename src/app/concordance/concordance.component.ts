@@ -12,7 +12,7 @@ import {
   FILTER, FREQUENCY, FREQ_OPTIONS_LABEL, INSTALLATION, LEMMA,
   MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, PHRASE,
   RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, SORT, SORT_OPTIONS_LABEL,
-  VIEW_OPTIONS, VIEW_OPTIONS_LABEL, VISUAL_QUERY, WORD, WORD_LIST, WORD_OPTIONS_LABEL
+  VIEW_OPTIONS, VIEW_OPTIONS_LABEL, WORD, WORD_LIST, WORD_OPTIONS_LABEL
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -35,8 +35,6 @@ import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-pa
   styleUrls: ['./concordance.component.scss']
 })
 export class ConcordanceComponent implements OnInit, OnDestroy {
-  public subHeader = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat';
-
   @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
@@ -105,8 +103,9 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.translateService.stream(VIEW_OPTIONS_LABEL).
-      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
+    this.emitterService.pageMenu = CONCORDANCE;
+    this.translateService.stream(CONCORDANCE).
+      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(CONCORDANCE, res)));
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
     this.init();
@@ -137,46 +136,45 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
     this.textTypeStatus = false;
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      switch (event?.item) {
-        case WORD_LIST:
-          this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case VISUAL_QUERY:
-          this.titleOption = new KeyValueItem(MENU_VISUAL_QUERY, this.visualQueryOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case SORT:
-          this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case FREQUENCY:
-          this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case COLLOCATIONS:
-          this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case FILTER:
-          this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case VIEW_OPTIONS:
-          this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-          this.emitterService.clickPanelDisplayOptions.emit(true);
-          break;
-        case CORPUS_INFO:
-          this.titleOption = new KeyValueItem(CORPUS_INFO, CORPUS_INFO);
-          break;
-        case ALL_LEMMANS:
-          this.titleOption = new KeyValueItem(ALL_LEMMANS, ALL_LEMMANS);
-          break;
-        default:
-          this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
+      if (this.emitterService.pageMenu === CONCORDANCE) {
+        switch (event?.item) {
+          case WORD_LIST:
+            this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
+            this.emitterService.clickPanelDisplayOptions.emit(true);
+            break;
+          case SORT:
+            this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
+            this.emitterService.clickPanelDisplayOptions.emit(true);
+            break;
+          case FREQUENCY:
+            this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
+            this.emitterService.clickPanelDisplayOptions.emit(true);
+            break;
+          case COLLOCATIONS:
+            this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
+            this.emitterService.clickPanelDisplayOptions.emit(true);
+            break;
+          case FILTER:
+            this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
+            this.emitterService.clickPanelDisplayOptions.emit(true);
+            break;
+          case VIEW_OPTIONS:
+            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
+            this.emitterService.clickPanelDisplayOptions.emit(true);
+            break;
+          case CORPUS_INFO:
+            this.titleOption = new KeyValueItem(CORPUS_INFO, CORPUS_INFO);
+            break;
+          case ALL_LEMMANS:
+            this.titleOption = new KeyValueItem(ALL_LEMMANS, ALL_LEMMANS);
+            break;
+          default:
+            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
+        }
+        this.emitterService.clickLabel.emit(this.titleOption);
       }
-      this.emitterService.clickLabel.emit(this.titleOption);
     });
+
 
     this.emitterService.clickPanelDisplayOptions.subscribe((event: boolean) => {
       this.displayPanelOptions = event;

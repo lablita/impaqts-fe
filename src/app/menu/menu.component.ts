@@ -4,10 +4,10 @@ import * as _ from 'lodash';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY, INSTALLATION,
-  RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
+  FILTER, FREQUENCY, INSTALLATION, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
+import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
 export class MenuEvent {
@@ -43,6 +43,7 @@ export class MenuComponent implements OnInit {
   private visualQuery: string;
 
   constructor(
+    private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService
   ) { }
@@ -90,6 +91,7 @@ export class MenuComponent implements OnInit {
   private menuDefine(): void {
     this.menuConcordance = [
       new MenuItemObject(this.concordance, null, () => {
+        this.emitterService.pageMenu = CONCORDANCE;
         this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
       }, null, null, false, false, CONCORDANCE),
       new MenuItemObject(this.wordList, null, () => {
@@ -99,6 +101,7 @@ export class MenuComponent implements OnInit {
         this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
       }, null, null, false, false, CORPUS_INFO),
       new MenuItemObject(this.visualQuery, null, () => {
+        this.emitterService.pageMenu = VISUAL_QUERY;
         this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
       }, null, null, false, false, VISUAL_QUERY)
     ];

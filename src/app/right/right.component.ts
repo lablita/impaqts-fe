@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ALL_LEMMANS, COPYRIGHT, CORPUS_INFO, CREDITS, MENU_VISUAL_QUERY, VIEW_OPTIONS_LABEL } from '../model/constants';
+import { ALL_LEMMANS, COPYRIGHT, CORPUS_INFO, CREDITS, VIEW_OPTIONS_LABEL, VISUAL_QUERY } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { EmitterService } from '../utils/emitter.service';
 
@@ -27,18 +27,17 @@ export class RightComponent implements OnInit {
   ngOnInit(): void {
     this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.viewOptionsLabel = res);
     this.emitterService.clickLabel.subscribe((event: KeyValueItem) => {
-      if (event.key === MENU_VISUAL_QUERY) {
-        this.hideMetadataLabel = true;
-        this.hideOptionsLabel = false;
-        this.titleLabel = this.viewOptionsLabel;
-      } else if (event.key === CORPUS_INFO || event.key === ALL_LEMMANS || event.key === CREDITS || event.key === COPYRIGHT) {
+      if (event.key === CORPUS_INFO || event.key === ALL_LEMMANS || event.key === CREDITS || event.key === COPYRIGHT) {
         this.hideMetadataLabel = true;
         this.hideOptionsLabel = true;
+      } else if (this.emitterService.pageMenu === VISUAL_QUERY) {
+        this.hideMetadataLabel = true;
+        this.hideOptionsLabel = false;
       } else {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
-        this.titleLabel = event.value;
       }
+      this.titleLabel = event.value;
     });
     this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => this.labelOptionsDisabled = event);
     this.emitterService.clickLabelMetadataDisabled.subscribe((event: boolean) => this.labelMetadataDisabled = event);

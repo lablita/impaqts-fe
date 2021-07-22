@@ -12,6 +12,7 @@ export class EmitterService {
   public clickPanelDisplayOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
   public clickPanelDisplayMetadata: EventEmitter<boolean> = new EventEmitter<boolean>();
   public spinnerMetadata?: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public pageMenu: string;
 
   constructor() { }
 }
