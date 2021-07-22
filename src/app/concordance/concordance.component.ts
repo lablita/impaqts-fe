@@ -260,6 +260,8 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
       this.kwicLines = null;
+      this.contextStatus = false;
+      this.queryTypeStatus = false;
     }
     this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
   }
