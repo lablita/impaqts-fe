@@ -53,8 +53,7 @@
   <button pButton type="button" label="{{'PAGE.CONCORDANCE.FILTER_OPTIONS.FILTER_CON' | translate}}"
     (click)="clickMakeFilter()" class="p-mr-5"></button>
 
-  <app-metadata-panel [corpus]="corpus" [metadata]="metadata" (closeSidebarEvent)="displayPanelMetadata=false"
-    title="MENU.FILTER">
+  <app-metadata-panel [corpus]="corpus" [metadata]="metadata" (closeSidebarEvent)="closeSidebar()" title="MENU.FILTER">
   </app-metadata-panel>
 
 </div>

@@ -139,7 +139,8 @@
         [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
       </app-collocation-options-panel>
       <app-filter-options-panel *ngIf="titleOption.value === filterOptionsLabel" [corpus]="selectedCorpus?.key"
-        [metadata]="metadataTextTypes" (closeSidebarEvent)="displayPanelMetadata=false">
+        [metadata]="metadataTextTypes" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelMetadata=false; displayPanelOptions=false">
       </app-filter-options-panel>
     </div>
   </p-sidebar>

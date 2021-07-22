@@ -16,6 +16,7 @@ const FILTER_OPTIONS_QUERY_REQUEST = 'filterOptionsQueryRequest';
 })
 export class FilterOptionsPanelComponent implements OnInit {
 
+  @Input() public showRightButton: boolean;
   @Input() public metadata: Metadatum[];
   @Input() public corpus: string;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
@@ -62,6 +63,10 @@ export class FilterOptionsPanelComponent implements OnInit {
 
   public clickFirst(): void {
 
+  }
+
+  public closeSidebar(): void {
+    this.closeSidebarEvent.emit(true);
   }
 
 }
