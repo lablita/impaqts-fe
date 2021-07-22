@@ -53,7 +53,7 @@ export class MetadataPanelComponent implements OnInit {
           this.textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
         } else if (!md.multipleChoice && (md?.tree[0]?.children.length > 0)) {
           //single
-          // this.textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
+          this.textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
         } else {
           //multi
           const values: string[] = [];
@@ -74,7 +74,8 @@ export class MetadataPanelComponent implements OnInit {
     return this.title === 'MENU.FILTER';
   }
 
-
+  public nodeSelect(event: any) {
+  }
 
 
 }

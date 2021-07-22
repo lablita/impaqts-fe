@@ -82,7 +82,7 @@ export class MenuComponent implements OnInit {
       if (!this.menuEmitterService.corpusSelected && !!this.items) {
         this.items.splice(1, 1);
       } else {
-        this.items = _.clone(this.getMenuItems(CONCORDANCE));
+        this.items = _.clone(this.getMenuItems(RESULT_CONCORDANCE));
       }
     });
   }
