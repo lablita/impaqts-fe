@@ -73,6 +73,9 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   private websocketVQ: WebSocketSubject<any>;
   private simple: string;
 
+  public resultView = false;
+  public noResultFound = false;
+
   constructor(
     private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService,
@@ -91,6 +94,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   private init(): void {
+    this.resultView = false;
     this.emitterService.pageMenu = VISUAL_QUERY;
     this.translateService.stream(VIEW_OPTIONS_LABEL).
       subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
@@ -101,12 +105,18 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.websocketVQ = webSocket(url);
     this.websocketVQ.asObservable().subscribe(
       resp => {
-        const qr = resp as QueryResponse;
-        if (qr.kwicLines.length > 0) {
-          this.kwicLines = (resp as QueryResponse).kwicLines;
+        if (this.selectedCorpus) {
+          const qr = resp as QueryResponse;
+          if (qr.kwicLines.length > 0) {
+            this.resultView = true;
+            this.noResultFound = false;
+            this.kwicLines = (resp as QueryResponse).kwicLines;
+          } else {
+            this.noResultFound = true;
+          }
+          this.totalResults = qr.currentSize;
+          this.simpleResult = this.simple;
         }
-        this.totalResults = qr.currentSize;
-        this.simpleResult = this.simple;
       },
       err => console.error(err),
       () => console.log('Activiti WS disconnected')
@@ -187,22 +197,31 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.enableAddMetadata = true;
   }
 
+  public makeConcordance(): void {
+    this.resultView = false;
+    this.loadConcordances();
+  }
+
   public loadConcordances(event?: LazyLoadEvent): void {
-    this.queryPattern.structPattern = this.metadata[0];
-    const qr = new QueryRequest();
-    qr.queryPattern = this.queryPattern;
-    if (!event) {
-      qr.start = 0;
-      qr.end = 10;
-    } else {
-      qr.start = event.first;
-      qr.end = qr.start + event.rows;
+    if (this.selectedCorpus && this.selectCorpus.length > 0) {
+      this.queryPattern.structPattern = this.metadata[0];
+      const qr = new QueryRequest();
+      qr.queryPattern = this.queryPattern;
+      if (!event) {
+        qr.start = 0;
+        qr.end = 10;
+      } else {
+        qr.start = event.first;
+        qr.end = qr.start + event.rows;
+      }
+      qr.corpus = this.selectedCorpus.key;
+      this.websocketVQ.next(qr);
     }
-    qr.corpus = this.selectedCorpus.key;
-    this.websocketVQ.next(qr);
   }
 
   public dropdownCorpus(): void {
+    this.resultView = false;
+    this.noResultFound = false;
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
