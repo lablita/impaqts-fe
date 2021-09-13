@@ -34,6 +34,9 @@ export class TopComponent {
       });
     }
     this.selectedLanguage = this.languages.filter(lang => lang.key === localStorage.getItem(INTERFACE_LANGUAGE))[0];
+    if (!this.selectedLanguage) {
+      this.selectedLanguage = new KeyValueItem(this.translateService.defaultLang.toLowerCase(), this.translateService.defaultLang.toUpperCase());
+    }
   }
 
   public selectLanguage(): void {

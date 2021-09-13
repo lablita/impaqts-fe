@@ -1,10 +1,9 @@
 <div class="p-d-flex p-jc-between">
-  <img *ngIf="!!urlTopLeft" [src]="urlTopLeft" style="height: 40px; margin-left: 20px; margin-top: 5px;">
-  <img *ngIf="!!urlTopRight" [src]="urlTopRight" style="height: 40px; margin-left: 20px; margin-top: 5px;">
+  <img *ngIf="!!urlTopLeft" [src]="urlTopLeft" class="logo" alt="logoLeft">
+  <img *ngIf="!!urlTopRight" [src]="urlTopRight" class="logo" alt="logoRight">
   <p-selectButton [options]="languages" [(ngModel)]="selectedLanguage" optionLabel="value" optionValue="value"
     (onChange)="selectLanguage()">
     <ng-template let-item>
-      <!-- <img alt="logo" src="{{'assets/images/lang_icons/' + item.label + '_icon.png'}}" style="width: 3rem" /> -->
       {{('LANGUAGE.' + item.label) | translate}}
     </ng-template>
   </p-selectButton>

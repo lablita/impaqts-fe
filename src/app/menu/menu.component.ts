@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { MenuItem } from 'primeng/api';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
@@ -24,12 +25,12 @@ export class MenuEvent {
 })
 export class MenuComponent implements OnInit {
 
-  public items: MenuItemObject[] = [];
+  public items: MenuItem[] = [];
   public urlBottomLeft: string;
 
-  private menuConcordance: MenuItemObject[];
-  private menuWordList: MenuItemObject[];
-  private menuResultConcordance: MenuItemObject[];
+  private menuConcordance: MenuItem[];
+  private menuWordList: MenuItem[];
+  private menuResultConcordance: MenuItem[];
   private concordance: string;
   private wordList: string;
   private corpusInfo: string;
@@ -68,7 +69,6 @@ export class MenuComponent implements OnInit {
     this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocations = res);
     this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => {
       this.visualQuery = res;
-
       this.menuDefine();
       this.items = _.clone(this.getMenuItems(CONCORDANCE));
       if (!this.menuEmitterService.corpusSelected) {
@@ -140,11 +140,10 @@ export class MenuComponent implements OnInit {
     );
   }
 
-  public getMenuItems(page: string): MenuItemObject[] {
+  private getMenuItems(page: string): MenuItemObject[] {
     switch (page) {
       case CONCORDANCE:
       case VISUAL_QUERY:
-
       case WORD_LIST:
       case ALL_WORDS:
       case ALL_LEMMANS:

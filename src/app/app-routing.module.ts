@@ -11,8 +11,14 @@ import { VisualQueryComponent } from './visual-query/visual-query.component';
 
 const routes: Routes = [
   {
-    path: '', component: MainComponent,
+    path: '',
+    component: MainComponent,
     children: [
+      {
+        path: '',
+        redirectTo: 'concordance',
+        pathMatch: 'full'
+      },
       {
         path: 'poc',
         component: QuerypocComponent
