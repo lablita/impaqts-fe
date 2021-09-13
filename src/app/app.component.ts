@@ -13,8 +13,8 @@ import { Installation } from './model/installation';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  public title = 'impaqts-fe';
-  public installation: Installation;
+
+  private installation: Installation;
 
   constructor(
     private readonly translateService: TranslateService,

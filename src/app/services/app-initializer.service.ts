@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { CONTEXT_INSTALLATION, FIND_FAILED, INSTALLATION } from '../model/constants';
+import { FIND_FAILED, INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
 import { UtilService } from '../utils/util.service';
 
@@ -21,7 +21,7 @@ export class AppInitializerService {
   }
 
   public loadInstallation(): Promise<Installation | Observable<any>> {
-    return this.http.get<Installation>(`${CONTEXT_INSTALLATION}/installation?installationName=${this.installationName}`)
+    return this.http.get<Installation>(`${environment.installationUrl}/installation?installationName=${this.installationName}`)
       .toPromise()
       .then((installation: Installation) => {
         if (installation) {
