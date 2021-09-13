@@ -54,7 +54,7 @@
     </div>
   </button>
   <div class="p-mt-6 p-text-center">
-    <button [disabled]="!queryTokenOK() || metadata.length === 0" pButton type="button"
+    <button [disabled]="!queryTokenOK()" pButton type="button"
       label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="loadConcordances()">
     </button>
   </div>
