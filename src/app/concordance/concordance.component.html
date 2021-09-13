@@ -23,7 +23,7 @@
         <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
         &nbsp;
         <button [disabled]="!selectedCorpus || !endedMetadataProcess" pButton type="button"
-          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="loadConcordances()"></button>
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       </div>
       <div class="p-field">
         <label for="simple_query" class="label-size"></label>
@@ -70,7 +70,7 @@
         </app-context-concordance>
         <div>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-            (click)="loadConcordances()" class="p-mr-5"></button>
+            (click)="makeConcordances()" class="p-mr-5"></button>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
             (click)="clickClearAll()"></button>
         </div>
@@ -79,10 +79,9 @@
 
   </div>
 
-  <div *ngIf="kwicLines" class="p-d-block">
+  <div *ngIf="resultView" class="p-d-block">
     <p-card>
       <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b></h3>
-
       <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
         styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
         currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
@@ -105,7 +104,11 @@
         </ng-template>
       </p-table>
     </p-card>
-
+  </div>
+  <div *ngIf="!resultView && noResultFound" class="p-d-block" style="width: 100%;">
+    <p-card>
+      <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+    </p-card>
   </div>
 
   <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" autoZIndex="true"

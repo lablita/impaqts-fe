@@ -30,6 +30,7 @@
     "VISUAL_QUERY": "Visual Query"
   },
   "PAGE": {
+    "NO_RESULT_FOUND": "No Result Found!!!",
     "CONCORDANCE": {
       "CORPUS": "Corpus",
       "SELECT_CORPUS": "Select a Corpus",

@@ -87,6 +87,9 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   public endedMetadataProcess = false;
   public holdSelectedCorpusStr: string;
 
+  public resultView = false;
+  public noResultFound = false;
+
   /** private */
   private websocket: WebSocketSubject<any>;
   private metadataQuery: QueryToken = null;
@@ -112,20 +115,26 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   }
 
   private init(): void {
+    this.resultView = false;
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
-
     /** Web Socket */
     const url = `ws://localhost:9000${WS_URL}`;
     this.websocket = webSocket(url);
     this.websocket.asObservable().subscribe(
       resp => {
-        const qr = resp as QueryResponse;
-        if (qr.kwicLines.length > 0) {
-          this.kwicLines = (resp as QueryResponse).kwicLines;
+        if (this.selectedCorpus) {
+          const qr = resp as QueryResponse;
+          if (qr.kwicLines.length > 0) {
+            this.resultView = true;
+            this.noResultFound = false;
+            this.kwicLines = (resp as QueryResponse).kwicLines;
+          } else {
+            this.noResultFound = true;
+          }
+          this.totalResults = qr.currentSize;
+          this.simpleResult = this.simple;
         }
-        this.totalResults = qr.currentSize;
-        this.simpleResult = this.simple;
       },
       err => console.error(err),
       () => console.log('Activiti WS disconnected')
@@ -220,6 +229,8 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   public clickClearAll(): void { }
 
   public dropdownCorpus(): void {
+    this.resultView = false;
+    this.noResultFound = false;
     this.clickTextType();
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterService.clickLabelMetadataDisabled.emit(true);
@@ -264,6 +275,11 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
       this.queryTypeStatus = false;
     }
     this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
+  }
+
+  public makeConcordances(): void {
+    this.resultView = false;
+    this.loadConcordances();
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {

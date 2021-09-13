@@ -54,15 +54,15 @@
     </div>
   </button>
   <div class="p-mt-6 p-text-center">
-    <button [disabled]="!queryTokenOK()" pButton type="button"
-      label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="loadConcordances()">
+    <button [disabled]="!queryTokenOK() || !enableAddMetadata" pButton type="button"
+      label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
     </button>
   </div>
 
-  <div *ngIf="!!kwicLines" class="p-d-block">
+  <div *ngIf="resultView" class="p-d-block">
     <p-card>
-      <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b></h3>
-
+      <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
+      </h3>
       <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
         styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
         currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
@@ -85,7 +85,11 @@
         </ng-template>
       </p-table>
     </p-card>
-
+  </div>
+  <div *ngIf="!resultView && noResultFound">
+    <p-card>
+      <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+    </p-card>
   </div>
 </p-card>
 <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
