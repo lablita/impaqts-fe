@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'src/environments/environment';
 import { INSTALLATION, INTERFACE_LANGUAGE } from './model/constants';
 import { Installation } from './model/installation';
 
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit {
     private readonly translateService: TranslateService,
     @Inject(DOCUMENT) private document: Document
   ) {
-    const lang = !!localStorage.getItem(INTERFACE_LANGUAGE) ? localStorage.getItem(INTERFACE_LANGUAGE) : 'en';
+    const lang = !!localStorage.getItem(INTERFACE_LANGUAGE) ? localStorage.getItem(INTERFACE_LANGUAGE) : 'it';
     this.translateService.addLangs(['en', 'it']);
     this.translateService.setDefaultLang(lang);
     this.translateService.use(lang);
@@ -28,8 +29,8 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     const projectName = this.installation.projectName;
-    this.document.getElementById('ico')['href'] = 'http://localhost:9001/impaqts-configurator/favicon?installationName=' + projectName;
-    this.document.getElementById('css')['href'] = 'http://localhost:9001/impaqts-configurator/css?installationName=' + projectName;
+    this.document.getElementById('ico')['href'] = `${environment.installationUrl}/favicon?installationName=${projectName}`;
+    this.document.getElementById('css')['href'] = `${environment.installationUrl}/css?installationName=${projectName}`;
   }
 
 }
