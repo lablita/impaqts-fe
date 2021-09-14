@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -101,7 +102,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
     this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     /** Web Socket */
-    const url = `ws://localhost:9000${WS_URL}`;
+    const url = `${environment.queryServerProtocol}://${environment.queryServerHost}/${WS_URL}`;
     this.websocketVQ = webSocket(url);
     this.websocketVQ.asObservable().subscribe(
       resp => {

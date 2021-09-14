@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { MenuItem } from 'primeng/api';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
@@ -25,12 +24,12 @@ export class MenuEvent {
 })
 export class MenuComponent implements OnInit {
 
-  public items: MenuItem[] = [];
+  public items: MenuItemObject[] = [];
   public urlBottomLeft: string;
 
-  private menuConcordance: MenuItem[];
-  private menuWordList: MenuItem[];
-  private menuResultConcordance: MenuItem[];
+  private menuConcordance: MenuItemObject[];
+  private menuWordList: MenuItemObject[];
+  private menuResultConcordance: MenuItemObject[];
   private concordance: string;
   private wordList: string;
   private corpusInfo: string;

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from 'src/environments/environment';
 import { WS_URL } from '../common/constants';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
@@ -20,7 +21,7 @@ export class QuerypocComponent implements OnInit, OnDestroy {
   constructor() { }
 
   ngOnInit(): void {
-    const url = `ws://localhost:9000${WS_URL}`;
+    const url = `${environment.queryServerProtocol}://${environment.queryServerHost}/${WS_URL}`;
     this.websocket = webSocket(url);
     this.websocket.asObservable().subscribe(
       resp => {
