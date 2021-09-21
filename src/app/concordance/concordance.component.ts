@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -34,7 +34,7 @@ import { MetadataUtilService } from '../utils/metadata-util.service';
   templateUrl: './concordance.component.html',
   styleUrls: ['./concordance.component.scss']
 })
-export class ConcordanceComponent implements OnInit, OnDestroy {
+export class ConcordanceComponent implements OnInit {
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
 
@@ -99,10 +99,6 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService
   ) { }
-
-  ngOnDestroy(): void {
-
-  }
 
   ngOnInit(): void {
     this.emitterService.pageMenu = CONCORDANCE;
@@ -221,7 +217,7 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
   public setMetadataQuery(textTypesRequest: TextTypesRequest): void {
     //Tutto in OR
     this.metadataQuery = new QueryToken();
-    if (textTypesRequest.freeTexts?.length > 0) {
+    if (textTypesRequest.freeTexts && textTypesRequest.freeTexts.length > 0) {
       textTypesRequest.freeTexts.forEach(ft => {
         const tag = new QueryTag(STRUCT_DOC);
         if (ft.value) {
@@ -233,7 +229,7 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
         }
       });
     }
-    if (textTypesRequest.multiSelects?.length > 0) {
+    if (textTypesRequest.multiSelects && textTypesRequest.multiSelects.length > 0) {
       textTypesRequest.multiSelects.forEach(ms => {
         if (ms.values) {
           ms.values.forEach(v => {
@@ -247,7 +243,7 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
         }
       });
     }
-    if (textTypesRequest.singleSelects?.length > 0) {
+    if (textTypesRequest.singleSelects && textTypesRequest.singleSelects.length > 0) {
       const tag = new QueryTag(STRUCT_DOC);
       const singleSelect = textTypesRequest.singleSelects[0];
       if (singleSelect && singleSelect.value) {
@@ -276,7 +272,7 @@ export class ConcordanceComponent implements OnInit, OnDestroy {
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (this.emitterService.pageMenu === CONCORDANCE) {
-        switch (event?.item) {
+        switch (event && event.item) {
           case WORD_LIST:
             this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
             this.emitterService.clickPanelDisplayOptions.emit(true);

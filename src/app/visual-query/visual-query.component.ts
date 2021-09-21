@@ -104,7 +104,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     }
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (this.emitterService.pageMenu === VISUAL_QUERY) {
-        switch (event?.item) {
+        switch (event && event.item) {
           case WORD_LIST:
             this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
             this.emitterService.clickPanelDisplayOptions.emit(true);
@@ -263,7 +263,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public queryTokenOK(): boolean {
     let result = false;
     this.queryPattern.tokPattern.forEach(pt => pt.tags.forEach(tg => tg.forEach(t => {
-      if (t?.name?.length) {
+      if (t && t.name && t.name.length) {
         result = true;
       }
     })));

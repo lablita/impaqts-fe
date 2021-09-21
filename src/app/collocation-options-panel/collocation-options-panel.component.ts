@@ -28,7 +28,7 @@ export class CollocationOptionsPanelComponent implements OnInit {
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     this.collocationOptionsQueryRequest = collOptReq ?
       JSON.parse(collOptReq) :
-      inst?.startup.collocationOptionsQueryRequest;
+      inst && inst.startup.collocationOptionsQueryRequest;
   }
 
   ngOnInit(): void {

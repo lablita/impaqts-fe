@@ -13,7 +13,7 @@
           </ng-template>
           <ng-template let-country pTemplate="item">
             <div>
-              <div class="label-size">{{country.value.value}}</div>
+              <div class="label-size">{{country.value}}</div>
             </div>
           </ng-template>
         </p-dropdown>
@@ -22,15 +22,15 @@
         <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
         &nbsp;
-        <button [disabled]="!selectedCorpus || !endedMetadataProcess" pButton type="button"
+        <button [disabled]="!selectedCorpus || !endedMetadataProcess" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       </div>
       <div class="p-field">
         <label for="simple_query" class="label-size"></label>
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}"
+        <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}"
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickQueryType()"></button>&nbsp;
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}" [disabled]="!selectedCorpus"
-          class="p-button-text" (click)="clickContext()"></button>&nbsp;
+        <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}"
+          [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
       </div>
 
       <div *ngIf="queryTypeStatus">
@@ -43,23 +43,23 @@
             <label [for]="queryType.key" class="p-mr-2 p-ml-1">{{queryType.value}}</label>
           </div>
         </div>
-        <div *ngIf="selectedQueryType?.key === LEMMA" class="p-field">
+        <div *ngIf="selectedQueryType && selectedQueryType.key === LEMMA" class="p-field">
           <label for="lemma" class="label-size">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
           <input id="lemma" type="text" pInputText style="width: 350px;" [(ngModel)]="lemma">
         </div>
-        <div *ngIf="selectedQueryType?.key === PHRASE" class="p-field">
+        <div *ngIf="selectedQueryType && selectedQueryType.key === PHRASE" class="p-field">
           <label for="phrase" class="label-size">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
           <input id="phrase" type="text" pInputText style="width: 350px;" [(ngModel)]="phrase">
         </div>
-        <div *ngIf="selectedQueryType?.key === WORD" class="p-field">
+        <div *ngIf="selectedQueryType && selectedQueryType.key === WORD" class="p-field">
           <label for="word" class="label-size">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
           <input id="word" type="text" pInputText style="width: 350px;" [(ngModel)]="word">
         </div>
-        <div *ngIf="selectedQueryType?.key === CHARACTER" class="p-field">
+        <div *ngIf="selectedQueryType && selectedQueryType.key === CHARACTER" class="p-field">
           <label for="character" class="label-size">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
           <input id="character" type="text" pInputText style="width: 350px;" [(ngModel)]="character">
         </div>
-        <div *ngIf="selectedQueryType?.key === CQL" class="p-field">
+        <div *ngIf="selectedQueryType && selectedQueryType.key === CQL" class="p-field">
           <label for="cql" class="label-size">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
           <input id="cql" type="text" pInputText style="width: 350px;" [(ngModel)]="cql">
         </div>
@@ -69,9 +69,9 @@
         <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
         </app-context-concordance>
         <div>
-          <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
+          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
             (click)="makeConcordances()" class="p-mr-5"></button>
-          <button pButton type="button" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
+          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
             (click)="clickClearAll()"></button>
         </div>
       </div>

@@ -20,7 +20,12 @@ export class AppComponent implements OnInit {
     private readonly translateService: TranslateService,
     @Inject(DOCUMENT) private document: Document
   ) {
-    const lang = !!localStorage.getItem(INTERFACE_LANGUAGE) ? localStorage.getItem(INTERFACE_LANGUAGE) : 'it';
+    let lang;
+    if (localStorage.getItem(INTERFACE_LANGUAGE) !== null && localStorage.getItem(INTERFACE_LANGUAGE) !== 'undefined') {
+      lang = localStorage.getItem(INTERFACE_LANGUAGE);
+    } else {
+      lang = 'it';
+    }
     this.translateService.addLangs(['en', 'it']);
     if (lang) {
       this.translateService.setDefaultLang(lang);

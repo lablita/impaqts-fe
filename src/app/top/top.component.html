@@ -1,10 +1,9 @@
 <div class="p-d-flex p-jc-between">
   <img *ngIf="urlTopLeft" [src]="urlTopLeft" class="logo" alt="logoLeft">
   <img *ngIf="urlTopRight" [src]="urlTopRight" class="logo" alt="logoRight">
-  <p-selectButton [options]="languages" [(ngModel)]="selectedLanguage" optionLabel="value" optionValue="value"
-    (onChange)="selectLanguage()">
+  <p-selectButton [options]="languages" optionLabel="value" optionValue="key" (onChange)="selectLanguage($event)">
     <ng-template let-item>
-      {{('LANGUAGE.' + item.label) | translate}}
+      {{('LANGUAGE.' + item.value) | translate}}
     </ng-template>
   </p-selectButton>
 </div>

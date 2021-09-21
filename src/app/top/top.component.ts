@@ -26,7 +26,7 @@ export class TopComponent {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       const installation = JSON.parse(inst) as Installation;
-      if (installation.logos?.length > 0) {
+      if (installation.logos && installation.logos.length > 0) {
         installation.logos.forEach(logo => {
           if (logo.position === TOP_LEFT) {
             this.urlTopLeft = logo.url;
@@ -42,10 +42,10 @@ export class TopComponent {
     }
   }
 
-  public selectLanguage(): void {
-    if (this.selectedLanguage) {
-      localStorage.setItem(INTERFACE_LANGUAGE, this.selectedLanguage.key);
-      this.translateService.use(this.selectedLanguage.key);
+  public selectLanguage(event: any): void {
+    if (event) {
+      localStorage.setItem(INTERFACE_LANGUAGE, event.value);
+      this.translateService.use(event.value);
     }
   }
 

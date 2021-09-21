@@ -37,13 +37,13 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.corpusAttributes?.length > 0) {
+    if (this.corpusAttributes && this.corpusAttributes.length > 0) {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false, false];
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)
-    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst?.startup.freqOptionsQueryRequest;
+    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst && inst.startup.freqOptionsQueryRequest;
 
     this.positionList = [
       new KeyValueItem(L6, L6),

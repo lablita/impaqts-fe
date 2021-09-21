@@ -99,7 +99,7 @@ export class WordListOptionsPanelComponent implements OnInit {
     if (wordList) {
       this.wordListOptionsQueryRequest = wordList ?
         JSON.parse(wordList) :
-        inst?.startup.wordListOptionsQueryRequest;
+        inst && inst.startup.wordListOptionsQueryRequest;
     }
     this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(res => this.fileUploadedInfo = res);
     this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.nonWords = res);

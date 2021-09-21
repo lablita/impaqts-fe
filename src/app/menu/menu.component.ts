@@ -77,7 +77,7 @@ export class MenuComponent implements OnInit {
     });
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (event?.item) {
+      if (event && event.item) {
         this.items = JSON.parse(JSON.stringify(this.getMenuItems(event.item)));
       }
       if (!this.menuEmitterService.corpusSelected && !!this.items) {

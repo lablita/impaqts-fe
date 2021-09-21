@@ -32,7 +32,7 @@
       </div>
       <div class="p-grid" *ngIf="metadata && tag">
         <div class="p-col">
-          <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
+          <button pButton icon="pi" label="Select Type" type="button" (click)="op.toggle($event)"></button>
           <input class="p-mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
             [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
           <label [for]="'tag'" class="label-size-enlarged">Aa</label>

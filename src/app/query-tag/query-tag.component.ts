@@ -73,7 +73,7 @@ export class QueryTagComponent implements OnInit {
     }
 
     this.retriveMetadatumFromTreeNode((metadata.selection as any).label, this.root);
-    if (this.metadatumSel?.freeText) {
+    if (this.metadatumSel && this.metadatumSel.freeText) {
       this.freeText = !this.freeText;
     }
     if (this.tag) {
@@ -94,7 +94,7 @@ export class QueryTagComponent implements OnInit {
   }
 
   private retriveMetadatumFromTreeNode(label: string, metadatum: Metadatum): void {
-    if (metadatum.subMetadata?.length > 0) {
+    if (metadatum.subMetadata && metadatum.subMetadata.length > 0) {
       metadatum.subMetadata.forEach(md => this.retriveMetadatumFromTreeNode(label, md));
     }
     if (metadatum.name === label) {

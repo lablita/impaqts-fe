@@ -48,7 +48,7 @@ export class ViewOptionsPanelComponent implements OnInit {
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     if (voqr) {
       this.viewOptionsQueryRequest = voqr ?
-        JSON.parse(voqr) : inst?.startup.viewOptionsQueryRequest;
+        JSON.parse(voqr) : inst && inst.startup.viewOptionsQueryRequest;
     }
     this.corpusAttributes.forEach((attribute, index) => {
       this.translateService.stream(attribute.value).subscribe(res => {

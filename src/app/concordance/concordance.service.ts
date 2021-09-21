@@ -9,6 +9,7 @@ import { Installation } from '../model/installation';
 import { Metadatum } from '../model/Metadatum';
 import { UtilService } from '../utils/util.service';
 
+
 @Injectable({
   providedIn: 'root'
 })

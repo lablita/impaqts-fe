@@ -83,7 +83,7 @@ export class SortOptionsPanelComponent implements OnInit {
       new KeyValueItem(NODE, NODE),
     ];
 
-    if (this.corpusAttributes?.length > 0) {
+    if (this.corpusAttributes && this.corpusAttributes.length > 0) {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false];
@@ -92,7 +92,7 @@ export class SortOptionsPanelComponent implements OnInit {
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     this.sortOptionsQueryRequest = soqr ?
       JSON.parse(soqr) :
-      inst?.startup.sortOptionsQueryRequest;
+      inst && inst.startup.sortOptionsQueryRequest;
 
     if (this.sortOptionsQueryRequest) {
       this.selectedSortKey = this.sortKeys.filter(sk => this.sortOptionsQueryRequest && sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];

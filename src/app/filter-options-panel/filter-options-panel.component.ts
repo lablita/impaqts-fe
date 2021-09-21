@@ -37,7 +37,7 @@ export class FilterOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     const foqr = localStorage.getItem(FILTER_OPTIONS_QUERY_REQUEST)
-    this.filterOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst?.startup.filterOptionsQueryRequest;
+    this.filterOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst && inst.startup.filterOptionsQueryRequest;
 
     this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.POSITIVE').subscribe(res => {
       this.filters = [];

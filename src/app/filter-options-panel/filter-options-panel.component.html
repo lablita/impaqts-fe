@@ -4,11 +4,11 @@
   </div>
   <div class="p-grid p-ml-4 p-ai-center">
     <div class="p-col-6">
-      <button pButton style="width: 100px;" type="button" label="{{'MENU.OVERLAPS' | translate}}"
+      <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.OVERLAPS' | translate}}"
         (click)="clickOverlaps()" class="p-mr-5"></button>
     </div>
     <div class="p-col-6">
-      <button pButton style="width: 100px;" type="button" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}"
+      <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}"
         (click)="clickFirst()" class="p-mr-5"></button>
     </div>
   </div>
@@ -50,7 +50,7 @@
   </app-context-concordance>
 
 
-  <button pButton type="button" label="{{'PAGE.CONCORDANCE.FILTER_OPTIONS.FILTER_CON' | translate}}"
+  <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.FILTER_OPTIONS.FILTER_CON' | translate}}"
     (click)="clickMakeFilter()" class="p-mr-5"></button>
 
   <app-metadata-panel [corpus]="corpus" [metadata]="metadata" (closeSidebarEvent)="closeSidebar()" title="MENU.FILTER">
