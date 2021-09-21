@@ -14,7 +14,7 @@ import { Installation } from './model/installation';
 })
 export class AppComponent implements OnInit {
 
-  private installation: Installation;
+  private installation: Installation | null = null;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -22,15 +22,26 @@ export class AppComponent implements OnInit {
   ) {
     const lang = !!localStorage.getItem(INTERFACE_LANGUAGE) ? localStorage.getItem(INTERFACE_LANGUAGE) : 'it';
     this.translateService.addLangs(['en', 'it']);
-    this.translateService.setDefaultLang(lang);
-    this.translateService.use(lang);
+    if (lang) {
+      this.translateService.setDefaultLang(lang);
+      this.translateService.use(lang);
+    }
   }
 
   ngOnInit(): void {
-    this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
-    const projectName = this.installation.projectName;
-    this.document.getElementById('ico')['href'] = `${environment.installationUrl}/favicon?installationName=${projectName}`;
-    this.document.getElementById('css')['href'] = `${environment.installationUrl}/css?installationName=${projectName}`;
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.installation = JSON.parse(inst) as Installation;
+      const projectName = this.installation.projectName;
+      if (this.document) {
+        const icoElement = this.document.getElementById('ico');
+        if (icoElement) {
+          (icoElement as any).href = `${environment.installationUrl}/favicon?installationName=${projectName}`;
+        }
+        const cssElement = this.document.getElementById('css');
+        (cssElement as any).href = `${environment.installationUrl}/css?installationName=${projectName}`;
+      }
+    }
   }
 
 }

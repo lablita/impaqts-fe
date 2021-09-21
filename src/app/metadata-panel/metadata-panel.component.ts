@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -7,10 +7,10 @@ import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 
 export class subMetadatum {
-  currentSize: number;
-  kwicLines: string[];
-  inProgress: boolean;
-  metadataValues: string[];
+  currentSize: number = 0;
+  kwicLines: string[] = new Array<string>();
+  inProgress: boolean = false;
+  metadataValues: string[] = new Array<string>();
 }
 
 @Component({
@@ -18,27 +18,24 @@ export class subMetadatum {
   templateUrl: './metadata-panel.component.html',
   styleUrls: ['./metadata-panel.component.scss']
 })
-export class MetadataPanelComponent implements OnInit {
+export class MetadataPanelComponent {
 
-  @Input() public metadata: Metadatum[];
-  @Input() public corpus: string;
-  @Input() public title: string;
+  @Input() public metadata: Metadatum[] = new Array<Metadatum>();
+  @Input() public corpus: string = ''
+  @Input() public title: string = ''
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public setMetadataQuery = new EventEmitter<TextTypesRequest>();
 
-  public simple: string;
   public res: KeyValueItem[] = [];
   public displayPanelMetadata = false;
   public selected: any;
   public loading = 0;
 
-  private textTypesRequest: TextTypesRequest;
+  private textTypesRequest: TextTypesRequest = new TextTypesRequest();
 
   // public structPattern: QueryToken[] = [];
 
   constructor() { }
-
-  ngOnInit(): void { }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
@@ -51,16 +48,18 @@ export class MetadataPanelComponent implements OnInit {
         if (md.freeText) {
           //freetxt
           this.textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
-        } else if (!md.multipleChoice && (md?.tree[0]?.children.length > 0)) {
+        } else if (!md.multipleChoice && md.tree && md.tree[0] && md.tree[0].children && md.tree[0].children.length > 0) {
           //single
           this.textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
         } else {
           //multi
           const values: string[] = [];
           (md.selection as TreeNode[]).forEach(m => {
-            values.push(m.label);
+            if (m.label) {
+              values.push(m.label);
+            }
           });
-          this.textTypesRequest.multiSelects.push(new Selection(md.name, null, values));
+          this.textTypesRequest.multiSelects.push(new Selection(md.name, undefined, values));
         }
       }
     });

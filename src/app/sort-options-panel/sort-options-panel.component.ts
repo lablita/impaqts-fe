@@ -15,25 +15,25 @@ const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 })
 export class SortOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: KeyValueItem[];
+  @Input() public showRightButton: boolean = false;
+  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public sortOptionsQueryRequest: SortOptionsQueryRequest;
+  public sortOptionsQueryRequest: SortOptionsQueryRequest | null = null;
 
   public attributeList: KeyValueItem[] = [];
 
-  public selectedMultiAttribute: KeyValueItem[];
-  public sortKeys: KeyValueItem[];
-  public selectedSortKey: KeyValueItem;
-  public ignoreCaseLabel: string;
-  public backwordLabel: string;
-  public levels: KeyValueItem[];
-  public selectedLevel: KeyValueItem;
-  public positionList: KeyValueItem[];
-  public selectedPosition: KeyValueItem[];
-  public ignoreCase: boolean[];
-  public backward: boolean[];
+  public selectedMultiAttribute: KeyValueItem[] = new Array<KeyValueItem>();
+  public sortKeys: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedSortKey: KeyValueItem | null = null;
+  public ignoreCaseLabel: string = '';
+  public backwordLabel: string = '';
+  public levels: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedLevel: KeyValueItem | null = null;
+  public positionList: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedPosition: KeyValueItem[] = new Array<KeyValueItem>();
+  public ignoreCase: boolean[] = new Array<boolean>();
+  public backward: boolean[] = new Array<boolean>();
 
   constructor(
     private readonly translateService: TranslateService
@@ -88,19 +88,22 @@ export class SortOptionsPanelComponent implements OnInit {
     }
     this.ignoreCase = [false, false, false];
     this.backward = [false, false, false];
+    const soqr = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST);
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    this.sortOptionsQueryRequest = soqr ?
+      JSON.parse(soqr) :
+      inst?.startup.sortOptionsQueryRequest;
 
-    this.sortOptionsQueryRequest = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].sortOptionsQueryRequest;
-
-    this.selectedSortKey = this.sortKeys.filter(sk => sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
-    this.selectedLevel = this.levels.filter(l => l.key === this.sortOptionsQueryRequest.level.key)[0];
-    if (!!this.selectedLevel) {
-      const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
-      this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
-      this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
-      this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
-      this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
+    if (this.sortOptionsQueryRequest) {
+      this.selectedSortKey = this.sortKeys.filter(sk => this.sortOptionsQueryRequest && sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
+      this.selectedLevel = this.levels.filter(l => this.sortOptionsQueryRequest && l.key === this.sortOptionsQueryRequest.level.key)[0];
+      if (!!this.selectedLevel) {
+        const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
+        this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
+        this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
+        this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
+        this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
+      }
     }
   }
 
@@ -109,15 +112,20 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickSortOption(): void {
-    this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
-    this.sortOptionsQueryRequest.level = this.selectedLevel;
-    const index = this.sortOptionsQueryRequest.level.key === FIRST ? 0 : (this.sortOptionsQueryRequest.level.key === SECOND ? 1 : 2);
-    this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute[index];
-    this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase[index];
-    this.sortOptionsQueryRequest.backwardMulti = this.backward[index];
-    this.sortOptionsQueryRequest.position = this.selectedPosition[index];
-
-    localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
+    if (this.sortOptionsQueryRequest) {
+      if (this.selectedSortKey) {
+        this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
+      }
+      if (this.selectedLevel) {
+        this.sortOptionsQueryRequest.level = this.selectedLevel;
+      }
+      const index = this.sortOptionsQueryRequest.level.key === FIRST ? 0 : (this.sortOptionsQueryRequest.level.key === SECOND ? 1 : 2);
+      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute[index];
+      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase[index];
+      this.sortOptionsQueryRequest.backwardMulti = this.backward[index];
+      this.sortOptionsQueryRequest.position = this.selectedPosition[index];
+      localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
+    }
   }
 
   public clickLeft(): void {

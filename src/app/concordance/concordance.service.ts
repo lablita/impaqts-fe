@@ -23,7 +23,7 @@ export class ConcordanceService {
     this.installationName = environment.installationName;
   }
 
-  public getInstallation(): Observable<Installation> {
+  public getInstallation(): Observable<Installation | null> {
     return this.http.get<Installation>(`${CONTEXT_INSTALLATION}/installation?installationName=${this.installationName}`)
       .pipe(catchError(this.utils.handleErrorObservable('getInstallation', FIND_FAILED, null)));
   }

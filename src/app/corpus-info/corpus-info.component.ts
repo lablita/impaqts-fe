@@ -11,14 +11,14 @@ import { EmitterService } from '../utils/emitter.service';
 })
 export class CorpusInfoComponent implements OnInit {
 
-  public countsLabel: string;
-  public counts: CorpusInfoObj[];
-  public generalInfosLabel: string;
-  public generalInfo: CorpusInfoObj[];
-  public lexiconSizesLabel: string;
-  public lexiconSizes: CorpusInfoObj[];
-  public structArtLabel: string;
-  public structArt: CorpusInfoObj[];
+  public countsLabel: string = '';
+  public counts: CorpusInfoObj[] = new Array<CorpusInfoObj>();
+  public generalInfosLabel: string = '';
+  public generalInfo: CorpusInfoObj[] = new Array<CorpusInfoObj>();
+  public lexiconSizesLabel: string = '';
+  public lexiconSizes: CorpusInfoObj[] = new Array<CorpusInfoObj>();
+  public structArtLabel: string = '';
+  public structArt: CorpusInfoObj[] = new Array<CorpusInfoObj>();
 
 
   constructor(

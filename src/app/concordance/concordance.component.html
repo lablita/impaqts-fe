@@ -111,10 +111,10 @@
     </p-card>
   </div>
 
-  <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" autoZIndex="true"
-    blockScroll="false">
+  <p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" [autoZIndex]="true"
+    [blockScroll]="false">
     <div class="p-ml-3" *ngIf="selectedCorpus">
-      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.key" [metadata]="metadataTextTypes"
+      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes"
         (closeSidebarEvent)="displayPanelMetadata=false" (setMetadataQuery)="setMetadataQuery($event)">
       </app-metadata-panel>
     </div>
@@ -123,26 +123,27 @@
 
   <p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
     <div class="p-ml-3" *ngIf="selectedCorpus">
-      <app-view-options-panel #viewOptionsPanel *ngIf="titleOption.value === viewOptionsLabel"
-        [corpus]="selectedCorpus?.key" [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
+      <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption.value === viewOptionsLabel"
+        [corpus]="selectedCorpus.key" [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
         (closeSidebarEvent)="displayPanelOptions=false">
       </app-view-options-panel>
-      <app-word-list-options-panel *ngIf="titleOption.value === wordListOptionsLabel"
+      <app-word-list-options-panel *ngIf="titleOption && titleOption.value === wordListOptionsLabel"
         [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
         [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
       </app-word-list-options-panel>
-      <app-sort-options-panel *ngIf="titleOption.value === sortOptionsLabel" [corpusAttributes]="metadataAttributes"
-        [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
+      <app-sort-options-panel *ngIf="titleOption && titleOption.value === sortOptionsLabel"
+        [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
+        (closeSidebarEvent)="displayPanelOptions=false">
       </app-sort-options-panel>
-      <app-frequency-options-panel *ngIf="titleOption.value === freqOptionsLabel"
+      <app-frequency-options-panel *ngIf="titleOption && titleOption.value === freqOptionsLabel"
         [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
         (closeSidebarEvent)="displayPanelOptions=false">
       </app-frequency-options-panel>
-      <app-collocation-options-panel *ngIf="titleOption.value === collocationOptionsLabel"
+      <app-collocation-options-panel *ngIf="titleOption && titleOption.value === collocationOptionsLabel"
         [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
       </app-collocation-options-panel>
-      <app-filter-options-panel *ngIf="titleOption.value === filterOptionsLabel" [corpus]="selectedCorpus?.key"
-        [metadata]="metadataTextTypes" [showRightButton]="displayPanelOptions"
+      <app-filter-options-panel *ngIf="titleOption && titleOption.value === filterOptionsLabel"
+        [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes" [showRightButton]="displayPanelOptions"
         (closeSidebarEvent)="displayPanelMetadata=false; displayPanelOptions=false">
       </app-filter-options-panel>
     </div>

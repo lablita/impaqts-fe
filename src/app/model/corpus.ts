@@ -2,9 +2,9 @@ import { Installation } from './installation';
 import { Metadatum } from './Metadatum';
 
 export class Corpus {
-  id: number;
-  name: string;
-  endpoint: string;
+  id = 0;
+  name = ''
+  endpoint = '';
   metadata: Metadatum[] = [];
   installations: Installation[] = [];
 }

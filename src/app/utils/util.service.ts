@@ -12,7 +12,7 @@ export class UtilService implements OnDestroy {
 
   public changeContentLanguage: Subject<string> = new Subject<string>();
 
-  private contentLanguageSet: string;
+  private contentLanguageSet: string = '';
   private readonly fallback = 'eng';
 
   constructor(

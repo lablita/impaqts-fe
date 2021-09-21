@@ -15,17 +15,21 @@ const showList = ['T_SCORE', 'MI', 'MI3', 'LOG', 'MIN', 'LOG_DICE', 'MI_LOG'];
 })
 export class CollocationOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean;
+  @Input() public showRightButton = false;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
-  public corpusAttributes: KeyValueItem[];
-
   public attributeList: KeyValueItem[] = [];
 
   constructor(
     private readonly translateService: TranslateService
-  ) { }
+  ) {
+    const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    this.collocationOptionsQueryRequest = collOptReq ?
+      JSON.parse(collOptReq) :
+      inst?.startup.collocationOptionsQueryRequest;
+  }
 
   ngOnInit(): void {
 
@@ -42,9 +46,6 @@ export class CollocationOptionsPanelComponent implements OnInit {
       });
     });
 
-    this.collocationOptionsQueryRequest = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].collocationOptionsQueryRequest;
   }
 
   public closeSidebar(): void {

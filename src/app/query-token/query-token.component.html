@@ -3,25 +3,25 @@
     <button pButton type="button" pTooltip="Delete Token" icon="pi pi-minus" class="p-button-rounded"
       (click)="deleteToken()"></button>
   </div>
-
-  <div *ngFor="let andTag of token.tags" class="p-mb-3" style="background-color: bisque;">
-    <div *ngFor="let tag of andTag" class="p-mb-1">
-      <app-query-tag [tag]="tag" [typeList]="typeList" [metadatumTextTypes]="metadatumTextTypes"
-        (delete)="deleteTag(tag, andTag)" [metadata]="metadata">
-      </app-query-tag>
+  <ng-container *ngIf="token">
+    <div *ngFor="let andTag of token.tags" class="p-mb-3" style="background-color: bisque;">
+      <div *ngFor="let tag of andTag" class="p-mb-1">
+        <app-query-tag [tag]="tag" [typeList]="typeList" [metadatumTextTypes]="metadatumTextTypes"
+          (delete)="deleteTag(tag, andTag)" [metadata]="metadata">
+        </app-query-tag>
+      </div>
+      <div class="p-ml-1">
+        <button pButton pTooltip="Add in Or" type="button" icon="pi pi-plus" class="p-button-rounded"
+          (click)="addTag(andTag)"></button>
+      </div>
+      &nbsp;
     </div>
-    <div class="p-ml-1">
-      <button pButton pTooltip="Add in Or" type="button" icon="pi pi-plus" class="p-button-rounded"
-        (click)="addTag(andTag)"></button>
-    </div>
-    &nbsp;
-  </div>
-
+  </ng-container>
   <div class="p-d-flex p-jc-between">
     <button pButton pTooltip="Add in And" type="button" icon="pi pi-plus" (click)="addAndTag()"
       class="p-button-rounded"></button>
 
-    <div *ngIf="repeat && !metadata" class="p-ml-3">
+    <div *ngIf="repeat && !metadata && token" class="p-ml-3">
       <label [for]="'minRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.REPEAT' | translate}}</label>
       <input class="p-mr-1" [id]="'minRepetitions'" type="number" style="width: 50px;"
         [(ngModel)]="token.minRepetitions">
@@ -44,7 +44,6 @@
   </div>
   <div class="p-d-flex p-jc-end p-mt-1">
     <div *ngFor="let opt of optionsSel, let i = index">
-      {{"PAGE.VISUAL_QUERY." + opt | translate}} {{i < (optionsSel.length  -1) ? ', ' : '' }}
+      {{"PAGE.VISUAL_QUERY." + opt | translate}} {{i < (optionsSel.length -1) ? ', ' : '' }} </div>
     </div>
-  </div>
 </p-card>

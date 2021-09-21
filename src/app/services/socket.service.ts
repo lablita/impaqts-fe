@@ -10,17 +10,22 @@ import { RxWebsocketSubject } from './rx-websocket-subject';
 export class SocketService {
 
   private readonly WS_ENDPOINT = `${environment.queryServerProtocol}://${environment.queryServerHost}/${WS_URL}`;
-  private socketSubject: RxWebsocketSubject;
+  private socketSubject: RxWebsocketSubject | null = null;
 
   public connect(): void {
     this.socketSubject = new RxWebsocketSubject(this.WS_ENDPOINT);
   }
 
   public sendMessage(message: QueryRequest): void {
-    this.socketSubject.send(message);
+    if (this.socketSubject) {
+      this.socketSubject.send(message);
+    }
   }
 
-  public getSocketSubject(): RxWebsocketSubject {
-    return this.socketSubject;
+  public getSocketSubject(): RxWebsocketSubject | null {
+    if (this.socketSubject) {
+      return this.socketSubject;
+    }
+    return null;
   }
 }

@@ -5,7 +5,7 @@
         (click)="deleteTag($event)"></button>
     </div>
     <div class="p-col">
-      <div class="p-grid p-mb-1" *ngIf="!metadata">
+      <div class="p-grid p-mb-1" *ngIf="!metadata && typeList">
         <div class="p-col">
           <p-dropdown [options]="typeList" [(ngModel)]="tagName" optionLabel="value" (onChange)="setTagName($event)"
             [placeholder]="'PAGE.VISUAL_QUERY.SEL_TYPE' | translate">
@@ -25,12 +25,12 @@
           </p-dropdown>
         </div>
       </div>
-      <div *ngIf="!metadata">
+      <div *ngIf="!metadata && tag">
         <input class="p-mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
           [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
         <label [for]="'tag'" class="label-size-enlarged">Aa</label>
       </div>
-      <div class="p-grid" *ngIf="metadata">
+      <div class="p-grid" *ngIf="metadata && tag">
         <div class="p-col">
           <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
           <input class="p-mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
@@ -40,7 +40,7 @@
         <div class="p-col p-d-flex p-ai-center">{{selectedMetadata}}</div>
       </div>
 
-      <div *ngIf="freeText">
+      <div *ngIf="freeText && tag">
         <input type="text" pInputText style="width: 200px;" [(ngModel)]="tag.value">
       </div>
 

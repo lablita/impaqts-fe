@@ -1,10 +1,8 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { LazyLoadEvent } from 'primeng/api';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { environment } from 'src/environments/environment';
-import { STRUCT_DOC, TOKEN, WS_URL } from '../common/constants';
+import { catchError, map, tap } from 'rxjs/operators';
+import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
@@ -20,9 +18,9 @@ import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
+import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
-import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-panel.component';
 
 @Component({
   selector: 'app-visual-query',
@@ -32,47 +30,43 @@ import { ViewOptionsPanelComponent } from '../view-options-panel/view-options-pa
 
 export class VisualQueryComponent implements OnInit, OnDestroy {
 
-  @ViewChild('viewOptionsPanel') private viewOptionsPanel: ViewOptionsPanelComponent;
-
   public queryPattern: QueryPattern = new QueryPattern();
   public typeListQuery: KeyValueItem[] = [new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'), new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
-  public metadataTextTypes: Metadatum[];
+  public metadataTextTypes: Metadatum[] = new Array<Metadatum>();
   public metadata: QueryToken[] = [];
 
-  public installation: Installation;
+  public installation?: Installation;
   public corpusList: KeyValueItem[] = [];
-  public selectedCorpus: KeyValueItem;
-  public holdSelectedCorpusStr: string;
+  public selectedCorpus: KeyValueItem | null = null;
+  public holdSelectedCorpusStr?: string;
   public selectCorpus = SELECT_CORPUS;
 
   public totalResults = 0;
-  public simpleResult: string;
-  public kwicLines: KWICline[];
-  public TotalKwicline: KWICline[];
+  public simpleResult?: string;
+  public kwicLines: KWICline[] = new Array<KWICline>();
+  public TotalKwicline?: KWICline[];
 
-  public loading = 0;
+  public loading = false;
   public res: KeyValueItem[] = [];
   public enableAddToken = false;
   public enableAddMetadata = false;
   public enableSpinner = false;
 
-  public visualQueryOptionsLabel: string;
-  public viewOptionsLabel: string;
-
-  public titleOption: KeyValueItem;
-  public wordListOptionsLabel: string;
-  public sortOptionsLabel: string;
-  public freqOptionsLabel: string;
-  public collocationOptionsLabel: string;
-  public filterOptionsLabel: string;
+  public visualQueryOptionsLabel = '';
+  public viewOptionsLabel = '';
+  public titleOption?: KeyValueItem;
+  public wordListOptionsLabel = '';
+  public sortOptionsLabel = '';
+  public freqOptionsLabel = '';
+  public collocationOptionsLabel = '';
+  public filterOptionsLabel = '';
   public displayPanelOptions = false;
-  public metadataAttributes: KeyValueItem[];
-  public textTypesAttributes: KeyValueItem[];
+  public metadataAttributes: KeyValueItem[] = new Array<KeyValueItem>();
+  public textTypesAttributes: KeyValueItem[] = new Array<KeyValueItem>();
 
-  private websocketVQ: WebSocketSubject<any>;
-  private simple: string;
+  private simple?: string;
 
   public resultView = false;
   public noResultFound = false;
@@ -81,11 +75,12 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly metadataUtilService: MetadataUtilService
+    private readonly metadataUtilService: MetadataUtilService,
+    private readonly socketService: SocketService
   ) { }
 
   ngOnDestroy(): void {
-    this.websocketVQ.unsubscribe();
+
   }
 
   ngOnInit(): void {
@@ -99,30 +94,14 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.emitterService.pageMenu = VISUAL_QUERY;
     this.translateService.stream(VIEW_OPTIONS_LABEL).
       subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
-    this.installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
-    this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
-    /** Web Socket */
-    const url = `${environment.queryServerProtocol}://${environment.queryServerHost}/${WS_URL}`;
-    this.websocketVQ = webSocket(url);
-    this.websocketVQ.asObservable().subscribe(
-      resp => {
-        if (this.selectedCorpus) {
-          const qr = resp as QueryResponse;
-          if (qr.kwicLines.length > 0) {
-            this.resultView = true;
-            this.noResultFound = false;
-            this.kwicLines = (resp as QueryResponse).kwicLines;
-          } else {
-            this.noResultFound = true;
-          }
-          this.totalResults = qr.currentSize;
-          this.simpleResult = this.simple;
-        }
-      },
-      err => console.error(err),
-      () => console.log('Activiti WS disconnected')
-    );
-
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.installation = JSON.parse(inst) as Installation;
+      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+      /** Web Socket */
+      /** Web Socket */
+      this.initWebSocket();
+    }
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (this.emitterService.pageMenu === VISUAL_QUERY) {
         switch (event?.item) {
@@ -212,11 +191,15 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         qr.start = 0;
         qr.end = 10;
       } else {
-        qr.start = event.first;
-        qr.end = qr.start + event.rows;
+        if (event.first) {
+          qr.start = event.first;
+        }
+        if (event.rows) {
+          qr.end = qr.start + event.rows;
+        }
       }
       qr.corpus = this.selectedCorpus.key;
-      this.websocketVQ.next(qr);
+      this.socketService.sendMessage(qr);
     }
   }
 
@@ -230,19 +213,24 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.enableAddToken = true;
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
-      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0].
-        metadata.sort((a, b) => a.position - b.position);
-      this.installation.corpora.filter(corpus => corpus.name === this.selectedCorpus.key)[0]
-        .metadata.filter(md => !md.child).forEach(md => {
-          //Attributes in View Options
-          if (!md.documentMetadatum) {
-            this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
-          } else {
-            this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
-          }
-        });
+      if (this.installation && this.installation.corpora) {
+        const selectedCorpusKey = this.selectedCorpus.key;
+        if (selectedCorpusKey) {
+          this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0].
+            metadata.sort((a, b) => a.position - b.position);
+          this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0]
+            .metadata.filter(md => !md.child).forEach(md => {
+              //Attributes in View Options
+              if (!md.documentMetadatum) {
+                this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
+              } else {
+                this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
+              }
+            });
+        }
+      }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
-        this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, _.cloneDeep(this.installation), true).subscribe(res => {
+        this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(res => {
           this.metadataTextTypes = res['md'];
           this.enableAddMetadata = res['ended'];
           if (this.enableAddMetadata) {
@@ -261,7 +249,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.enableAddMetadata = false;
       this.enableSpinner = false;
       this.menuEmitterService.corpusSelected = false;
-      this.kwicLines = null;
+      this.kwicLines = new Array<KWICline>();
       this.metadata = [];
       this.queryPattern.tokPattern = [];
     }
@@ -280,6 +268,34 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       }
     })));
     return result;
+  }
+
+  private initWebSocket(): void {
+    this.socketService.connect();
+    const socketServiceSubject = this.socketService.getSocketSubject();
+    if (socketServiceSubject) {
+      socketServiceSubject.pipe(
+        map(resp => {
+          if (this.selectedCorpus) {
+            const qr = resp as QueryResponse;
+            if (qr.kwicLines.length > 0) {
+              this.resultView = true;
+              this.noResultFound = false;
+              this.kwicLines = (resp as QueryResponse).kwicLines;
+            } else {
+              this.noResultFound = true;
+            }
+            this.totalResults = qr.currentSize;
+            this.simpleResult = this.simple;
+          }
+        }),
+        catchError(err => { throw err }),
+        tap({
+          error: err => console.error(err),
+          complete: () => console.log('IMPAQTS WS disconnected')
+        })
+      ).subscribe();
+    }
   }
 
 }

@@ -14,7 +14,7 @@ export class RightComponent implements OnInit {
   public titleLabel = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
   public labelOptionsDisabled = true;
   public labelMetadataDisabled = true;
-  public viewOptionsLabel: string;
+  public viewOptionsLabel: string = '';
   public hideMetadataLabel = false;
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
@@ -37,7 +37,9 @@ export class RightComponent implements OnInit {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
       }
-      this.titleLabel = event.value;
+      if (event.value) {
+        this.titleLabel = event.value;
+      }
     });
     this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => this.labelOptionsDisabled = event);
     this.emitterService.clickLabelMetadataDisabled.subscribe((event: boolean) => this.labelMetadataDisabled = event);

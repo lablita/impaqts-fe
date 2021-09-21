@@ -1,8 +1,8 @@
 import { QueryElement } from "./query-element";
 import { QueryTag } from "./query-tag";
 export class QueryToken extends QueryElement {
-  sentenceStart: boolean;
-  sentenceEnd: boolean;
+  sentenceStart = false;
+  sentenceEnd = false;
   minRepetitions = 1;
   maxRepetitions = 1;
 

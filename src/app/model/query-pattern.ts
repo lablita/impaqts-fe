@@ -3,6 +3,6 @@ import { QueryToken } from "./query-token";
 
 export class QueryPattern {
   tokPattern: QueryToken[] = [];
-  structPattern: QueryStructure;
+  structPattern: QueryStructure = new QueryStructure();
 
 }

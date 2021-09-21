@@ -11,7 +11,7 @@ import { EmitterService } from '../utils/emitter.service';
 })
 export class CreditsComponent implements OnInit {
 
-  public credits: string;
+  public credits: string = '';
 
   constructor(
     private readonly emitterService: EmitterService
@@ -19,7 +19,10 @@ export class CreditsComponent implements OnInit {
 
   ngOnInit(): void {
     this.emitterService.clickLabel.emit(new KeyValueItem(CREDITS, CREDITS));
-    this.credits = (JSON.parse(localStorage.getItem(INSTALLATION)) as Installation).credits;
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.credits = (JSON.parse(inst) as Installation).credits;
+    }
   }
 
 }

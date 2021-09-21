@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
@@ -25,22 +24,22 @@ export class MenuEvent {
 export class MenuComponent implements OnInit {
 
   public items: MenuItemObject[] = [];
-  public urlBottomLeft: string;
+  public urlBottomLeft: string | null = null;
 
-  private menuConcordance: MenuItemObject[];
-  private menuWordList: MenuItemObject[];
-  private menuResultConcordance: MenuItemObject[];
-  private concordance: string;
-  private wordList: string;
-  private corpusInfo: string;
-  private allWords: string;
-  private allLemmans: string;
-  private viewOption: string;
-  private sort: string;
-  private filter: string;
-  private frequency: string;
-  private collocations: string;
-  private visualQuery: string;
+  private menuConcordance: MenuItemObject[] = new Array<MenuItemObject>();
+  private menuWordList: MenuItemObject[] = new Array<MenuItemObject>();
+  private menuResultConcordance: MenuItemObject[] = new Array<MenuItemObject>();
+  private concordance: string = '';
+  private wordList: string = '';
+  private corpusInfo: string = '';
+  private allWords: string = '';
+  private allLemmans: string = '';
+  private viewOption: string = '';
+  private sort: string = '';
+  private filter: string = '';
+  private frequency: string = '';
+  private collocations: string = '';
+  private visualQuery: string = '';
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -49,13 +48,15 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
-    installation.logos.forEach(logo => {
-      if (logo.position === BOTTOM_LEFT) {
-        this.urlBottomLeft = logo.url;
-      }
-    });
-
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      const installation = JSON.parse(inst) as Installation;
+      installation.logos.forEach(logo => {
+        if (logo.position === BOTTOM_LEFT) {
+          this.urlBottomLeft = logo.url;
+        }
+      });
+    }
     this.translateService.stream('MENU.CONCORDANCE').subscribe(res => this.concordance = res);
     this.translateService.stream('MENU.WOLRD_LIST').subscribe(res => this.wordList = res);
     this.translateService.stream('MENU.CORPUS_INFO').subscribe(res => this.corpusInfo = res);
@@ -69,7 +70,7 @@ export class MenuComponent implements OnInit {
     this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => {
       this.visualQuery = res;
       this.menuDefine();
-      this.items = _.clone(this.getMenuItems(CONCORDANCE));
+      this.items = JSON.parse(JSON.stringify(this.getMenuItems(CONCORDANCE)));
       if (!this.menuEmitterService.corpusSelected) {
         this.items.splice(1, 1);
       }
@@ -77,12 +78,12 @@ export class MenuComponent implements OnInit {
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (event?.item) {
-        this.items = _.clone(this.getMenuItems(event.item));
+        this.items = JSON.parse(JSON.stringify(this.getMenuItems(event.item)));
       }
       if (!this.menuEmitterService.corpusSelected && !!this.items) {
         this.items.splice(1, 1);
       } else {
-        this.items = _.clone(this.getMenuItems(RESULT_CONCORDANCE));
+        this.items = JSON.parse(JSON.stringify(this.getMenuItems(RESULT_CONCORDANCE)));
       }
     });
   }

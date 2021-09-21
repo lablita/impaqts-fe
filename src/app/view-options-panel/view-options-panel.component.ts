@@ -6,7 +6,6 @@ import {
   OPTIONAL_DISPLAY_ATTR_URL_KWIC
 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { QueryRequest } from '../model/query-request';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
@@ -19,37 +18,38 @@ const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 
 export class ViewOptionsPanelComponent implements OnInit {
 
-  @Input() public corpus: string;
-  @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: KeyValueItem[];
+  @Input() public corpus: string | null = null;
+  @Input() public showRightButton = false;
+  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public attributeChekBox: KeyValueItem[] = [];
-  public displayAttr: KeyValueItem[];
-  public selectedDisplayAttr: KeyValueItem;
-  public asTooltipLabel: string;
-  public refsUpLabel: string;
-  public sortGoodLabel: string;
-  public showGDEXLabel: string;
-  public iconForOneLabel: string;
-  public allowMultiLabel: string;
-  public flashCopingLabel: string;
-  public checkSelLinesLabel: string;
-  public showLinesNumLabel: string;
-  public shortLongRefLabel: string;
+  public displayAttr: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedDisplayAttr: KeyValueItem | null = null;
+  public asTooltipLabel: string = '';
+  public refsUpLabel: string = '';
+  public sortGoodLabel: string = '';
+  public showGDEXLabel: string = '';
+  public iconForOneLabel: string = '';
+  public allowMultiLabel: string = '';
+  public flashCopingLabel: string = '';
+  public checkSelLinesLabel: string = '';
+  public showLinesNumLabel: string = '';
+  public shortLongRefLabel: string = '';
 
-  public viewOptionsQueryRequest: ViewOptionsQueryRequest;
-
-  private queryRequest: QueryRequest;
+  public viewOptionsQueryRequest: ViewOptionsQueryRequest = ViewOptionsQueryRequest.getInstance();
 
   constructor(
     private readonly translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
-    this.viewOptionsQueryRequest = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(VIEW_OPTION_QUERY_REQUEST)) : INSTALLATION_LIST[environment.installation].viewOptionsQueryRequest;
-
+    const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST);
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    if (voqr) {
+      this.viewOptionsQueryRequest = voqr ?
+        JSON.parse(voqr) : inst?.startup.viewOptionsQueryRequest;
+    }
     this.corpusAttributes.forEach((attribute, index) => {
       this.translateService.stream(attribute.value).subscribe(res => {
         if (index === 0) {

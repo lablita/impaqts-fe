@@ -15,17 +15,17 @@
     <div class="p-mt-1 p-ml-3 p-component">
       <div *ngFor="let metadatum of metadata, let i = index" class="p-field p-mb-2">
         <!-- FreeText-->
-        <label *ngIf="!metadatum.multipleChoice && metadatum.freeText"
-          class="label-size">{{metadatum.name | translate}}</label>
+        <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="label-size">{{metadatum.name |
+          translate}}</label>
         <input *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText style="width: 200px;"
           [(ngModel)]="metadatum.selection">
         <!-- Tree & checkbox-->
-        <div *ngIf="(metadatum.tree?.length > 0) && metadatum.multipleChoice">
+        <div *ngIf="(metadatum.tree.length > 0) && metadatum.multipleChoice">
           <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
           </p-tree>
         </div>
         <!-- Single selection -->
-        <div *ngIf="(metadatum.tree?.length > 0) && !metadatum.multipleChoice">
+        <div *ngIf="(metadatum.tree.length > 0) && !metadatum.multipleChoice">
           <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
             (onNodeSelect)="nodeSelect($event)" stlye="color: red !importatnt;">
           </p-tree>
@@ -33,6 +33,6 @@
       </div>
     </div>
   </p-scrollPanel>
-  <button pButton type=" button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-    [disabled]="(this.loading > 0)" (click)="clickMakeConcordance()"></button>
+  <button pButton type=" button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" [disabled]="loading"
+    (click)="clickMakeConcordance()"></button>
 </div>

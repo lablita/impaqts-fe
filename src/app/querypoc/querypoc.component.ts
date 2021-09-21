@@ -13,10 +13,10 @@ import { QueryResponse } from '../model/query-response';
 })
 export class QuerypocComponent implements OnInit, OnDestroy {
 
-  public queryResponse: QueryResponse;
+  public queryResponse: QueryResponse | null = null;
   public totalResults = 0;
   public wordFC = new FormControl('');
-  private websocket: WebSocketSubject<any>;
+  private websocket: WebSocketSubject<any> | null = null;
 
   constructor() { }
 
@@ -45,7 +45,9 @@ export class QuerypocComponent implements OnInit, OnDestroy {
     qr.start = 0;
     qr.end = 15;
     qr.word = `[word="${this.wordFC.value}"]`;
-    this.websocket.next(qr);
+    if (this.websocket) {
+      this.websocket.next(qr);
+    }
   }
 
   private closeWebSocket(): void {

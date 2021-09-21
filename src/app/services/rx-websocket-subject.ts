@@ -7,10 +7,10 @@ export class RxWebsocketSubject extends Subject<any> {
 
   public connectionStatus: Observable<any>;
 
-  private reconnectionObservable: Observable<any>;
+  private reconnectionObservable: Observable<any> | null = null;
   private wsSubjectConfig: WebSocketSubjectConfig<any>;
-  private socket: WebSocketSubject<any>;
-  private connectionObserver: Observer<any>;
+  private socket: WebSocketSubject<any> | null = null;
+  private connectionObserver: Observer<any> | null = null;
 
   /// by default, when a message is received from the server, we are trying to decode it as JSON
   /// we can override it in the constructor
@@ -33,7 +33,6 @@ export class RxWebsocketSubject extends Subject<any> {
     private serializer?: (data: any) => string,
   ) {
     super();
-
     /// connection status
     this.connectionStatus = new Observable((observer) => {
       this.connectionObserver = observer;
@@ -53,12 +52,16 @@ export class RxWebsocketSubject extends Subject<any> {
       closeObserver: {
         next: (e: CloseEvent) => {
           this.socket = null;
-          this.connectionObserver.next(false);
+          if (this.connectionObserver) {
+            this.connectionObserver.next(false);
+          }
         }
       },
       openObserver: {
         next: (e: Event) => {
-          this.connectionObserver.next(true);
+          if (this.connectionObserver) {
+            this.connectionObserver.next(true);
+          }
         }
       }
     };
@@ -104,7 +107,9 @@ export class RxWebsocketSubject extends Subject<any> {
           this.reconnectionObservable = null;
           if (!this.socket) {
             this.complete();
-            this.connectionObserver.complete();
+            if (this.connectionObserver) {
+              this.connectionObserver.complete();
+            }
           }
         }
       });
@@ -112,6 +117,8 @@ export class RxWebsocketSubject extends Subject<any> {
 
   /// sending the message
   send(data: any): void {
-    this.socket.next(data);
+    if (this.socket) {
+      this.socket.next(data);
+    }
   }
 }

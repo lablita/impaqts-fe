@@ -11,7 +11,7 @@ import { EmitterService } from '../utils/emitter.service';
 })
 export class CopyrightComponent implements OnInit {
 
-  public copyright: string;
+  public copyright: string = '';
 
   constructor(
     private readonly emitterService: EmitterService
@@ -19,7 +19,10 @@ export class CopyrightComponent implements OnInit {
 
   ngOnInit(): void {
     this.emitterService.clickLabel.emit(new KeyValueItem(COPYRIGHT, COPYRIGHT));
-    this.copyright = (JSON.parse(localStorage.getItem(INSTALLATION)) as Installation).credits;
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.copyright = (JSON.parse(inst) as Installation).credits;
+    }
   }
 
 }

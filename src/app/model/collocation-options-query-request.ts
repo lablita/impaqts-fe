@@ -1,22 +1,22 @@
 import { KeyValueItem } from "./key-value-item";
 
 export class CollocationOptionsQueryRequest {
-  attribute: KeyValueItem;
+  attribute: KeyValueItem | null;
   rangeFrom: number;
   rangeTo: number;
   minFreqCorpus: number;
   minFreqRange: number;
-  showFunc: KeyValueItem[];
-  sortBy: KeyValueItem;
+  showFunc: KeyValueItem[] | null;
+  sortBy?: KeyValueItem;
 
   constructor(
-    attribute: KeyValueItem,
+    attribute: KeyValueItem | null,
     rangeFrom: number,
     rangeTo: number,
     minFreqCorpus: number,
     minFreqRange: number,
     showFunc: KeyValueItem[],
-    sortBy: KeyValueItem
+    sortBy?: KeyValueItem
   ) {
     this.attribute = attribute;
     this.rangeFrom = rangeFrom;

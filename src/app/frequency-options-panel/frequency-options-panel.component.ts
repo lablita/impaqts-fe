@@ -15,22 +15,22 @@ const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 })
 export class FrequencyOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: KeyValueItem[];
+  @Input() public showRightButton: boolean = false;
+  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public freqOptionsQueryRequest: FreqOptionsQueryRequest;
+  public freqOptionsQueryRequest: FreqOptionsQueryRequest = FreqOptionsQueryRequest.getInstance();
 
   public attributeList: KeyValueItem[] = [];
-  public levels: KeyValueItem[];
-  public selectedLevel: KeyValueItem;
-  public selectedAttribute: KeyValueItem;
-  public selectedMultiAttribute: KeyValueItem[];
-  public ignoreCase: boolean[];
-  public positionList: KeyValueItem[];
-  public selectedPosition: KeyValueItem[];
-  public ignoreCaseLabel: string;
-  public includeCatLabel: string;
+  public levels: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedLevel: KeyValueItem | null = null;
+  public selectedAttribute: KeyValueItem | null = null;
+  public selectedMultiAttribute: KeyValueItem[] = new Array<KeyValueItem>();
+  public ignoreCase: boolean[] = new Array<boolean>();
+  public positionList: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedPosition: KeyValueItem[] = new Array<KeyValueItem>();
+  public ignoreCaseLabel: string = '';
+  public includeCatLabel: string = ''
 
   constructor(
     private readonly translateService: TranslateService
@@ -41,10 +41,9 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false, false];
-
-    this.freqOptionsQueryRequest = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].freqOptionsQueryRequest;
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)
+    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst?.startup.freqOptionsQueryRequest;
 
     this.positionList = [
       new KeyValueItem(L6, L6),
@@ -101,7 +100,9 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickFreqOption(): void {
-    this.freqOptionsQueryRequest.level = this.selectedLevel;
+    if (this.selectedLevel) {
+      this.freqOptionsQueryRequest.level = this.selectedLevel;
+    }
     const index = this.freqOptionsQueryRequest.level.key === FIRST ? 0 :
       (this.freqOptionsQueryRequest.level.key === SECOND ? 1 : (this.freqOptionsQueryRequest.level.key === THIRD ? 2 : 3));
     this.freqOptionsQueryRequest.attribute = this.selectedMultiAttribute[index];

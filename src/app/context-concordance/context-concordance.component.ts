@@ -11,14 +11,14 @@ import { KeyValueItem } from '../model/key-value-item';
 })
 export class ContextConcordanceComponent implements OnInit {
 
-  @Input() public contextConcordanceQueryRequest: ContextConcordanceQueryRequest;
+  @Input() public contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
 
-  public windows: KeyValueItem[];
-  public selectedWindow: KeyValueItem;
-  public items: KeyValueItem[];
-  public selectedItem: KeyValueItem;
-  public tokens: KeyValueItem[] = [];
-  public selectedToken: KeyValueItem;
+  public windows: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedWindow: KeyValueItem | null = null;
+  public items: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedItem: KeyValueItem | null = null;
+  public tokens: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedToken: KeyValueItem | null = null;
 
   constructor(
     private readonly translateService: TranslateService
@@ -32,8 +32,9 @@ export class ContextConcordanceComponent implements OnInit {
     this.tokens.push(new KeyValueItem('7', '7'));
     this.tokens.push(new KeyValueItem('10', '10'));
     this.tokens.push(new KeyValueItem('15', '15'));
-    this.contextConcordanceQueryRequest.token = this.tokens[4];
-
+    if (this.contextConcordanceQueryRequest) {
+      this.contextConcordanceQueryRequest.token = this.tokens[4];
+    }
     this.translateService.stream('PAGE.CONCORDANCE.LEFT').subscribe(res => {
       this.windows = [];
       this.windows.push(new KeyValueItem(LEFT, res));
@@ -41,7 +42,9 @@ export class ContextConcordanceComponent implements OnInit {
     this.translateService.stream('PAGE.CONCORDANCE.RIGHT').subscribe(res => this.windows.push(new KeyValueItem(RIGHT, res)));
     this.translateService.stream('PAGE.CONCORDANCE.BOTH').subscribe(res => {
       this.windows.push(new KeyValueItem(BOTH, res));
-      this.contextConcordanceQueryRequest.window = res;
+      if (this.contextConcordanceQueryRequest) {
+        this.contextConcordanceQueryRequest.window = res;
+      }
     });
 
     this.translateService.stream('PAGE.CONCORDANCE.ALL').subscribe(res => {
@@ -51,7 +54,9 @@ export class ContextConcordanceComponent implements OnInit {
     this.translateService.stream('PAGE.CONCORDANCE.ANY').subscribe(res => this.items.push(new KeyValueItem(ANY, res)));
     this.translateService.stream('PAGE.CONCORDANCE.NONE').subscribe(res => {
       this.items.push(new KeyValueItem(NONE, res));
-      this.contextConcordanceQueryRequest.item = res;
+      if (this.contextConcordanceQueryRequest) {
+        this.contextConcordanceQueryRequest.item = res;
+      }
     });
   }
 
