@@ -32,9 +32,6 @@
       class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_TOKEN" | translate}}</button>
 
   <hr>
-  <div *ngIf="loading" class="p-text-center">
-    <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-  </div>
   <span class="p-component">
     <h2>{{"PAGE.VISUAL_QUERY.METADATA" | translate}}</h2>
   </span>
@@ -54,11 +51,14 @@
     </div>
   </button>
   <div class="p-mt-6 p-text-center">
-    <button [disabled]="!queryTokenOK() || !enableAddMetadata" pButton type="button" icon="pi"
+    <button [disabled]="!queryTokenOK()" pButton type="button" icon="pi"
       label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
     </button>
   </div>
 
+  <div class="p-text-center p-mt-6" *ngIf="loading">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+  </div>
   <div *ngIf="resultView" class="p-d-block">
     <p-card>
       <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
@@ -86,7 +86,7 @@
       </p-table>
     </p-card>
   </div>
-  <div *ngIf="!resultView && noResultFound">
+  <div *ngIf="!resultView && noResultFound && !loading" class="p-mt-6">
     <p-card>
       <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
     </p-card>

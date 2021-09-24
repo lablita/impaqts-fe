@@ -22,7 +22,7 @@
         <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}</label>
         <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
         &nbsp;
-        <button [disabled]="!selectedCorpus || !endedMetadataProcess" pButton type="button" icon="pi"
+        <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       </div>
       <div class="p-field">
@@ -79,6 +79,9 @@
 
   </div>
 
+  <div class="p-text-center p-mt-6" *ngIf="loading">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+  </div>
   <div *ngIf="resultView" class="p-d-block">
     <p-card>
       <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b></h3>
@@ -105,7 +108,7 @@
       </p-table>
     </p-card>
   </div>
-  <div *ngIf="!resultView && noResultFound" class="p-d-block" style="width: 100%;">
+  <div *ngIf="!resultView && noResultFound && !loading" class="p-d-block" style="width: 100%;">
     <p-card>
       <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
     </p-card>

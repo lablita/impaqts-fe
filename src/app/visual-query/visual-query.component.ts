@@ -178,6 +178,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   public makeConcordance(): void {
+    this.loading = true;
     this.resultView = false;
     this.loadConcordances();
   }
@@ -285,6 +286,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
             } else {
               this.noResultFound = true;
             }
+            this.loading = false;
             this.totalResults = qr.currentSize;
             this.simpleResult = this.simple;
           }

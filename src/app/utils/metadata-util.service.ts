@@ -46,7 +46,10 @@ export class MetadataUtilService {
     if (this.textTypesRequest && this.textTypesRequest.freeTexts) {
       metadata.forEach(md => {
         if (md.freeText) {
-          const value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
+          let value = null;
+          if (this.textTypesRequest && this.textTypesRequest.freeTexts && this.textTypesRequest.freeTexts.length > 0) {
+            value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
+          }
           if (value) {
             md.selection = value;
           }

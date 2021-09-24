@@ -65,9 +65,9 @@ export class QueryTagComponent implements OnInit {
 
   public selectedNode(metadata: Metadatum): void {
     if (metadata && metadata.selection) {
-      if (this.selectedMetadata !== (metadata.selection as any).label && (metadata.selection as any).children.length <= 0) {
+      if (this.selectedMetadata !== (metadata.selection as any).label && (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0)) {
         this.selectedMetadata = (metadata.selection as any).label;
-      } else if ((metadata.selection as any).children.length <= 0) {
+      } else if (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0) {
         this.selectedMetadata = '';
       }
     }

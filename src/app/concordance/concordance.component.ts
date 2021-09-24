@@ -181,6 +181,7 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public makeConcordances(): void {
+    this.loading = true;
     this.resultView = false;
     this.loadConcordances();
   }
@@ -354,6 +355,7 @@ export class ConcordanceComponent implements OnInit {
             } else {
               this.noResultFound = true;
             }
+            this.loading = false;
             this.totalResults = qr.currentSize;
             this.simpleResult = this.simple;
           }
