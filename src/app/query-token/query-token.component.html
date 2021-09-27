@@ -35,7 +35,7 @@
       <p-listbox [options]="optionList" [(ngModel)]="optionSel" optionLabel="value" [style]="{'width':'15rem'}"
         (click)="setOption()">
         <ng-template let-option pTemplate="item">
-          {{'PAGE.VISUAL_QUERY.' + option.label | translate}}
+          {{'PAGE.VISUAL_QUERY.' + option.value | translate}}
         </ng-template>
       </p-listbox>
     </p-overlayPanel>
