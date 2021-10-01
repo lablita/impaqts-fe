@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
@@ -76,7 +77,9 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public loading: boolean;
   public totalRecords: number;
   public simpleResult: string;
+  public displayModal = false;
 
+  public videoUrl: SafeResourceUrl;
 
   /** private */
   private websocket: WebSocketSubject<any>;
@@ -84,7 +87,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   constructor(
     private readonly translateService: TranslateService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly sanitizer: DomSanitizer
   ) { }
 
   ngAfterViewInit(): void {
@@ -239,5 +243,16 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     qr.corpus = this.selectedCorpus.key;
     this.websocket.next(qr);
     this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
+  }
+
+  public showVideoDlg(): void {
+    const url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
+    const start = Math.floor((Math.random() * 200) + 1);
+    const end = start + Math.floor((Math.random() * 20) + 1);
+    if (url?.length > 0) {
+      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
+        + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
+    }
+    this.displayModal = true;
   }
 }

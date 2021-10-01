@@ -78,12 +78,26 @@
         </div>
       </div>
     </p-card>
-
   </div>
+
 
   <div *ngIf="kwicLines" class="p-d-block">
     <p-card>
-      <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b></h3>
+      <div class="p-grid p-ml-4 p-ai-center">
+        <div class="p-col-fixed" style="width: 250px;">
+          <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
+          </h3>
+        </div>
+        <div class="p-col-fixed" style="width: 150px;">
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
+            (click)="showVideoDlg()"></button>
+          <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
+            [style]="{width: '700'}" [baseZIndex]="10000">
+            <iframe title="youtubeVideo" style="border: 0px;" width="600" height="450" [src]="videoUrl"
+              allowfullscreen></iframe>
+          </p-dialog>
+        </div>
+      </div>
 
       <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
         styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"

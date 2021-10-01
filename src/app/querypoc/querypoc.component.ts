@@ -16,6 +16,7 @@ export class QuerypocComponent implements OnInit, OnDestroy {
   public queryResponse: QueryResponse;
   public totalResults = 0;
   public wordFC = new FormControl('');
+
   private websocket: WebSocketSubject<any>;
 
   constructor() { }
