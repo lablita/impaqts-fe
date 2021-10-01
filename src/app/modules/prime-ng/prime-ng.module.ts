@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ChipsModule } from 'primeng/chips';
+import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
@@ -56,7 +57,8 @@ import { TreeModule } from 'primeng/tree';
     OverlayPanelModule,
     ChipsModule,
     OverlayPanelModule,
-    SelectButtonModule
+    SelectButtonModule,
+    DialogModule
   ],
   exports: [
     CommonModule,
@@ -85,7 +87,8 @@ import { TreeModule } from 'primeng/tree';
     OverlayPanelModule,
     ChipsModule,
     OverlayPanelModule,
-    SelectButtonModule
+    SelectButtonModule,
+    DialogModule
   ]
 })
 export class PrimeNgModule { }

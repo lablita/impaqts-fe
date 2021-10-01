@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -88,6 +89,9 @@ export class ConcordanceComponent implements OnInit {
 
   public resultView = false;
   public noResultFound = false;
+  public displayModal = false;
+
+  public videoUrl: SafeResourceUrl | null = null;
 
   /** private */
   private metadataQuery: QueryToken | null = null;
@@ -97,7 +101,8 @@ export class ConcordanceComponent implements OnInit {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
-    private readonly socketService: SocketService
+    private readonly socketService: SocketService,
+    private readonly sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -367,5 +372,16 @@ export class ConcordanceComponent implements OnInit {
         })
       ).subscribe();
     }
+  }
+
+  public showVideoDlg(): void {
+    const url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
+    const start = Math.floor((Math.random() * 200) + 1);
+    const end = start + Math.floor((Math.random() * 20) + 1);
+    if (url?.length > 0) {
+      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
+        + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
+    }
+    this.displayModal = true;
   }
 }
