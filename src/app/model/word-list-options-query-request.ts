@@ -1,42 +1,42 @@
 export class WordListOptionsQueryRequest {
-  subcoprpus: string;
-  searchAttribute: string;
+  subcoprpus: string | null;
+  searchAttribute: string | null;
   useNGrams: boolean;
   valueOf: number;
-  regexp: string;
+  regexp: string | null;
   minFreq: number;
   maxFreq: number;
-  whitelist: string;
-  blacklist: string;
+  whitelist: string | null;
+  blacklist: string | null;
   nonWords: boolean;
-  freqFigure: string;
-  outputType: string;
-  refSubCorpus: string;
-  refSubCorpusDet: string;
+  freqFigure: string | null;
+  outputType: string | null;
+  refSubCorpus: string | null;
+  refSubCorpusDet: string | null;
   commonWords: number;
-  changeOutFirst: string;
-  changeOutSecond: string;
-  changeOutThird: string;
+  changeOutFirst: string | null;
+  changeOutSecond: string | null;
+  changeOutThird: string | null;
 
   constructor(
-    subcoprpus: string,
-    searchAttribute: string,
+    subcoprpus: string | null,
+    searchAttribute: string | null,
     useNGrams: boolean,
     valueOf: number,
-    regexp: string,
+    regexp: string | null,
     minFreq: number,
     maxFreq: number,
-    whitelist: string,
-    blacklist: string,
+    whitelist: string | null,
+    blacklist: string | null,
     nonWords: boolean,
-    freqFigure: string,
-    outputType: string,
-    refSubCorpus: string,
-    refSubCorpusDet: string,
+    freqFigure: string | null,
+    outputType: string | null,
+    refSubCorpus: string | null,
+    refSubCorpusDet: string | null,
     commonWords: number,
-    changeOutFirst: string,
-    changeOutSecond: string,
-    changeOutThird: string,
+    changeOutFirst: string | null,
+    changeOutSecond: string | null,
+    changeOutThird: string | null
   ) {
     this.subcoprpus = subcoprpus;
     this.searchAttribute = searchAttribute;
@@ -56,6 +56,10 @@ export class WordListOptionsQueryRequest {
     this.changeOutFirst = changeOutFirst;
     this.changeOutSecond = changeOutSecond;
     this.changeOutThird = changeOutThird;
+  }
+
+  public static getInstance(): WordListOptionsQueryRequest {
+    return new WordListOptionsQueryRequest(null, null, false, 0, null, 0, 0, null, null, false, null, null, null, null, 0, null, null, null);
   }
 
 }

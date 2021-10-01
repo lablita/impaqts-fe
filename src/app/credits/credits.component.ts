@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { INSTALLATION } from '../model/constants';
+import { CREDITS, INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
+import { KeyValueItem } from '../model/key-value-item';
+import { EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-credits',
@@ -9,12 +11,18 @@ import { Installation } from '../model/installation';
 })
 export class CreditsComponent implements OnInit {
 
-  public credits: string;
+  public credits: string = '';
 
-  constructor() { }
+  constructor(
+    private readonly emitterService: EmitterService
+  ) { }
 
   ngOnInit(): void {
-    this.credits = (JSON.parse(localStorage.getItem(INSTALLATION)) as Installation).credits;
+    this.emitterService.clickLabel.emit(new KeyValueItem(CREDITS, CREDITS));
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.credits = (JSON.parse(inst) as Installation).credits;
+    }
   }
 
 }

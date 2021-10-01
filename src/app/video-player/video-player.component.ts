@@ -8,22 +8,22 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class VideoPlayerComponent implements OnInit {
 
-  @Input() public videoUrl: string;
-  @Input() public autoplay: number;
-  @Input() public start: number;
-  @Input() public end: number;
+  @Input() public videoUrl: string | null = null;
+  @Input() public autoplay: number = 0;
+  @Input() public start: number = 0;
+  @Input() public end: number = 0;
 
   public ytPlayerVisible = false;
-  public urlComplete: SafeResourceUrl;
+  public urlComplete: SafeResourceUrl | null = null;
 
   constructor(
     private readonly sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
-    if (this.videoUrl?.length > 0) {
+    if (this.videoUrl && this.videoUrl.length > 0) {
       this.urlComplete = this.sanitizer.bypassSecurityTrustResourceUrl(this.videoUrl + '?autoplay=' + (this.autoplay ? this.autoplay : 0)
-        + (this.start ? `&start=${this.start}` : '') + (this.end ? `&end=${this.end}` : ''));
+        + (this.start ? `&start=${this.start}` : 0) + (this.end ? `&end=${this.end}` : 0));
     }
   }
 

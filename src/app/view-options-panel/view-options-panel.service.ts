@@ -20,9 +20,9 @@ export class ViewOptionsPanelService {
     [
       new CorpusAttributes('REPUBBLICA',
         [
-          new KeyValueItem('OPTION_ATTR_URL_WORLD', 'PAGE.CONCORDANCE.WORD'),
+          new KeyValueItem('OPTION_ATTR_URL_WORLD', CONCORDANCE_WORD),
           new KeyValueItem('OPTION_ATTR_URL_TAG', 'PAGE.CONCORDANCE.TAG'),
-          new KeyValueItem('OPTION_ATTR_URL_LEMMA', 'PAGE.CONCORDANCE.LEMMA'),
+          new KeyValueItem('OPTION_ATTR_URL_LEMMA', CONCORDANCE_LEMMA),
           new KeyValueItem('OPTION_ATTR_URL_WORLD_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.WORD_LC'),
           new KeyValueItem('OPTION_ATTR_URL_LEMMA_LC', 'PAGE.CONCORDANCE.VIEW_OPTIONS.LEMMA_LC')
         ]

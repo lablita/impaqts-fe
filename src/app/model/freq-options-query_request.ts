@@ -29,4 +29,8 @@ export class FreqOptionsQueryRequest {
     this.includeCat = includeCat;
     this.categories = categories;
   }
+
+  public static getInstance(): FreqOptionsQueryRequest {
+    return new FreqOptionsQueryRequest(0, new KeyValueItem('', ''), new KeyValueItem('', ''), false, new KeyValueItem('', ''), 0, false, new Array<KeyValueItem>());
+  }
 }

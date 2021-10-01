@@ -29,9 +29,11 @@
     "NODE_FORMS": "Node forms",
     "COLLOCATIONS": "Collocations",
     "CONC_DECS": "ConcDesc",
-    "VISUALIZE": "Visualize"
+    "VISUALIZE": "Visualize",
+    "VISUAL_QUERY": "Visual Query"
   },
   "PAGE": {
+    "NO_RESULT_FOUND": "No Result Found!!!",
     "CONCORDANCE": {
       "CORPUS": "Corpus",
       "SELECT_CORPUS": "Select a Corpus",
@@ -216,6 +218,32 @@
       "SUMMARY": "summary",
       "S": "s",
       "ARTICLE": "article"
+    },
+    "VISUAL_QUERY": {
+      "QUERY": "Query",
+      "METADATA": "Metadata",
+      "ADD_TOKEN": "Add Token",
+      "ADD_METADATA": "Add Metadata",
+      "OPTION": "Options",
+      "SEL_TYPE": "Select a type",
+      "SEL_ACTION": "Select an action",
+      "ANY_WORD": "any word",
+      "IS": "is",
+      "IS_NOT": "is not",
+      "BEGINS": "begins with",
+      "CONTAINS": "contains",
+      "ENDS": "ends with",
+      "REGEXP": "regexp",
+      "NOT_REG": "not regexp",
+      "REPEAT": "repeat",
+      "START": "sentence start",
+      "END": "sentence end",
+      "FOR": "for",
+      "TIMES": "times"
     }
+  },
+  "LANGUAGE": {
+    "IT": "ITA",
+    "EN": "ENG"
   }
 }

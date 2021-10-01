@@ -3,13 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY, INSTALLATION,
-  RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, WORD_LIST
+  FILTER, FREQUENCY, INSTALLATION, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
+import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
-
 export class MenuEvent {
   constructor(
     public item: string,
@@ -25,54 +24,66 @@ export class MenuEvent {
 export class MenuComponent implements OnInit {
 
   public items: MenuItemObject[] = [];
-  public urlBottomLeft: string;
+  public urlBottomLeft: string | null = null;
 
-  private menuConcordance: MenuItemObject[];
-  private menuWordList: MenuItemObject[];
-  private menuResultConcordance: MenuItemObject[];
-  private concordance: string;
-  private wordList: string;
-  private corpusInfo: string;
-  private allWords: string;
-  private allLemmans: string;
-  private viewOption: string;
-  private sort: string;
-  private sample: string;
-  private filter: string;
-  private frequency: string;
-  private collocations: string;
+  private menuConcordance: MenuItemObject[] = new Array<MenuItemObject>();
+  private menuWordList: MenuItemObject[] = new Array<MenuItemObject>();
+  private menuResultConcordance: MenuItemObject[] = new Array<MenuItemObject>();
+  private concordance: string = '';
+  private wordList: string = '';
+  private corpusInfo: string = '';
+  private allWords: string = '';
+  private allLemmans: string = '';
+  private viewOption: string = '';
+  private sort: string = '';
+  private filter: string = '';
+  private frequency: string = '';
+  private collocations: string = '';
+  private visualQuery: string = '';
 
   constructor(
+    private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
-    const installation = JSON.parse(localStorage.getItem(INSTALLATION)) as Installation;
-    installation.logos.forEach(logo => {
-      if (logo.position === BOTTOM_LEFT) {
-        this.urlBottomLeft = logo.url;
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      const installation = JSON.parse(inst) as Installation;
+      installation.logos.forEach(logo => {
+        if (logo.position === BOTTOM_LEFT) {
+          this.urlBottomLeft = logo.url;
+        }
+      });
+    }
+    this.translateService.stream('MENU.CONCORDANCE').subscribe(res => this.concordance = res);
+    this.translateService.stream('MENU.WOLRD_LIST').subscribe(res => this.wordList = res);
+    this.translateService.stream('MENU.CORPUS_INFO').subscribe(res => this.corpusInfo = res);
+    this.translateService.stream('MENU.ALL_WORDS').subscribe(res => this.allWords = res);
+    this.translateService.stream('MENU.ALL_LEMMANS').subscribe(res => this.allLemmans = res);
+    this.translateService.stream('MENU.VIEW_OPTION').subscribe(res => this.viewOption = res);
+    this.translateService.stream('MENU.SORT').subscribe(res => this.sort = res);
+    this.translateService.stream('MENU.FILTER').subscribe(res => this.filter = res);
+    this.translateService.stream('MENU.FREQUENCY').subscribe(res => this.frequency = res);
+    this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocations = res);
+    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => {
+      this.visualQuery = res;
+      this.menuDefine();
+      this.items = JSON.parse(JSON.stringify(this.getMenuItems(CONCORDANCE)));
+      if (!this.menuEmitterService.corpusSelected) {
+        this.items.splice(1, 1);
       }
     });
 
-    this.translateService.get('MENU.CONCORDANCE').subscribe(concordance => {
-      this.concordance = concordance;
-      this.wordList = this.translateService.instant('MENU.WOLRD_LIST') as string;
-      this.corpusInfo = this.translateService.instant('MENU.CORPUS_INFO') as string;
-      this.allWords = this.translateService.instant('MENU.ALL_WORDS') as string;
-      this.allLemmans = this.translateService.instant('MENU.ALL_LEMMANS') as string;
-      this.viewOption = this.translateService.instant('MENU.VIEW_OPTION') as string;
-      this.sort = this.translateService.instant('MENU.SORT') as string;
-      this.sample = this.translateService.instant('MENU.SAMPLE') as string;
-      this.filter = this.translateService.instant('MENU.FILTER') as string;
-      this.frequency = this.translateService.instant('MENU.FREQUENCY') as string;
-      this.collocations = this.translateService.instant('MENU.COLLOCATIONS') as string;
-      this.menuDefine();
-      this.items = this.getMenuItems(CONCORDANCE);
-    });
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (event.item) {
-        this.items = this.getMenuItems(event.item);
+      if (event && event.item) {
+        this.items = JSON.parse(JSON.stringify(this.getMenuItems(event.item)));
+      }
+      if (!this.menuEmitterService.corpusSelected && !!this.items) {
+        this.items.splice(1, 1);
+      } else {
+        this.items = JSON.parse(JSON.stringify(this.getMenuItems(RESULT_CONCORDANCE)));
       }
     });
   }
@@ -80,6 +91,7 @@ export class MenuComponent implements OnInit {
   private menuDefine(): void {
     this.menuConcordance = [
       new MenuItemObject(this.concordance, null, () => {
+        this.emitterService.pageMenu = CONCORDANCE;
         this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
       }, null, null, false, false, CONCORDANCE),
       new MenuItemObject(this.wordList, null, () => {
@@ -87,7 +99,11 @@ export class MenuComponent implements OnInit {
       }, null, null, false, false, null),
       new MenuItemObject(this.corpusInfo, null, () => {
         this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
-      }, null, null, false, false, CORPUS_INFO)
+      }, null, null, false, false, CORPUS_INFO),
+      new MenuItemObject(this.visualQuery, null, () => {
+        this.emitterService.pageMenu = VISUAL_QUERY;
+        this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
+      }, null, null, false, false, VISUAL_QUERY)
     ];
 
     this.menuWordList = this.menuConcordance.concat(
@@ -111,9 +127,6 @@ export class MenuComponent implements OnInit {
         new MenuItemObject(this.sort, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(SORT));
         }, null, null, false, false, null),
-        // new MenuItemObject(this.sample, null, () => {
-        //   this.menuEmitterService.click.emit(new MenuEvent(SAMPLE));
-        // }, null, null, false, false, null),
         new MenuItemObject(this.filter, null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(FILTER));
         }, null, null, false, false, null),
@@ -127,11 +140,10 @@ export class MenuComponent implements OnInit {
     );
   }
 
-  public getMenuItems(page: string): MenuItemObject[] {
-
+  private getMenuItems(page: string): MenuItemObject[] {
     switch (page) {
       case CONCORDANCE:
-
+      case VISUAL_QUERY:
       case WORD_LIST:
       case ALL_WORDS:
       case ALL_LEMMANS:
@@ -141,7 +153,6 @@ export class MenuComponent implements OnInit {
       case AS_SUBCORPUS:
       case VIEW_OPTIONS:
       case SORT:
-      // case SAMPLE:
       case FILTER:
       case FREQUENCY:
       case COLLOCATIONS:

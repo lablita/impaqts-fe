@@ -56,4 +56,8 @@ export class ViewOptionsQueryRequest {
     this.showLinesNum = showLinesNum;
     this.shortLongRef = shortLongRef;
   }
+
+  public static getInstance(): ViewOptionsQueryRequest {
+    return new ViewOptionsQueryRequest(new Array<string>(), new Array<KeyValueItem>(), new Array<KeyValueItem>(), '', false, false, 0, 0, false, false, 0, false, false, false, false, false, false);
+  }
 }

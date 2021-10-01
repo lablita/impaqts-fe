@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'src/environments/environment';
+import { INSTALLATION, INTERFACE_LANGUAGE } from './model/constants';
 import { Installation } from './model/installation';
 
 
@@ -9,14 +12,41 @@ import { Installation } from './model/installation';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  public title = 'impaqts-fe';
-  public installation: Installation;
+export class AppComponent implements OnInit {
+
+  private installation: Installation | null = null;
 
   constructor(
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    @Inject(DOCUMENT) private document: Document
   ) {
-    this.translateService.setDefaultLang('en');
-    this.translateService.use('en');
+    let lang;
+    if (localStorage.getItem(INTERFACE_LANGUAGE) !== null && localStorage.getItem(INTERFACE_LANGUAGE) !== 'undefined') {
+      lang = localStorage.getItem(INTERFACE_LANGUAGE);
+    } else {
+      lang = 'it';
+    }
+    this.translateService.addLangs(['en', 'it']);
+    if (lang) {
+      this.translateService.setDefaultLang(lang);
+      this.translateService.use(lang);
+    }
   }
+
+  ngOnInit(): void {
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.installation = JSON.parse(inst) as Installation;
+      const projectName = this.installation.projectName;
+      if (this.document) {
+        const icoElement = this.document.getElementById('ico');
+        if (icoElement) {
+          (icoElement as any).href = `${environment.installationUrl}/favicon?installationName=${projectName}`;
+        }
+        const cssElement = this.document.getElementById('css');
+        (cssElement as any).href = `${environment.installationUrl}/css?installationName=${projectName}`;
+      }
+    }
+  }
+
 }
