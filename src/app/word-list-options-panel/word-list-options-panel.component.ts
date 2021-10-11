@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { ARF, CHANGE_OUT, DOC_COUNTS, HIT_COUNTS, KEYWORD, SIMPLE } from '../model/constants';
+import { HIT_COUNTS } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -26,27 +26,27 @@ class DropdownIG {
 
 export class WordListOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: KeyValueItem[];
-  @Input() public textTypesAttributes: KeyValueItem[];
+  @Input() public showRightButton: boolean = false;
+  @Input() public corpusAttributes: KeyValueItem[] | null = null
+  @Input() public textTypesAttributes: KeyValueItem[] | null = null
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
-  public fileUploadedInfo: string;
-  public nonWords: string;
+  public fileUploadedInfo: string | null = null;
+  public nonWords: string = '';
   public frequencyFigures: KeyValueItem[] = [];
-  public selectedFrequencyFigure: KeyValueItem;
+  public selectedFrequencyFigure: KeyValueItem | null = null;
   public outputTypes: KeyValueItem[] = [];
-  public selectedOutputType: KeyValueItem;
+  public selectedOutputType: KeyValueItem | null = null;
   public subcorpusList: KeyValueItem[] = [];
-  public selectedSubcorpus: KeyValueItem;
+  public selectedSubcorpus: KeyValueItem | null = null;
   public searchAttrList: {}[] = [];
-  public selectedSearchAttr: KeyValueItem;
-  public nGram: string;
+  public selectedSearchAttr: KeyValueItem | null = null;
+  public nGram: string = '';
   public valueOfList: KeyValueItem[] = [];
-  public selectedValueOf: KeyValueItem;
+  public selectedValueOf: KeyValueItem | null = null;
   public rareWordsList: KeyValueItem[] = [];
-  public selectedRareWords: KeyValueItem;
+  public selectedRareWords: KeyValueItem | null = null;
   public attributeList: DropdownIG[] = [];
   public textTypeList: DropdownIG[] = [];
 
@@ -54,14 +54,16 @@ export class WordListOptionsPanelComponent implements OnInit {
   constructor(
     private readonly translateService: TranslateService,
     private readonly messageService: MessageService
-  ) { }
+  ) {
+    this.wordListOptionsQueryRequest = WordListOptionsQueryRequest.getInstance();
+  }
 
   ngOnInit(): void {
-    if (this.corpusAttributes?.length > 0) {
-      this.corpusAttributes.forEach(ca => this.attributeList.push(new DropdownIG(ca.key, ca.value)));
+    if (this.corpusAttributes) {
+      this.corpusAttributes.forEach(ca => { if (ca.value) { this.attributeList.push(new DropdownIG(ca.key, ca.value)); } });
     }
-    if (this.corpusAttributes?.length > 0) {
-      this.textTypesAttributes.forEach(ca => this.textTypeList.push(new DropdownIG(ca.key, ca.value)));
+    if (this.textTypesAttributes) {
+      this.textTypesAttributes.forEach(ca => { if (ca.value) { this.textTypeList.push(new DropdownIG(ca.key, ca.value)); } });
     }
 
     this.searchAttrList.push(
@@ -92,26 +94,30 @@ export class WordListOptionsPanelComponent implements OnInit {
       new KeyValueItem('10000', '10000'),
       new KeyValueItem('100000', '100000'),
     ];
-    this.wordListOptionsQueryRequest = localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].wordListOptionsQueryRequest;
-    this.translateService.get('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(translated => {
-      this.fileUploadedInfo = translated;
-      this.nonWords = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS');
-      this.nGram = this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM');
+    const wordList = localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST);
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    if (wordList) {
+      this.wordListOptionsQueryRequest = wordList ?
+        JSON.parse(wordList) :
+        inst && inst.startup.wordListOptionsQueryRequest;
+    }
+    this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(res => this.fileUploadedInfo = res);
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.nonWords = res);
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM').subscribe(res => this.nGram = res);
 
-      this.frequencyFigures = [
-        new KeyValueItem(HIT_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS')),
-        new KeyValueItem(DOC_COUNTS, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.DOC_COUNTS')),
-        new KeyValueItem(ARF, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.ARF'))
-      ];
-
-      this.outputTypes = [
-        new KeyValueItem(SIMPLE, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE')),
-        new KeyValueItem(KEYWORD, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD')),
-        new KeyValueItem(CHANGE_OUT, this.translateService.instant('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT'))
-      ];
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS').subscribe(res => {
+      this.frequencyFigures = [];
+      this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res))
+      this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res)));
+      this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.ARF').subscribe(res => this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res)));
     });
+
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE').subscribe(res => {
+      this.outputTypes = [];
+      this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res))
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD').subscribe(res => this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT').subscribe(res => this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res)));
 
   }
 
@@ -119,12 +125,12 @@ export class WordListOptionsPanelComponent implements OnInit {
 
   }
 
-  public onWhiteListBasicUpload(event): void {
-    this.messageService.add({ severity: 'info', summary: this.fileUploadedInfo, detail: '' });
+  public onWhiteListBasicUpload(event: any): void {
+    this.messageService.add({ severity: 'info', summary: this.fileUploadedInfo ? this.fileUploadedInfo : '', detail: '' });
   }
 
-  public onBlackListBasicUpload(event): void {
-    this.messageService.add({ severity: 'info', summary: this.fileUploadedInfo, detail: '' });
+  public onBlackListBasicUpload(event: any): void {
+    this.messageService.add({ severity: 'info', summary: this.fileUploadedInfo ? this.fileUploadedInfo : '', detail: '' });
   }
 
   public closeSidebar(): void {
@@ -132,7 +138,9 @@ export class WordListOptionsPanelComponent implements OnInit {
   }
 
   public dropdownRareWords(): void {
-    this.wordListOptionsQueryRequest.commonWords = parseFloat(this.selectedRareWords.key);
+    if (this.wordListOptionsQueryRequest && this.selectedRareWords) {
+      this.wordListOptionsQueryRequest.commonWords = parseFloat(this.selectedRareWords.key);
+    }
   }
 
 }

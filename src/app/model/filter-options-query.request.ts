@@ -7,7 +7,7 @@ export class FilterOptionsQueryRequest {
   from: number;
   to: number;
   kwic: boolean;
-  contextConcordance: ContextConcordanceQueryRequest;
+  contextConcordance?: ContextConcordanceQueryRequest;
 
   constructor(
     filter: KeyValueItem,
@@ -23,5 +23,9 @@ export class FilterOptionsQueryRequest {
     this.to = to;
     this.kwic = kwic;
     this.contextConcordance = contextConcordance;
+  }
+
+  public static getInstance(): FilterOptionsQueryRequest {
+    return new FilterOptionsQueryRequest(new KeyValueItem('', ''), new KeyValueItem('', ''), 0, 0, false);
   }
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { INSTALLATION } from '../model/constants';
+import { COPYRIGHT, INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
+import { KeyValueItem } from '../model/key-value-item';
+import { EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-copyright',
@@ -9,12 +11,18 @@ import { Installation } from '../model/installation';
 })
 export class CopyrightComponent implements OnInit {
 
-  public copyright: string;
+  public copyright: string = '';
 
-  constructor() { }
+  constructor(
+    private readonly emitterService: EmitterService
+  ) { }
 
   ngOnInit(): void {
-    this.copyright = (JSON.parse(localStorage.getItem(INSTALLATION)) as Installation).credits;
+    this.emitterService.clickLabel.emit(new KeyValueItem(COPYRIGHT, COPYRIGHT));
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.copyright = (JSON.parse(inst) as Installation).credits;
+    }
   }
 
 }

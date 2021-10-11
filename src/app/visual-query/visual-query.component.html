@@ -1,0 +1,120 @@
+<p-card class="p-p-3">
+  <div class="p-field p-d-flex">
+    <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
+    <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value"
+      [placeholder]="'Select a Corpus'" [filter]="true" [showClear]="true" (onChange)="dropdownCorpus()">
+      <ng-template pTemplate="selectedItem">
+        <div *ngIf="selectedCorpus">
+          <div class="label-size">{{selectedCorpus.value}}</div>
+        </div>
+      </ng-template>
+      <ng-template let-country pTemplate="item">
+        <div>
+          <div class="label-size">{{country.value}}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+  </div>
+
+  <span class="p-component">
+    <h2>{{"PAGE.VISUAL_QUERY.QUERY" | translate}}</h2>
+  </span>
+  <div class="p-jc-start p-mt-2">
+    <div *ngFor="let token of queryPattern.tokPattern" class="p-mr-2 p-d-inline-flex">
+      <div class="box">
+        <app-query-token [token]="token" [typeList]="typeListQuery" [option]="true" (delete)="deleteTokenQuery(token)"
+          [metadata]="false">
+        </app-query-token>
+      </div>
+    </div>
+  </div>
+  <button pButton label=" " icon="pi" (click)="addTokenQuery()" [disabled]="!enableAddToken"><i
+      class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_TOKEN" | translate}}</button>
+
+  <hr>
+  <span class="p-component">
+    <h2>{{"PAGE.VISUAL_QUERY.METADATA" | translate}}</h2>
+  </span>
+  <div class="p-jc-start p-mt-2">
+    <div *ngFor="let token of metadata" class="p-mr-2">
+      <div class="box">
+        <app-query-token [token]="token" [metadatumTextTypes]="getMetadatumTextTypes()"
+          (delete)="deleteTokenMetadata(token)" [metadata]="true">
+        </app-query-token>
+      </div>
+    </div>
+  </div>
+  <button pButton label=" " icon="pi" (click)="addTokenMetadata()" [disabled]="!enableAddMetadata"><i
+      class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_METADATA" | translate}}
+    <div *ngIf="enableSpinner">
+      <p-progressSpinner [style]="{width: '25px', height: '25px'}"></p-progressSpinner>
+    </div>
+  </button>
+  <div class="p-mt-6 p-text-center">
+    <button [disabled]="!queryTokenOK()" pButton type="button" icon="pi"
+      label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
+    </button>
+  </div>
+
+  <div class="p-text-center p-mt-6" *ngIf="loading">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+  </div>
+  <div *ngIf="resultView" class="p-d-block">
+    <p-card>
+      <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
+      </h3>
+      <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
+        styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
+        currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10,25,50]">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 80px;">Ref</th>
+            <th class="p-text-center" style="width: 180px;">Left</th>
+            <th class="p-text-center" style="width: 80px;">Kwic</th>
+            <th class="p-text-center" style="width: 180px;">Right</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-kwicLine>
+          <tr>
+            <td><a href="#">{{kwicLine.ref}}</a></td>
+            <td class="p-text-right">{{kwicLine.leftContext}}</td>
+            <td class="p-text-center" style="color: red;">{{kwicLine.kwic}}</td>
+            <td class="p-text-left">{{kwicLine.rightContext}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+  <div *ngIf="!resultView && noResultFound && !loading" class="p-mt-6">
+    <p-card>
+      <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+    </p-card>
+  </div>
+</p-card>
+<p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
+  <div class="p-ml-3" *ngIf="selectedCorpus">
+    <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption.value === viewOptionsLabel"
+      [corpus]="selectedCorpus.key" [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
+      (closeSidebarEvent)="displayPanelOptions=false">
+    </app-view-options-panel>
+    <app-word-list-options-panel *ngIf="titleOption && titleOption.value === wordListOptionsLabel"
+      [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
+      [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
+    </app-word-list-options-panel>
+    <app-sort-options-panel *ngIf="titleOption && titleOption.value === sortOptionsLabel"
+      [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
+      (closeSidebarEvent)="displayPanelOptions=false">
+    </app-sort-options-panel>
+    <app-frequency-options-panel *ngIf="titleOption && titleOption.value === freqOptionsLabel"
+      [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
+      (closeSidebarEvent)="displayPanelOptions=false">
+    </app-frequency-options-panel>
+    <app-collocation-options-panel *ngIf="titleOption && titleOption.value === collocationOptionsLabel"
+      [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
+    </app-collocation-options-panel>
+    <app-filter-options-panel *ngIf="titleOption && titleOption.value === filterOptionsLabel"
+      [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes">
+    </app-filter-options-panel>
+  </div>
+</p-sidebar>

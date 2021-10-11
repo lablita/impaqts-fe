@@ -7,11 +7,18 @@ import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { CreditsComponent } from './credits/credits.component';
 import { MainComponent } from './main/main.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
+import { VisualQueryComponent } from './visual-query/visual-query.component';
 
 const routes: Routes = [
   {
-    path: '', component: MainComponent,
+    path: '',
+    component: MainComponent,
     children: [
+      {
+        path: '',
+        redirectTo: 'concordance',
+        pathMatch: 'full'
+      },
       {
         path: 'poc',
         component: QuerypocComponent
@@ -39,6 +46,10 @@ const routes: Routes = [
       {
         path: 'copyright',
         component: CopyrightComponent
+      },
+      {
+        path: 'visual_query',
+        component: VisualQueryComponent
       }
     ]
   },

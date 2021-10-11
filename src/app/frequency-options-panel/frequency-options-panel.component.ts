@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
+import { CONCORDANCE_WORD, FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -15,77 +15,77 @@ const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 })
 export class FrequencyOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean;
-  @Input() public corpusAttributes: KeyValueItem[];
+  @Input() public showRightButton: boolean = false;
+  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public freqOptionsQueryRequest: FreqOptionsQueryRequest;
+  public freqOptionsQueryRequest: FreqOptionsQueryRequest = FreqOptionsQueryRequest.getInstance();
 
   public attributeList: KeyValueItem[] = [];
-  public levels: KeyValueItem[];
-  public selectedLevel: KeyValueItem;
-  public selectedAttribute: KeyValueItem;
-  public selectedMultiAttribute: KeyValueItem[];
-  public ignoreCase: boolean[];
-  public positionList: KeyValueItem[];
-  public selectedPosition: KeyValueItem[];
-  public ignoreCaseLabel: string;
-  public includeCatLabel: string;
+  public levels: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedLevel: KeyValueItem | null = null;
+  public selectedAttribute: KeyValueItem | null = null;
+  public selectedMultiAttribute: KeyValueItem[] = new Array<KeyValueItem>();
+  public ignoreCase: boolean[] = new Array<boolean>();
+  public positionList: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedPosition: KeyValueItem[] = new Array<KeyValueItem>();
+  public ignoreCaseLabel: string = '';
+  public includeCatLabel: string = ''
 
   constructor(
     private readonly translateService: TranslateService
   ) { }
 
   ngOnInit(): void {
-    if (this.corpusAttributes?.length > 0) {
+    if (this.corpusAttributes && this.corpusAttributes.length > 0) {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false, false];
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)
+    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst && inst.startup.freqOptionsQueryRequest;
 
-    this.freqOptionsQueryRequest = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST) ?
-      JSON.parse(localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)) :
-      INSTALLATION_LIST[environment.installation].freqOptionsQueryRequest;
+    this.positionList = [
+      new KeyValueItem(L6, L6),
+      new KeyValueItem(L5, L5),
+      new KeyValueItem(L4, L4),
+      new KeyValueItem(L3, L3),
+      new KeyValueItem(L2, L2),
+      new KeyValueItem(L1, L1),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(R6, R6),
+      new KeyValueItem(R5, R5),
+      new KeyValueItem(R4, R4),
+      new KeyValueItem(R3, R3),
+      new KeyValueItem(R2, R2),
+      new KeyValueItem(R1, R1)
+    ];
 
-    this.translateService.get('PAGE.CONCORDANCE.WORD').subscribe(word => {
-      this.includeCatLabel = this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT');
-      this.ignoreCaseLabel = this.translateService.instant('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE');
-      this.levels = [
-        new KeyValueItem(FIRST, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL')),
-        new KeyValueItem(SECOND, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL')),
-        new KeyValueItem(THIRD, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL')),
-        new KeyValueItem(FOURTH, this.translateService.instant('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL'))
-      ];
+    this.selectedPosition = [
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE),
+      new KeyValueItem(NODE, NODE)
+    ];
 
-      this.positionList = [
-        new KeyValueItem(L6, L6),
-        new KeyValueItem(L5, L5),
-        new KeyValueItem(L4, L4),
-        new KeyValueItem(L3, L3),
-        new KeyValueItem(L2, L2),
-        new KeyValueItem(L1, L1),
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(R6, R6),
-        new KeyValueItem(R5, R5),
-        new KeyValueItem(R4, R4),
-        new KeyValueItem(R3, R3),
-        new KeyValueItem(R2, R2),
-        new KeyValueItem(R1, R1)
-      ];
+    this.translateService.stream(CONCORDANCE_WORD).subscribe(res => {
+      this.selectedMultiAttribute = [];
+      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT').subscribe(res => this.includeCatLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE').subscribe(res => this.ignoreCaseLabel = res);
 
-      this.selectedMultiAttribute = [
-        new KeyValueItem('word', word),
-        new KeyValueItem('word', word),
-        new KeyValueItem('word', word),
-        new KeyValueItem('word', word)
-      ];
-
-      this.selectedPosition = [
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(NODE, NODE),
-        new KeyValueItem(NODE, NODE)
-      ];
-
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL').subscribe(res => {
+      this.levels = [];
+      this.levels.push(new KeyValueItem(FIRST, res));
+    });
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL').subscribe(res => this.levels.push(new KeyValueItem(SECOND, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL').subscribe(res => this.levels.push(new KeyValueItem(THIRD, res)));
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL').subscribe(res => {
+      this.levels.push(new KeyValueItem(FOURTH, res));
       this.selectedLevel = this.levels.filter(l => l.key === this.freqOptionsQueryRequest.level.key)[0];
       const index = this.selectedLevel.key === FIRST ? 0 :
         (this.selectedLevel.key === SECOND ? 1 : (this.selectedLevel.key === THIRD ? 2 : 3));
@@ -100,7 +100,9 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickFreqOption(): void {
-    this.freqOptionsQueryRequest.level = this.selectedLevel;
+    if (this.selectedLevel) {
+      this.freqOptionsQueryRequest.level = this.selectedLevel;
+    }
     const index = this.freqOptionsQueryRequest.level.key === FIRST ? 0 :
       (this.freqOptionsQueryRequest.level.key === SECOND ? 1 : (this.freqOptionsQueryRequest.level.key === THIRD ? 2 : 3));
     this.freqOptionsQueryRequest.attribute = this.selectedMultiAttribute[index];
@@ -108,7 +110,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.freqOptionsQueryRequest.position = this.selectedPosition[index];
 
     localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
-    console.log('ok');
   }
 
   public clickNodeTags(): void {

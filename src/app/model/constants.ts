@@ -3,6 +3,7 @@ export const CONTEXT_INSTALLATION = '/impaqts-configurator';
 export const CONTEXT_CORPORA = '';
 export const FIND_FAILED = 'FIND_FAILED';
 export const INSTALLATION = 'installation';
+export const INTERFACE_LANGUAGE = 'interface_language';
 
 /** */
 export const TOP_LEFT = 'TOP_LEFT';
@@ -38,6 +39,7 @@ export const COLLOCATIONS = 'collocations';
 export const CONC_DECS = 'conc_desc';
 export const VISUALIZE = 'visualize';
 export const CHENGE_OPTIONS = 'change_options';
+export const VISUAL_QUERY = 'visual_query';
 
 export const SIMPLE = 'simple';
 export const LEMMA = 'lemma';
@@ -108,6 +110,20 @@ export const POSITIVE = 'positive';
 export const NEGATIVE = 'negative';
 export const LAST = 'last';
 
-
-
-
+/** PAGE */
+export const SELECT_CORPUS = 'PAGE.CONCORDANCE.SELECT_CORPUS';
+export const WORD_OPTIONS_LABEL = 'PAGE.CONCORDANCE.WORD_OPTIONS.WORD_OPTIONS';
+export const MENU_VISUAL_QUERY = 'MENU.VISUAL_QUERY';
+export const SORT_OPTIONS_LABEL = 'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS';
+export const FREQ_OPTIONS_LABEL = 'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_OPTIONS';
+export const MENU_COLL_OPTIONS = 'MENU.COLLOCATIONS';
+export const MENU_FILTER = 'MENU.FILTER';
+export const VIEW_OPTIONS_LABEL = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
+export const CREDITS = 'CREDITS';
+export const COPYRIGHT = 'COPYRIGHT';
+export const CONCORDANCE_SIMPLE = 'PAGE.CONCORDANCE.SIMPLE';
+export const CONCORDANCE_LEMMA = 'PAGE.CONCORDANCE.LEMMA';
+export const CONCORDANCE_PHRASE = 'PAGE.CONCORDANCE.PHRASE';
+export const CONCORDANCE_WORD = 'PAGE.CONCORDANCE.WORD';
+export const CONCORDANCE_CHARACTER = 'PAGE.CONCORDANCE.CHARACTER';
+export const CONCORDANCE_CQL = 'PAGE.CONCORDANCE.CQL';

@@ -5,7 +5,7 @@ import { MenuEvent } from './menu.component';
   providedIn: 'root'
 })
 export class MenuEmitterService {
-
+  public corpusSelected = false;
   public click: EventEmitter<MenuEvent> = new EventEmitter<MenuEvent>();
 
   constructor() { }

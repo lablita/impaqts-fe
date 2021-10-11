@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-// import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, throwError } from 'rxjs';
 
 
@@ -13,12 +12,11 @@ export class UtilService implements OnDestroy {
 
   public changeContentLanguage: Subject<string> = new Subject<string>();
 
-  private contentLanguageSet: string;
+  private contentLanguageSet: string = '';
   private readonly fallback = 'eng';
 
   constructor(
     private readonly translateService: TranslateService,
-    // private readonly toastr: ToastrService,
     private readonly router: Router,
   ) {
     this.changeContentLanguage.subscribe(lang => {
@@ -104,26 +102,22 @@ export class UtilService implements OnDestroy {
 
   public notifyError(message: string): void {
     console.log(message);
-    // this.toastr.error('', message);
   }
 
   public notifyErrorTranslation(translation: string): void {
-    this.translateService.get(translation)
+    this.translateService.stream(translation)
       .subscribe((message: string) => this.notifyError(message));
   }
 
   public notifySuccessTranslation(translation: string): void {
-    this.translateService.get(translation)
+    this.translateService.stream(translation)
       .subscribe((message: string) =>
         console.log(message)
-        // this.toastr.success(message)
       );
   }
 
   public setContentLanguage(language: string): void {
     this.contentLanguageSet = language;
   }
-
-
 
 }

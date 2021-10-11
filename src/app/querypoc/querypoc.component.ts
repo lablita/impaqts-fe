@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { environment } from 'src/environments/environment';
+import { WS_URL } from '../common/constants';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
-
-const WS_URL = '/test-query-ws-ext';
 
 @Component({
   selector: 'app-querypoc',
@@ -13,15 +13,15 @@ const WS_URL = '/test-query-ws-ext';
 })
 export class QuerypocComponent implements OnInit, OnDestroy {
 
-  public queryResponse: QueryResponse;
+  public queryResponse: QueryResponse | null = null;
   public totalResults = 0;
   public wordFC = new FormControl('');
-  private websocket: WebSocketSubject<any>;
+  private websocket: WebSocketSubject<any> | null = null;
 
   constructor() { }
 
   ngOnInit(): void {
-    const url = `ws://localhost:9000${WS_URL}`;
+    const url = `${environment.queryServerProtocol}://${environment.queryServerHost}/${WS_URL}`;
     this.websocket = webSocket(url);
     this.websocket.asObservable().subscribe(
       resp => {
@@ -45,7 +45,9 @@ export class QuerypocComponent implements OnInit, OnDestroy {
     qr.start = 0;
     qr.end = 15;
     qr.word = `[word="${this.wordFC.value}"]`;
-    this.websocket.next(qr);
+    if (this.websocket) {
+      this.websocket.next(qr);
+    }
   }
 
   private closeWebSocket(): void {

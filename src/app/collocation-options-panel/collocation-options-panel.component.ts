@@ -15,35 +15,37 @@ const showList = ['T_SCORE', 'MI', 'MI3', 'LOG', 'MIN', 'LOG_DICE', 'MI_LOG'];
 })
 export class CollocationOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean;
-  // @Input() public corpusAttributes: KeyValueItem[];
+  @Input() public showRightButton = false;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
-  public corpusAttributes: KeyValueItem[];
-
   public attributeList: KeyValueItem[] = [];
 
   constructor(
     private readonly translateService: TranslateService
-  ) { }
+  ) {
+    const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
+    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
+    this.collocationOptionsQueryRequest = collOptReq ?
+      JSON.parse(collOptReq) :
+      inst && inst.startup.collocationOptionsQueryRequest;
+  }
 
   ngOnInit(): void {
 
-    this.translateService.get('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.T_SCORE').subscribe(tScore => {
+    this.translateService.stream('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.T_SCORE').subscribe(res => {
       showList.forEach((show, index) => {
         if (index === 0) {
-          this.attributeList.push(new KeyValueItem(show, tScore));
+          this.attributeList = [];
+          this.attributeList.push(new KeyValueItem(show, res));
         } else {
-          this.attributeList.push(new KeyValueItem(show, this.translateService.instant('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + show)));
+          this.translateService.stream('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + show).subscribe(r =>
+            this.attributeList.push(new KeyValueItem(show, r))
+          );
         }
       });
-
-      this.collocationOptionsQueryRequest = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST) ?
-        JSON.parse(localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST)) :
-        INSTALLATION_LIST[environment.installation].collocationOptionsQueryRequest;
-
     });
+
   }
 
   public closeSidebar(): void {
@@ -52,7 +54,6 @@ export class CollocationOptionsPanelComponent implements OnInit {
 
   public clickCollocationOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
-    console.log('ok');
   }
 
 }

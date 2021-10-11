@@ -4,6 +4,7 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
@@ -21,14 +22,17 @@ import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
 import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
+import { QueryTagComponent } from './query-tag/query-tag.component';
+import { QueryTokenComponent } from './query-token/query-token.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { RightComponent } from './right/right.component';
 import { AppInitializerService } from './services/app-initializer.service';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
 import { TopComponent } from './top/top.component';
+import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
+import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,7 +53,11 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     FilterOptionsPanelComponent,
     ContextConcordanceComponent,
     CreditsComponent,
-    CopyrightComponent
+    CopyrightComponent,
+    VisualQueryComponent,
+    QueryTokenComponent,
+    QueryTagComponent,
+    VideoPlayerComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +74,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
         deps: [HttpClient]
       }
     }),
-    HttpClientModule
+    HttpClientModule,
+    YouTubePlayerModule
   ],
   providers: [
     {
