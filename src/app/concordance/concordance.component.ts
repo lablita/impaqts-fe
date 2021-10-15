@@ -198,7 +198,7 @@ export class ConcordanceComponent implements OnInit {
         qr.start = 0;
         qr.end = 10;
       } else {
-        if (event.first && event.rows) {
+        if (event.first !== undefined && event.first !== null && event.rows !== undefined && event.rows !== null) {
           qr.start = event.first;
           qr.end = qr.start + event.rows;
         }

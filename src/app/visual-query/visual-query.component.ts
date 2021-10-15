@@ -192,10 +192,10 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         qr.start = 0;
         qr.end = 10;
       } else {
-        if (event.first) {
+        if (event.first !== undefined && event.first !== null) {
           qr.start = event.first;
         }
-        if (event.rows) {
+        if (event.rows !== undefined && event.rows !== null) {
           qr.end = qr.start + event.rows;
         }
       }
