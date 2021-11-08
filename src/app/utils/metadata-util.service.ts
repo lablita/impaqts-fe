@@ -48,7 +48,10 @@ export class MetadataUtilService {
         if (md.freeText) {
           let value = null;
           if (this.textTypesRequest && this.textTypesRequest.freeTexts && this.textTypesRequest.freeTexts.length > 0) {
-            value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
+            const ft = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name);
+            if (ft.length > 0) {
+              value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
+            }
           }
           if (value) {
             md.selection = value;
@@ -255,28 +258,31 @@ export class MetadataUtilService {
       selections.push(root);
     }
     const expandBranch = (metadata: Metadatum, node: TreeNode, parentNode: TreeNode) => {
-      metadata.subMetadata.forEach(md => {
-        const innerNode: TreeNode = {
-          label: md.name,
-          parent: parentNode,
-          selectable: true,
-          children: []
-        };
-        const innerParentNode: TreeNode = {
-          label: md.name,
-          parent: parentNode,
-          selectable: true,
-          children: []
-        };
-        if (values && values.indexOf(md.name) > -1) {
-          selections.push(innerNode);
-        }
-        if (node.children) {
-          node.children.push(innerNode);
-        } if (md.subMetadata.length > 0) {
-          expandBranch(md, innerNode, innerParentNode);
-        }
-      });
+      if (!!metadata.subMetadata) {
+        metadata.subMetadata.forEach(md => {
+          const innerNode: TreeNode = {
+            label: md.name,
+            parent: parentNode,
+            selectable: true,
+            children: []
+          };
+          const innerParentNode: TreeNode = {
+            label: md.name,
+            parent: parentNode,
+            selectable: true,
+            children: []
+          };
+          if (values && values.indexOf(md.name) > -1) {
+            selections.push(innerNode);
+          }
+          if (node.children) {
+            node.children.push(innerNode);
+          }
+          if (md.subMetadata.length > 0) {
+            expandBranch(md, innerNode, innerParentNode);
+          }
+        });
+      }
     };
     expandBranch(meta, root, rootParent);
     return { tree: root, selections: selections };
