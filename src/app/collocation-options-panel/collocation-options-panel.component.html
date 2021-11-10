@@ -1,59 +1,57 @@
-<div *ngIf="!!showRightButton">
-  <a class="p-shadow-7 p-component right-button-options" (click)="closeSidebar()">
-    {{'MENU.COLLOCATIONS' | translate}}</a>
-</div>
-
 <span class="p-component">
+  <div class="flex justify-content-center">
+    <h2>{{"MENU.COLLOCATIONS" | translate}}</h2>
+  </div>
   <h3>{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.CANDIDATES' | translate}}</h3>
-
-
-  <div class="p-d-inline p-field p-ml-2">
-    <label class="label-size p-mr-1">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
+  <div class="inline field ml-2">
+    <label class="label-size mr-1">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
     <p-dropdown [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.attribute" optionLabel="value"
       [showClear]="true">
     </p-dropdown>
   </div>
-  <div class="p-d-inline p-field p-ml-6">
-    <label for="rangeFrom" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.RANGE" | translate}}</label>
+  <div class="inline field ml-6">
+    <label for="rangeFrom" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.RANGE" | translate}}</label>
     <input id="rangeFrom" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="collocationOptionsQueryRequest.rangeFrom" class="p-mr-3">
+      [(ngModel)]="collocationOptionsQueryRequest.rangeFrom" class="mr-3">
   </div>
-  <div class="p-d-inline p-field p-ml-2">
-    <label for="rangeTo" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
+  <div class="inline field ml-2">
+    <label for="rangeTo" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
     <input id="rangeTo" type="number" pInputText style="width: 50px;"
       [(ngModel)]="collocationOptionsQueryRequest.rangeTo">
   </div>
 
-  <div class="p-field p-ml-2 p-mt-3">
-    <label for="minCorpus" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
+  <div class="field ml-2 mt-3">
+    <label for="minCorpus" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
     <input id="minCorpus" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="p-mr-3">
+      [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="mr-3">
   </div>
-  <div class="p-field p-ml-2">
-    <label for="minRange" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
+  <div class="field ml-2">
+    <label for="minRange" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
     <input id="minRange" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="p-mr-3">
+      [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="mr-3">
   </div>
 
-  <div class="p-grid p-ml-4 p-ai-center">
-    <div class="p-col-fixed" style="width: 70px;">
-      <label for="show" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
+  <div class="grid ml-4 ai-center">
+    <div class="col-fixed" style="width: 70px;">
+      <label for="show" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
     </div>
-    <div class="p-col-fixed" style="width: 150px;">
+    <div class="col-fixed" style="width: 150px;">
       <p-listbox id="show" [options]="attributeList" [multiple]="true"
         [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value"></p-listbox>
     </div>
-    <div class="p-col-fixed" style="width: 70px;">
+    <div class="col-fixed" style="width: 70px;">
       <label for="sort">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
     </div>
-    <div class="p-col-fixed" style="width: 150px;">
+    <div class="col-fixed" style="width: 150px;">
       <p-listbox id="sort" [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
         optionLabel="value"></p-listbox>
     </div>
   </div>
 
-  <button pButton type="button" icon="pi"
-    label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MAKE_CANDIDATE_LIST' | translate}}"
-    (click)="clickCollocationOption()" class="p-mr-5 p-mt-6"></button>
+  <span class="flex justify-content-center mt-3">
+    <button pButton type="button" icon="pi"
+      label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MAKE_CANDIDATE_LIST' | translate}}"
+      (click)="clickCollocationOption()" class="mr-5 mt-6"></button>
+  </span>
 
 </span>
