@@ -2,17 +2,17 @@
   <div *ngIf="loading > 0" class="p-text-center">
     <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
   </div>
-  <div>
+  <!-- <div>
     <a class="p-shadow-7 p-component right-button-meta"
       [ngClass]="{'right-button-meta': !isFilterOptions(), 'right-button-options': isFilterOptions() }"
       (click)="closeSidebar()">
       {{isFilterOptions() ? ('MENU.FILTER' | translate) : ('PAGE.CONCORDANCE.METADATA' | translate)}}</a>
-  </div>
-  <div class="mt-4 ml-3 p-component">
+  </div> -->
+  <div class="mt-4 p-component">
     <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
   </div>
   <p-scrollPanel [style]="{width: '100%', height: '700px'}" styleClass="custombar">
-    <div class="mt-1 ml-3 mr-3 p-component">
+    <div class="mt-1 mr-3 p-component">
       <div *ngFor="let metadatum of metadata, let i = index" class="p-field mb-2">
         <!-- FreeText-->
         <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="mr-3">{{metadatum.name |
@@ -33,6 +33,8 @@
       </div>
     </div>
   </p-scrollPanel>
-  <button pButton type=" button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-    [disabled]="loading" (click)="clickMakeConcordance()"></button>
+  <span class="flex justify-content-center">
+    <button pButton type=" button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
+      [disabled]="loading" (click)="clickMakeConcordance()"></button>
+  </span>
 </div>

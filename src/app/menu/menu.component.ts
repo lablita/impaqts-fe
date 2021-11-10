@@ -70,7 +70,7 @@ export class MenuComponent implements OnInit {
     this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => {
       this.visualQuery = res;
       this.menuDefine();
-      this.items = JSON.parse(JSON.stringify(this.getMenuItems(CONCORDANCE)));
+      this.items = this.getMenuItems(CONCORDANCE);
       if (!this.menuEmitterService.corpusSelected) {
         this.items.splice(1, 1);
       }
@@ -78,12 +78,12 @@ export class MenuComponent implements OnInit {
 
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (event && event.item) {
-        this.items = JSON.parse(JSON.stringify(this.getMenuItems(event.item)));
+        this.items = this.getMenuItems(event.item);
       }
       if (!this.menuEmitterService.corpusSelected && !!this.items) {
         this.items.splice(1, 1);
       } else {
-        this.items = JSON.parse(JSON.stringify(this.getMenuItems(RESULT_CONCORDANCE)));
+        this.items = this.getMenuItems(RESULT_CONCORDANCE);
       }
     });
   }

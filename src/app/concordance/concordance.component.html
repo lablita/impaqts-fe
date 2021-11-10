@@ -3,7 +3,8 @@
   <!-- <div style="width: 800px;"> -->
   <!-- <div  [ngClass]="{'contentMin': displayPanelMetadata, 'contentMax': !displayPanelMetadata}"> -->
   <div class="flex flex-grow-1 flex-column mt-3">
-    <p-card [ngClass]="{'w-12': displayPanelMetadata, 'w-6': !displayPanelMetadata}">
+    <p-card
+      [ngClass]="{'w-12': displayPanelMetadata || displayPanelOptions, 'w-6': !(displayPanelMetadata || displayPanelOptions)}">
       <div class="mb-3">
         <label class="mr-3" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
         <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value" [filter]="true"
@@ -135,17 +136,17 @@
   </div>
 
   <!-- <div  [ngClass]="{'panelOn': displayPanelMetadata, 'panelOff': !displayPanelMetadata}"> -->
-  <div class="flex w-6" *ngIf="displayPanelMetadata">
-    <div class="" *ngIf="selectedCorpus">
-      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes"
+  <div class="flex w-6" *ngIf="displayPanelMetadata && !displayPanelOptions">
+    <div class="ml-3 w-12" *ngIf="selectedCorpus">
+      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.key" [metadata]="metadataTextTypes"
         (closeSidebarEvent)="displayPanelMetadata=false" (setMetadataQuery)="setMetadataQuery($event)">
       </app-metadata-panel>
     </div>
   </div>
 
   <!-- <div [ngClass]="{'panelOn': displayPanelOptions, 'panelOff': !displayPanelOptions}"> -->
-  <div class="flex w-6" *ngIf="false">
-    <div class="" *ngIf="selectedCorpus && displayPanelOptions">
+  <div class="flex w-6" *ngIf="displayPanelOptions && !displayPanelMetadata">
+    <div class="ml-3 w-12" *ngIf="selectedCorpus && displayPanelOptions">
       <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption?.value === viewOptionsLabel"
         [corpus]="selectedCorpus?.key" [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
         (closeSidebarEvent)="displayPanelOptions=false">

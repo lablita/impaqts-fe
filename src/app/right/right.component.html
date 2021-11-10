@@ -1,5 +1,5 @@
-<a *ngIf="!hideMetadataLabel" p-button class="p-shadow-7 p-component right-button disabled" style="top: 200px"
-  (click)="openSidebarMetadata()" [ngClass]="{'disabled': labelMetadataDisabled}">
+<a *ngIf="!hideMetadataLabel" p-button class="p-shadow-7 p-component right-button disabled"
+  style="top: 200px; z-index: 999;" (click)="openSidebarMetadata()" [ngClass]="{'disabled': labelMetadataDisabled}">
   <div>
     <div>{{'PAGE.CONCORDANCE.METADATA' | translate}}</div>
     <div *ngIf="spinnerMetadata" class="progress-spinner">
@@ -8,5 +8,6 @@
   </div>
 </a>
 
-<a *ngIf="!hideOptionsLabel" p-button class="p-shadow-7 p-component right-button disabled" style="top: 276px;"
-  (click)="openSidebarOptions()" [ngClass]="{'disabled': labelOptionsDisabled}">{{viewOptionsLabel | translate}}</a>
+<a *ngIf="!hideOptionsLabel" p-button class="p-shadow-7 p-component right-button disabled"
+  style="top: 276px; z-index:999;" (click)="openSidebarOptions()"
+  [ngClass]="{'disabled': labelOptionsDisabled}">{{viewOptionsLabel | translate}}</a>
