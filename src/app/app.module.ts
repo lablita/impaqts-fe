@@ -5,8 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
+import { AuthModule } from '@auth0/auth0-angular';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { environment } from 'src/environments/environment';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +20,7 @@ import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { CreditsComponent } from './credits/credits.component';
 import { FilterOptionsPanelComponent } from './filter-options-panel/filter-options-panel.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
+import { LoginComponent } from './login/login/login.component';
 import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
 import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
@@ -57,7 +60,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     VisualQueryComponent,
     QueryTokenComponent,
     QueryTagComponent,
-    VideoPlayerComponent
+    VideoPlayerComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +79,11 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
       }
     }),
     HttpClientModule,
-    YouTubePlayerModule
+    YouTubePlayerModule,
+    AuthModule.forRoot({
+      domain: environment.auth0Domain,
+      clientId: environment.auth0ClientId
+    }),
   ],
   providers: [
     {

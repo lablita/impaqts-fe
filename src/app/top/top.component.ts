@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { INSTALLATION, INTERFACE_LANGUAGE, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
@@ -15,14 +16,17 @@ export class TopComponent {
   public urlTopRight: string | null = null;
   public languages: KeyValueItem[] = [new KeyValueItem('en', 'EN'), new KeyValueItem('it', 'IT')];
   public selectedLanguage: KeyValueItem | null = null;
+  public authLabel = '';
 
   constructor(
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly authService: AuthService
   ) {
     this.init();
   }
 
   private init(): void {
+    this.authLabel = "Login";
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       const installation = JSON.parse(inst) as Installation;

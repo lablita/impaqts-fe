@@ -5,6 +5,7 @@ import { ConcordanceComponent } from './concordance/concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { CreditsComponent } from './credits/credits.component';
+import { LoginComponent } from './login/login/login.component';
 import { MainComponent } from './main/main.component';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
@@ -16,8 +17,12 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'concordance',
+        redirectTo: 'login',
         pathMatch: 'full'
+      },
+      {
+        path: 'login',
+        component: LoginComponent
       },
       {
         path: 'poc',

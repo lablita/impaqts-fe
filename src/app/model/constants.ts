@@ -4,7 +4,7 @@ export const CONTEXT_CORPORA = '';
 export const FIND_FAILED = 'FIND_FAILED';
 export const INSTALLATION = 'installation';
 export const INTERFACE_LANGUAGE = 'interface_language';
-
+export const LOGIN = 'login';
 /** */
 export const TOP_LEFT = 'TOP_LEFT';
 export const TOP_RIGHT = 'TOP_RIGHT';
