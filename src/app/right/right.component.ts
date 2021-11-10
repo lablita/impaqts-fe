@@ -18,6 +18,8 @@ export class RightComponent implements OnInit {
   public hideMetadataLabel = false;
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
+  private panelMetaOn = false;
+  private panelOptionOn = false;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -47,11 +49,13 @@ export class RightComponent implements OnInit {
   }
 
   public openSidebarOptions(): void {
-    this.emitterService.clickPanelDisplayOptions.emit(true);
+    this.panelOptionOn = !this.panelOptionOn;
+    this.emitterService.clickPanelDisplayOptions.emit(this.panelOptionOn);
   }
 
   public openSidebarMetadata(): void {
-    this.emitterService.clickPanelDisplayMetadata.emit(true);
+    this.panelMetaOn = !this.panelMetaOn;
+    this.emitterService.clickPanelDisplayMetadata.emit(this.panelMetaOn);
   }
 
 }

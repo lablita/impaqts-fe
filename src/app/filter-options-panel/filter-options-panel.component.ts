@@ -18,7 +18,7 @@ export class FilterOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton: boolean = false;
   @Input() public metadata: Metadatum[] = new Array<Metadatum>();
-  @Input() public corpus: string = '';
+  @Input() public corpus: string | null | undefined = '';
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = ContextConcordanceQueryRequest.getInstance();

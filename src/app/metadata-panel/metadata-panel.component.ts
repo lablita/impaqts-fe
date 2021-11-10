@@ -21,7 +21,7 @@ export class subMetadatum {
 export class MetadataPanelComponent {
 
   @Input() public metadata: Metadatum[] = new Array<Metadatum>();
-  @Input() public corpus: string = ''
+  @Input() public corpus: string | null | undefined = ''
   @Input() public title: string = ''
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public setMetadataQuery = new EventEmitter<TextTypesRequest>();

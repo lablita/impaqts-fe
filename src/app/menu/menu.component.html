@@ -3,9 +3,9 @@
     <p-panelMenu [model]="items"></p-panelMenu>
   </div>
   <div style="position: fixed; bottom: 0px; left: 0px;">
-    <div class="p-d-flex p-jc-between p-component" style="width: 240px;">
-      <a class="p-ml-6" [routerLink]="['/credits']">credits</a>
-      <a class="p-mr-6" [routerLink]="['/copyright']">copyright</a>
+    <div class="flex justify-content-between p-component" style="width: 240px;">
+      <a class="ml-6" [routerLink]="['/credits']">credits</a>
+      <a class="mr-6" [routerLink]="['/copyright']">copyright</a>
     </div>
     <img *ngIf="urlBottomLeft" [src]="urlBottomLeft" class="logo" alt="logoMenu">
   </div>

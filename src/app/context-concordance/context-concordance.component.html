@@ -1,10 +1,10 @@
 <div class="p-mt-4">
   <h2>{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h2>
 </div>
-<div class="p-mt-1 p-ml-3">
+<div class="mt-1 ml-3">
   <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
   <div class="p-field">
-    <label class="label-size-reduced">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
+    <label class="mr-3">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
     <p-dropdown [options]="windows" *ngIf="contextConcordanceQueryRequest"
       [(ngModel)]="contextConcordanceQueryRequest.window" optionLabel="value" [showClear]="true">
     </p-dropdown>&nbsp;
@@ -13,8 +13,8 @@
     </p-dropdown>&nbsp;
     <label class="label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
 
-    <div class="p-field p-mt-3">
-      <label for="lemmas" class="label-size-reduced">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
+    <div class="p-field mt-3">
+      <label for="lemmas" class="mr-3">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
       <input id="lemmas" *ngIf="contextConcordanceQueryRequest" type="text" pInputText style="width: 150px;"
         [(ngModel)]="contextConcordanceQueryRequest.lemma">&nbsp;
       <p-dropdown *ngIf="contextConcordanceQueryRequest" [options]="items"
