@@ -50,6 +50,13 @@ export class FilterOptionsPanelComponent implements OnInit {
       this.tokens.push(new KeyValueItem(FIRST, res));
     });
     this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.LAST').subscribe(res => this.tokens.push(new KeyValueItem(LAST, res)));
+    if (!!this.metadata && this.metadata.length > 0) {
+      this.metadata.forEach(m => {
+        if ('tree' in m) {
+          m.tree = [];
+        }
+      });
+    }
   }
 
   public clickMakeFilter(): void {

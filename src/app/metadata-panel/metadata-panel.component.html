@@ -2,12 +2,6 @@
   <div *ngIf="loading > 0" class="p-text-center">
     <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
   </div>
-  <!-- <div>
-    <a class="p-shadow-7 p-component right-button-meta"
-      [ngClass]="{'right-button-meta': !isFilterOptions(), 'right-button-options': isFilterOptions() }"
-      (click)="closeSidebar()">
-      {{isFilterOptions() ? ('MENU.FILTER' | translate) : ('PAGE.CONCORDANCE.METADATA' | translate)}}</a>
-  </div> -->
   <div class="mt-4 p-component">
     <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
   </div>

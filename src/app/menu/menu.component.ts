@@ -58,7 +58,7 @@ export class MenuComponent implements OnInit {
       });
     }
     this.translateService.stream('MENU.CONCORDANCE').subscribe(res => this.concordance = res);
-    this.translateService.stream('MENU.WOLRD_LIST').subscribe(res => this.wordList = res);
+    this.translateService.stream('MENU.WORD_LIST').subscribe(res => this.wordList = res);
     this.translateService.stream('MENU.CORPUS_INFO').subscribe(res => this.corpusInfo = res);
     this.translateService.stream('MENU.ALL_WORDS').subscribe(res => this.allWords = res);
     this.translateService.stream('MENU.ALL_LEMMANS').subscribe(res => this.allLemmans = res);

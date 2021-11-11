@@ -3,7 +3,7 @@
     <h2>{{"PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS" | translate}}</h2>
   </div>
   <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SIMPLE_SORT' | translate}}</h3>
-  <div class="grid ml-4 ai-center mb-3">
+  <div class="grid ml-4 mb-3">
     <div class="col-3">
       <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.LEFT' | translate}}"
         (click)="clickLeft()" class="mr-5"></button>
@@ -28,11 +28,11 @@
     </p-dropdown>
   </div>
 
-  <div class="grid ai-center">
+  <div class="grid">
     <div class="col-fixed ml-2" style="width: 145px;">
       <b>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_KEY' | translate}}</b>
     </div>
-    <div class="col ai-center">
+    <div class="col">
       <div *ngFor="let sortkey of sortKeys" class="field-checkbox d-inline">
         <p-radioButton [inputId]="sortkey.key" name="sortkey" [value]="sortkey" [(ngModel)]="selectedSortKey">
         </p-radioButton>
