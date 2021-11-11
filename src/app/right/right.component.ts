@@ -32,6 +32,8 @@ export class RightComponent implements OnInit {
         this.hideMetadataLabel = true;
         this.hideOptionsLabel = false;
       } else {
+        // this.panelOptionOn = true;
+        // this.labelMetadataDisabled = true;
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
       }
