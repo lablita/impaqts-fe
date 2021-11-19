@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY, INSTALLATION, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
+  FILTER, FREQUENCY, INSTALLATION, LOGIN, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
 import { EmitterService } from '../utils/emitter.service';
@@ -29,6 +30,7 @@ export class MenuComponent implements OnInit {
   private menuConcordance: MenuItemObject[] = new Array<MenuItemObject>();
   private menuWordList: MenuItemObject[] = new Array<MenuItemObject>();
   private menuResultConcordance: MenuItemObject[] = new Array<MenuItemObject>();
+  private login: string = '';
   private concordance: string = '';
   private wordList: string = '';
   private corpusInfo: string = '';
@@ -44,7 +46,8 @@ export class MenuComponent implements OnInit {
   constructor(
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -57,6 +60,7 @@ export class MenuComponent implements OnInit {
         }
       });
     }
+    this.translateService.stream('MENU.LOGIN').subscribe(res => this.login = res);
     this.translateService.stream('MENU.CONCORDANCE').subscribe(res => this.concordance = res);
     this.translateService.stream('MENU.WORD_LIST').subscribe(res => this.wordList = res);
     this.translateService.stream('MENU.CORPUS_INFO').subscribe(res => this.corpusInfo = res);
@@ -90,6 +94,10 @@ export class MenuComponent implements OnInit {
 
   private menuDefine(): void {
     this.menuConcordance = [
+      new MenuItemObject(this.login, null, () => {
+        this.emitterService.pageMenu = LOGIN;
+        this.menuEmitterService.click.emit(new MenuEvent(LOGIN));
+      }, null, null, false, false, LOGIN),
       new MenuItemObject(this.concordance, null, () => {
         this.emitterService.pageMenu = CONCORDANCE;
         this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));

@@ -3,6 +3,7 @@
     "NO_VIDEO": "No video are present"
   },
   "MENU": {
+    "LOGIN": "Login",
     "CONCORDANCE": "Concordance",
     "WORD_LIST": "Word list",
     "CORPUS_INFO": "Corpus info",
