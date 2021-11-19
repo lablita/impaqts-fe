@@ -40,6 +40,7 @@ export const CONC_DECS = 'conc_desc';
 export const VISUALIZE = 'visualize';
 export const CHENGE_OPTIONS = 'change_options';
 export const VISUAL_QUERY = 'visual_query';
+export const POC = 'poc';
 
 export const SIMPLE = 'simple';
 export const LEMMA = 'lemma';
@@ -101,7 +102,6 @@ export const R3 = '3R';
 export const R2 = '2R';
 export const R1 = '1R';
 
-
 /** Corpus */
 export const REPUBBLICA = 'REPUBBLICA';
 
@@ -127,3 +127,9 @@ export const CONCORDANCE_PHRASE = 'PAGE.CONCORDANCE.PHRASE';
 export const CONCORDANCE_WORD = 'PAGE.CONCORDANCE.WORD';
 export const CONCORDANCE_CHARACTER = 'PAGE.CONCORDANCE.CHARACTER';
 export const CONCORDANCE_CQL = 'PAGE.CONCORDANCE.CQL';
+
+
+/**Roles */
+export const ADMIN = 'ADMIN';
+export const ADVANCEDUSER = 'ADVANCEDUSER';
+export const USER = 'USER';

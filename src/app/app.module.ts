@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
-import { AuthModule } from '@auth0/auth0-angular';
+import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { environment } from 'src/environments/environment';
@@ -82,8 +82,15 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     YouTubePlayerModule,
     AuthModule.forRoot({
       domain: environment.auth0Domain,
-      clientId: environment.auth0ClientId
-    }),
+      clientId: environment.auth0ClientId,
+      cacheLocation: 'localstorage',
+      audience: 'https://impaqts.eu.auth0.com/api/v2/',
+      httpInterceptor: {
+        allowedList: [
+          '/'
+        ]
+      }
+    })
   ],
   providers: [
     {
@@ -91,6 +98,11 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
       useFactory: loadInstallation,
       deps: [AppInitializerService],
       multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthHttpInterceptor,
+      multi: true,
     }
   ],
   bootstrap: [AppComponent]

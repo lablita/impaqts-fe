@@ -1,5 +1,6 @@
 {
   "MENU": {
+    "LOGIN": "Login",
     "CONCORDANCE": "Concordance",
     "WOLRD_LIST": "Word list",
     "CORPUS_INFO": "Corpus info",
