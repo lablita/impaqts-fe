@@ -10,6 +10,7 @@ import {
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
+import { UserService } from '../services/user.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
@@ -49,6 +50,7 @@ export class MenuComponent implements OnInit {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
     private readonly authService: AuthService,
+    private readonly userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -98,7 +100,11 @@ export class MenuComponent implements OnInit {
   private getMenuItems(page: string, role: string): void {
     this.authService.user$.subscribe(u => {
       let menuByRole: string[] | undefined;
-      if (!!u) {
+      if (!!u && this.userService.isChanged(u['https://impaqts.eu.auth0.meta/email'])) {
+        // if (this.userService.isChanged(u['https://impaqts.eu.auth0.meta/email'])) {
+        this.userService.setUser(u);
+        this.emitterService.user.emit(true);
+        // }
         menuByRole = this.getMenuByRole(u['https://impaqts.eu.auth0.meta/role'])
       } else {
         menuByRole = [];

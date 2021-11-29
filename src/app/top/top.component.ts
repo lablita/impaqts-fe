@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { INSTALLATION, INTERFACE_LANGUAGE, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
+import { UserService } from '../services/user.service';
+import { EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-top',
@@ -17,15 +18,24 @@ export class TopComponent {
   public languages: KeyValueItem[] = [new KeyValueItem('en', 'EN'), new KeyValueItem('it', 'IT')];
   public selectedLanguage: KeyValueItem | null = null;
   public authLabel = '';
+  public name: string | null = null;
+  public role: string | null = null;
+  public email: string | null = null;
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly authService: AuthService
+    private readonly userService: UserService,
+    private readonly emitterService: EmitterService
   ) {
     this.init();
   }
 
   private init(): void {
+    this.emitterService.user.subscribe(event => {
+      this.name = this.userService.getName();
+      this.role = this.userService.getRole();
+      this.email = this.userService.getEmail();
+    });
     this.authLabel = "Login";
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {

@@ -10,11 +10,11 @@ export class UserService {
 
   constructor() { }
 
-  public setUser(user: string): void {
+  public setName(user: string): void {
     this.user = user;
   }
 
-  public getUser(): string | null {
+  public getName(): string | null {
     return this.user;
   }
 
@@ -40,6 +40,12 @@ export class UserService {
 
   public clean(): void {
     this.user = this.email = this.role = ''
+  }
+
+  public setUser(user: any) {
+    this.setName(user['name']);
+    this.setEmail(user['https://impaqts.eu.auth0.meta/email']);
+    this.setRole(user['https://impaqts.eu.auth0.meta/role']);
   }
 
 }

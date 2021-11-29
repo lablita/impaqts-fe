@@ -1,6 +1,14 @@
 <div class="flex justify-content-between">
   <img *ngIf="urlTopLeft" [src]="urlTopLeft" class="logo" alt="logoLeft">
   <img *ngIf="urlTopRight" [src]="urlTopRight" class="logo" alt="logoRight">
+
+  <div *ngIf="!!name" class="flex mt-4 p-component">
+
+    {{'USER.USER' | translate}}: {{name}} - {{'USER.EMAIL' | translate}}: {{email}} - {{'USER.ROLE' | translate}}:
+    {{role}}
+
+  </div>
+
   <p-selectButton class="mt-3 mr-3" [options]="languages" optionLabel="value" optionValue="key"
     (onChange)="selectLanguage($event)">
     <ng-template let-item>

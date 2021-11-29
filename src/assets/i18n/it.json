@@ -240,6 +240,11 @@
       "TIMES": "times"
     }
   },
+  "USER": {
+    "USER": "Utente",
+    "EMAIL": "Email",
+    "ROLE": "Ruolo"
+  },
   "LANGUAGE": {
     "IT": "ITA",
     "EN": "ING"
