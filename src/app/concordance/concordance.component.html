@@ -1,7 +1,5 @@
 <div class="flex flex-row">
 
-  <!-- <div style="width: 800px;"> -->
-  <!-- <div  [ngClass]="{'contentMin': displayPanelMetadata, 'contentMax': !displayPanelMetadata}"> -->
   <div class="flex flex-grow-1 flex-column mt-3">
     <p-card
       [ngClass]="{'w-12': displayPanelMetadata || displayPanelOptions, 'w-6': !(displayPanelMetadata || displayPanelOptions)}">
@@ -31,9 +29,9 @@
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       </div>
       <div class="flex justify-content-center">
-        <!-- <label for=" simple_query" class="label-size"></label> -->
-        <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}"
-          [disabled]="!selectedCorpus" class="p-button-text mr-3" (click)="clickQueryType()"></button>&nbsp;
+        <button [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button" icon="pi"
+          label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus" class="p-button-text mr-3"
+          (click)="clickQueryType()"></button>&nbsp;
         <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}"
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
       </div>
@@ -135,7 +133,6 @@
     </div>
   </div>
 
-  <!-- <div  [ngClass]="{'panelOn': displayPanelMetadata, 'panelOff': !displayPanelMetadata}"> -->
   <div class="flex w-6" *ngIf="displayPanelMetadata && !displayPanelOptions">
     <div class="ml-3 w-12" *ngIf="selectedCorpus">
       <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.key" [metadata]="metadataTextTypes"
@@ -144,7 +141,6 @@
     </div>
   </div>
 
-  <!-- <div [ngClass]="{'panelOn': displayPanelOptions, 'panelOff': !displayPanelOptions}"> -->
   <div class="flex w-6" *ngIf="displayPanelOptions && !displayPanelMetadata">
     <div class="ml-3 w-12" *ngIf="selectedCorpus && displayPanelOptions">
       <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption?.value === viewOptionsLabel"

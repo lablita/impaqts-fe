@@ -243,7 +243,10 @@
   "USER": {
     "USER": "Utente",
     "EMAIL": "Email",
-    "ROLE": "Ruolo"
+    "ROLE": "Ruolo",
+    "ADMIN_ROLE": "Amministratore",
+    "ADVANCEDUSER_ROLE": "Utente avanzato",
+    "USER_ROLE": "Utente semplice"
   },
   "LANGUAGE": {
     "IT": "ITA",

@@ -246,7 +246,10 @@
   "USER": {
     "USER": "User",
     "EMAIL": "Email",
-    "ROLE": "Role"
+    "ROLE": "Role",
+    "ADMIN_ROLE": "Admin",
+    "ADVANCEDUSER_ROLE": "Advanced user",
+    "USER_ROLE": "Simple user"
   },
   "LANGUAGE": {
     "IT": "ITA",

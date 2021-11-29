@@ -5,7 +5,7 @@
   <div *ngIf="!!name" class="flex mt-4 p-component">
 
     {{'USER.USER' | translate}}: {{name}} - {{'USER.EMAIL' | translate}}: {{email}} - {{'USER.ROLE' | translate}}:
-    {{role}}
+    {{('USER.' + role + '_ROLE' | translate)}}
 
   </div>
 
