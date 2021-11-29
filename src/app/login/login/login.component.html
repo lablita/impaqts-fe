@@ -3,14 +3,9 @@
   <p-card header="Login IMPAQTS">
     <h3 class="project-subtitle">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
     </h3>
-    <!-- <button *ngIf="!(isAuthenticated() | async)" pButton (click)="loginWithRedirect()" type="button">Login</button>
-    <button *ngIf="isAuthenticated() | async" pButton (click)="logout()">Logout</button> -->
-
-    <button pButton (click)="loginWithRedirect()" type="button">Login</button>
-    <button pButton (click)="logout()">Logout</button>
-
+    <div class="flex justify-content-around">
+      <button pButton (click)="loginWithRedirect()" type="button">Login</button>
+      <button pButton (click)="logout()">Logout</button>
+    </div>
   </p-card>
-
-
-
 </div>

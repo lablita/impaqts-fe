@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'src/environments/environment';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
   FILTER, FREQUENCY, INSTALLATION, LOGIN, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
+import { KeyValueItem } from '../model/key-value-item';
+import { RoleMenu } from '../model/role-menu';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
@@ -30,27 +33,30 @@ export class MenuComponent implements OnInit {
   private menuConcordance: MenuItemObject[] = new Array<MenuItemObject>();
   private menuWordList: MenuItemObject[] = new Array<MenuItemObject>();
   private menuResultConcordance: MenuItemObject[] = new Array<MenuItemObject>();
-  private login: string = '';
-  private concordance: string = '';
-  private wordList: string = '';
-  private corpusInfo: string = '';
-  private allWords: string = '';
-  private allLemmans: string = '';
-  private viewOption: string = '';
-  private sort: string = '';
-  private filter: string = '';
-  private frequency: string = '';
-  private collocations: string = '';
-  private visualQuery: string = '';
+
+  private menuConcordanceStr: string[] = [LOGIN, CONCORDANCE, WORD_LIST, CORPUS_INFO, VISUAL_QUERY];
+  private menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
+  private menuResultConcordanceStr: string[] = [VIEW_OPTIONS, SORT, FILTER, FREQUENCY, COLLOCATIONS];
+
+  private role: string = '';
+  private menuByRoleList: RoleMenu[] = [];
+  private roles: string[] = [];
+  private menuNoRole: string[] = [];
+  private menuRoutes: KeyValueItem[] = [];
 
   constructor(
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
   ) { }
 
   ngOnInit(): void {
+    this.roles = environment.roles;
+    this.menuByRoleList = environment.menuByRoleList;
+    this.menuNoRole = environment.menuNoRole;
+    this.menuRoutes = environment.menuRoutes;
+
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       const installation = JSON.parse(inst) as Installation;
@@ -60,115 +66,96 @@ export class MenuComponent implements OnInit {
         }
       });
     }
-    this.translateService.stream('MENU.LOGIN').subscribe(res => this.login = res);
-    this.translateService.stream('MENU.CONCORDANCE').subscribe(res => this.concordance = res);
-    this.translateService.stream('MENU.WORD_LIST').subscribe(res => this.wordList = res);
-    this.translateService.stream('MENU.CORPUS_INFO').subscribe(res => this.corpusInfo = res);
-    this.translateService.stream('MENU.ALL_WORDS').subscribe(res => this.allWords = res);
-    this.translateService.stream('MENU.ALL_LEMMANS').subscribe(res => this.allLemmans = res);
-    this.translateService.stream('MENU.VIEW_OPTION').subscribe(res => this.viewOption = res);
-    this.translateService.stream('MENU.SORT').subscribe(res => this.sort = res);
-    this.translateService.stream('MENU.FILTER').subscribe(res => this.filter = res);
-    this.translateService.stream('MENU.FREQUENCY').subscribe(res => this.frequency = res);
-    this.translateService.stream('MENU.COLLOCATIONS').subscribe(res => this.collocations = res);
-    this.translateService.stream('MENU.VISUAL_QUERY').subscribe(res => {
-      this.visualQuery = res;
-      this.menuDefine();
-      this.items = this.getMenuItems(CONCORDANCE);
-      if (!this.menuEmitterService.corpusSelected) {
-        this.items.splice(1, 1);
-      }
-    });
 
+    this.getMenuItems(CONCORDANCE, this.role);
     this.menuEmitterService.click.subscribe((event: MenuEvent) => {
       if (event && event.item) {
-        this.items = this.getMenuItems(event.item);
+        this.getMenuItems(event.item, this.role);
       }
-      if (!this.menuEmitterService.corpusSelected && !!this.items) {
-        this.items.splice(1, 1);
-      } else {
-        this.items = this.getMenuItems(RESULT_CONCORDANCE);
+      if (this.menuEmitterService.corpusSelected && this.items) {
+        this.getMenuItems(RESULT_CONCORDANCE, this.role);
       }
     });
   }
 
-  private menuDefine(): void {
-    this.menuConcordance = [
-      new MenuItemObject(this.login, null, () => {
-        this.emitterService.pageMenu = LOGIN;
-        this.menuEmitterService.click.emit(new MenuEvent(LOGIN));
-      }, null, null, false, false, LOGIN),
-      new MenuItemObject(this.concordance, null, () => {
-        this.emitterService.pageMenu = CONCORDANCE;
-        this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
-      }, null, null, false, false, CONCORDANCE),
-      new MenuItemObject(this.wordList, null, () => {
-        this.menuEmitterService.click.emit(new MenuEvent(WORD_LIST));
-      }, null, null, false, false, null),
-      new MenuItemObject(this.corpusInfo, null, () => {
-        this.menuEmitterService.click.emit(new MenuEvent(CORPUS_INFO));
-      }, null, null, false, false, CORPUS_INFO),
-      new MenuItemObject(this.visualQuery, null, () => {
-        this.emitterService.pageMenu = VISUAL_QUERY;
-        this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
-      }, null, null, false, false, VISUAL_QUERY)
-    ];
-
-    this.menuWordList = this.menuConcordance.concat(
-      [
-        new MenuItemObject(null, null, null, null, null, false, true, null),
-        new MenuItemObject(this.allWords, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(ALL_WORDS));
-        }, null, null, false, false, ALL_WORDS),
-        new MenuItemObject(this.allLemmans, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(ALL_LEMMANS));
-        }, null, null, false, false, ALL_LEMMANS)
-      ]
-    );
-
-    this.menuResultConcordance = this.menuConcordance.concat(
-      [
-        new MenuItemObject(null, null, null, null, null, false, true, null),
-        new MenuItemObject(this.viewOption, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(VIEW_OPTIONS));
-        }, null, null, false, false, null),
-        new MenuItemObject(this.sort, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(SORT));
-        }, null, null, false, false, null),
-        new MenuItemObject(this.filter, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(FILTER));
-        }, null, null, false, false, null),
-        new MenuItemObject(this.frequency, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(FREQUENCY));
-        }, null, null, false, false, null),
-        new MenuItemObject(this.collocations, null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(COLLOCATIONS));
-        }, null, null, false, false, null)
-      ]
-    );
+  private getVoiceMenu(routesRole: string[], routesPage: string[]): void {
+    this.translateService.stream(CONCORDANCE).subscribe(res => {
+      const routeNoRole = this.getRoutesByMenu(this.menuNoRole, this.menuRoutes);
+      let routes = routeNoRole.concat(routesRole.filter(item => routesPage.includes(item)));
+      routes = [...new Set(routes)];
+      const menuItems: MenuItemObject[] = [];
+      routes.forEach(route => {
+        const menuVoice = this.getMenuByRoute(route, this.menuRoutes);
+        menuItems.push(new MenuItemObject(this.translateService.instant(menuVoice), null, () => {
+          this.menuEmitterService.click.emit(new MenuEvent(route));
+        }, null, null, false, false, route));
+      }
+      );
+      this.items = menuItems;
+    });
   }
 
-  private getMenuItems(page: string): MenuItemObject[] {
-    switch (page) {
-      case CONCORDANCE:
-      case VISUAL_QUERY:
-      case WORD_LIST:
-      case ALL_WORDS:
-      case ALL_LEMMANS:
-        return this.menuWordList;
+  private getMenuItems(page: string, role: string): void {
+    this.authService.user$.subscribe(u => {
+      let menuByRole: string[] | undefined;
+      if (!!u) {
+        menuByRole = this.getMenuByRole(u['https://impaqts.eu.auth0.meta/role'])
+      } else {
+        menuByRole = [];
+      }
+      if (menuByRole !== undefined) {
+        const routesRole = this.getRoutesByMenu(menuByRole !== undefined ? menuByRole : [], this.menuRoutes);
+        switch (page) {
+          case CONCORDANCE:
+          case VISUAL_QUERY:
+          case WORD_LIST:
+          case ALL_WORDS:
+          case ALL_LEMMANS:
+            this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuWordListStr);
+            break;
 
-      case RESULT_CONCORDANCE:
-      case AS_SUBCORPUS:
-      case VIEW_OPTIONS:
-      case SORT:
-      case FILTER:
-      case FREQUENCY:
-      case COLLOCATIONS:
-        return this.menuResultConcordance;
+          case RESULT_CONCORDANCE:
+          case AS_SUBCORPUS:
+          case VIEW_OPTIONS:
+          case SORT:
+          case FILTER:
+          case FREQUENCY:
+          case COLLOCATIONS:
+            this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuResultConcordanceStr);
+            break;
 
-      default:
-        return this.menuConcordance;
+          default:
+            this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuConcordanceStr);
+            break;
+        }
+      }
+    });
+  }
+
+  private getMenuByRole(role: string): string[] | undefined {
+    if (role.length > 0) {
+      return this.menuByRoleList.find(rm => rm.role === role)?.menu;
     }
+    return this.menuNoRole;
+  }
+
+  private getRoutesByMenu(menu: string[], menuRoutes: KeyValueItem[]): string[] {
+    const result: string[] = [];
+    menu.forEach(voiceMenu => {
+      const route = menuRoutes.find(i => i.key === voiceMenu)?.value;
+      if (route !== undefined) {
+        result.push(route);
+      }
+    })
+    return result;
+  }
+
+  private getMenuByRoute(route: string, menuRoutes: KeyValueItem[]): string {
+    const item = menuRoutes.find(mr => mr.value === route);
+    if (item !== undefined) {
+      return item.key;
+    }
+    return '';
   }
 
 }

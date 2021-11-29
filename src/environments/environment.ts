@@ -2,6 +2,13 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import {
+  ADMIN, ADVANCEDUSER, ALL_LEMMANS, ALL_WORDS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, LOGIN, MENU_ALL_LEMMANS, MENU_ALL_WORDS, MENU_CONCORDANCE,
+  MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_LOGIN, MENU_POC, MENU_VISUAL_QUERY, POC, USER, VISUAL_QUERY
+} from "src/app/model/constants";
+import { KeyValueItem } from 'src/app/model/key-value-item';
+import { RoleMenu } from "src/app/model/role-menu";
+
 
 export const environment = {
   auth0Domain: 'impaqts.eu.auth0.com',
@@ -12,22 +19,26 @@ export const environment = {
   installationUrl: 'http://localhost:9001/impaqts-configurator',
   queryServerProtocol: 'ws',
   queryServerHost: 'localhost:9000',
-  RECONNECT_INTERVAL: 1000 // ms
+  RECONNECT_INTERVAL: 1000, // ms
+  roles: [ADMIN, ADVANCEDUSER, USER],
+  menuByRoleList: [
+    new RoleMenu(ADMIN, [MENU_POC, MENU_CORPUS_INFO, MENU_ALL_WORDS, MENU_ALL_LEMMANS, MENU_VISUAL_QUERY]),
+    new RoleMenu(ADVANCEDUSER, [MENU_POC, MENU_CORPUS_INFO, MENU_VISUAL_QUERY]),
+    new RoleMenu(USER, [MENU_VISUAL_QUERY]),
+  ],
+  menuNoRole: [MENU_LOGIN, MENU_CONCORDANCE],
+  menuRoutes: [
+    new KeyValueItem(MENU_LOGIN, LOGIN),
+    new KeyValueItem(MENU_CONCORDANCE, CONCORDANCE),
+    new KeyValueItem(MENU_POC, POC),
+    new KeyValueItem(MENU_CORPUS_INFO, CORPUS_INFO),
+    new KeyValueItem(MENU_ALL_WORDS, ALL_WORDS),
+    new KeyValueItem(MENU_ALL_LEMMANS, ALL_LEMMANS),
+    new KeyValueItem(MENU_CREDITS, CREDITS_ROUTE),
+    new KeyValueItem(MENU_COPYRIGHT, COPYRIGHT_ROUTE),
+    new KeyValueItem(MENU_VISUAL_QUERY, VISUAL_QUERY),
+  ]
 };
-
-// export const environment = {
-//   production: false,
-//   installation: 'due',
-//   installationName: 'IMPAQTS2',
-//   installationUrl: 'http://localhost:9001/impaqts-configurator',
-// };
-
-// export const environment = {
-//   production: false,
-//   installation: 'tre',
-//   installationName: 'IMPAQTS3',
-//   installationUrl: 'http://localhost:9001/impaqts-configurator',
-// };
 
 
 /*

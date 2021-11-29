@@ -3,33 +3,23 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } fro
 import { AuthService } from '@auth0/auth0-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ADMIN, ADVANCEDUSER, ALL_LEMMANS, ALL_WORDS, CORPUS_INFO, POC, USER, VISUAL_QUERY } from '../model/constants';
+import { environment } from 'src/environments/environment';
+import { RoleMenu } from '../model/role-menu';
 
-
-export class RoleMenu {
-  role: 'ADMIN' | 'ADVANCEDUSER' | 'USER';
-  menu: string[];
-
-  constructor(role: 'ADMIN' | 'ADVANCEDUSER' | 'USER', menu: string[]) {
-    this.role = role;
-    this.menu = menu;
-  }
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class HasRoleGuard implements CanActivate {
 
-  private rolesMenu: RoleMenu[] = [
-    new RoleMenu(ADMIN, [POC, CORPUS_INFO, ALL_WORDS, ALL_LEMMANS, VISUAL_QUERY]),
-    new RoleMenu(ADVANCEDUSER, [POC, CORPUS_INFO, VISUAL_QUERY]),
-    new RoleMenu(USER, [VISUAL_QUERY]),
-  ];
+  private menuByRoleList: RoleMenu[] = [];
+
 
   constructor(
     private readonly authService: AuthService
-  ) { }
+  ) {
+    this.menuByRoleList = environment.menuByRoleList;
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -44,8 +34,8 @@ export class HasRoleGuard implements CanActivate {
     }));
   }
 
-  private getMenuByRole(role: 'ADMIN' | 'ADVANCEDUSER' | 'USER'): RoleMenu | undefined {
-    return this.rolesMenu.find(rm => rm.role === role);
+  private getMenuByRole(role: string): RoleMenu | undefined {
+    return this.menuByRoleList.find(rm => rm.role === role);
   }
 
 }
