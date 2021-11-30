@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { INSTALLATION, INTERFACE_LANGUAGE, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
-import { UserService } from '../services/user.service';
+import { User } from '../model/user';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
@@ -21,21 +21,20 @@ export class TopComponent {
   public name: string | null = null;
   public role: string | null = null;
   public email: string | null = null;
+  public user: User = new User();
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly userService: UserService,
     private readonly emitterService: EmitterService
   ) {
     this.init();
   }
 
   private init(): void {
-    this.emitterService.user.subscribe(event => {
-      this.name = this.userService.getName();
-      this.role = this.userService.getRole();
-      this.email = this.userService.getEmail();
-    });
+    this.emitterService.user.subscribe(user => {
+      this.user = user;
+    })
+
     this.authLabel = "Login";
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {

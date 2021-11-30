@@ -1,5 +1,6 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
+import { EmitterService } from '../utils/emitter.service';
 
 @Directive({
   selector: '[requiredRole]'
@@ -7,18 +8,29 @@ import { UserService } from '../services/user.service';
 export class RoleDirective implements OnInit {
 
   @Input() requiredRole: string[] | null = null;
+  private role: string = '';
 
   constructor(
     private readonly el: ElementRef,
-    private readonly userService: UserService
-  ) { }
+    private readonly userService: UserService,
+    private readonly emitterService: EmitterService
+  ) {
+    // this.emitterService.user.subscribe(user => {
+    //   if (!!user.role) {
+    //     this.role = user.role
+    //     this.init();
+    //   }
+    // })
+  }
+
   ngOnInit(): void {
-    if (this.requiredRole && this.requiredRole.length > 0) {
+    this.role = this.userService.getRole();
+    this.init();
+  }
 
-      if (this.requiredRole.indexOf(this.userService.getRole()) < 0) {
-        this.el.nativeElement.style.display = 'none';
-      }
-
+  private init(): void {
+    if (this.requiredRole && this.requiredRole.length > 0 && this.requiredRole.indexOf(this.role) < 0) {
+      this.el.nativeElement.style.display = 'none';
     }
   }
 

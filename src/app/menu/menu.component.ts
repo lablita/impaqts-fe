@@ -54,6 +54,7 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.role = this.userService.getRole();
     this.roles = environment.roles;
     this.menuByRoleList = environment.menuByRoleList;
     this.menuNoRole = environment.menuNoRole;
@@ -82,8 +83,9 @@ export class MenuComponent implements OnInit {
 
   private getVoiceMenu(routesRole: string[], routesPage: string[]): void {
     this.translateService.stream(CONCORDANCE).subscribe(res => {
+      //unisco le rotte dell'utente con quelle della pagina visitata
       const routeNoRole = this.getRoutesByMenu(this.menuNoRole, this.menuRoutes);
-      let routes = routeNoRole.concat(routesRole.filter(item => routesPage.includes(item)));
+      let routes = routeNoRole.concat(routesRole.concat(routesPage));
       routes = [...new Set(routes)];
       const menuItems: MenuItemObject[] = [];
       routes.forEach(route => {
@@ -98,44 +100,34 @@ export class MenuComponent implements OnInit {
   }
 
   private getMenuItems(page: string, role: string): void {
-    this.authService.user$.subscribe(u => {
-      let menuByRole: string[] | undefined;
-      if (!!u && this.userService.isChanged(u['https://impaqts.eu.auth0.meta/email'])) {
-        // if (this.userService.isChanged(u['https://impaqts.eu.auth0.meta/email'])) {
-        this.userService.setUser(u);
-        this.emitterService.user.emit(true);
-        // }
-        menuByRole = this.getMenuByRole(u['https://impaqts.eu.auth0.meta/role'])
-      } else {
-        menuByRole = [];
-      }
-      if (menuByRole !== undefined) {
-        const routesRole = this.getRoutesByMenu(menuByRole !== undefined ? menuByRole : [], this.menuRoutes);
-        switch (page) {
-          case CONCORDANCE:
-          case VISUAL_QUERY:
-          case WORD_LIST:
-          case ALL_WORDS:
-          case ALL_LEMMANS:
-            this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuWordListStr);
-            break;
+    let menuByRole: string[] | undefined;
+    menuByRole = this.userService.getRole().length > 0 ? this.getMenuByRole(this.userService.getRole()) : []
+    if (menuByRole !== undefined) {
+      const routesRole = this.getRoutesByMenu(menuByRole !== undefined ? menuByRole : [], this.menuRoutes);
+      switch (page) {
+        case CONCORDANCE:
+        case VISUAL_QUERY:
+        case WORD_LIST:
+        case ALL_WORDS:
+        case ALL_LEMMANS:
+          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuWordListStr);
+          break;
 
-          case RESULT_CONCORDANCE:
-          case AS_SUBCORPUS:
-          case VIEW_OPTIONS:
-          case SORT:
-          case FILTER:
-          case FREQUENCY:
-          case COLLOCATIONS:
-            this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuResultConcordanceStr);
-            break;
+        case RESULT_CONCORDANCE:
+        case AS_SUBCORPUS:
+        case VIEW_OPTIONS:
+        case SORT:
+        case FILTER:
+        case FREQUENCY:
+        case COLLOCATIONS:
+          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuResultConcordanceStr);
+          break;
 
-          default:
-            this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuConcordanceStr);
-            break;
-        }
+        default:
+          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuConcordanceStr);
+          break;
       }
-    });
+    }
   }
 
   private getMenuByRole(role: string): string[] | undefined {
