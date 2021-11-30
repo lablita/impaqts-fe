@@ -1,6 +1,6 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
-import { UserService } from '../services/user.service';
-import { EmitterService } from '../utils/emitter.service';
+import { AuthService } from '@auth0/auth0-angular';
+import { User } from '../model/user';
 
 @Directive({
   selector: '[requiredRole]'
@@ -9,23 +9,18 @@ export class RoleDirective implements OnInit {
 
   @Input() requiredRole: string[] | null = null;
   private role: string = '';
+  public user: User = new User();
 
   constructor(
     private readonly el: ElementRef,
-    private readonly userService: UserService,
-    private readonly emitterService: EmitterService
-  ) {
-    // this.emitterService.user.subscribe(user => {
-    //   if (!!user.role) {
-    //     this.role = user.role
-    //     this.init();
-    //   }
-    // })
-  }
+    private readonly authService: AuthService
+  ) { }
 
   ngOnInit(): void {
-    this.role = this.userService.getRole();
-    this.init();
+    this.authService.user$.subscribe(u => {
+      this.role = !!u ? u['https://impaqts.eu.auth0.meta/role'] : '';
+      this.init();
+    })
   }
 
   private init(): void {
