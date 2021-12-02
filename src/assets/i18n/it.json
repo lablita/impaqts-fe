@@ -238,7 +238,8 @@
       "SEL_TYPE": "Select a type",
       "START": "sentence start",
       "TIMES": "times"
-    }
+    },
+    "RESET": "Reset"
   },
   "USER": {
     "USER": "Utente",

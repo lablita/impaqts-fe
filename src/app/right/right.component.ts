@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { ALL_LEMMANS, CONCORDANCE, COPYRIGHT, CORPUS_INFO, CREDITS, VISUAL_QUERY } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { EmitterService } from '../utils/emitter.service';
@@ -9,7 +10,7 @@ import { EmitterService } from '../utils/emitter.service';
   styleUrls: ['./right.component.scss']
 })
 export class RightComponent implements OnInit {
-
+  public faCheck = faCheck;
   public titleLabel = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
   public labelOptionsDisabled = true;
   public labelMetadataDisabled = true;

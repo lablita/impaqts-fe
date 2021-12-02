@@ -241,7 +241,8 @@
       "END": "sentence end",
       "FOR": "for",
       "TIMES": "times"
-    }
+    },
+    "RESET": "Reset"
   },
   "USER": {
     "USER": "User",

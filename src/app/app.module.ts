@@ -37,6 +37,7 @@ import { ViewOptionsPanelComponent } from './view-options-panel/view-options-pan
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { RoleDirective } from './directives/role.directive';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 @NgModule({
   declarations: [
     AppComponent,
@@ -92,7 +93,8 @@ import { RoleDirective } from './directives/role.directive';
           '/'
         ]
       }
-    })
+    }),
+    FontAwesomeModule
   ],
   providers: [
     {

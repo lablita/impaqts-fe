@@ -93,8 +93,6 @@
             </h3>
           </div>
           <div class="" style="width: 150px;">
-            <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-              (click)="showVideoDlg()"></button>
             <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
               [style]="{width: '700'}" [baseZIndex]="10000">
               <iframe title="youtubeVideo" style="border: 0px;" width="600" height="450" [src]="videoUrl"
@@ -109,7 +107,7 @@
           [rowsPerPageOptions]="[10,25,50]">
           <ng-template pTemplate="header">
             <tr>
-              <th style="width: 80px;">Ref</th>
+              <th style="width: 80px;"></th>
               <th class="p-text-center" style="width: 180px;">Left</th>
               <th class="p-text-center" style="width: 80px;">Kwic</th>
               <th class="p-text-center" style="width: 180px;">Right</th>
@@ -117,7 +115,10 @@
           </ng-template>
           <ng-template pTemplate="body" let-kwicLine>
             <tr>
-              <td><a href="#">{{kwicLine.ref}}</a></td>
+              <td>
+                <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
+                  (click)="showVideoDlg()"></button>
+              </td>
               <td class="p-text-right">{{kwicLine.leftContext}}</td>
               <td class="p-text-center" style="color: red;">{{kwicLine.kwic}}</td>
               <td class="p-text-left">{{kwicLine.rightContext}}</td>
@@ -135,8 +136,8 @@
 
   <div class="flex w-6" *ngIf="displayPanelMetadata && !displayPanelOptions">
     <div class="ml-3 w-12" *ngIf="selectedCorpus">
-      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.key" [metadata]="metadataTextTypes"
-        (closeSidebarEvent)="displayPanelMetadata=false" (setMetadataQuery)="setMetadataQuery($event)">
+      <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus?.key"
+        (closeSidebarEvent)="displayPanelMetadata=false">
       </app-metadata-panel>
     </div>
   </div>

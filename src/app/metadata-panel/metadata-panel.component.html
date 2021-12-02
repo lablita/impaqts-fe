@@ -10,7 +10,7 @@
   </div>
   <p-scrollPanel [style]="{width: '100%'}" styleClass="custombar">
     <div class="mt-1 mr-3 p-component">
-      <div *ngFor="let metadatum of metadata, let i = index" class="field mb-2">
+      <div *ngFor="let metadatum of metadataQueryService.metadata, let i = index" class="field mb-2">
         <!-- FreeText-->
         <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="mr-3">{{metadatum.name |
           translate}}</label>
@@ -31,7 +31,7 @@
     </div>
   </p-scrollPanel>
   <span class="flex justify-content-center">
-    <button pButton type=" button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-      [disabled]="loading" (click)="clickMakeConcordance()"></button>
+    <button pButton type=" button" icon="pi" label="{{'RESET' | translate}}" [disabled]="loading"
+      (click)="resetMetadata()"></button>
   </span>
 </span>

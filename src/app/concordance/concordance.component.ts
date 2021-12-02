@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
-import { STRUCT_DOC, TOKEN } from '../common/constants';
+import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
@@ -25,7 +25,9 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
+import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
@@ -102,7 +104,8 @@ export class ConcordanceComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
@@ -159,12 +162,12 @@ export class ConcordanceComponent implements OnInit {
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
         if (this.installation) {
           this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(res => {
-            this.metadataTextTypes = res['md'];
+            this.metadataQueryService.metadata = res['md'];
             this.endedMetadataProcess = res['ended'];
             if (this.endedMetadataProcess) {
               this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
               //ordinamento position 
-              this.metadataTextTypes.sort((a, b) => a.position - b.position);
+              this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
               this.emitterService.spinnerMetadata.emit(false);
             }
           });
@@ -192,6 +195,7 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
+    this.setMetadataQuery();
     if (!!this.selectedCorpus) {
       const qr = new QueryRequest();
       if (!event) {
@@ -220,7 +224,30 @@ export class ConcordanceComponent implements OnInit {
     }
   }
 
-  public setMetadataQuery(textTypesRequest: TextTypesRequest): void {
+  public setMetadataQuery(): void {
+    //** Metadata */
+    const textTypesRequest = new TextTypesRequest();
+    this.metadataQueryService.metadata.forEach(md => {
+      if (!!md.selection) {
+        if (md.freeText) {
+          //freetxt
+          textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
+        } else if (!md.multipleChoice && md.tree && md.tree[0] && md.tree[0].children && md.tree[0].children.length > 0) {
+          //single
+          textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
+        } else {
+          //multi
+          const values: string[] = [];
+          (md.selection as TreeNode[]).forEach(m => {
+            if (m.label) {
+              values.push(m.label);
+            }
+          });
+          textTypesRequest.multiSelects.push(new Selection(md.name, undefined, values));
+        }
+      }
+    });
+    localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(textTypesRequest));
     //Tutto in OR
     this.metadataQuery = new QueryToken();
     if (textTypesRequest.freeTexts && textTypesRequest.freeTexts.length > 0) {
@@ -258,9 +285,7 @@ export class ConcordanceComponent implements OnInit {
         this.metadataQuery.tags.push([tag]);
       }
     }
-    this.loadConcordances();
   }
-
 
   private init(): void {
     this.resultView = false;
