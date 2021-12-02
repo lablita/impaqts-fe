@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -18,7 +18,7 @@ export class subMetadatum {
   templateUrl: './metadata-panel.component.html',
   styleUrls: ['./metadata-panel.component.scss']
 })
-export class MetadataPanelComponent {
+export class MetadataPanelComponent implements OnInit {
 
   @Input() public metadata: Metadatum[] = new Array<Metadatum>();
   @Input() public corpus: string | null | undefined = ''
@@ -36,6 +36,10 @@ export class MetadataPanelComponent {
   // public structPattern: QueryToken[] = [];
 
   constructor() { }
+
+  ngOnInit(): void {
+    console.log('Metadata Panel Start')
+  }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);

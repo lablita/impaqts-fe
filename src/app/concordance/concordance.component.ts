@@ -107,8 +107,8 @@ export class ConcordanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.emitterService.pageMenu = CONCORDANCE;
-    this.translateService.stream(CONCORDANCE).
-      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(CONCORDANCE, res)));
+    this.translateService.stream(VIEW_OPTIONS_LABEL).
+      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
     this.init();
@@ -332,7 +332,10 @@ export class ConcordanceComponent implements OnInit {
     this.translateService.stream(FREQ_OPTIONS_LABEL).subscribe(res => this.freqOptionsLabel = res);
     this.translateService.stream(MENU_COLL_OPTIONS).subscribe(res => this.collocationOptionsLabel = res);
     this.translateService.stream(MENU_FILTER).subscribe(res => this.filterOptionsLabel = res);
-    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.titleOption = this.viewOptionsLabel = res);
+    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => {
+      this.viewOptionsLabel = res
+      this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
+    });
     this.translateService.stream(CONCORDANCE_SIMPLE).subscribe(res => {
       this.queryTypes = [];
       this.queryTypes.push(new KeyValueItem(SIMPLE, res));

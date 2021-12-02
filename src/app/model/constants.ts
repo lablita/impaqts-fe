@@ -141,6 +141,8 @@ export const MENU_VISUAL_QUERY = 'MENU.VISUAL_QUERY';
 export const MENU_CREDITS = 'MENU.CREDITS';
 export const MENU_COPYRIGHT = 'MENU.COPYRIGHT';
 export const MENU_POC = 'MENU.POC';
+export const MENU_RESULT_CONCORDANCE = 'MENU.RESULT_CONCORDANCE';
+export const MENU_AS_SUBCORPUS = 'MENU.AS_SUBCORPUS'
 
 /**Route */
 export const CREDITS_ROUTE = 'credits';

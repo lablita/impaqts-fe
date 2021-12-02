@@ -1,7 +1,7 @@
 {
   "MENU": {
-    "LOGIN": "Login",
-    "CONCORDANCE": "Concordance",
+    "LOGIN": "Accedi",
+    "CONCORDANCE": "Concordanze",
     "WORD_LIST": "Word list",
     "CORPUS_INFO": "Corpus info",
     "MY_JOBS": "My jobs",
@@ -51,7 +51,7 @@
       "LEMMAS": "Lemma(s)",
       "MAKE_CONCORDANCE": "Make Concordance",
       "MATCH_CASE": "match case",
-      "METADATA": "Metadata",
+      "METADATA": "Metadati",
       "NONE": "none",
       "OF_THESE_ITEMS": "of these items",
       "PHRASE": "Frase",
@@ -62,7 +62,7 @@
       "SIMPLE_QUERY": "Simple query",
       "SIMPLE": "Semplice",
       "TAG": "tag",
-      "TEXT_TYPE": "Text types",
+      "TEXT_TYPE": "Tipi di Testo",
       "TOKENS": "tokens",
       "VIDEO": "Video",
       "WINDOW": "Window",

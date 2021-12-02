@@ -89,8 +89,8 @@ export class MenuComponent implements OnInit {
       routes = [...new Set(routes)];
       const menuItems: MenuItemObject[] = [];
       routes.forEach(route => {
-        const menuVoice = this.getMenuByRoute(route, this.menuRoutes);
-        menuItems.push(new MenuItemObject(this.translateService.instant(menuVoice), null, () => {
+        const menuItem = this.getMenuByRoute(route, this.menuRoutes);
+        menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
           this.menuEmitterService.click.emit(new MenuEvent(route));
         }, null, null, false, false, route));
       }

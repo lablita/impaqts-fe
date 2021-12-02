@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ALL_LEMMANS, COPYRIGHT, CORPUS_INFO, CREDITS, VISUAL_QUERY } from '../model/constants';
+import { ALL_LEMMANS, CONCORDANCE, COPYRIGHT, CORPUS_INFO, CREDITS, VISUAL_QUERY } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { EmitterService } from '../utils/emitter.service';
 
@@ -19,13 +19,15 @@ export class RightComponent implements OnInit {
   private panelMetaOn = false;
   private panelOptionOn = false;
 
+  private routesHidden = [CORPUS_INFO, ALL_LEMMANS, CREDITS, COPYRIGHT, CONCORDANCE]
+
   constructor(
     private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
     this.emitterService.clickLabel.subscribe((event: KeyValueItem) => {
-      if (event.key === CORPUS_INFO || event.key === ALL_LEMMANS || event.key === CREDITS || event.key === COPYRIGHT) {
+      if (this.routesHidden.indexOf(event.key) >= 0) {
         this.hideMetadataLabel = true;
         this.hideOptionsLabel = true;
       } else if (this.emitterService.pageMenu === VISUAL_QUERY) {
