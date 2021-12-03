@@ -38,6 +38,7 @@ import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { RoleDirective } from './directives/role.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,7 +65,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     QueryTagComponent,
     VideoPlayerComponent,
     LoginComponent,
-    RoleDirective
+    RoleDirective,
+    KwicLinesViewComponent
   ],
   imports: [
     BrowserModule,
