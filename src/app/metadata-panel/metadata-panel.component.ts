@@ -18,11 +18,9 @@ export class subMetadatum {
 })
 export class MetadataPanelComponent implements OnInit {
 
-  // @Input() public metadata: Metadatum[] = new Array<Metadatum>();
   @Input() public corpus: string | null | undefined = ''
   @Input() public title: string = ''
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
-  // @Output() public setMetadataQuery = new EventEmitter<TextTypesRequest>();
 
   public res: KeyValueItem[] = [];
   public displayPanelMetadata = false;
@@ -30,8 +28,6 @@ export class MetadataPanelComponent implements OnInit {
   public loading = 0;
 
   private textTypesRequest: TextTypesRequest = new TextTypesRequest();
-
-  // public structPattern: QueryToken[] = [];
 
   constructor(
     public metadataQueryService: MetadataQueryService
@@ -57,6 +53,4 @@ export class MetadataPanelComponent implements OnInit {
 
   public nodeSelect(event: any) {
   }
-
-
 }

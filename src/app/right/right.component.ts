@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { ALL_LEMMANS, CONCORDANCE, COPYRIGHT, CORPUS_INFO, CREDITS, VISUAL_QUERY } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
@@ -23,7 +24,8 @@ export class RightComponent implements OnInit {
   private routesHidden = [CORPUS_INFO, ALL_LEMMANS, CREDITS, COPYRIGHT, CONCORDANCE]
 
   constructor(
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
@@ -57,6 +59,10 @@ export class RightComponent implements OnInit {
     this.panelMetaOn = !this.panelMetaOn;
     this.labelOptionsDisabled = this.panelMetaOn;
     this.emitterService.clickPanelDisplayMetadata.emit(this.panelMetaOn);
+  }
+
+  public checkMetadata(): boolean {
+    return this.metadataQueryService.isCompiled();
   }
 
 }
