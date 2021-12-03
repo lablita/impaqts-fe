@@ -126,7 +126,7 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public clickTextType(): void {
-    this.textTypeStatus = !this.textTypeStatus;
+    this.textTypeStatus = true;
     this.emitterService.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
   }
 
@@ -139,6 +139,9 @@ export class ConcordanceComponent implements OnInit {
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterService.clickLabelMetadataDisabled.emit(true);
     if (this.selectedCorpus) {
+      this.displayPanelMetadata = false;
+      this.displayPanelOptions = false;
+
       this.menuEmitterService.corpusSelected = true;
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
