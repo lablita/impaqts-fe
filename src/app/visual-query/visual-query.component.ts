@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -69,24 +68,18 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public resultView = false;
   public noResultFound = false;
-  public videoUrl: SafeResourceUrl | null = null;
-  public displayModal = false;
 
   private simple?: string;
-
 
   constructor(
     private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly metadataUtilService: MetadataUtilService,
-    private readonly socketService: SocketService,
-    private readonly sanitizer: DomSanitizer
+    private readonly socketService: SocketService
   ) { }
 
-  ngOnDestroy(): void {
-
-  }
+  ngOnDestroy(): void { }
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
@@ -306,17 +299,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         })
       ).subscribe();
     }
-  }
-
-  public showVideoDlg(): void {
-    const url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
-    const start = Math.floor((Math.random() * 200) + 1);
-    const end = start + Math.floor((Math.random() * 20) + 1);
-    if (url?.length > 0) {
-      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
-        + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
-    }
-    this.displayModal = true;
   }
 
 }

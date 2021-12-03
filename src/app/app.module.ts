@@ -39,6 +39,7 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
 import { RoleDirective } from './directives/role.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.component';
+import { DispalyPanelOptionsComponent } from './dispaly-panel-options/dispaly-panel-options.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,7 +67,8 @@ import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.compon
     VideoPlayerComponent,
     LoginComponent,
     RoleDirective,
-    KwicLinesViewComponent
+    KwicLinesViewComponent,
+    DispalyPanelOptionsComponent
   ],
   imports: [
     BrowserModule,
