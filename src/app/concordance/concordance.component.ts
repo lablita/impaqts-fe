@@ -8,11 +8,8 @@ import { MenuEvent } from '../menu/menu.component';
 import {
   ALL_LEMMANS, CHARACTER, COLLOCATIONS, CONCORDANCE, CONCORDANCE_CHARACTER,
   CONCORDANCE_CQL, CONCORDANCE_LEMMA, CONCORDANCE_PHRASE,
-  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CORPUS_INFO, CQL,
-  FILTER, FREQUENCY, FREQ_OPTIONS_LABEL, INSTALLATION, LEMMA,
-  MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, PHRASE,
-  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, SORT, SORT_OPTIONS_LABEL,
-  VIEW_OPTIONS, VIEW_OPTIONS_LABEL, WORD, WORD_LIST, WORD_OPTIONS_LABEL
+  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CORPUS_INFO, CQL, FILTER, FREQUENCY, FREQ_OPTIONS_LABEL, INSTALLATION, LEMMA, MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, PHRASE,
+  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, SORT, SORT_OPTIONS_LABEL, VIEW_OPTIONS, VIEW_OPTIONS_LABEL, WORD, WORD_LIST, WORD_OPTIONS_LABEL
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -26,6 +23,7 @@ import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
@@ -100,7 +98,8 @@ export class ConcordanceComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
-    private readonly metadataQueryService: MetadataQueryService
+    private readonly metadataQueryService: MetadataQueryService,
+    public displayPanelService: DisplayPanelService
   ) { }
 
   ngOnInit(): void {

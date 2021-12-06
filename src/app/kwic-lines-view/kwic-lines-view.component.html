@@ -1,8 +1,9 @@
 <div class="" style="width: 150px;">
   <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal" [style]="{width: '700'}"
     [baseZIndex]="10000">
-    <iframe title="youtubeVideo" style="border: 0px;" width="600" height="450" [src]="videoUrl"
+    <iframe *ngIf="youtubeVideo" title="youtubeVideo" style="border: 0px;" width="600" height="450" [src]="videoUrl"
       allowfullscreen></iframe>
+    <iframe *ngIf="!youtubeVideo" [src]="videoUrl" width="600" height="450" frameborder="0" allowfullscreen></iframe>
   </p-dialog>
 </div>
 <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
@@ -17,11 +18,11 @@
       <th class="p-text-center" style="width: 180px;">Right</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-kwicLine>
+  <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
     <tr>
       <td>
         <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-          (click)="showVideoDlg()"></button>
+          (click)="showVideoDlg(rowIndex)"></button>
       </td>
       <td class="p-text-right">{{kwicLine.leftContext}}</td>
       <td class="p-text-center" style="color: red;">{{kwicLine.kwic}}</td>
