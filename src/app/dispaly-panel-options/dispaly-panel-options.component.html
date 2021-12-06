@@ -1,4 +1,5 @@
-<div class="ml-3" *ngIf="displayPanelService.displayPanelMetadata && !displayPanelService.displayPanelOptions">
+<div class="flex ml-3 w-12"
+  *ngIf="displayPanelService.displayPanelMetadata && !displayPanelService.displayPanelOptions">
   <div *ngIf="selectedCorpus">
     <app-metadata-panel *ngIf="displayPanelService.displayPanelMetadata" [corpus]="selectedCorpus?.key"
       (closeSidebarEvent)="displayPanelService.displayPanelMetadata=false">
@@ -6,7 +7,7 @@
   </div>
 </div>
 
-<div class="ml-3" *ngIf="displayPanelService.displayPanelOptions && selectedCorpus">
+<div class="flex ml-3 w-12" *ngIf="displayPanelService.displayPanelOptions && selectedCorpus">
   <div *ngIf="selectedCorpus">
     <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption.value === viewOptionsLabel"
       [corpus]="selectedCorpus.key" [showRightButton]="displayPanelService.displayPanelOptions"

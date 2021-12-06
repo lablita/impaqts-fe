@@ -6,10 +6,10 @@ import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  ALL_LEMMANS, CHARACTER, COLLOCATIONS, CONCORDANCE, CONCORDANCE_CHARACTER,
+  CHARACTER, CONCORDANCE, CONCORDANCE_CHARACTER,
   CONCORDANCE_CQL, CONCORDANCE_LEMMA, CONCORDANCE_PHRASE,
-  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CORPUS_INFO, CQL, FILTER, FREQUENCY, FREQ_OPTIONS_LABEL, INSTALLATION, LEMMA, MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, PHRASE,
-  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, SORT, SORT_OPTIONS_LABEL, VIEW_OPTIONS, VIEW_OPTIONS_LABEL, WORD, WORD_LIST, WORD_OPTIONS_LABEL
+  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CQL, INSTALLATION, LEMMA, PHRASE,
+  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, VIEW_OPTIONS_LABEL, WORD
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -298,66 +298,8 @@ export class ConcordanceComponent implements OnInit {
     this.contextStatus = false;
     this.textTypeStatus = false;
 
-    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (this.emitterService.pageMenu === CONCORDANCE) {
-        switch (event && event.item) {
-          case WORD_LIST:
-            this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case SORT:
-            this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FREQUENCY:
-            this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case COLLOCATIONS:
-            this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FILTER:
-            this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case VIEW_OPTIONS:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case CORPUS_INFO:
-            this.titleOption = new KeyValueItem(CORPUS_INFO, CORPUS_INFO);
-            break;
-          case ALL_LEMMANS:
-            this.titleOption = new KeyValueItem(ALL_LEMMANS, ALL_LEMMANS);
-            break;
-          default:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-        }
-        this.emitterService.clickLabel.emit(this.titleOption);
-      }
-    });
-
-
-    this.emitterService.clickPanelDisplayOptions.subscribe((event: boolean) => {
-      this.displayPanelOptions = event;
-    });
-
-    this.emitterService.clickPanelDisplayMetadata.subscribe((event: boolean) => {
-      this.displayPanelMetadata = event;
-    });
-
     this.translateService.stream(SELECT_CORPUS).subscribe(res => this.selectCorpus = res);
-    this.translateService.stream(WORD_OPTIONS_LABEL).subscribe(res => this.wordListOptionsLabel = res);
-    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.visualQueryOptionsLabel = res);
-    this.translateService.stream(SORT_OPTIONS_LABEL).subscribe(res => this.sortOptionsLabel = res);
-    this.translateService.stream(FREQ_OPTIONS_LABEL).subscribe(res => this.freqOptionsLabel = res);
-    this.translateService.stream(MENU_COLL_OPTIONS).subscribe(res => this.collocationOptionsLabel = res);
-    this.translateService.stream(MENU_FILTER).subscribe(res => this.filterOptionsLabel = res);
-    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => {
-      this.viewOptionsLabel = res
-      this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-    });
+
     this.translateService.stream(CONCORDANCE_SIMPLE).subscribe(res => {
       this.queryTypes = [];
       this.queryTypes.push(new KeyValueItem(SIMPLE, res));

@@ -6,9 +6,7 @@ import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  ALL_LEMMANS, COLLOCATIONS, CORPUS_INFO, FILTER, FREQUENCY, FREQ_OPTIONS_LABEL,
-  INSTALLATION, MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, SELECT_CORPUS,
-  SORT, SORT_OPTIONS_LABEL, VIEW_OPTIONS, VIEW_OPTIONS_LABEL, VISUAL_QUERY, WORD_LIST, WORD_OPTIONS_LABEL
+  INSTALLATION, SELECT_CORPUS, VIEW_OPTIONS_LABEL, VISUAL_QUERY
 } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
@@ -18,6 +16,7 @@ import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
@@ -76,7 +75,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly metadataUtilService: MetadataUtilService,
-    private readonly socketService: SocketService
+    private readonly socketService: SocketService,
+    public displayPanelService: DisplayPanelService
   ) { }
 
   ngOnDestroy(): void { }
@@ -100,62 +100,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       /** Web Socket */
       this.initWebSocket();
     }
-    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (this.emitterService.pageMenu === VISUAL_QUERY) {
-        switch (event && event.item) {
-          case WORD_LIST:
-            this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case SORT:
-            this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FREQUENCY:
-            this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case COLLOCATIONS:
-            this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FILTER:
-            this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case VIEW_OPTIONS:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case CORPUS_INFO:
-            this.titleOption = new KeyValueItem(CORPUS_INFO, CORPUS_INFO);
-            break;
-          case ALL_LEMMANS:
-            this.titleOption = new KeyValueItem(ALL_LEMMANS, ALL_LEMMANS);
-            break;
-          default:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-        }
-        this.emitterService.clickLabel.emit(this.titleOption);
-      }
-    });
-
-
-    this.emitterService.clickPanelDisplayOptions.subscribe((event: boolean) => {
-      this.displayPanelOptions = event;
-    });
 
     this.translateService.stream(SELECT_CORPUS).subscribe(res => this.selectCorpus = res);
-    this.translateService.stream(WORD_OPTIONS_LABEL).subscribe(res => this.wordListOptionsLabel = res);
-    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.visualQueryOptionsLabel = res);
-    this.translateService.stream(SORT_OPTIONS_LABEL).subscribe(res => this.sortOptionsLabel = res);
-    this.translateService.stream(FREQ_OPTIONS_LABEL).subscribe(res => this.freqOptionsLabel = res);
-    this.translateService.stream(MENU_COLL_OPTIONS).subscribe(res => this.collocationOptionsLabel = res);
-    this.translateService.stream(MENU_FILTER).subscribe(res => this.filterOptionsLabel = res);
-    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => {
-      this.viewOptionsLabel = res
-      this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-    });
   }
 
   public addTokenQuery(): void {

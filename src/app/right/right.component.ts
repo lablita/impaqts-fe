@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { ALL_LEMMANS, CONCORDANCE, COPYRIGHT, CORPUS_INFO, CREDITS, VISUAL_QUERY } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { EmitterService } from '../utils/emitter.service';
 
@@ -25,7 +26,8 @@ export class RightComponent implements OnInit {
 
   constructor(
     private readonly emitterService: EmitterService,
-    private readonly metadataQueryService: MetadataQueryService
+    private readonly metadataQueryService: MetadataQueryService,
+    public displayPanelService: DisplayPanelService
   ) { }
 
   ngOnInit(): void {
@@ -52,13 +54,13 @@ export class RightComponent implements OnInit {
   public openSidebarOptions(): void {
     this.panelOptionOn = !this.panelOptionOn;
     this.labelMetadataDisabled = this.panelOptionOn;
-    this.emitterService.clickPanelDisplayOptions.emit(this.panelOptionOn);
+    this.displayPanelService.displayPanelOptions = this.panelOptionOn;
   }
 
   public openSidebarMetadata(): void {
     this.panelMetaOn = !this.panelMetaOn;
     this.labelOptionsDisabled = this.panelMetaOn;
-    this.emitterService.clickPanelDisplayMetadata.emit(this.panelMetaOn);
+    this.displayPanelService.displayPanelMetadata = this.panelMetaOn;
   }
 
   public checkMetadata(): boolean {

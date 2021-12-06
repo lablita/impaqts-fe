@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import {
@@ -11,7 +10,6 @@ import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { UserService } from '../services/user.service';
-import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
 export class MenuEvent {
@@ -46,10 +44,10 @@ export class MenuComponent implements OnInit {
   private menuRoutes: KeyValueItem[] = [];
 
   constructor(
-    private readonly emitterService: EmitterService,
+    // private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
-    private readonly authService: AuthService,
+    // private readonly authService: AuthService,
     private readonly userService: UserService
   ) { }
 
