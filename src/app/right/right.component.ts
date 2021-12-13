@@ -37,7 +37,8 @@ export class RightComponent implements OnInit {
         this.hideOptionsLabel = true;
       } else if (this.emitterService.pageMenu === VISUAL_QUERY) {
         this.hideMetadataLabel = true;
-        this.hideOptionsLabel = false;
+        this.hideOptionsLabel = true;
+        // this.hideOptionsLabel = false;
       } else {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;

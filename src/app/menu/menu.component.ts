@@ -73,7 +73,7 @@ export class MenuComponent implements OnInit {
       if (event && event.item) {
         this.getMenuItems(event.item, this.role);
       }
-      if (this.menuEmitterService.corpusSelected && this.items) {
+      if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
         this.getMenuItems(RESULT_CONCORDANCE, this.role);
       }
     });
