@@ -1,4 +1,5 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { MenuEvent } from './menu.component';
 
 @Injectable({
@@ -6,7 +7,7 @@ import { MenuEvent } from './menu.component';
 })
 export class MenuEmitterService {
   public corpusSelected = false;
-  public click: EventEmitter<MenuEvent> = new EventEmitter<MenuEvent>();
+  public menuEvent$: Subject<MenuEvent> = new Subject<MenuEvent>();
 
   constructor() { }
 }

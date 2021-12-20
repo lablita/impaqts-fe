@@ -100,9 +100,7 @@
         <div class="" style="width: 150px;">
           <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
             [style]="{width: '700'}" [baseZIndex]="10000">
-            <iframe *ngIf="youtubeVideo" title="youtubeVideo" style="border: 0px;" width="600" height="450"
-              [src]="videoUrl" allowfullscreen></iframe>
-            <iframe *ngIf="!youtubeVideo" [src]="videoUrl" width="600" height="450" frameborder="0"
+            <iframe title="Video" style="border: 0px;" width="600" height="450" [src]="videoUrl" allow="autoplay"
               allowfullscreen></iframe>
           </p-dialog>
         </div>

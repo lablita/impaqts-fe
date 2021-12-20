@@ -92,7 +92,6 @@ export class ConcordanceComponent implements OnInit {
 
   public videoUrl: SafeResourceUrl | null = null;
   public displayModal = false;
-  public youtubeVideo: boolean = true;
 
   /** private */
   private metadataQuery: QueryToken | null = null;
@@ -113,7 +112,7 @@ export class ConcordanceComponent implements OnInit {
     this.translateService.stream(VIEW_OPTIONS_LABEL).
       subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
     this.init();
   }
 
@@ -188,7 +187,7 @@ export class ConcordanceComponent implements OnInit {
       this.contextStatus = false;
       this.queryTypeStatus = false;
     }
-    this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
   }
 
   public makeConcordances(): void {
@@ -223,7 +222,7 @@ export class ConcordanceComponent implements OnInit {
       }
       qr.corpus = this.selectedCorpus.key;
       this.socketService.sendMessage(qr);
-      this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
+      this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     }
   }
 
@@ -348,22 +347,23 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public showVideoDlg(rowIndex: number): void {
-    this.youtubeVideo = rowIndex % 2 > 0;
+    const youtubeVideo = rowIndex % 2 > 0;
     let url = '';
 
-    if (this.youtubeVideo) {
+    if (youtubeVideo) {
       url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
       const start = Math.floor((Math.random() * 200) + 1);
       const end = start + Math.floor((Math.random() * 20) + 1);
       if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
-          + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `${url}?autoplay=1&start=${start}&end=${end}`
+        );
       }
     } else {
       url = 'https://player.vimeo.com/video/637089218';
       const start = Math.floor((Math.random() * 5) + 1) + 'm' + Math.floor((Math.random() * 60) + 1) + 's';
       if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1#t=' + start);
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
       }
     }
 

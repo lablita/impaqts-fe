@@ -51,7 +51,7 @@ export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
   }
 
   init() {
-    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
+    this.menuEmitterService.menuEvent$.subscribe((event: MenuEvent) => {
       if (this.emitterService.pageMenu === CONCORDANCE) {
         switch (event && event.item) {
           case WORD_LIST:

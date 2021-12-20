@@ -69,7 +69,7 @@ export class MenuComponent implements OnInit {
     }
 
     this.getMenuItems(CONCORDANCE, this.role);
-    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
+    this.menuEmitterService.menuEvent$.subscribe((event: MenuEvent) => {
       if (event && event.item) {
         this.getMenuItems(event.item, this.role);
       }
@@ -89,7 +89,7 @@ export class MenuComponent implements OnInit {
       routes.forEach(route => {
         const menuItem = this.getMenuByRoute(route, this.menuRoutes);
         menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
-          this.menuEmitterService.click.emit(new MenuEvent(route));
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
         }, null, null, false, false, route));
       }
       );

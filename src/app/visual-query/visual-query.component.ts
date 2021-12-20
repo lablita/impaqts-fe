@@ -89,7 +89,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
   }
 
@@ -207,7 +207,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.metadata = [];
       this.queryPattern.tokPattern = [];
     }
-    this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
   }
 
   public getMetadatumTextTypes(): Metadatum[] {
