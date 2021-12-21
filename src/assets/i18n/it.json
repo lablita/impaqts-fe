@@ -43,7 +43,7 @@
       "CQL": "CQL",
       "DEFAULT_ATTRIBUTE": "Default attribute",
       "FILE_UPLOADED": "File uploaded",
-      "LC_WORD": "lc = word (lowercase)",
+      "WORD_LC": "word (lowercase)",
       "LEFT": "left",
       "LEMMA_FILTER": "Lemma filter",
       "LEMMA_LC": "lemma (lowercase)",
