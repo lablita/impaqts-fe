@@ -75,7 +75,6 @@ export class ConcordanceComponent implements OnInit {
   public matchCase: boolean = false;
   public defaultAttributeCQL: KeyValueItem | null = null;
   public defaultAttributeCQLList: KeyValueItem[] = [new KeyValueItem('WORD', 'WORD'), new KeyValueItem('TAG', 'TAG'), new KeyValueItem('LEMMA', 'LEMMA'), new KeyValueItem('WORD_LC', 'WORD_LC'), new KeyValueItem('LEMMA_LC', 'LEMMA_LC')];
-  // public defaultAttributeCQLList: string[] = ['WORD', 'TAG', 'LEMMA', 'WORD_LC', 'LEMMA_LC'];
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public totalResults = 0;

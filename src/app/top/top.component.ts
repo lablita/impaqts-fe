@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { INSTALLATION, INTERFACE_LANGUAGE, TOP_LEFT, TOP_RIGHT } from '../model/constants';
+import { INSTALLATION, INTERFACE_LANGUAGE, LOGIN, LOGOUT, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { EmitterService } from '../utils/emitter.service';
-
-const LOGIN = 'Login';
-const LOGOUT = 'Logout';
 @Component({
   selector: 'app-top',
   templateUrl: './top.component.html',

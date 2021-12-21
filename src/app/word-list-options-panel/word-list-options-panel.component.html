@@ -14,7 +14,8 @@
   <div class="grid ml-4 align-items-center">
     <div class="col-fixed" style="width: 96px;"></div>
     <div class="col-fixed align-items-center" style="width: 110px;">
-      <p-checkbox name="nonWords" [binary]="true" [label]="nGram" [(ngModel)]="wordListOptionsQueryRequest.useNGrams">
+      <p-checkbox name="nGrams" [binary]="true" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM' | translate}}"
+        [(ngModel)]="wordListOptionsQueryRequest.useNGrams">
       </p-checkbox>
     </div>
     <div class="col align-items-center">
@@ -70,7 +71,8 @@
   </div>
 
   <div class="field-checkbox ml-4">
-    <p-checkbox name="nonWords" [binary]="true" [label]="nonWords" [(ngModel)]="wordListOptionsQueryRequest.nonWords">
+    <p-checkbox name="nonWords" [binary]="true" label="{{'PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS' | translate}}"
+      [(ngModel)]="wordListOptionsQueryRequest.nonWords">
     </p-checkbox>
   </div>
 
@@ -84,7 +86,7 @@
       <div *ngFor="let freq of frequencyFigures" class="field-checkbox inline">
         <p-radioButton [inputId]="freq.key" name="displayAttr" [value]="freq" [(ngModel)]="selectedFrequencyFigure">
         </p-radioButton>
-        <label [for]="freq.key" class="mr-2 ml-1">{{freq.value}}</label>
+        <label [for]="freq.key" class="mr-2 ml-1">{{'PAGE.CONCORDANCE.WORD_OPTIONS.' + freq.value | translate}}</label>
       </div>
     </div>
   </div>
@@ -100,7 +102,7 @@
           [(ngModel)]="selectedOutputType">
         </p-radioButton>
         <label [for]="outputTypes[0] && outputTypes[0].key"
-          class="mr-2 ml-1">{{outputTypes[0] && outputTypes[0].value}}</label>
+          class="mr-2 ml-1">{{'PAGE.CONCORDANCE.WORD_OPTIONS.' + outputTypes[0].value | translate}}</label>
       </div>
 
       <div class="field-checkbox">
@@ -108,7 +110,7 @@
           [(ngModel)]="selectedOutputType">
         </p-radioButton>
         <label [for]="outputTypes[1] && outputTypes[1].key"
-          class="mr-2 ml-1">{{outputTypes[1] && outputTypes[1].value}}</label>
+          class="mr-2 ml-1">{{'PAGE.CONCORDANCE.WORD_OPTIONS.' + outputTypes[1].value | translate}}</label>
       </div>
       <div class="mt-0 mb-3 ml-3">
         <div>
@@ -141,7 +143,7 @@
           [(ngModel)]="selectedOutputType">
         </p-radioButton>
         <label [for]="outputTypes[2] && outputTypes[2].key"
-          class="mr-2 ml-1">{{outputTypes[2] && outputTypes[2].value}}</label>
+          class="mr-2 ml-1">{{'PAGE.CONCORDANCE.WORD_OPTIONS.' + outputTypes[2].value | translate}}</label>
       </div>
       <div class="mb-3 ml-3">
         <p-dropdown [disabled]="selectedOutputType !== outputTypes[2]" class="mr-2" [options]="rareWordsList"

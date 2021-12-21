@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
   BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY, INSTALLATION, LOGIN, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
+  FILTER, FREQUENCY, INSTALLATION, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
 } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
@@ -31,13 +31,9 @@ export class MenuComponent implements OnInit {
   public items: MenuItemObject[] = [];
   public urlBottomLeft: string | null = null;
 
-  private menuConcordance: MenuItemObject[] = new Array<MenuItemObject>();
-  private menuWordList: MenuItemObject[] = new Array<MenuItemObject>();
-  private menuResultConcordance: MenuItemObject[] = new Array<MenuItemObject>();
-
-  private menuConcordanceStr: string[] = [LOGIN, CONCORDANCE, WORD_LIST, CORPUS_INFO, VISUAL_QUERY];
+  private menuConcordanceStr: string[] = [CONCORDANCE, CORPUS_INFO, VISUAL_QUERY];
   private menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
-  private menuResultConcordanceStr: string[] = [VIEW_OPTIONS, SORT, FILTER, FREQUENCY, COLLOCATIONS];
+  private menuResultConcordanceStr: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
 
   private role: string = '';
   private menuByRoleList: RoleMenu[] = [];
@@ -50,7 +46,6 @@ export class MenuComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
-    // private readonly authService: AuthService,
     private readonly userService: UserService
   ) { }
 
@@ -112,7 +107,6 @@ export class MenuComponent implements OnInit {
       switch (page) {
         case CONCORDANCE:
         case VISUAL_QUERY:
-        case WORD_LIST:
         case ALL_WORDS:
         case ALL_LEMMANS:
           this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuWordListStr);
@@ -121,6 +115,7 @@ export class MenuComponent implements OnInit {
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
         case VIEW_OPTIONS:
+        case WORD_LIST:
         case SORT:
         case FILTER:
         case FREQUENCY:

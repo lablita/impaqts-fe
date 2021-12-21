@@ -7,6 +7,12 @@
     <label class="label-size mr-1">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
     <p-dropdown [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.attribute" optionLabel="value"
       [showClear]="true">
+      <ng-template let-option pTemplate="item">
+        {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
+      </ng-template>
+      <ng-template pTemplate="selectedItem" let-item>
+        {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + item.value | translate}}
+      </ng-template>
     </p-dropdown>
   </div>
   <div class="inline field ml-6">
@@ -37,14 +43,22 @@
     </div>
     <div class="col-fixed" style="width: 150px;">
       <p-listbox id="show" [options]="attributeList" [multiple]="true"
-        [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value"></p-listbox>
+        [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value">
+        <ng-template let-option pTemplate="item">
+          {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
+        </ng-template>
+      </p-listbox>
     </div>
     <div class="col-fixed" style="width: 70px;">
       <label for="sort">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
     </div>
     <div class="col-fixed" style="width: 150px;">
       <p-listbox id="sort" [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
-        optionLabel="value"></p-listbox>
+        optionLabel="value">
+        <ng-template let-option pTemplate="item">
+          {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
+        </ng-template>
+      </p-listbox>
     </div>
   </div>
 

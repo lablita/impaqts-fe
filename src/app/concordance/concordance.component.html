@@ -73,7 +73,8 @@
           <label class="mr-3" for="cql">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
           <input id="cql" type="text" pInputText style="width: 350px;" [(ngModel)]="cql">
           <label class="ml-3 mr-3">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" | translate}}</label>
-          <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL" [style]="{'width':'12rem'}">
+          <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL" [style]="{'width':'12rem'}"
+            [showClear]="true">
             <ng-template let-option pTemplate="item">
               {{'PAGE.CONCORDANCE.' + option.value | translate}}
             </ng-template>

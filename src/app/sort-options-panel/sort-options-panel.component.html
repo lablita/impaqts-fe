@@ -36,7 +36,7 @@
       <div *ngFor="let sortkey of sortKeys" class="field-checkbox d-inline">
         <p-radioButton [inputId]="sortkey.key" name="sortkey" [value]="sortkey" [(ngModel)]="selectedSortKey">
         </p-radioButton>
-        <label [for]="sortkey.key" class="mr-2 ml-1">{{sortkey.value}}</label>
+        <label [for]="sortkey.key" class="mr-2 ml-1">{{sortkey.value | translate}}</label>
       </div>
     </div>
   </div>
@@ -49,14 +49,15 @@
   </div>
 
   <div class="field-checkbox ml-2">
-    <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true" [label]="ignoreCaseLabel"
+    <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
+      label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}"
       [(ngModel)]="sortOptionsQueryRequest.ignoreCase">
     </p-checkbox>
   </div>
 
   <div class="field-checkbox ml-2">
-    <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true" [label]="backwordLabel"
-      [(ngModel)]="sortOptionsQueryRequest.backward">
+    <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
+      label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}" [(ngModel)]="sortOptionsQueryRequest.backward">
     </p-checkbox>
   </div>
 
@@ -72,7 +73,8 @@
         <div class="mb-4 ml-2">
           <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
           </p-radioButton>
-          <label [for]="level.key" class="mr-2 ml-1">{{level.value}}</label>
+          <label [for]="level.key"
+            class="mr-2 ml-1">{{'PAGE.CONCORDANCE.SORT_OPTIONS.' + level.value | translate}}</label>
         </div>
         <div class="field ml-2 mb-3">
           <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="value"
@@ -80,11 +82,13 @@
           </p-dropdown>
         </div>
         <div class="field-checkbox ml-2 mb-3">
-          <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel" [(ngModel)]="ignoreCase[i]">
+          <p-checkbox name="nonWords" [binary]="true"
+            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}" [(ngModel)]="ignoreCase[i]">
           </p-checkbox>
         </div>
         <div class="field-checkbox ml-2 mb-3">
-          <p-checkbox name="nonWords" [binary]="true" [label]="backwordLabel" [(ngModel)]="backward[i]">
+          <p-checkbox name="nonWords" [binary]="true" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}"
+            [(ngModel)]="backward[i]">
           </p-checkbox>
         </div>
         <div class="field ml-2">

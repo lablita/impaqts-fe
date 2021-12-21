@@ -28,7 +28,6 @@ export const environment = {
   ],
   menuNoRole: [MENU_LOGIN, MENU_CONCORDANCE],
   menuRoutes: [
-    // new KeyValueItem(MENU_LOGIN, LOGIN),
     new KeyValueItem(MENU_CONCORDANCE, CONCORDANCE),
     // new KeyValueItem(MENU_POC, POC),
     new KeyValueItem(MENU_CORPUS_INFO, CORPUS_INFO),
