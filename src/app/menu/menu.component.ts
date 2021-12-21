@@ -9,7 +9,9 @@ import {
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
+import { User } from '../model/user';
 import { UserService } from '../services/user.service';
+import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
 export class MenuEvent {
@@ -42,9 +44,10 @@ export class MenuComponent implements OnInit {
   private roles: string[] = [];
   private menuNoRole: string[] = [];
   private menuRoutes: KeyValueItem[] = [];
+  public user: User = new User();
 
   constructor(
-    // private readonly emitterService: EmitterService,
+    private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
     // private readonly authService: AuthService,
@@ -52,6 +55,10 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.emitterService.user.subscribe(user => {
+      this.user = user;
+    });
+
     this.role = this.userService.getRole();
     this.roles = environment.roles;
     this.menuByRoleList = environment.menuByRoleList;

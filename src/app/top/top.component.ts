@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { INSTALLATION, INTERFACE_LANGUAGE, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
-import { User } from '../model/user';
 import { EmitterService } from '../utils/emitter.service';
 
+const LOGIN = 'Login';
+const LOGOUT = 'Logout';
 @Component({
   selector: 'app-top',
   templateUrl: './top.component.html',
   styleUrls: ['./top.component.scss']
 })
+
 export class TopComponent {
 
   public urlTopLeft: string | null = null;
@@ -21,21 +24,22 @@ export class TopComponent {
   public name: string | null = null;
   public role: string | null = null;
   public email: string | null = null;
-  public user: User = new User();
+  public selectedLang = '';
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly authService: AuthService
   ) {
     this.init();
   }
 
   private init(): void {
+    this.selectedLang = this.translateService.currentLang;
     this.emitterService.user.subscribe(user => {
-      this.user = user;
+      this.authLabel = !!user.role ? LOGOUT : LOGIN;
     })
 
-    this.authLabel = "Login";
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       const installation = JSON.parse(inst) as Installation;
@@ -60,6 +64,22 @@ export class TopComponent {
       localStorage.setItem(INTERFACE_LANGUAGE, event.value);
       this.translateService.use(event.value);
     }
+  }
+
+  public loginLogout(): void {
+    if (this.authLabel === LOGOUT) {
+      this.logout()
+    } else {
+      this.loginWithRedirect();
+    }
+  }
+
+  private loginWithRedirect(): void {
+    this.authService.loginWithRedirect();
+  }
+
+  private logout(): void {
+    this.authService.logout();
   }
 
 }
