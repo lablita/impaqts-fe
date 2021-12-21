@@ -17,6 +17,7 @@ import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
+import { ResultContext } from '../model/result-context';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
@@ -72,6 +73,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public videoUrl: SafeResourceUrl | null = null;
   public displayModal = false;
   public youtubeVideo: boolean = true;
+  public resultContext: ResultContext | null = null;
 
   private simple?: string;
 
@@ -274,6 +276,11 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     }
 
     this.displayModal = true;
+  }
+
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
   }
 
 }

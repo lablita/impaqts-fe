@@ -97,11 +97,25 @@
                     (click)="showVideoDlg(rowIndex)"></button>
                 </td>
                 <td class="p-text-right">{{kwicLine.leftContext}}</td>
-                <td class="p-text-center" style="color: red;">{{kwicLine.kwic}}</td>
+                <td class="p-text-center">
+                  <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
+                    (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
+                </td>
                 <td class="p-text-left">{{kwicLine.rightContext}}</td>
               </tr>
             </ng-template>
           </p-table>
+          <p-overlayPanel #op [style]="{width: '450px'}">
+            <ng-template pTemplate>
+              <div>{{resultContext?.after}}</div>
+              <div style="text-align: center; color: red;">
+                {{resultContext?.keyword}}
+              </div>
+              <div>
+                {{resultContext?.before}}
+              </div>
+            </ng-template>
+          </p-overlayPanel>
 
         </p-card>
       </div>

@@ -22,6 +22,7 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
+import { ResultContext } from '../model/result-context';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 import { DisplayPanelService } from '../services/display-panel.service';
@@ -92,6 +93,7 @@ export class ConcordanceComponent implements OnInit {
 
   public videoUrl: SafeResourceUrl | null = null;
   public displayModal = false;
+  public resultContext: ResultContext | null = null;
 
   /** private */
   private metadataQuery: QueryToken | null = null;
@@ -369,4 +371,11 @@ export class ConcordanceComponent implements OnInit {
 
     this.displayModal = true;
   }
+
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+  }
+
+
 }
