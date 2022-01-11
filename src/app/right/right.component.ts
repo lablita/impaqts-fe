@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { ALL_LEMMANS, COPYRIGHT, CORPUS_INFO, CREDITS, VIEW_OPTIONS_LABEL, VISUAL_QUERY } from '../model/constants';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { ALL_LEMMANS, CONCORDANCE, COPYRIGHT, CORPUS_INFO, CREDITS, VISUAL_QUERY } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { DisplayPanelService } from '../services/display-panel.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
@@ -10,35 +12,39 @@ import { EmitterService } from '../utils/emitter.service';
   styleUrls: ['./right.component.scss']
 })
 export class RightComponent implements OnInit {
-
+  public faCheck = faCheck;
   public titleLabel = 'PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS';
   public labelOptionsDisabled = true;
   public labelMetadataDisabled = true;
-  public viewOptionsLabel: string = '';
   public hideMetadataLabel = false;
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
+  private panelMetaOn = false;
+  private panelOptionOn = false;
+
+  private routesHidden = [CORPUS_INFO, ALL_LEMMANS, CREDITS, COPYRIGHT, CONCORDANCE]
 
   constructor(
-    private readonly translateService: TranslateService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly metadataQueryService: MetadataQueryService,
+    public displayPanelService: DisplayPanelService
   ) { }
 
   ngOnInit(): void {
-    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.viewOptionsLabel = res);
     this.emitterService.clickLabel.subscribe((event: KeyValueItem) => {
-      if (event.key === CORPUS_INFO || event.key === ALL_LEMMANS || event.key === CREDITS || event.key === COPYRIGHT) {
+      if (this.routesHidden.indexOf(event.key) >= 0) {
         this.hideMetadataLabel = true;
         this.hideOptionsLabel = true;
       } else if (this.emitterService.pageMenu === VISUAL_QUERY) {
         this.hideMetadataLabel = true;
-        this.hideOptionsLabel = false;
+        this.hideOptionsLabel = true;
+        // this.hideOptionsLabel = false;
       } else {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
       }
       if (event.value) {
-        this.titleLabel = event.value;
+        this.titleLabel = event.key;
       }
     });
     this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => this.labelOptionsDisabled = event);
@@ -47,11 +53,19 @@ export class RightComponent implements OnInit {
   }
 
   public openSidebarOptions(): void {
-    this.emitterService.clickPanelDisplayOptions.emit(true);
+    this.panelOptionOn = !this.panelOptionOn;
+    this.labelMetadataDisabled = this.panelOptionOn;
+    this.displayPanelService.displayPanelOptions = this.panelOptionOn;
   }
 
   public openSidebarMetadata(): void {
-    this.emitterService.clickPanelDisplayMetadata.emit(true);
+    this.panelMetaOn = !this.panelMetaOn;
+    this.labelOptionsDisabled = this.panelMetaOn;
+    this.displayPanelService.displayPanelMetadata = this.panelMetaOn;
+  }
+
+  public checkMetadata(): boolean {
+    return this.metadataQueryService.isCompiled();
   }
 
 }

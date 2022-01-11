@@ -258,7 +258,7 @@ export class MetadataUtilService {
       selections.push(root);
     }
     const expandBranch = (metadata: Metadatum, node: TreeNode, parentNode: TreeNode) => {
-      if (!!metadata.subMetadata) {
+      if (!!metadata.subMetadata && metadata.subMetadata?.length > 0) {
         metadata.subMetadata.forEach(md => {
           const innerNode: TreeNode = {
             label: md.name,

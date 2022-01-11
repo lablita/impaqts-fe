@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -6,9 +7,7 @@ import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  ALL_LEMMANS, COLLOCATIONS, CORPUS_INFO, FILTER, FREQUENCY, FREQ_OPTIONS_LABEL,
-  INSTALLATION, MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, SELECT_CORPUS,
-  SORT, SORT_OPTIONS_LABEL, VIEW_OPTIONS, VIEW_OPTIONS_LABEL, VISUAL_QUERY, WORD_LIST, WORD_OPTIONS_LABEL
+  INSTALLATION, SELECT_CORPUS, VIEW_OPTIONS_LABEL, VISUAL_QUERY
 } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
@@ -18,6 +17,8 @@ import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
+import { ResultContext } from '../model/result-context';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
@@ -66,26 +67,31 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public metadataAttributes: KeyValueItem[] = new Array<KeyValueItem>();
   public textTypesAttributes: KeyValueItem[] = new Array<KeyValueItem>();
 
-  private simple?: string;
-
   public resultView = false;
   public noResultFound = false;
+
+  public videoUrl: SafeResourceUrl | null = null;
+  public displayModal = false;
+  public youtubeVideo: boolean = true;
+  public resultContext: ResultContext | null = null;
+
+  private simple?: string;
 
   constructor(
     private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly metadataUtilService: MetadataUtilService,
-    private readonly socketService: SocketService
+    private readonly socketService: SocketService,
+    public displayPanelService: DisplayPanelService,
+    private readonly sanitizer: DomSanitizer
   ) { }
 
-  ngOnDestroy(): void {
-
-  }
+  ngOnDestroy(): void { }
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
   }
 
@@ -102,59 +108,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       /** Web Socket */
       this.initWebSocket();
     }
-    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (this.emitterService.pageMenu === VISUAL_QUERY) {
-        switch (event && event.item) {
-          case WORD_LIST:
-            this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case SORT:
-            this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FREQUENCY:
-            this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case COLLOCATIONS:
-            this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FILTER:
-            this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case VIEW_OPTIONS:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case CORPUS_INFO:
-            this.titleOption = new KeyValueItem(CORPUS_INFO, CORPUS_INFO);
-            break;
-          case ALL_LEMMANS:
-            this.titleOption = new KeyValueItem(ALL_LEMMANS, ALL_LEMMANS);
-            break;
-          default:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-        }
-        this.emitterService.clickLabel.emit(this.titleOption);
-      }
-    });
-
-
-    this.emitterService.clickPanelDisplayOptions.subscribe((event: boolean) => {
-      this.displayPanelOptions = event;
-    });
 
     this.translateService.stream(SELECT_CORPUS).subscribe(res => this.selectCorpus = res);
-    this.translateService.stream(WORD_OPTIONS_LABEL).subscribe(res => this.wordListOptionsLabel = res);
-    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.visualQueryOptionsLabel = res);
-    this.translateService.stream(SORT_OPTIONS_LABEL).subscribe(res => this.sortOptionsLabel = res);
-    this.translateService.stream(FREQ_OPTIONS_LABEL).subscribe(res => this.freqOptionsLabel = res);
-    this.translateService.stream(MENU_COLL_OPTIONS).subscribe(res => this.collocationOptionsLabel = res);
-    this.translateService.stream(MENU_FILTER).subscribe(res => this.filterOptionsLabel = res);
-    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.titleOption = this.viewOptionsLabel = res);
   }
 
   public addTokenQuery(): void {
@@ -254,7 +209,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.metadata = [];
       this.queryPattern.tokPattern = [];
     }
-    this.menuEmitterService.click.emit(new MenuEvent(VISUAL_QUERY));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
   }
 
   public getMetadatumTextTypes(): Metadatum[] {
@@ -298,6 +253,34 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         })
       ).subscribe();
     }
+  }
+
+  public showVideoDlg(rowIndex: number): void {
+    this.youtubeVideo = rowIndex % 2 > 0;
+    let url = '';
+
+    if (this.youtubeVideo) {
+      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
+      const start = Math.floor((Math.random() * 200) + 1);
+      const end = start + Math.floor((Math.random() * 20) + 1);
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
+          + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
+      }
+    } else {
+      url = 'https://player.vimeo.com/video/637089218';
+      const start = Math.floor((Math.random() * 5) + 1) + 'm' + Math.floor((Math.random() * 60) + 1) + 's';
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1#t=' + start);
+      }
+    }
+
+    this.displayModal = true;
+  }
+
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
   }
 
 }

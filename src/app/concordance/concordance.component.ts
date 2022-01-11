@@ -1,19 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
-import { STRUCT_DOC, TOKEN } from '../common/constants';
+import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  ALL_LEMMANS, CHARACTER, COLLOCATIONS, CONCORDANCE, CONCORDANCE_CHARACTER,
+  CHARACTER, CONCORDANCE, CONCORDANCE_CHARACTER,
   CONCORDANCE_CQL, CONCORDANCE_LEMMA, CONCORDANCE_PHRASE,
-  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CORPUS_INFO, CQL,
-  FILTER, FREQUENCY, FREQ_OPTIONS_LABEL, INSTALLATION, LEMMA,
-  MENU_COLL_OPTIONS, MENU_FILTER, MENU_VISUAL_QUERY, PHRASE,
-  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, SORT, SORT_OPTIONS_LABEL,
-  VIEW_OPTIONS, VIEW_OPTIONS_LABEL, WORD, WORD_LIST, WORD_OPTIONS_LABEL
+  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CQL, INSTALLATION, LEMMA, PHRASE,
+  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, VIEW_OPTIONS_LABEL, WORD
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Installation } from '../model/installation';
@@ -25,7 +22,11 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
+import { ResultContext } from '../model/result-context';
+import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
+import { DisplayPanelService } from '../services/display-panel.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
@@ -71,6 +72,9 @@ export class ConcordanceComponent implements OnInit {
   public freqOptionsLabel: string = '';
   public collocationOptionsLabel: string = '';
   public filterOptionsLabel: string = '';
+  public matchCase: boolean = false;
+  public defaultAttributeCQL: KeyValueItem | null = null;
+  public defaultAttributeCQLList: KeyValueItem[] = [new KeyValueItem('WORD', 'WORD'), new KeyValueItem('TAG', 'TAG'), new KeyValueItem('LEMMA', 'LEMMA'), new KeyValueItem('WORD_LC', 'WORD_LC'), new KeyValueItem('LEMMA_LC', 'LEMMA_LC')];
   public displayPanelMetadata = false;
   public displayPanelOptions = false;
   public totalResults = 0;
@@ -89,9 +93,10 @@ export class ConcordanceComponent implements OnInit {
 
   public resultView = false;
   public noResultFound = false;
-  public displayModal = false;
 
   public videoUrl: SafeResourceUrl | null = null;
+  public displayModal = false;
+  public resultContext: ResultContext | null = null;
 
   /** private */
   private metadataQuery: QueryToken | null = null;
@@ -102,15 +107,17 @@ export class ConcordanceComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
+    private readonly metadataQueryService: MetadataQueryService,
+    public displayPanelService: DisplayPanelService,
     private readonly sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
     this.emitterService.pageMenu = CONCORDANCE;
-    this.translateService.stream(CONCORDANCE).
-      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(CONCORDANCE, res)));
+    this.translateService.stream(VIEW_OPTIONS_LABEL).
+      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
     this.init();
   }
 
@@ -123,7 +130,7 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public clickTextType(): void {
-    this.textTypeStatus = !this.textTypeStatus;
+    this.textTypeStatus = true;
     this.emitterService.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
   }
 
@@ -136,6 +143,9 @@ export class ConcordanceComponent implements OnInit {
     this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     this.emitterService.clickLabelMetadataDisabled.emit(true);
     if (this.selectedCorpus) {
+      this.displayPanelMetadata = false;
+      this.displayPanelOptions = false;
+
       this.menuEmitterService.corpusSelected = true;
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
@@ -159,12 +169,12 @@ export class ConcordanceComponent implements OnInit {
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
         if (this.installation) {
           this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(res => {
-            this.metadataTextTypes = res['md'];
+            this.metadataQueryService.metadata = res['md'];
             this.endedMetadataProcess = res['ended'];
             if (this.endedMetadataProcess) {
               this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
               //ordinamento position 
-              this.metadataTextTypes.sort((a, b) => a.position - b.position);
+              this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
               this.emitterService.spinnerMetadata.emit(false);
             }
           });
@@ -182,7 +192,7 @@ export class ConcordanceComponent implements OnInit {
       this.contextStatus = false;
       this.queryTypeStatus = false;
     }
-    this.menuEmitterService.click.emit(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
   }
 
   public makeConcordances(): void {
@@ -192,6 +202,7 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public loadConcordances(event?: LazyLoadEvent): void {
+    this.setMetadataQuery();
     if (!!this.selectedCorpus) {
       const qr = new QueryRequest();
       if (!event) {
@@ -216,11 +227,34 @@ export class ConcordanceComponent implements OnInit {
       }
       qr.corpus = this.selectedCorpus.key;
       this.socketService.sendMessage(qr);
-      this.menuEmitterService.click.emit(new MenuEvent(RESULT_CONCORDANCE));
+      this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     }
   }
 
-  public setMetadataQuery(textTypesRequest: TextTypesRequest): void {
+  public setMetadataQuery(): void {
+    //** Metadata */
+    const textTypesRequest = new TextTypesRequest();
+    this.metadataQueryService.metadata.forEach(md => {
+      if (!!md.selection) {
+        if (md.freeText) {
+          //freetxt
+          textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
+        } else if (!md.multipleChoice && md.tree && md.tree[0] && md.tree[0].children && md.tree[0].children.length > 0) {
+          //single
+          textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
+        } else {
+          //multi
+          const values: string[] = [];
+          (md.selection as TreeNode[]).forEach(m => {
+            if (m.label) {
+              values.push(m.label);
+            }
+          });
+          textTypesRequest.multiSelects.push(new Selection(md.name, undefined, values));
+        }
+      }
+    });
+    localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(textTypesRequest));
     //Tutto in OR
     this.metadataQuery = new QueryToken();
     if (textTypesRequest.freeTexts && textTypesRequest.freeTexts.length > 0) {
@@ -258,9 +292,7 @@ export class ConcordanceComponent implements OnInit {
         this.metadataQuery.tags.push([tag]);
       }
     }
-    this.loadConcordances();
   }
-
 
   private init(): void {
     this.resultView = false;
@@ -276,63 +308,8 @@ export class ConcordanceComponent implements OnInit {
     this.contextStatus = false;
     this.textTypeStatus = false;
 
-    this.menuEmitterService.click.subscribe((event: MenuEvent) => {
-      if (this.emitterService.pageMenu === CONCORDANCE) {
-        switch (event && event.item) {
-          case WORD_LIST:
-            this.titleOption = new KeyValueItem(WORD_OPTIONS_LABEL, this.wordListOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case SORT:
-            this.titleOption = new KeyValueItem(SORT_OPTIONS_LABEL, this.sortOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FREQUENCY:
-            this.titleOption = new KeyValueItem(FREQ_OPTIONS_LABEL, this.freqOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case COLLOCATIONS:
-            this.titleOption = new KeyValueItem(MENU_COLL_OPTIONS, this.collocationOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case FILTER:
-            this.titleOption = new KeyValueItem(MENU_FILTER, this.filterOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case VIEW_OPTIONS:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-            this.emitterService.clickPanelDisplayOptions.emit(true);
-            break;
-          case CORPUS_INFO:
-            this.titleOption = new KeyValueItem(CORPUS_INFO, CORPUS_INFO);
-            break;
-          case ALL_LEMMANS:
-            this.titleOption = new KeyValueItem(ALL_LEMMANS, ALL_LEMMANS);
-            break;
-          default:
-            this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
-        }
-        this.emitterService.clickLabel.emit(this.titleOption);
-      }
-    });
-
-
-    this.emitterService.clickPanelDisplayOptions.subscribe((event: boolean) => {
-      this.displayPanelOptions = event;
-    });
-
-    this.emitterService.clickPanelDisplayMetadata.subscribe((event: boolean) => {
-      this.displayPanelMetadata = event;
-    });
-
     this.translateService.stream(SELECT_CORPUS).subscribe(res => this.selectCorpus = res);
-    this.translateService.stream(WORD_OPTIONS_LABEL).subscribe(res => this.wordListOptionsLabel = res);
-    this.translateService.stream(MENU_VISUAL_QUERY).subscribe(res => this.visualQueryOptionsLabel = res);
-    this.translateService.stream(SORT_OPTIONS_LABEL).subscribe(res => this.sortOptionsLabel = res);
-    this.translateService.stream(FREQ_OPTIONS_LABEL).subscribe(res => this.freqOptionsLabel = res);
-    this.translateService.stream(MENU_COLL_OPTIONS).subscribe(res => this.collocationOptionsLabel = res);
-    this.translateService.stream(MENU_FILTER).subscribe(res => this.filterOptionsLabel = res);
-    this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe(res => this.titleOption = this.viewOptionsLabel = res);
+
     this.translateService.stream(CONCORDANCE_SIMPLE).subscribe(res => {
       this.queryTypes = [];
       this.queryTypes.push(new KeyValueItem(SIMPLE, res));
@@ -374,14 +351,34 @@ export class ConcordanceComponent implements OnInit {
     }
   }
 
-  public showVideoDlg(): void {
-    const url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
-    const start = Math.floor((Math.random() * 200) + 1);
-    const end = start + Math.floor((Math.random() * 20) + 1);
-    if (url?.length > 0) {
-      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
-        + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
+  public showVideoDlg(rowIndex: number): void {
+    const youtubeVideo = rowIndex % 2 > 0;
+    let url = '';
+
+    if (youtubeVideo) {
+      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
+      const start = Math.floor((Math.random() * 200) + 1);
+      const end = start + Math.floor((Math.random() * 20) + 1);
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `${url}?autoplay=1&start=${start}&end=${end}`
+        );
+      }
+    } else {
+      url = 'https://player.vimeo.com/video/637089218';
+      const start = Math.floor((Math.random() * 5) + 1) + 'm' + Math.floor((Math.random() * 60) + 1) + 's';
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
+      }
     }
+
     this.displayModal = true;
   }
+
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+  }
+
+
 }

@@ -1,13 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
-
-const showList = ['T_SCORE', 'MI', 'MI3', 'LOG', 'MIN', 'LOG_DICE', 'MI_LOG'];
 @Component({
   selector: 'app-collocation-options-panel',
   templateUrl: './collocation-options-panel.component.html',
@@ -19,11 +16,9 @@ export class CollocationOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
-  public attributeList: KeyValueItem[] = [];
+  public attributeList: KeyValueItem[] = [new KeyValueItem('T_SCORE', 'T_SCORE'), new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'), new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'), new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')];
 
-  constructor(
-    private readonly translateService: TranslateService
-  ) {
+  constructor() {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     this.collocationOptionsQueryRequest = collOptReq ?
@@ -32,19 +27,6 @@ export class CollocationOptionsPanelComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-    this.translateService.stream('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.T_SCORE').subscribe(res => {
-      showList.forEach((show, index) => {
-        if (index === 0) {
-          this.attributeList = [];
-          this.attributeList.push(new KeyValueItem(show, res));
-        } else {
-          this.translateService.stream('PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + show).subscribe(r =>
-            this.attributeList.push(new KeyValueItem(show, r))
-          );
-        }
-      });
-    });
 
   }
 

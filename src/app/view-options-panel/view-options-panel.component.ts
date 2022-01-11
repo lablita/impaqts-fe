@@ -18,7 +18,7 @@ const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 
 export class ViewOptionsPanelComponent implements OnInit {
 
-  @Input() public corpus: string | null = null;
+  @Input() public corpus: string | null | undefined = null;
   @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
@@ -44,6 +44,7 @@ export class ViewOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log("View Panel Option Start");
     const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST);
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     if (voqr) {

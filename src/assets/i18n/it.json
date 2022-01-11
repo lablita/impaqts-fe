@@ -1,7 +1,8 @@
 {
   "MENU": {
-    "CONCORDANCE": "Concordance",
-    "WOLRD_LIST": "Word list",
+    "LOGIN": "Accedi",
+    "CONCORDANCE": "Concordanze",
+    "WORD_LIST": "Word list",
     "CORPUS_INFO": "Corpus info",
     "MY_JOBS": "My jobs",
     "USER_GUIDE": "Guida",
@@ -42,7 +43,7 @@
       "CQL": "CQL",
       "DEFAULT_ATTRIBUTE": "Default attribute",
       "FILE_UPLOADED": "File uploaded",
-      "LC_WORD": "lc = word (lowercase)",
+      "WORD_LC": "word (lowercase)",
       "LEFT": "left",
       "LEMMA_FILTER": "Lemma filter",
       "LEMMA_LC": "lemma (lowercase)",
@@ -50,7 +51,7 @@
       "LEMMAS": "Lemma(s)",
       "MAKE_CONCORDANCE": "Make Concordance",
       "MATCH_CASE": "match case",
-      "METADATA": "Metadata",
+      "METADATA": "Metadati",
       "NONE": "none",
       "OF_THESE_ITEMS": "of these items",
       "PHRASE": "Frase",
@@ -61,7 +62,7 @@
       "SIMPLE_QUERY": "Simple query",
       "SIMPLE": "Semplice",
       "TAG": "tag",
-      "TEXT_TYPE": "Text types",
+      "TEXT_TYPE": "Tipi di Testo",
       "TOKENS": "tokens",
       "VIDEO": "Video",
       "WINDOW": "Window",
@@ -237,7 +238,16 @@
       "SEL_TYPE": "Select a type",
       "START": "sentence start",
       "TIMES": "times"
-    }
+    },
+    "RESET": "Reset"
+  },
+  "USER": {
+    "USER": "Utente",
+    "EMAIL": "Email",
+    "ROLE": "Ruolo",
+    "ADMIN_ROLE": "Amministratore",
+    "ADVANCEDUSER_ROLE": "Utente avanzato",
+    "USER_ROLE": "Utente semplice"
   },
   "LANGUAGE": {
     "IT": "ITA",

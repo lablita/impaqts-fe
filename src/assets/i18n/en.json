@@ -3,8 +3,9 @@
     "NO_VIDEO": "No video are present"
   },
   "MENU": {
+    "LOGIN": "Login",
     "CONCORDANCE": "Concordance",
-    "WOLRD_LIST": "Word list",
+    "WORD_LIST": "Word list",
     "CORPUS_INFO": "Corpus info",
     "MY_JOBS": "My jobs",
     "USER_GUIDE": "User guide",
@@ -65,7 +66,7 @@
       "ANY": "any",
       "NONE": "none",
       "TAG": "tag",
-      "LC_WORD": "lc = word (lowercase)",
+      "WORD_LC": "word (lowercase)",
       "LEMMA_LC": "lemma (lowercase)",
       "METADATA": "Metadata",
       "FILE_UPLOADED": "File uploaded",
@@ -240,7 +241,16 @@
       "END": "sentence end",
       "FOR": "for",
       "TIMES": "times"
-    }
+    },
+    "RESET": "Reset"
+  },
+  "USER": {
+    "USER": "User",
+    "EMAIL": "Email",
+    "ROLE": "Role",
+    "ADMIN_ROLE": "Admin",
+    "ADVANCEDUSER_ROLE": "Advanced user",
+    "USER_ROLE": "Simple user"
   },
   "LANGUAGE": {
     "IT": "ITA",

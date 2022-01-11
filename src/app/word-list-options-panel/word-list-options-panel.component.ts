@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { HIT_COUNTS } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -33,16 +32,14 @@ export class WordListOptionsPanelComponent implements OnInit {
 
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
   public fileUploadedInfo: string | null = null;
-  public nonWords: string = '';
-  public frequencyFigures: KeyValueItem[] = [];
+  public frequencyFigures: KeyValueItem[] = [new KeyValueItem('HIT_COUNTS', 'HIT_COUNTS'), new KeyValueItem('NON_WORDS', 'NON_WORDS'), new KeyValueItem('ARF', 'ARF')];
   public selectedFrequencyFigure: KeyValueItem | null = null;
-  public outputTypes: KeyValueItem[] = [];
+  public outputTypes: KeyValueItem[] = [new KeyValueItem('SIMPLE', 'SIMPLE'), new KeyValueItem('KEYWORD', 'KEYWORD'), new KeyValueItem('CHANGE_OUT', 'CHANGE_OUT')];
   public selectedOutputType: KeyValueItem | null = null;
   public subcorpusList: KeyValueItem[] = [];
   public selectedSubcorpus: KeyValueItem | null = null;
   public searchAttrList: {}[] = [];
   public selectedSearchAttr: KeyValueItem | null = null;
-  public nGram: string = '';
   public valueOfList: KeyValueItem[] = [];
   public selectedValueOf: KeyValueItem | null = null;
   public rareWordsList: KeyValueItem[] = [];
@@ -102,23 +99,6 @@ export class WordListOptionsPanelComponent implements OnInit {
         inst && inst.startup.wordListOptionsQueryRequest;
     }
     this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(res => this.fileUploadedInfo = res);
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.nonWords = res);
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.N_GRAM').subscribe(res => this.nGram = res);
-
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.HIT_COUNTS').subscribe(res => {
-      this.frequencyFigures = [];
-      this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res))
-      this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.NON_WORDS').subscribe(res => this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res)));
-      this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.ARF').subscribe(res => this.frequencyFigures.push(new KeyValueItem(HIT_COUNTS, res)));
-    });
-
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.SIMPLE').subscribe(res => {
-      this.outputTypes = [];
-      this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res))
-    });
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.KEYWORD').subscribe(res => this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res)));
-    this.translateService.stream('PAGE.CONCORDANCE.WORD_OPTIONS.CHANGE_OUT').subscribe(res => this.outputTypes.push(new KeyValueItem(HIT_COUNTS, res)));
-
   }
 
   public clickWordListOption(): void {

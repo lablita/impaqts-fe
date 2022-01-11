@@ -1,46 +1,49 @@
 <div class="p-component">
-  <div class="p-mt-4">
+  <div class="flex justify-content-center">
+    <h2>{{"MENU.FILTER" | translate}}</h2>
+  </div>
+  <div class="mt-4">
     <h2>{{"PAGE.CONCORDANCE.FILTER_OPTIONS.CONCORDANCE_FILTER" | translate}}</h2>
   </div>
-  <div class="p-grid p-ml-4 p-ai-center">
-    <div class="p-col-6">
-      <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.OVERLAPS' | translate}}"
-        (click)="clickOverlaps()" class="p-mr-5"></button>
+  <div class="grid ml-4">
+    <div class="col-6">
+      <button pButton type="button" icon="pi" label="{{'MENU.OVERLAPS' | translate}}" (click)="clickOverlaps()"
+        class="mr-5"></button>
     </div>
-    <div class="p-col-6">
-      <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}"
-        (click)="clickFirst()" class="p-mr-5"></button>
+    <div class="col-6">
+      <button pButton type="button" icon="pi" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}" (click)="clickFirst()"
+        class="mr-5"></button>
     </div>
   </div>
 
-  <div class="p-d-flex p-ml-2">
+  <div class="flex ml-2">
     <label class="label-size">{{"MENU.FILTER" | translate}}</label>
-    <div *ngFor="let filter of filters" class="p-field-checkbox">
+    <div *ngFor="let filter of filters" class="field-checkbox">
       <p-radioButton [inputId]="filter.key" name="filter" [value]="filter" [(ngModel)]="selectedFilter">
       </p-radioButton>
-      <label [for]="filter.key" class="p-mr-2 p-ml-1">{{filter.value}}</label>
+      <label [for]="filter.key" class="mr-2 ml-1">{{filter.value}}</label>
     </div>
   </div>
 
-  <div class="p-d-flex p-ml-2">
+  <div class="flex ml-2">
     <label class="label-size">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.SEL_TOKEN" | translate}}</label>
-    <div *ngFor="let token of tokens" class="p-field-checkbox">
+    <div *ngFor="let token of tokens" class="field-checkbox">
       <p-radioButton [inputId]="token.key" name="filter" [value]="token" [(ngModel)]="selectedToken">
       </p-radioButton>
-      <label [for]="token.key" class="p-mr-2 p-ml-1">{{token.value}}</label>
+      <label [for]="token.key" class="mr-2 ml-1">{{token.value}}</label>
     </div>
   </div>
 
-  <div class="p-d-inline p-field p-ml-6">
-    <label for="rangeFrom" class="p-mr-2">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.FROM" | translate}}</label>
+  <div class="inline field ml-6">
+    <label for="rangeFrom" class="mr-2">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.FROM" | translate}}</label>
     <input id="rangeFrom" type="number" pInputText style="width: 50px;" [(ngModel)]="filterOptionsQueryRequest.from"
-      class="p-mr-3">
+      class="mr-3">
   </div>
-  <div class="p-d-inline p-field p-ml-2">
-    <label for="rangeTo" class="p-mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
+  <div class="inline field ml-2">
+    <label for="rangeTo" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
     <input id="rangeTo" type="number" pInputText style="width: 50px;" [(ngModel)]="filterOptionsQueryRequest.to">
   </div>
-  <div class="p-d-inline p-field-checkbox p-ml-2">
+  <div class="inline field-checkbox ml-2">
     <p-checkbox name="nonWords" [binary]="true" [label]="'PAGE.CONCORDANCE.FILTER_OPTIONS.KWIC' | translate"
       [(ngModel)]="filterOptionsQueryRequest.kwic">
     </p-checkbox>
@@ -49,11 +52,12 @@
   <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
   </app-context-concordance>
 
+  <span class="flex justify-content-center mt-3">
+    <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.FILTER_OPTIONS.FILTER_CON' | translate}}"
+      (click)="clickMakeFilter()" class="mr-5"></button>
+  </span>
 
-  <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.FILTER_OPTIONS.FILTER_CON' | translate}}"
-    (click)="clickMakeFilter()" class="p-mr-5"></button>
-
-  <app-metadata-panel [corpus]="corpus" [metadata]="metadata" (closeSidebarEvent)="closeSidebar()" title="MENU.FILTER">
-  </app-metadata-panel>
+  <!-- <app-metadata-panel [corpus]="corpus" [metadata]="metadata" (closeSidebarEvent)="closeSidebar()" title="MENU.FILTER">
+  </app-metadata-panel> -->
 
 </div>

@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
-import { CONCORDANCE_WORD, FIRST, L1, L2, L3, NODE, R1, R2, R3, SECOND } from '../model/constants';
+import { FIRST, L1, L2, L3, NODE, R1, R2, R3, SECOND } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -23,49 +22,19 @@ export class SortOptionsPanelComponent implements OnInit {
 
   public attributeList: KeyValueItem[] = [];
 
-  public selectedMultiAttribute: KeyValueItem[] = new Array<KeyValueItem>();
-  public sortKeys: KeyValueItem[] = new Array<KeyValueItem>();
+  public selectedMultiAttribute: KeyValueItem[] = [new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD')];
+  public sortKeys: KeyValueItem[] = [new KeyValueItem('LEFT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT'), new KeyValueItem('NODE', 'MENU.NODE'), new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
   public selectedSortKey: KeyValueItem | null = null;
-  public ignoreCaseLabel: string = '';
-  public backwordLabel: string = '';
-  public levels: KeyValueItem[] = new Array<KeyValueItem>();
+  public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'), new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
   public selectedLevel: KeyValueItem | null = null;
   public positionList: KeyValueItem[] = new Array<KeyValueItem>();
   public selectedPosition: KeyValueItem[] = new Array<KeyValueItem>();
   public ignoreCase: boolean[] = new Array<boolean>();
   public backward: boolean[] = new Array<boolean>();
 
-  constructor(
-    private readonly translateService: TranslateService
-  ) { }
+  constructor() { }
 
   ngOnInit(): void {
-
-
-    this.translateService.stream(CONCORDANCE_WORD).subscribe(res => {
-      this.selectedMultiAttribute = [
-        new KeyValueItem('word', res),
-        new KeyValueItem('word', res),
-        new KeyValueItem('word', res)
-      ];
-    });
-
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE').subscribe(res => this.ignoreCaseLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD').subscribe(res => this.backwordLabel = res);
-
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT').subscribe(res => {
-      this.sortKeys = [];
-      this.sortKeys.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT', res));
-    });
-    this.translateService.stream('MENU.NODE').subscribe(res => this.sortKeys.push(new KeyValueItem('MENU.NODE', res)));
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT').subscribe(res => this.sortKeys.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT', res)));
-
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL').subscribe(res => {
-      this.levels = [];
-      this.levels.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.FIRST_LEVEL', res));
-    });
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL').subscribe(res => this.levels.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.SECOND_LEVEL', res)));
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL').subscribe(res => this.levels.push(new KeyValueItem('PAGE.CONCORDANCE.SORT_OPTIONS.THIRD_LEVEL', res)));
 
     this.positionList = [
       new KeyValueItem(L3, L3),

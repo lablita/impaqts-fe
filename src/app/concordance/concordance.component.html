@@ -1,165 +1,176 @@
-<div class="p-d-flex p-mb-3 p-mr-3 p-d-block">
-  <p-card class="p-p-3">
-    <div class="p-field p-d-flex">
-      <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
-      <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value" [filter]="true"
-        [showClear]="true" placeholder="{{selectCorpus}}" (onChange)="dropdownCorpus()">
-        <ng-template pTemplate="selectedItem">
-          <div *ngIf="selectedCorpus">
-            <div class="label-size">{{selectedCorpus.value}}</div>
-          </div>
-        </ng-template>
-        <ng-template let-country pTemplate="item">
-          <div>
-            <div class="label-size">{{country.value}}</div>
-          </div>
-        </ng-template>
-      </p-dropdown>
-    </div>
-    <div class="p-field">
-      <label for="simple_query" class="label-size">{{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}</label>
-      <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
-      &nbsp;
-      <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
-        label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
-    </div>
-    <div class="p-field">
-      <label for="simple_query" class="label-size"></label>
-      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}"
-        [disabled]="!selectedCorpus" class="p-button-text" (click)="clickQueryType()"></button>&nbsp;
-      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}"
-        [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
-    </div>
+<div class="flex flex-row">
 
-    <div *ngIf="queryTypeStatus">
-      <div class="p-d-flex">
-        <label class="label-size">{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</label>
-        <div *ngFor="let queryType of queryTypes" class="p-field-checkbox">
-          <p-radioButton [inputId]="queryType.key" name="queryType" [value]="queryType" [(ngModel)]="selectedQueryType">
-          </p-radioButton>
-          <label [for]="queryType.key" class="p-mr-2 p-ml-1">{{queryType.value}}</label>
+  <div class="flex flex-grow-1 flex-column mt-3">
+    <p-card
+      [ngClass]="{'w-12': displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions, 'w-6': !(displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions)}">
+      <div class="mb-3">
+        <label class="mr-3">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
+        <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value" [filter]="true"
+          [showClear]="true" placeholder="{{selectCorpus}}" (onChange)="dropdownCorpus()">
+          <ng-template pTemplate="selectedItem">
+            <div *ngIf="selectedCorpus">
+              <div class="">{{selectedCorpus.value}}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div>
+              <div class="">{{country.value}}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <div class="p-field mb-3">
+        <label for="simple_query" class="label-size mr-3">
+          {{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}
+        </label>
+        <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
+        &nbsp;
+        <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
+      </div>
+      <div class="flex justify-content-center">
+        <button [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button" icon="pi"
+          label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus" class="p-button-text mr-3"
+          (click)="clickQueryType()"></button>&nbsp;
+        <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}"
+          [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
+      </div>
+
+      <div class="mt-3" *ngIf="queryTypeStatus">
+        <div class="">
+          <label class="mb-3">
+            <h2>{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</h2>
+          </label>
+          <div class="flex justify-content-center">
+            <div *ngFor="let queryType of queryTypes" class="p-field-checkbox">
+              <p-radioButton class="ml-3 mr-1" [inputId]="queryType.key" name="queryType" [value]="queryType"
+                [(ngModel)]="selectedQueryType">
+              </p-radioButton>
+              <label class="mr-3" [for]="queryType.key" class="">{{queryType.value}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 p-field" *ngIf="selectedQueryType && selectedQueryType.key === LEMMA">
+          <label class="mr-3" for="lemma">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
+          <input id="lemma" type="text" pInputText style="width: 350px;" [(ngModel)]="lemma">
+        </div>
+        <div class="mt-3 p-field" *ngIf="selectedQueryType && selectedQueryType.key === PHRASE">
+          <label class="mr-3" for="phrase">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
+          <input id="phrase" type="text" pInputText style="width: 350px;" [(ngModel)]="phrase">
+        </div>
+        <div class="flex mt-3 p-field" *ngIf="selectedQueryType && selectedQueryType.key === WORD">
+          <label class="mr-3 pt-2" for="word">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
+          <input class="mr-6" id="word" type="text" pInputText style="width: 350px;" [(ngModel)]="word">
+          <p-checkbox name="iconForOne" [binary]="true" label="{{'PAGE.CONCORDANCE.MATCH_CASE' | translate}}"
+            [(ngModel)]="matchCase">
+          </p-checkbox>
+        </div>
+        <div class="mt-3 p-field" *ngIf="selectedQueryType && selectedQueryType.key === CHARACTER">
+          <label class="mr-3" for="character">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
+          <input id="character" type="text" pInputText style="width: 350px;" [(ngModel)]="character">
+        </div>
+        <div class="mt-3 p-field" *ngIf="selectedQueryType && selectedQueryType.key === CQL">
+          <label class="mr-3" for="cql">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
+          <input id="cql" type="text" pInputText style="width: 350px;" [(ngModel)]="cql">
+          <label class="ml-3 mr-3">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" | translate}}</label>
+          <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL" [style]="{'width':'12rem'}"
+            [showClear]="true">
+            <ng-template let-option pTemplate="item">
+              {{'PAGE.CONCORDANCE.' + option.value | translate}}
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-item>
+              {{'PAGE.CONCORDANCE.' + item.value | translate}}
+            </ng-template>
+          </p-dropdown>
         </div>
       </div>
-      <div *ngIf="selectedQueryType && selectedQueryType.key === LEMMA" class="p-field">
-        <label for="lemma" class="label-size">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
-        <input id="lemma" type="text" pInputText style="width: 350px;" [(ngModel)]="lemma">
+
+      <div class="mt-3" *ngIf="contextStatus">
+        <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
+        </app-context-concordance>
+        <div class="flex justify-content-center mt-3">
+          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
+            (click)="makeConcordances()" class="mr-3"></button>
+          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
+            (click)="clickClearAll()"></button>
+        </div>
       </div>
-      <div *ngIf="selectedQueryType && selectedQueryType.key === PHRASE" class="p-field">
-        <label for="phrase" class="label-size">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
-        <input id="phrase" type="text" pInputText style="width: 350px;" [(ngModel)]="phrase">
-      </div>
-      <div *ngIf="selectedQueryType && selectedQueryType.key === WORD" class="p-field">
-        <label for="word" class="label-size">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
-        <input id="word" type="text" pInputText style="width: 350px;" [(ngModel)]="word">
-      </div>
-      <div *ngIf="selectedQueryType && selectedQueryType.key === CHARACTER" class="p-field">
-        <label for="character" class="label-size">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
-        <input id="character" type="text" pInputText style="width: 350px;" [(ngModel)]="character">
-      </div>
-      <div *ngIf="selectedQueryType && selectedQueryType.key === CQL" class="p-field">
-        <label for="cql" class="label-size">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
-        <input id="cql" type="text" pInputText style="width: 350px;" [(ngModel)]="cql">
-      </div>
+    </p-card>
+
+    <div class="flex mt-3 w-12 justify-content-center" *ngIf="loading">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
     </div>
+    <div class="flex mt-3" *ngIf="resultView">
+      <p-card class="w-12">
+        <div class="">
+          <div class="" style="width: 250px;">
+            <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
+            </h3>
+          </div>
+        </div>
 
-    <div *ngIf="contextStatus">
-      <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
-      </app-context-concordance>
-      <div>
-        <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-          (click)="makeConcordances()" class="p-mr-5"></button>
-        <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
-          (click)="clickClearAll()"></button>
-      </div>
+        <!-- <app-kwic-lines-view [kwicLines]="kwicLines" [loadConcordances]="loadConcordances" [loading]="loading">
+        </app-kwic-lines-view> -->
+
+        <div class="" style="width: 150px;">
+          <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
+            [style]="{width: '700'}" [baseZIndex]="10000">
+            <iframe title="Video" style="border: 0px;" width="600" height="450" [src]="videoUrl" allow="autoplay"
+              allowfullscreen></iframe>
+          </p-dialog>
+        </div>
+        <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
+          styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
+          currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+          [rowsPerPageOptions]="[10,25,50]">
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 80px;"></th>
+              <th class="p-text-center" style="width: 180px;">Left</th>
+              <th class="p-text-center" style="width: 80px;">Kwic</th>
+              <th class="p-text-center" style="width: 180px;">Right</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
+            <tr>
+              <td>
+                <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
+                  (click)="showVideoDlg(rowIndex)"></button>
+              </td>
+              <td class="p-text-right">{{kwicLine.leftContext}}</td>
+              <td class="p-text-center">
+                <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
+                  (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
+              </td>
+              <td class="p-text-left">{{kwicLine.rightContext}}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+        <p-overlayPanel #op [style]="{width: '450px'}">
+          <ng-template pTemplate>
+            <div>{{resultContext?.after}}</div>
+            <div style="text-align: center; color: red;">
+              {{resultContext?.keyword}}
+            </div>
+            <div>
+              {{resultContext?.before}}
+            </div>
+          </ng-template>
+        </p-overlayPanel>
+
+      </p-card>
     </div>
-  </p-card>
-</div>
-
-
-<div class="p-text-center p-mt-6" *ngIf="loading">
-  <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-</div>
-<div *ngIf="resultView" class="p-d-block">
-  <p-card>
-    <div class="p-grid p-ml-4 p-ai-center">
-      <div class="p-col-fixed" style="width: 250px;">
-        <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
-        </h3>
-      </div>
-      <div class="p-col-fixed" style="width: 150px;">
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-          (click)="showVideoDlg()"></button>
-        <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal" [style]="{width: '700'}"
-          [baseZIndex]="10000">
-          <iframe title="youtubeVideo" style="border: 0px;" width="600" height="450" [src]="videoUrl"
-            allowfullscreen></iframe>
-        </p-dialog>
-      </div>
+    <div class="mt-3 w-12" *ngIf="!resultView && noResultFound && !loading">
+      <p-card>
+        <h3 style="text-align: center; color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+      </p-card>
     </div>
-
-    <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
-      styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
-      currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-      [rowsPerPageOptions]="[10,25,50]">
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="width: 80px;">Ref</th>
-          <th class="p-text-center" style="width: 180px;">Left</th>
-          <th class="p-text-center" style="width: 80px;">Kwic</th>
-          <th class="p-text-center" style="width: 180px;">Right</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-kwicLine>
-        <tr>
-          <td><a href="#">{{kwicLine.ref}}</a></td>
-          <td class="p-text-right">{{kwicLine.leftContext}}</td>
-          <td class="p-text-center" style="color: red;">{{kwicLine.kwic}}</td>
-          <td class="p-text-left">{{kwicLine.rightContext}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </p-card>
-</div>
-<div *ngIf="!resultView && noResultFound && !loading" class="p-d-block" style="width: 100%;">
-  <p-card>
-    <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
-  </p-card>
-</div>
-
-<p-sidebar [(visible)]="displayPanelMetadata" position="right" [style]="{width:'50em'}" [autoZIndex]="true"
-  [blockScroll]="false">
-  <div class="p-ml-3" *ngIf="selectedCorpus">
-    <app-metadata-panel *ngIf="displayPanelMetadata" [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes"
-      (closeSidebarEvent)="displayPanelMetadata=false" (setMetadataQuery)="setMetadataQuery($event)">
-    </app-metadata-panel>
   </div>
-</p-sidebar>
 
-
-<p-sidebar [(visible)]="displayPanelOptions" position="right" [style]="{width:'55em'}">
-  <div class="p-ml-3" *ngIf="selectedCorpus">
-    <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption.value === viewOptionsLabel"
-      [corpus]="selectedCorpus.key" [showRightButton]="displayPanelOptions" [corpusAttributes]="metadataAttributes"
-      (closeSidebarEvent)="displayPanelOptions=false">
-    </app-view-options-panel>
-    <app-word-list-options-panel *ngIf="titleOption && titleOption.value === wordListOptionsLabel"
-      [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
-    </app-word-list-options-panel>
-    <app-sort-options-panel *ngIf="titleOption && titleOption.value === sortOptionsLabel"
-      [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
-      (closeSidebarEvent)="displayPanelOptions=false">
-    </app-sort-options-panel>
-    <app-frequency-options-panel *ngIf="titleOption && titleOption.value === freqOptionsLabel"
-      [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelOptions"
-      (closeSidebarEvent)="displayPanelOptions=false">
-    </app-frequency-options-panel>
-    <app-collocation-options-panel *ngIf="titleOption && titleOption.value === collocationOptionsLabel"
-      [showRightButton]="displayPanelOptions" (closeSidebarEvent)="displayPanelOptions=false">
-    </app-collocation-options-panel>
-    <app-filter-options-panel *ngIf="titleOption && titleOption.value === filterOptionsLabel"
-      [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes" [showRightButton]="displayPanelOptions"
-      (closeSidebarEvent)="displayPanelMetadata=false; displayPanelOptions=false">
-    </app-filter-options-panel>
+  <div class="flex w-6" *ngIf="displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions">
+    <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
+      [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
+      [metadataTextTypes]="metadataTextTypes">
+    </app-dispaly-panel-options>
   </div>
-</p-sidebar>
+</div>

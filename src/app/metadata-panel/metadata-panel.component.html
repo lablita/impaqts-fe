@@ -1,21 +1,18 @@
-<div>
-  <div *ngIf="loading > 0" class="p-text-center">
+<span class="p-component flex flex-column">
+  <div class="flex justify-content-center">
+    <h2>{{"PAGE.CONCORDANCE.METADATA" | translate}}</h2>
+  </div>
+  <div *ngIf="loading > 0" class="text-center">
     <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
   </div>
-  <div>
-    <a class="p-shadow-7 p-component right-button-meta"
-      [ngClass]="{'right-button-meta': !isFilterOptions(), 'right-button-options': isFilterOptions() }"
-      (click)="closeSidebar()">
-      {{isFilterOptions() ? ('MENU.FILTER' | translate) : ('PAGE.CONCORDANCE.METADATA' | translate)}}</a>
-  </div>
-  <div class="p-mt-4 p-component">
+  <div class="mt-4 p-component">
     <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
   </div>
-  <p-scrollPanel [style]="{width: '100%', height: '700px'}" styleClass="custombar">
-    <div class="p-mt-1 p-ml-3 p-component">
-      <div *ngFor="let metadatum of metadata, let i = index" class="p-field p-mb-2">
+  <p-scrollPanel [style]="{width: '100%'}" styleClass="custombar">
+    <div class="mt-1 mr-3 p-component">
+      <div *ngFor="let metadatum of metadataQueryService.metadata, let i = index" class="field mb-2">
         <!-- FreeText-->
-        <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="label-size">{{metadatum.name |
+        <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="mr-3">{{metadatum.name |
           translate}}</label>
         <input *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText style="width: 200px;"
           [(ngModel)]="metadatum.selection">
@@ -33,6 +30,8 @@
       </div>
     </div>
   </p-scrollPanel>
-  <button pButton type=" button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-    [disabled]="loading" (click)="clickMakeConcordance()"></button>
-</div>
+  <span class="flex justify-content-center">
+    <button pButton type=" button" icon="pi" label="{{'RESET' | translate}}" [disabled]="loading"
+      (click)="resetMetadata()"></button>
+  </span>
+</span>
