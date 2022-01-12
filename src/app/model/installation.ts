@@ -1,11 +1,11 @@
 import { Corpus } from './corpus';
 import { Logo } from './logo';
 export class Installation {
-  id: number = 0;
-  projectName: string = '';
-  projectSubTitle: string = '';
+  id = 0;
+  projectName = '';
+  projectSubTitle = '';
   corpora: Corpus[] = [];
   logos: Logo[] = [];
-  credits: string = '';
-  copyrights: string = '';
+  credits = '';
+  copyrights = '';
 }

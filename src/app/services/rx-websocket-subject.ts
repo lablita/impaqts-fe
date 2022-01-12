@@ -1,6 +1,6 @@
-import { interval, Observable, Observer, Subject } from "rxjs";
-import { distinctUntilChanged, share, takeWhile } from "rxjs/operators";
-import { WebSocketSubject, WebSocketSubjectConfig } from "rxjs/webSocket";
+import { interval, Observable, Observer, Subject } from 'rxjs';
+import { distinctUntilChanged, share, takeWhile } from 'rxjs/operators';
+import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 
 /// we inherit from the ordinary Subject
 export class RxWebsocketSubject extends Subject<any> {
@@ -8,7 +8,7 @@ export class RxWebsocketSubject extends Subject<any> {
   public connectionStatus: Observable<any>;
 
   private reconnectionObservable: Observable<any> | null = null;
-  private wsSubjectConfig: WebSocketSubjectConfig<any>;
+  private readonly wsSubjectConfig: WebSocketSubjectConfig<any>;
   private socket: WebSocketSubject<any> | null = null;
   private connectionObserver: Observer<any> | null = null;
 
@@ -25,12 +25,11 @@ export class RxWebsocketSubject extends Subject<any> {
   }
 
   constructor(
-    private url: string,
-    private reconnectInterval: number = 5000,  /// pause between connections
-    private reconnectAttempts: number = 10,  /// number of connection attempts
-
-    private resultSelector?: (e: MessageEvent) => any,
-    private serializer?: (data: any) => string,
+    private readonly url: string,
+    private readonly reconnectInterval: number = 5000,  /// pause between connections
+    private readonly reconnectAttempts: number = 10,  /// number of connection attempts
+    private readonly resultSelector?: (e: MessageEvent) => any,
+    private readonly serializer?: (data: any) => string,
   ) {
     super();
     /// connection status
@@ -48,7 +47,7 @@ export class RxWebsocketSubject extends Subject<any> {
     /// config for WebSocketSubject
     /// except the url, here is closeObserver and openObserver to update connection status
     this.wsSubjectConfig = {
-      url: url,
+      url,
       closeObserver: {
         next: (e: CloseEvent) => {
           this.socket = null;
@@ -68,26 +67,29 @@ export class RxWebsocketSubject extends Subject<any> {
     /// we connect
     this.connect();
     /// we follow the connection status and run the reconnect while losing the connection
-    this.connectionStatus.subscribe((isConnected) => {
-      if (!this.reconnectionObservable && typeof (isConnected) == 'boolean' && !isConnected) {
-        this.reconnect();
+    this.connectionStatus.subscribe({
+      next: isConnected => {
+        if (!this.reconnectionObservable && typeof (isConnected) === 'boolean' && !isConnected) {
+          this.reconnect();
+        }
       }
     });
   }
 
   connect(): void {
     this.socket = new WebSocketSubject(this.wsSubjectConfig);
-    this.socket.subscribe(
-      (m) => {
+    this.socket.subscribe({
+      next: m => {
         this.next(m); // when receiving a message, we just send it to our Subject
       },
-      (error: Event) => {
+      error: (error: Event) => {
         if (!this.socket) {
           // in case of an error with a loss of connection, we restore it
           this.socket = null;
           this.reconnect();
         }
-      });
+      }
+    });
   }
 
   /// WebSocket Reconnect handling

@@ -3,7 +3,8 @@
     [baseZIndex]="10000">
     <iframe *ngIf="youtubeVideo" title="youtubeVideo" style="border: 0px;" width="600" height="450" [src]="videoUrl"
       allowfullscreen></iframe>
-    <iframe *ngIf="!youtubeVideo" [src]="videoUrl" width="600" height="450" frameborder="0" allowfullscreen></iframe>
+    <iframe *ngIf="!youtubeVideo" title="otherTypeVideo" [src]="videoUrl" width="600" height="450"
+      allowfullscreen></iframe>
   </p-dialog>
 </div>
 <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
@@ -12,10 +13,10 @@
   [rowsPerPageOptions]="[10,25,50]">
   <ng-template pTemplate="header">
     <tr>
-      <th style="width: 80px;"></th>
-      <th class="p-text-center" style="width: 180px;">Left</th>
-      <th class="p-text-center" style="width: 80px;">Kwic</th>
-      <th class="p-text-center" style="width: 180px;">Right</th>
+      <th style="width: 80px;" scope="col"></th>
+      <th class="p-text-center" style="width: 180px;" scope="col">Left</th>
+      <th class="p-text-center" style="width: 80px;" scope="col">Kwic</th>
+      <th class="p-text-center" style="width: 180px;" scope="col">Right</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">

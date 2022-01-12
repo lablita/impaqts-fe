@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 
 export class CorpusAttributes {
@@ -16,7 +17,7 @@ export class CorpusAttributes {
 })
 export class ViewOptionsPanelService {
 
-  private attributesByCorpus =
+  private readonly attributesByCorpus =
     [
       new CorpusAttributes('REPUBBLICA',
         [
@@ -28,8 +29,6 @@ export class ViewOptionsPanelService {
         ]
       )
     ];
-
-  constructor() { }
 
   public getAttributesByCorpus(corpus: string): KeyValueItem[] {
     const attributes = this.attributesByCorpus.find(ca => ca.corpus === corpus);

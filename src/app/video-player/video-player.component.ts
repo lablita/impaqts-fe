@@ -9,9 +9,9 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class VideoPlayerComponent implements OnInit {
 
   @Input() public videoUrl: string | null = null;
-  @Input() public autoplay: number = 0;
-  @Input() public start: number = 0;
-  @Input() public end: number = 0;
+  @Input() public autoplay = 0;
+  @Input() public start = 0;
+  @Input() public end = 0;
 
   public ytPlayerVisible = false;
   public urlComplete: SafeResourceUrl | null = null;

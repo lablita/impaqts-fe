@@ -1,14 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { TextTypesRequest } from '../model/text-types-request';
 import { MetadataQueryService } from '../services/metadata-query.service';
 
-export class subMetadatum {
-  currentSize: number = 0;
-  kwicLines: string[] = new Array<string>();
-  inProgress: boolean = false;
-  metadataValues: string[] = new Array<string>();
+export class SubMetadatum {
+  currentSize = 0;
+  kwicLines: Array<string> = Array.from<string>({ length: 0 });
+  inProgress = false;
+  metadataValues: Array<string> = Array.from<string>({ length: 0 });
 }
 
 @Component({
@@ -18,8 +17,8 @@ export class subMetadatum {
 })
 export class MetadataPanelComponent implements OnInit {
 
-  @Input() public corpus: string | null | undefined = ''
-  @Input() public title: string = ''
+  @Input() public corpus: string | null | undefined = '';
+  @Input() public title = '';
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public res: KeyValueItem[] = [];
@@ -27,21 +26,19 @@ export class MetadataPanelComponent implements OnInit {
   public selected: any;
   public loading = 0;
 
-  private textTypesRequest: TextTypesRequest = new TextTypesRequest();
-
   constructor(
     public metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
-    console.log('Metadata Panel Start')
+    console.log('Metadata Panel Start');
   }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
   }
 
-  public resetMetadata() {
+  public resetMetadata(): void {
     localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
     console.log('reset');
@@ -51,6 +48,7 @@ export class MetadataPanelComponent implements OnInit {
     return this.title === 'MENU.FILTER';
   }
 
-  public nodeSelect(event: any) {
+  public nodeSelect(event: any): void {
+    return;
   }
 }

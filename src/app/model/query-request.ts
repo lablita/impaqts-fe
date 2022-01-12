@@ -1,17 +1,17 @@
 import { QueryPattern } from "./query-pattern";
 
 export class WordListOption {
-  subcorpus: string = '';
-  searchAttribute: string = '';
-  nGrams: boolean = false;
+  subcorpus = '';
+  searchAttribute = '';
+  nGrams = false;
 }
 export class QueryRequest {
-  start: number = 0;
-  end: number = 0;
-  corpusMetadatum: string = '';
-  word: string = '';
-  corpus: string = '';
-  cql: string = '';
-  queryInCql: boolean = false;
+  start = 0;
+  end = 0;
+  corpusMetadatum = '';
+  word = '';
+  corpus = '';
+  cql = '';
+  queryInCql = false;
   queryPattern: QueryPattern = new QueryPattern();
 }

@@ -1,9 +1,8 @@
 import { STRUCT_DOC, TOKEN } from '../common/constants';
 
-
 export class QueryTag {
-  name: string = '';
-  value: string = ''
+  name = '';
+  value = ''
   structure: 'token' | 'doc';
   startsWithValue = false;
   endsWithValue = false;

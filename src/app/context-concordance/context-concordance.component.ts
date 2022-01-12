@@ -15,10 +15,8 @@ export class ContextConcordanceComponent implements OnInit {
   public selectedWindow: KeyValueItem | null = null;
   public items: KeyValueItem[] = [new KeyValueItem('ALL', 'ALL'), new KeyValueItem('ANY', 'ANY'), new KeyValueItem('NONE', 'NONE')];
   public selectedItem: KeyValueItem | null = null;
-  public tokens: KeyValueItem[] = new Array<KeyValueItem>();
+  public tokens: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public selectedToken: KeyValueItem | null = null;
-
-  constructor() { }
 
   ngOnInit(): void {
 

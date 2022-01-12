@@ -11,7 +11,7 @@ import { EmitterService } from '../utils/emitter.service';
 })
 export class CopyrightComponent implements OnInit {
 
-  public copyright: string = '';
+  public copyright = '';
 
   constructor(
     private readonly emitterService: EmitterService

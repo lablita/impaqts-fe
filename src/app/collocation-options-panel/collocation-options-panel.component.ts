@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -10,13 +10,18 @@ const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
   templateUrl: './collocation-options-panel.component.html',
   styleUrls: ['./collocation-options-panel.component.scss']
 })
-export class CollocationOptionsPanelComponent implements OnInit {
+export class CollocationOptionsPanelComponent {
 
   @Input() public showRightButton = false;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
-  public attributeList: KeyValueItem[] = [new KeyValueItem('T_SCORE', 'T_SCORE'), new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'), new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'), new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')];
+  public attributeList: KeyValueItem[] = [
+    new KeyValueItem('T_SCORE', 'T_SCORE'),
+    new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
+    new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
+    new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
+  ];
 
   constructor() {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
@@ -24,10 +29,6 @@ export class CollocationOptionsPanelComponent implements OnInit {
     this.collocationOptionsQueryRequest = collOptReq ?
       JSON.parse(collOptReq) :
       inst && inst.startup.collocationOptionsQueryRequest;
-  }
-
-  ngOnInit(): void {
-
   }
 
   public closeSidebar(): void {

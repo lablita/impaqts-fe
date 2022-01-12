@@ -2,7 +2,7 @@ export class WordListOptionsQueryRequest {
   subcoprpus: string | null;
   searchAttribute: string | null;
   useNGrams: boolean;
-  valueOf: number;
+  value: number;
   regexp: string | null;
   minFreq: number;
   maxFreq: number;
@@ -22,7 +22,7 @@ export class WordListOptionsQueryRequest {
     subcoprpus: string | null,
     searchAttribute: string | null,
     useNGrams: boolean,
-    valueOf: number,
+    value: number,
     regexp: string | null,
     minFreq: number,
     maxFreq: number,
@@ -41,7 +41,7 @@ export class WordListOptionsQueryRequest {
     this.subcoprpus = subcoprpus;
     this.searchAttribute = searchAttribute;
     this.useNGrams = useNGrams;
-    this.valueOf = valueOf;
+    this.value = value;
     this.regexp = regexp;
     this.minFreq = minFreq;
     this.maxFreq = maxFreq;
@@ -59,7 +59,8 @@ export class WordListOptionsQueryRequest {
   }
 
   public static getInstance(): WordListOptionsQueryRequest {
-    return new WordListOptionsQueryRequest(null, null, false, 0, null, 0, 0, null, null, false, null, null, null, null, 0, null, null, null);
+    return new WordListOptionsQueryRequest(null, null, false, 0, null, 0, 0, null, null,
+      false, null, null, null, null, 0, null, null, null);
   }
 
 }

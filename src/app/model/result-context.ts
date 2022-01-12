@@ -1,7 +1,7 @@
 export class ResultContext {
-  keyword: string = ''
-  before: string = '';
-  after: string = '';
+  keyword = '';
+  before = '';
+  after = '';
 
   constructor(keyword: string, before: string, after: string) {
     this.keyword = keyword;

@@ -1,4 +1,4 @@
-import { KeyValueItem } from "./key-value-item";
+import { KeyValueItem } from './key-value-item';
 
 export class FreqOptionsQueryRequest {
   freqLimitMulti: number;
@@ -31,6 +31,7 @@ export class FreqOptionsQueryRequest {
   }
 
   public static getInstance(): FreqOptionsQueryRequest {
-    return new FreqOptionsQueryRequest(0, new KeyValueItem('', ''), new KeyValueItem('', ''), false, new KeyValueItem('', ''), 0, false, new Array<KeyValueItem>());
+    return new FreqOptionsQueryRequest(0, new KeyValueItem('', ''),
+      new KeyValueItem('', ''), false, new KeyValueItem('', ''), 0, false, Array.from<KeyValueItem>({ length: 0 }));
   }
 }

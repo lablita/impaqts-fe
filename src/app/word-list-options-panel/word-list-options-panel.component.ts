@@ -25,14 +25,16 @@ class DropdownIG {
 
 export class WordListOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean = false;
-  @Input() public corpusAttributes: KeyValueItem[] | null = null
-  @Input() public textTypesAttributes: KeyValueItem[] | null = null
+  @Input() public showRightButton = false;
+  @Input() public corpusAttributes: KeyValueItem[] | null = null;
+  @Input() public textTypesAttributes: KeyValueItem[] | null = null;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
   public fileUploadedInfo: string | null = null;
-  public frequencyFigures: KeyValueItem[] = [new KeyValueItem('HIT_COUNTS', 'HIT_COUNTS'), new KeyValueItem('NON_WORDS', 'NON_WORDS'), new KeyValueItem('ARF', 'ARF')];
+  public frequencyFigures: KeyValueItem[] = [
+    new KeyValueItem('HIT_COUNTS', 'HIT_COUNTS'), new KeyValueItem('NON_WORDS', 'NON_WORDS'), new KeyValueItem('ARF', 'ARF')
+  ];
   public selectedFrequencyFigure: KeyValueItem | null = null;
   public outputTypes: KeyValueItem[] = [new KeyValueItem('SIMPLE', 'SIMPLE'), new KeyValueItem('KEYWORD', 'KEYWORD'), new KeyValueItem('CHANGE_OUT', 'CHANGE_OUT')];
   public selectedOutputType: KeyValueItem | null = null;
@@ -57,10 +59,18 @@ export class WordListOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.corpusAttributes) {
-      this.corpusAttributes.forEach(ca => { if (ca.value) { this.attributeList.push(new DropdownIG(ca.key, ca.value)); } });
+      this.corpusAttributes.forEach(ca => {
+        if (ca.value) {
+          this.attributeList.push(new DropdownIG(ca.key, ca.value));
+        }
+      });
     }
     if (this.textTypesAttributes) {
-      this.textTypesAttributes.forEach(ca => { if (ca.value) { this.textTypeList.push(new DropdownIG(ca.key, ca.value)); } });
+      this.textTypesAttributes.forEach(ca => {
+        if (ca.value) {
+          this.textTypeList.push(new DropdownIG(ca.key, ca.value));
+        }
+      });
     }
 
     this.searchAttrList.push(
@@ -98,11 +108,13 @@ export class WordListOptionsPanelComponent implements OnInit {
         JSON.parse(wordList) :
         inst && inst.startup.wordListOptionsQueryRequest;
     }
-    this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe(res => this.fileUploadedInfo = res);
+    this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe({
+      next: res => this.fileUploadedInfo = res
+    });
   }
 
   public clickWordListOption(): void {
-
+    return;
   }
 
   public onWhiteListBasicUpload(event: any): void {

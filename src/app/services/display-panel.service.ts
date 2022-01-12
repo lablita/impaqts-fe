@@ -5,8 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class DisplayPanelService {
 
-  public displayPanelOptions: boolean = false;
-  public displayPanelMetadata: boolean = false;
+  public displayPanelOptions = false;
+  public displayPanelMetadata = false;
 
-  constructor() { }
 }

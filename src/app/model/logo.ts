@@ -1,5 +1,5 @@
 export class Logo {
-  id: number = 0;
-  url: string = '';
-  position: string = '';
+  id = 0;
+  url = '';
+  position = '';
 }

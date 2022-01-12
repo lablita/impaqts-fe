@@ -5,10 +5,9 @@ import { User } from '../model/user';
   providedIn: 'root'
 })
 export class UserService {
-  private user: User = new User()
-  constructor() { }
+  private user: User = new User();
 
-  public setUser(user: User) {
+  public setUser(user: User): void {
     this.user = user;
   }
 
@@ -18,7 +17,7 @@ export class UserService {
 
   public getRole(): string {
     if (!!this.user && !!this.user.role) {
-      return this.user.role
+      return this.user.role;
     }
     return '';
   }

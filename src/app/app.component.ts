@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly emitterService: EmitterService,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private readonly document: Document
   ) {
     let lang;
     if (localStorage.getItem(INTERFACE_LANGUAGE) !== null && localStorage.getItem(INTERFACE_LANGUAGE) !== 'undefined') {
@@ -38,13 +38,17 @@ export class AppComponent implements OnInit {
       this.translateService.setDefaultLang(lang);
       this.translateService.use(lang);
     }
-    this.authService.user$.subscribe(u => {
-      if (!!u) {
-        const user: User = new User(u['name'], u['https://impaqts.eu.auth0.meta/email'], u['https://impaqts.eu.auth0.meta/role'])
-        this.userService.setUser(user);
-        this.emitterService.user.next(user)
+    this.authService.user$.subscribe(
+      {
+        next: u => {
+          if (!!u) {
+            const user: User = new User(u.name, u['https://impaqts.eu.auth0.meta/email'], u['https://impaqts.eu.auth0.meta/role']);
+            this.userService.setUser(user);
+            this.emitterService.user.next(user);
+          }
+        }
       }
-    });
+    );
   }
 
   ngOnInit(): void {

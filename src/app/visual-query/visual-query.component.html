@@ -66,15 +66,12 @@
         <p-card>
           <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
           </h3>
-
-          <!-- <app-kwic-lines-view [kwicLines]="kwicLines" [loadConcordances]="loadConcordances"></app-kwic-lines-view> -->
-
           <div class="" style="width: 150px;">
             <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
               [style]="{width: '700'}" [baseZIndex]="10000">
               <iframe *ngIf="youtubeVideo" title="youtubeVideo" style="border: 0px;" width="600" height="450"
                 [src]="videoUrl" allowfullscreen></iframe>
-              <iframe *ngIf="!youtubeVideo" [src]="videoUrl" width="600" height="450" frameborder="0"
+              <iframe *ngIf="!youtubeVideo" title="otherTypeVideo" [src]="videoUrl" width="600" height="450"
                 allowfullscreen></iframe>
             </p-dialog>
           </div>
@@ -84,10 +81,10 @@
             [rowsPerPageOptions]="[10,25,50]">
             <ng-template pTemplate="header">
               <tr>
-                <th style="width: 80px;"></th>
-                <th class="p-text-center" style="width: 180px;">Left</th>
-                <th class="p-text-center" style="width: 80px;">Kwic</th>
-                <th class="p-text-center" style="width: 180px;">Right</th>
+                <th style="width: 80px;" scope="col"></th>
+                <th class="p-text-center" style="width: 180px;" scope="col">Left</th>
+                <th class="p-text-center" style="width: 80px;" scope="col">Kwic</th>
+                <th class="p-text-center" style="width: 180px;" scope="col">Right</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
@@ -126,12 +123,4 @@
       </div>
     </p-card>
   </div>
-
-  <!-- <div class="flex w-6" *ngIf="displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions">
-    <app-dispaly-panel-options [isVisualQuery]="true" [selectedCorpus]="selectedCorpus"
-      [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [metadataTextTypes]="metadataTextTypes">
-    </app-dispaly-panel-options>
-  </div> -->
-
 </div>
