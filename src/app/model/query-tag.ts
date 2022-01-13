@@ -2,7 +2,7 @@ import { STRUCT_DOC, TOKEN } from '../common/constants';
 
 export class QueryTag {
   name = '';
-  value = ''
+  value = '';
   structure: 'token' | 'doc';
   startsWithValue = false;
   endsWithValue = false;

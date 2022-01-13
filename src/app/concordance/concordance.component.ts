@@ -182,8 +182,8 @@ export class ConcordanceComponent implements OnInit {
           this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(
             {
               next: res => {
-                this.metadataQueryService.metadata = res['md'];
-                this.endedMetadataProcess = res['ended'];
+                this.metadataQueryService.metadata = res.md;
+                this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
                   this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
                   // ordinamento position
@@ -246,18 +246,18 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public setMetadataQuery(): void {
-    //** Metadata */
+    /** Metadata */
     const textTypesRequest = new TextTypesRequest();
     this.metadataQueryService.metadata.forEach(md => {
       if (!!md.selection) {
         if (md.freeText) {
-          //freetxt
+          // freetxt
           textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
         } else if (!md.multipleChoice && md.tree && md.tree[0] && md.tree[0].children && md.tree[0].children.length > 0) {
-          //single
+          // single
           textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
         } else {
-          //multi
+          // multi
           const values: string[] = [];
           (md.selection as TreeNode[]).forEach(m => {
             if (m.label) {
@@ -269,7 +269,7 @@ export class ConcordanceComponent implements OnInit {
       }
     });
     localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(textTypesRequest));
-    //Tutto in OR
+    // Tutto in OR
     this.metadataQuery = new QueryToken();
     if (textTypesRequest.freeTexts && textTypesRequest.freeTexts.length > 0) {
       textTypesRequest.freeTexts.forEach(ft => {
@@ -370,7 +370,7 @@ export class ConcordanceComponent implements OnInit {
             this.simpleResult = this.simple;
           }
         }),
-        catchError(err => { throw err }),
+        catchError(err => { throw err; }),
         tap({
           error: err => console.error(err),
           complete: () => console.log('IMPAQTS WS disconnected')
@@ -407,7 +407,8 @@ export class ConcordanceComponent implements OnInit {
 
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+    this.resultContext = new ResultContext(kwicline.kwic,
+      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
   }
 
 
