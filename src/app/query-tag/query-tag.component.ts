@@ -12,9 +12,9 @@ import { QueryTag } from '../model/query-tag';
 export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag | null = null;
-  @Input() typeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  @Input() typeList: Array<KeyValueItem> | null = Array.from<KeyValueItem>({ length: 0 });
   @Input() metadata = false;
-  @Input() metadatumTextTypes: Array<Metadatum> = Array.from<Metadatum>({ length: 0 });
+  @Input() metadatumTextTypes: Array<Metadatum> | null = Array.from<Metadatum>({ length: 0 });
 
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
