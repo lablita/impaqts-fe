@@ -11,7 +11,7 @@ import { EmitterService } from '../utils/emitter.service';
 })
 export class CreditsComponent implements OnInit {
 
-  public credits: string = '';
+  public credits = '';
 
   constructor(
     private readonly emitterService: EmitterService

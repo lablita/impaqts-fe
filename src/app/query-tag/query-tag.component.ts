@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { KeyValueItem } from '../model/key-value-item';
-import { Metadatum } from '../model/Metadatum';
+import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
 
 @Component({
@@ -12,9 +12,9 @@ import { QueryTag } from '../model/query-tag';
 export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag | null = null;
-  @Input() typeList: KeyValueItem[] | null = new Array<KeyValueItem>();
-  @Input() metadata: boolean = false;
-  @Input() metadatumTextTypes: Metadatum[] | null = new Array<Metadatum>();
+  @Input() typeList: Array<KeyValueItem> | null = Array.from<KeyValueItem>({ length: 0 });
+  @Input() metadata = false;
+  @Input() metadatumTextTypes: Array<Metadatum> | null = Array.from<Metadatum>({ length: 0 });
 
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
@@ -37,8 +37,6 @@ export class QueryTagComponent implements OnInit {
 
   public root: Metadatum = new Metadatum();
 
-  constructor() { }
-
   ngOnInit(): void {
     if (this.metadata && this.metadatumTextTypes) {
       this.root.subMetadata = this.metadatumTextTypes;
@@ -55,6 +53,7 @@ export class QueryTagComponent implements OnInit {
   }
 
   public openTypeDialog(): void {
+    return;
   }
 
   public setTagName(event: any): void {
@@ -65,7 +64,8 @@ export class QueryTagComponent implements OnInit {
 
   public selectedNode(metadata: Metadatum): void {
     if (metadata && metadata.selection) {
-      if (this.selectedMetadata !== (metadata.selection as any).label && (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0)) {
+      if (this.selectedMetadata !== (metadata.selection as any).label &&
+        (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0)) {
         this.selectedMetadata = (metadata.selection as any).label;
       } else if (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0) {
         this.selectedMetadata = '';

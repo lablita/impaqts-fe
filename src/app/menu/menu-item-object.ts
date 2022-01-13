@@ -10,7 +10,8 @@ export class MenuItemObject implements MenuItem {
   disabled = false;
   routerLink: any;
 
-  constructor(label: string | null, icon: string | null, command: any, url: string | null,
+  constructor(
+    label: string | null, icon: string | null, command: any, url: string | null,
     items: MenuItem[] | null, expanded: boolean, disabled: boolean, routerLink: any) {
     if (label) {
       this.label = label;

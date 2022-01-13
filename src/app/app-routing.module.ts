@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@auth0/auth0-angular';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
@@ -9,7 +9,10 @@ import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { CreditsComponent } from './credits/credits.component';
 import { HasRoleGuard } from './guards/has-role.guard';
 import { MainComponent } from './main/main.component';
-import { ALL_LEMMANS, ALL_WORDS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, MENU_ALL_LEMMANS, MENU_ALL_WORDS, MENU_CONCORDANCE, MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_POC, MENU_VISUAL_QUERY, POC, VISUAL_QUERY } from './model/constants';
+import {
+  ALL_LEMMANS, ALL_WORDS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, MENU_ALL_LEMMANS,
+  MENU_ALL_WORDS, MENU_CONCORDANCE, MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_POC, MENU_VISUAL_QUERY, POC, VISUAL_QUERY
+} from './model/constants';
 import { QuerypocComponent } from './querypoc/querypoc.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 

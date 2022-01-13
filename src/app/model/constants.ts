@@ -85,7 +85,7 @@ export const ARF = 'arf';
 export const KEYWORD = 'keyword';
 export const CHANGE_OUT = 'change_out';
 
-/** SORT & FREQ*/
+/** SORT & FREQ */
 export const FIRST = 'first';
 export const SECOND = 'second';
 export const THIRD = 'third';
@@ -145,11 +145,11 @@ export const MENU_POC = 'MENU.POC';
 export const MENU_RESULT_CONCORDANCE = 'MENU.RESULT_CONCORDANCE';
 export const MENU_AS_SUBCORPUS = 'MENU.AS_SUBCORPUS'
 
-/**Route */
+/** Route */
 export const CREDITS_ROUTE = 'credits';
 export const COPYRIGHT_ROUTE = 'copyright';
 
-/**Roles */
+/** Roles */
 export const ADMIN = 'ADMIN';
 export const ADVANCEDUSER = 'ADVANCEDUSER';
 export const USER = 'USER';

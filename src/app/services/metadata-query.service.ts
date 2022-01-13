@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { Metadatum } from '../model/Metadatum';
+import { Metadatum } from '../model/metadatum';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +8,6 @@ import { Metadatum } from '../model/Metadatum';
 export class MetadataQueryService {
 
   public metadata: Metadatum[] = [];
-
-  constructor() { }
 
   public reset(): void {
     this.metadata.forEach(m => this.resetMetadatum(m));
@@ -37,7 +35,7 @@ export class MetadataQueryService {
     if ((!!metadatum.selected && metadatum.selected) || this.selectionCompiled(metadatum.selection)) {
       return true;
     } else if (!!metadatum.subMetadata && metadatum.subMetadata.length > 0) {
-      metadatum.subMetadata.forEach(m => this.compiledMetadatum(m))
+      metadatum.subMetadata.forEach(m => this.compiledMetadatum(m));
       return false;
     } else {
       return false;

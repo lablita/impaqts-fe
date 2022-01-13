@@ -163,7 +163,7 @@ const startUp2 = new Startup(
     5,
     false
   )
-)
+);
 
 export const INSTALLATION_LIST = [
   {
@@ -174,4 +174,4 @@ export const INSTALLATION_LIST = [
     index: 'due',
     startup: startUp2
   }
-]
+];

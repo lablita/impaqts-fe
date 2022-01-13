@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
@@ -12,7 +12,7 @@ import {
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
-import { Metadatum } from '../model/Metadatum';
+import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
@@ -29,13 +29,15 @@ import { MetadataUtilService } from '../utils/metadata-util.service';
   styleUrls: ['./visual-query.component.scss']
 })
 
-export class VisualQueryComponent implements OnInit, OnDestroy {
+export class VisualQueryComponent implements OnInit {
 
   public queryPattern: QueryPattern = new QueryPattern();
-  public typeListQuery: KeyValueItem[] = [new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'), new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
+  public typeListQuery: KeyValueItem[] = [
+    new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'),
+    new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
-  public metadataTextTypes: Metadatum[] = new Array<Metadatum>();
+  public metadataTextTypes: Array<Metadatum> = Array.from<Metadatum>({ length: 0 });
   public metadata: QueryToken[] = [];
 
   public installation?: Installation;
@@ -46,8 +48,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public totalResults = 0;
   public simpleResult?: string;
-  public kwicLines: KWICline[] = new Array<KWICline>();
-  public TotalKwicline?: KWICline[];
+  public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
+  public TotalKwicline?: Array<KWICline>;
 
   public loading = false;
   public res: KeyValueItem[] = [];
@@ -64,17 +66,18 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public collocationOptionsLabel = '';
   public filterOptionsLabel = '';
   public displayPanelOptions = false;
-  public metadataAttributes: KeyValueItem[] = new Array<KeyValueItem>();
-  public textTypesAttributes: KeyValueItem[] = new Array<KeyValueItem>();
+  public metadataAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public textTypesAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
 
   public resultView = false;
   public noResultFound = false;
 
   public videoUrl: SafeResourceUrl | null = null;
   public displayModal = false;
-  public youtubeVideo: boolean = true;
+  public youtubeVideo = true;
   public resultContext: ResultContext | null = null;
 
+  // FIXME: a cosa serve?
   private simple?: string;
 
   constructor(
@@ -86,8 +89,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     public displayPanelService: DisplayPanelService,
     private readonly sanitizer: DomSanitizer
   ) { }
-
-  ngOnDestroy(): void { }
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
@@ -176,7 +177,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
             metadata.sort((a, b) => a.position - b.position);
           this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0]
             .metadata.filter(md => !md.child).forEach(md => {
-              //Attributes in View Options
+              // Attributes in View Options
               if (!md.documentMetadatum) {
                 this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
               } else {
@@ -186,15 +187,16 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
-        this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(res => {
-          this.metadataTextTypes = res['md'];
-          this.enableAddMetadata = res['ended'];
-          if (this.enableAddMetadata) {
-            //ordinamento position 
-            this.metadataTextTypes.sort((a, b) => a.position - b.position);
-            this.enableSpinner = false;
-          }
-        });
+        this.metadataUtilService.createMatadataTree(
+          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(res => {
+            this.metadataTextTypes = res.md;
+            this.enableAddMetadata = res.ended;
+            if (this.enableAddMetadata) {
+              // ordinamento position
+              this.metadataTextTypes.sort((a, b) => a.position - b.position);
+              this.enableSpinner = false;
+            }
+          });
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
         this.enableSpinner = false;
@@ -205,7 +207,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.enableAddMetadata = false;
       this.enableSpinner = false;
       this.menuEmitterService.corpusSelected = false;
-      this.kwicLines = new Array<KWICline>();
+      this.kwicLines = Array.from<KWICline>({ length: 0 });
       this.metadata = [];
       this.queryPattern.tokPattern = [];
     }
@@ -246,7 +248,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
             this.simpleResult = this.simple;
           }
         }),
-        catchError(err => { throw err }),
+        catchError(err => { throw err; }),
         tap({
           error: err => console.error(err),
           complete: () => console.log('IMPAQTS WS disconnected')
@@ -280,7 +282,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext,
+      kwicline.rightContext + kwicline.rightContext);
   }
 
 }

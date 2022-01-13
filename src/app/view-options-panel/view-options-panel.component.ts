@@ -20,22 +20,22 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string | null | undefined = null;
   @Input() public showRightButton = false;
-  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
+  @Input() public corpusAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public attributeChekBox: KeyValueItem[] = [];
-  public displayAttr: KeyValueItem[] = new Array<KeyValueItem>();
+  public attributeChekBox: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public displayAttr: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedDisplayAttr: KeyValueItem | null = null;
-  public asTooltipLabel: string = '';
-  public refsUpLabel: string = '';
-  public sortGoodLabel: string = '';
-  public showGDEXLabel: string = '';
-  public iconForOneLabel: string = '';
-  public allowMultiLabel: string = '';
-  public flashCopingLabel: string = '';
-  public checkSelLinesLabel: string = '';
-  public showLinesNumLabel: string = '';
-  public shortLongRefLabel: string = '';
+  public asTooltipLabel = '';
+  public refsUpLabel = '';
+  public sortGoodLabel = '';
+  public showGDEXLabel = '';
+  public iconForOneLabel = '';
+  public allowMultiLabel = '';
+  public flashCopingLabel = '';
+  public checkSelLinesLabel = '';
+  public showLinesNumLabel = '';
+  public shortLongRefLabel = '';
 
   public viewOptionsQueryRequest: ViewOptionsQueryRequest = ViewOptionsQueryRequest.getInstance();
 
@@ -44,7 +44,7 @@ export class ViewOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("View Panel Option Start");
+    console.log('View Panel Option Start');
     const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST);
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     if (voqr) {
@@ -52,33 +52,39 @@ export class ViewOptionsPanelComponent implements OnInit {
         JSON.parse(voqr) : inst && inst.startup.viewOptionsQueryRequest;
     }
     this.corpusAttributes.forEach((attribute, index) => {
-      this.translateService.stream(attribute.value).subscribe(res => {
-        if (index === 0) {
-          this.attributeChekBox = [];
+      this.translateService.stream(attribute.value).subscribe({
+        next: res => {
+          if (index === 0) {
+            this.attributeChekBox = [];
+          }
+          this.attributeChekBox.push(new KeyValueItem(attribute.key, res));
         }
-        this.attributeChekBox.push(new KeyValueItem(attribute.key, res));
       });
     });
 
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN').subscribe(res => {
-      this.displayAttr = [];
-      this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, res));
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN').subscribe({
+      next: res => {
+        this.displayAttr = [];
+        this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, res));
+      }
     });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN').subscribe(res => {
-      this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, res));
-      this.selectedDisplayAttr = this.displayAttr.filter(da => da.key === this.viewOptionsQueryRequest.displayAttr)[0];
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN').subscribe({
+      next: res => {
+        this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, res));
+        this.selectedDisplayAttr = this.displayAttr.filter(da => da.key === this.viewOptionsQueryRequest.displayAttr)[0];
+      }
     });
 
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe(res => this.asTooltipLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe(res => this.refsUpLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe(res => this.sortGoodLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe(res => this.showGDEXLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ICON_FOR').subscribe(res => this.iconForOneLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ALLOW_MULT').subscribe(res => this.allowMultiLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.COPYING_CLIP').subscribe(res => this.flashCopingLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.CHECK_SEL_LINES').subscribe(res => this.checkSelLinesLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHOW_LINE').subscribe(res => this.showLinesNumLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHORT_LONG').subscribe(res => this.shortLongRefLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe({ next: res => this.asTooltipLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe({ next: res => this.refsUpLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe({ next: res => this.sortGoodLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe({ next: res => this.showGDEXLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ICON_FOR').subscribe({ next: res => this.iconForOneLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ALLOW_MULT').subscribe({ next: res => this.allowMultiLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.COPYING_CLIP').subscribe({ next: res => this.flashCopingLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.CHECK_SEL_LINES').subscribe({ next: res => this.checkSelLinesLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHOW_LINE').subscribe({ next: res => this.showLinesNumLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHORT_LONG').subscribe({ next: res => this.shortLongRefLabel = res });
   }
 
   public clickChangeViewOption(): void {
@@ -90,11 +96,11 @@ export class ViewOptionsPanelComponent implements OnInit {
   }
 
   public clickKwic(): void {
-
+    return;
   }
 
   public clickSentence(): void {
-
+    return;
   }
 
 }

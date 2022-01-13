@@ -31,11 +31,11 @@ export class MenuComponent implements OnInit {
   public items: MenuItemObject[] = [];
   public urlBottomLeft: string | null = null;
 
-  private menuConcordanceStr: string[] = [CONCORDANCE, CORPUS_INFO, VISUAL_QUERY];
-  private menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
-  private menuResultConcordanceStr: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
+  private readonly menuConcordanceStr: string[] = [CONCORDANCE, CORPUS_INFO, VISUAL_QUERY];
+  private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
+  private readonly menuResultConcordanceStr: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
 
-  private role: string = '';
+  private role = '';
   private menuByRoleList: RoleMenu[] = [];
   private roles: string[] = [];
   private menuNoRole: string[] = [];
@@ -50,8 +50,10 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.emitterService.user.subscribe(user => {
-      this.user = user;
+    this.emitterService.user.subscribe({
+      next: user => {
+        this.user = user;
+      }
     });
 
     this.role = this.userService.getRole();
@@ -71,37 +73,40 @@ export class MenuComponent implements OnInit {
     }
 
     this.getMenuItems(CONCORDANCE, this.role);
-    this.menuEmitterService.menuEvent$.subscribe((event: MenuEvent) => {
-      if (event && event.item) {
-        this.getMenuItems(event.item, this.role);
-      }
-      if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
-        this.getMenuItems(RESULT_CONCORDANCE, this.role);
+    this.menuEmitterService.menuEvent$.subscribe({
+      next: (event: MenuEvent) => {
+        if (event && event.item) {
+          this.getMenuItems(event.item, this.role);
+        }
+        if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
+          this.getMenuItems(RESULT_CONCORDANCE, this.role);
+        }
       }
     });
   }
 
   private getVoiceMenu(routesRole: string[], routesPage: string[]): void {
-    this.translateService.stream(CONCORDANCE).subscribe(res => {
-      //unisco le rotte dell'utente con quelle della pagina visitata
-      const routeNoRole = this.getRoutesByMenu(this.menuNoRole, this.menuRoutes);
-      let routes = routeNoRole.concat(routesRole.concat(routesPage));
-      routes = [...new Set(routes)];
-      const menuItems: MenuItemObject[] = [];
-      routes.forEach(route => {
-        const menuItem = this.getMenuByRoute(route, this.menuRoutes);
-        menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
-          this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
-        }, null, null, false, false, route));
+    this.translateService.stream(CONCORDANCE).subscribe({
+      next: res => {
+        // unisco le rotte dell'utente con quelle della pagina visitata
+        const routeNoRole = this.getRoutesByMenu(this.menuNoRole, this.menuRoutes);
+        let routes = routeNoRole.concat(routesRole.concat(routesPage));
+        routes = [...new Set(routes)];
+        const menuItems: MenuItemObject[] = [];
+        routes.forEach(route => {
+          const menuItem = this.getMenuByRoute(route, this.menuRoutes);
+          menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
+            this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
+          }, null, null, false, false, route));
+        }
+        );
+        this.items = menuItems;
       }
-      );
-      this.items = menuItems;
     });
   }
 
   private getMenuItems(page: string, role: string): void {
-    let menuByRole: string[] | undefined;
-    menuByRole = this.userService.getRole().length > 0 ? this.getMenuByRole(this.userService.getRole()) : []
+    const menuByRole = this.userService.getRole().length > 0 ? this.getMenuByRole(this.userService.getRole()) : [];
     if (menuByRole !== undefined) {
       const routesRole = this.getRoutesByMenu(menuByRole !== undefined ? menuByRole : [], this.menuRoutes);
       switch (page) {
@@ -111,7 +116,6 @@ export class MenuComponent implements OnInit {
         case ALL_LEMMANS:
           this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuWordListStr);
           break;
-
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
         case VIEW_OPTIONS:
@@ -144,7 +148,7 @@ export class MenuComponent implements OnInit {
       if (route !== undefined) {
         result.push(route);
       }
-    })
+    });
     return result;
   }
 

@@ -2,10 +2,10 @@ import { TreeNode } from 'primeng/api';
 import { Corpus } from './corpus';
 
 export class Metadatum {
-  id: number = 0;
-  name: string = ''
+  id = 0;
+  name = '';
   documentMetadatum = false;
-  position: number = 0;
+  position = 0;
   subMetadata: Metadatum[] = [];
   parentMetadata: Metadatum | null = null;
   Metadatum: Metadatum | null = null;

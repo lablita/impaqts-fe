@@ -11,7 +11,7 @@ import { UtilService } from '../utils/util.service';
   providedIn: 'root'
 })
 export class AppInitializerService {
-  private installationName: string;
+  private readonly installationName: string;
 
   constructor(
     private readonly http: HttpClient,

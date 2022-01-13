@@ -22,7 +22,7 @@ export class RightComponent implements OnInit {
   private panelMetaOn = false;
   private panelOptionOn = false;
 
-  private routesHidden = [CORPUS_INFO, ALL_LEMMANS, CREDITS, COPYRIGHT, CONCORDANCE]
+  private readonly routesHidden = [CORPUS_INFO, ALL_LEMMANS, CREDITS, COPYRIGHT, CONCORDANCE];
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -32,13 +32,9 @@ export class RightComponent implements OnInit {
 
   ngOnInit(): void {
     this.emitterService.clickLabel.subscribe((event: KeyValueItem) => {
-      if (this.routesHidden.indexOf(event.key) >= 0) {
+      if (this.routesHidden.indexOf(event.key) >= 0 || this.emitterService.pageMenu === VISUAL_QUERY) {
         this.hideMetadataLabel = true;
         this.hideOptionsLabel = true;
-      } else if (this.emitterService.pageMenu === VISUAL_QUERY) {
-        this.hideMetadataLabel = true;
-        this.hideOptionsLabel = true;
-        // this.hideOptionsLabel = false;
       } else {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
@@ -47,9 +43,9 @@ export class RightComponent implements OnInit {
         this.titleLabel = event.key;
       }
     });
-    this.emitterService.clickLabelOptionsDisabled.subscribe((event: boolean) => this.labelOptionsDisabled = event);
-    this.emitterService.clickLabelMetadataDisabled.subscribe((event: boolean) => this.labelMetadataDisabled = event);
-    this.emitterService.spinnerMetadata.subscribe((event: boolean) => this.spinnerMetadata = event);
+    this.emitterService.clickLabelOptionsDisabled.subscribe({ next: (event: boolean) => this.labelOptionsDisabled = event });
+    this.emitterService.clickLabelMetadataDisabled.subscribe({ next: (event: boolean) => this.labelMetadataDisabled = event });
+    this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => this.spinnerMetadata = event });
   }
 
   public openSidebarOptions(): void {

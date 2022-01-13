@@ -33,9 +33,12 @@ export class TopComponent {
 
   private init(): void {
     this.selectedLang = this.translateService.currentLang;
-    this.emitterService.user.subscribe(user => {
-      this.authLabel = !!user.role ? LOGOUT : LOGIN;
-    })
+    this.emitterService.user.subscribe(
+      {
+        next: user => {
+          this.authLabel = !!user.role ? LOGOUT : LOGIN;
+        }
+      });
 
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
@@ -52,7 +55,9 @@ export class TopComponent {
     }
     this.selectedLanguage = this.languages.filter(lang => lang.key === localStorage.getItem(INTERFACE_LANGUAGE))[0];
     if (!this.selectedLanguage) {
-      this.selectedLanguage = new KeyValueItem(this.translateService.defaultLang.toLowerCase(), this.translateService.defaultLang.toUpperCase());
+      this.selectedLanguage = new KeyValueItem(
+        this.translateService.defaultLang.toLowerCase(),
+        this.translateService.defaultLang.toUpperCase());
     }
   }
 
@@ -65,7 +70,7 @@ export class TopComponent {
 
   public loginLogout(): void {
     if (this.authLabel === LOGOUT) {
-      this.logout()
+      this.logout();
     } else {
       this.loginWithRedirect();
     }

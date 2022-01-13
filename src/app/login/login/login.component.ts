@@ -11,7 +11,7 @@ import { EmitterService } from 'src/app/utils/emitter.service';
 })
 export class LoginComponent {
 
-  public auth: boolean = false;
+  public auth = false;
   public role: string | null | undefined = null;
   public user: User = new User();
 
@@ -23,8 +23,10 @@ export class LoginComponent {
   }
 
   private init(): void {
-    this.emitterService.user.subscribe(user => {
-      this.role = user.role;
+    this.emitterService.user.subscribe({
+      next: user => {
+        this.role = user.role;
+      }
     });
   }
 

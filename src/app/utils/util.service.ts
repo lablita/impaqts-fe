@@ -12,15 +12,17 @@ export class UtilService implements OnDestroy {
 
   public changeContentLanguage: Subject<string> = new Subject<string>();
 
-  private contentLanguageSet: string = '';
+  private contentLanguageSet = '';
   private readonly fallback = 'eng';
 
   constructor(
     private readonly translateService: TranslateService,
     private readonly router: Router,
   ) {
-    this.changeContentLanguage.subscribe(lang => {
-      this.setContentLanguage(lang);
+    this.changeContentLanguage.subscribe({
+      next: lang => {
+        this.setContentLanguage(lang);
+      }
     });
   }
 
@@ -70,7 +72,7 @@ export class UtilService implements OnDestroy {
     this.notifyErrorTranslation('AUTHORIZATION_ERROR');
   }
 
-  public isArray(obj: any) {
+  public isArray(obj: any): boolean {
     return Array.isArray(obj);
   }
 
@@ -106,14 +108,16 @@ export class UtilService implements OnDestroy {
 
   public notifyErrorTranslation(translation: string): void {
     this.translateService.stream(translation)
-      .subscribe((message: string) => this.notifyError(message));
+      .subscribe({
+        next: (message: string) => this.notifyError(message)
+      });
   }
 
   public notifySuccessTranslation(translation: string): void {
     this.translateService.stream(translation)
-      .subscribe((message: string) =>
-        console.log(message)
-      );
+      .subscribe({
+        next: (message: string) => console.log(message)
+      });
   }
 
   public setContentLanguage(language: string): void {

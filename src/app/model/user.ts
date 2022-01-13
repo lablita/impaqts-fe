@@ -1,9 +1,10 @@
+type NullableString = string | null | undefined;
 export class User {
-  name: string | null | undefined = null;
-  email: string | null | undefined = null;
-  role: string | null | undefined = null;
+  name: NullableString = null;
+  email: NullableString = null;
+  role: NullableString = null;
 
-  constructor(name?: string | null | undefined, email?: string | null | undefined, role?: string | null | undefined) {
+  constructor(name?: NullableString, email?: NullableString, role?: NullableString) {
     this.name = name;
     this.email = email;
     this.role = role;

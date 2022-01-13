@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { Metadatum } from '../model/Metadatum';
+import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 
@@ -28,9 +28,6 @@ export class QueryTokenComponent {
   public metaSel: KeyValueItem | null = null;
 
   public repeat = false;
-
-  constructor() {
-  }
 
   public addTag(andTag: Array<QueryTag>): void {
     if (this.token) {
@@ -69,10 +66,20 @@ export class QueryTokenComponent {
         this.repeat = !this.repeat;
       }
     }
+    if (this.optionsSel.length > 0 && this.token) {
+      this.token.sentenceEnd = this.token.sentenceStart = false;
+      this.optionsSel.forEach(op => {
+        if (op === 'START' && this.token) {
+          this.token.sentenceStart = true;
+        } else if (op === 'END' && this.token) {
+          this.token.sentenceEnd = true;
+        }
+      });
+    }
   }
 
   public setMeta(): void {
-
+    return;
   }
 
 }

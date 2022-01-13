@@ -14,8 +14,8 @@ const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 })
 export class SortOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean = false;
-  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
+  @Input() public showRightButton = false;
+  @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public sortOptionsQueryRequest: SortOptionsQueryRequest | null = null;
@@ -23,19 +23,20 @@ export class SortOptionsPanelComponent implements OnInit {
   public attributeList: KeyValueItem[] = [];
 
   public selectedMultiAttribute: KeyValueItem[] = [new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD')];
-  public sortKeys: KeyValueItem[] = [new KeyValueItem('LEFT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT'), new KeyValueItem('NODE', 'MENU.NODE'), new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
+  public sortKeys: KeyValueItem[] = [new KeyValueItem('LEFT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT'),
+  new KeyValueItem('NODE', 'MENU.NODE'),
+  new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
   public selectedSortKey: KeyValueItem | null = null;
-  public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'), new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+  public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
+  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
   public selectedLevel: KeyValueItem | null = null;
-  public positionList: KeyValueItem[] = new Array<KeyValueItem>();
-  public selectedPosition: KeyValueItem[] = new Array<KeyValueItem>();
-  public ignoreCase: boolean[] = new Array<boolean>();
-  public backward: boolean[] = new Array<boolean>();
+  public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
+  public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
 
-  constructor() { }
 
   ngOnInit(): void {
-
     this.positionList = [
       new KeyValueItem(L3, L3),
       new KeyValueItem(L2, L2),
@@ -64,7 +65,8 @@ export class SortOptionsPanelComponent implements OnInit {
       inst && inst.startup.sortOptionsQueryRequest;
 
     if (this.sortOptionsQueryRequest) {
-      this.selectedSortKey = this.sortKeys.filter(sk => this.sortOptionsQueryRequest && sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
+      this.selectedSortKey = this.sortKeys.filter(sk => this.sortOptionsQueryRequest &&
+        sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
       this.selectedLevel = this.levels.filter(l => this.sortOptionsQueryRequest && l.key === this.sortOptionsQueryRequest.level.key)[0];
       if (!!this.selectedLevel) {
         const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
@@ -98,19 +100,18 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickLeft(): void {
-
+    return;
   }
 
   public clickRight(): void {
-
+    return;
   }
 
   public clickNode(): void {
-
+    return;
   }
 
   public clickShuffle(): void {
-
+    return;
   }
-
 }

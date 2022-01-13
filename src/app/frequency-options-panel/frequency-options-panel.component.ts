@@ -15,22 +15,22 @@ const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 })
 export class FrequencyOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton: boolean = false;
-  @Input() public corpusAttributes: KeyValueItem[] = new Array<KeyValueItem>();
+  @Input() public showRightButton = false;
+  @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public freqOptionsQueryRequest: FreqOptionsQueryRequest = FreqOptionsQueryRequest.getInstance();
 
-  public attributeList: KeyValueItem[] = [];
-  public levels: KeyValueItem[] = new Array<KeyValueItem>();
+  public attributeList: Array<KeyValueItem> = [];
+  public levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedLevel: KeyValueItem | null = null;
   public selectedAttribute: KeyValueItem | null = null;
-  public selectedMultiAttribute: KeyValueItem[] = new Array<KeyValueItem>();
-  public ignoreCase: boolean[] = new Array<boolean>();
-  public positionList: KeyValueItem[] = new Array<KeyValueItem>();
-  public selectedPosition: KeyValueItem[] = new Array<KeyValueItem>();
-  public ignoreCaseLabel: string = '';
-  public includeCatLabel: string = ''
+  public selectedMultiAttribute: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
+  public positionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public selectedPosition: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public ignoreCaseLabel = '';
+  public includeCatLabel = ''
 
   constructor(
     private readonly translateService: TranslateService
@@ -68,30 +68,36 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       new KeyValueItem(NODE, NODE)
     ];
 
-    this.translateService.stream(CONCORDANCE_WORD).subscribe(res => {
-      this.selectedMultiAttribute = [];
-      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-      this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+    this.translateService.stream(CONCORDANCE_WORD).subscribe({
+      next: res => {
+        this.selectedMultiAttribute = [];
+        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
+      }
     });
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT').subscribe(res => this.includeCatLabel = res);
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE').subscribe(res => this.ignoreCaseLabel = res);
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT').subscribe({ next: res => this.includeCatLabel = res });
+    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE').subscribe({ next: res => this.ignoreCaseLabel = res });
 
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL').subscribe(res => {
-      this.levels = [];
-      this.levels.push(new KeyValueItem(FIRST, res));
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL').subscribe({
+      next: res => {
+        this.levels = [];
+        this.levels.push(new KeyValueItem(FIRST, res));
+      }
     });
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL').subscribe(res => this.levels.push(new KeyValueItem(SECOND, res)));
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL').subscribe(res => this.levels.push(new KeyValueItem(THIRD, res)));
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL').subscribe(res => {
-      this.levels.push(new KeyValueItem(FOURTH, res));
-      this.selectedLevel = this.levels.filter(l => l.key === this.freqOptionsQueryRequest.level.key)[0];
-      const index = this.selectedLevel.key === FIRST ? 0 :
-        (this.selectedLevel.key === SECOND ? 1 : (this.selectedLevel.key === THIRD ? 2 : 3));
-      this.selectedMultiAttribute[index] = this.freqOptionsQueryRequest.attribute;
-      this.selectedPosition[index] = this.freqOptionsQueryRequest.position;
-      this.ignoreCase[index] = this.freqOptionsQueryRequest.ignoreCase;
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL').subscribe({ next: res => this.levels.push(new KeyValueItem(SECOND, res)) });
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL').subscribe({ next: res => this.levels.push(new KeyValueItem(THIRD, res)) });
+    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL').subscribe({
+      next: res => {
+        this.levels.push(new KeyValueItem(FOURTH, res));
+        this.selectedLevel = this.levels.filter(l => l.key === this.freqOptionsQueryRequest.level.key)[0];
+        const index = this.selectedLevel.key === FIRST ? 0 :
+          (this.selectedLevel.key === SECOND ? 1 : (this.selectedLevel.key === THIRD ? 2 : 3));
+        this.selectedMultiAttribute[index] = this.freqOptionsQueryRequest.attribute;
+        this.selectedPosition[index] = this.freqOptionsQueryRequest.position;
+        this.ignoreCase[index] = this.freqOptionsQueryRequest.ignoreCase;
+      }
     });
   }
 
@@ -113,11 +119,11 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickNodeTags(): void {
-
+    return;
   }
 
   public clickNodeForms(): void {
-
+    return;
   }
 
 }

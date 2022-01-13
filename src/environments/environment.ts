@@ -3,11 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 import {
-  ADMIN, ADVANCEDUSER, ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, MENU_ALL_LEMMANS, MENU_ALL_WORDS, MENU_AS_SUBCORPUS, MENU_COLL_OPTIONS, MENU_CONCORDANCE,
-  MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_FILTER, MENU_FREQUENCY, MENU_LOGIN, MENU_RESULT_CONCORDANCE, MENU_SORT, MENU_VIEW_OPTION, MENU_VISUAL_QUERY, MENU_WORD_LIST, RESULT_CONCORDANCE, SORT, USER, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
-} from "src/app/model/constants";
+  ADMIN, ADVANCEDUSER, ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS,
+  CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY,
+  MENU_ALL_LEMMANS, MENU_ALL_WORDS, MENU_AS_SUBCORPUS, MENU_COLL_OPTIONS, MENU_CONCORDANCE,
+  MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_FILTER, MENU_FREQUENCY,
+  MENU_LOGIN, MENU_RESULT_CONCORDANCE, MENU_SORT, MENU_VIEW_OPTION, MENU_VISUAL_QUERY,
+  MENU_WORD_LIST, RESULT_CONCORDANCE, SORT, USER, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
+} from 'src/app/model/constants';
 import { KeyValueItem } from 'src/app/model/key-value-item';
-import { RoleMenu } from "src/app/model/role-menu";
+import { RoleMenu } from 'src/app/model/role-menu';
 
 
 export const environment = {
@@ -29,7 +33,6 @@ export const environment = {
   menuNoRole: [MENU_LOGIN, MENU_CONCORDANCE],
   menuRoutes: [
     new KeyValueItem(MENU_CONCORDANCE, CONCORDANCE),
-    // new KeyValueItem(MENU_POC, POC),
     new KeyValueItem(MENU_CORPUS_INFO, CORPUS_INFO),
     new KeyValueItem(MENU_ALL_WORDS, ALL_WORDS),
     new KeyValueItem(MENU_ALL_LEMMANS, ALL_LEMMANS),
@@ -47,12 +50,3 @@ export const environment = {
   ]
 };
 
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/dist/zone-error';  // Included with Angular CLI.

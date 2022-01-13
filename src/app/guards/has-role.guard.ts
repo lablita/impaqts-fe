@@ -13,8 +13,8 @@ import { RoleMenu } from '../model/role-menu';
 })
 export class HasRoleGuard implements CanActivate {
 
-  private menuByRoleList: RoleMenu[] = [];
-  private menuRoutes: KeyValueItem[] = [];
+  private readonly menuByRoleList: Array<RoleMenu>;
+  private readonly menuRoutes: Array<KeyValueItem>;
 
 
   constructor(

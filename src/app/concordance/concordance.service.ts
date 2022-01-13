@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 import { STRUCT_DOC } from '../common/constants';
 import { CONTEXT_CORPORA, CONTEXT_INSTALLATION, FIND_FAILED } from '../model/constants';
 import { Installation } from '../model/installation';
-import { Metadatum } from '../model/Metadatum';
+import { Metadatum } from '../model/metadatum';
 import { UtilService } from '../utils/util.service';
 
 
@@ -15,7 +15,7 @@ import { UtilService } from '../utils/util.service';
 })
 export class ConcordanceService {
 
-  private installationName: string;
+  private readonly installationName: string;
 
   constructor(
     private readonly http: HttpClient,

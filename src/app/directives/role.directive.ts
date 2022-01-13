@@ -8,7 +8,7 @@ import { User } from '../model/user';
 export class RoleDirective implements OnInit {
 
   @Input() requiredRole: string[] | null = null;
-  private role: string = '';
+  private role = '';
   public user: User = new User();
 
   constructor(
@@ -17,10 +17,13 @@ export class RoleDirective implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.user$.subscribe(u => {
-      this.role = !!u ? u['https://impaqts.eu.auth0.meta/role'] : '';
-      this.init();
-    })
+    this.authService.user$.subscribe(
+      {
+        next: u => {
+          this.role = !!u ? u['https://impaqts.eu.auth0.meta/role'] : '';
+          this.init();
+        }
+      })
   }
 
   private init(): void {
@@ -28,5 +31,4 @@ export class RoleDirective implements OnInit {
       this.el.nativeElement.style.display = 'none';
     }
   }
-
 }

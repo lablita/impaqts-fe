@@ -9,5 +9,4 @@ export class MenuEmitterService {
   public corpusSelected = false;
   public menuEvent$: Subject<MenuEvent> = new Subject<MenuEvent>();
 
-  constructor() { }
 }

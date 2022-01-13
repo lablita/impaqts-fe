@@ -6,7 +6,7 @@ import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { ConcordanceService } from '../concordance/concordance.service';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
-import { Metadatum } from '../model/Metadatum';
+import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 
@@ -33,13 +33,13 @@ export class MetadataUtilService {
     metadata.forEach(md => {
       if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
         md.tree = [];
-        let filteredSelections: Array<Selection> = new Array<Selection>();
+        let filteredSelections: Array<Selection> = Array.from<Selection>({ length: 0 });
         if (this.textTypesRequest && this.textTypesRequest.multiSelects) {
           filteredSelections = this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name);
         }
         const res = this.generateTree(md, (filteredSelections[0] && filteredSelections[0].values) ? filteredSelections[0].values : []);
-        md.tree.push(res['tree']);
-        md.selection = res['selections'];
+        md.tree.push(res.tree);
+        md.selection = res.selections;
       }
     });
     /** recupero freeText da localstorage */
@@ -60,7 +60,7 @@ export class MetadataUtilService {
       });
     }
     // genero albero flat per componente multiselect check box e single select
-    const obsArray = new Array<any>();
+    const obsArray = Array.from<any>({ length: 0 });
     metadata.forEach(metadatum => {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
@@ -68,7 +68,7 @@ export class MetadataUtilService {
         obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
       }
     });
-    //elimino metadata che partecimano ad alberi 
+    // elimino metadata che partecimano ad alberi
     metadata = metadata.filter(md => !md.child);
     const lenObsArray = obsArray.length;
     if (lenObsArray > 0) {
@@ -91,13 +91,14 @@ export class MetadataUtilService {
       }
     }
     if (metadatum) {
-      const selected = this.textTypesRequest && this.textTypesRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
+      const selected = this.textTypesRequest &&
+        this.textTypesRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
         this.textTypesRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] :
         (this.textTypesRequest && this.textTypesRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
           this.textTypesRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] : null);
       metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
       if (pruneTree) {
-        //collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
+        // collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
         metadata = this.linkLeafs(metadata, this.textTypesRequest);
         metadata.forEach(md => {
           if (!md.multipleChoice && !md.freeText) {
@@ -139,7 +140,7 @@ export class MetadataUtilService {
         });
       } else {
         (res.metadataValues as Array<string>).forEach(el => {
-          const e = el as string;
+          const e = el;
           const node = {
             label: e,
             selectable: true,
@@ -285,7 +286,7 @@ export class MetadataUtilService {
       }
     };
     expandBranch(meta, root, rootParent);
-    return { tree: root, selections: selections };
+    return { tree: root, selections };
   }
 
   public setUnselectable(node: TreeNode): void {

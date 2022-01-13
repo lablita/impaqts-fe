@@ -209,3 +209,6 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+### SONAR
+.scannerwork/

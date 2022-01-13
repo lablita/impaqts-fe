@@ -18,25 +18,23 @@ export class QuerypocComponent implements OnInit, OnDestroy {
   public wordFC = new FormControl('');
   private websocket: WebSocketSubject<any> | null = null;
 
-  constructor() { }
-
   ngOnInit(): void {
     const url = `${environment.queryServerProtocol}://${environment.queryServerHost}/${WS_URL}`;
     this.websocket = webSocket(url);
-    this.websocket.asObservable().subscribe(
-      resp => {
+    this.websocket.asObservable().subscribe({
+      next: resp => {
         const qr = resp as QueryResponse;
         if (qr.kwicLines.length > 0) {
           this.queryResponse = resp as QueryResponse;
         }
         this.totalResults = qr.currentSize;
       },
-      err => console.error(err),
-      () => console.log('Activiti WS disconnected')
-    );
+      error: err => console.error(err),
+      complete: () => console.log('Activiti WS disconnected')
+    });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.closeWebSocket();
   }
 
