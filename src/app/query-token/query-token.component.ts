@@ -66,6 +66,16 @@ export class QueryTokenComponent {
         this.repeat = !this.repeat;
       }
     }
+    if (this.optionsSel.length > 0 && this.token) {
+      this.token.sentenceEnd = this.token.sentenceStart = false;
+      this.optionsSel.forEach(op => {
+        if (op === 'START' && this.token) {
+          this.token.sentenceStart = true;
+        } else if (op === 'END' && this.token) {
+          this.token.sentenceEnd = true;
+        }
+      });
+    }
   }
 
   public setMeta(): void {
