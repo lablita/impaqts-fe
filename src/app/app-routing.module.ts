@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@auth0/auth0-angular';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
