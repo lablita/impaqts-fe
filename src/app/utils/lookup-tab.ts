@@ -1,5 +1,8 @@
 import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
-import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
+import {
+  FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
+  OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD
+} from '../model/constants';
 import { FilterOptionsQueryRequest } from '../model/filter-options-query.request';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';

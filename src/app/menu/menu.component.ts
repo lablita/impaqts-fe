@@ -21,7 +21,6 @@ export class MenuEvent {
   ) { }
 }
 
-
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',

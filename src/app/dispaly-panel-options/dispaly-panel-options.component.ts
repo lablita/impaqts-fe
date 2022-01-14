@@ -1,5 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { Component, Input } from '@angular/core';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { COLLOCATIONS, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -12,7 +11,7 @@ import { EmitterService } from '../utils/emitter.service';
   templateUrl: './dispaly-panel-options.component.html',
   styleUrls: ['./dispaly-panel-options.component.scss']
 })
-export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
+export class DispalyPanelOptionsComponent {
 
   @Input() isVisualQuery = false;
   @Input() selectedCorpus: KeyValueItem | null = null;
@@ -33,17 +32,25 @@ export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
   public titleOption: string | null = null;
 
   constructor(
-    private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
-    private readonly translateService: TranslateService,
-    public displayPanelService: DisplayPanelService
-  ) { }
+    public displayPanelService: DisplayPanelService,
+    private readonly menuEmitterService: MenuEmitterService
+  ) {
+    this.init();
+  }
 
   private init(): void {
+    this.titleOption = this.displayPanelService.panelItemSelected;
     this.emitterService.panelDisplayOptions.subscribe({
       next: (event: boolean) => {
         this.displayPanelService.displayPanelOptions = event;
+      }
+    });
+    this.menuEmitterService.menuEvent$.subscribe(() => {
+      if (this.displayPanelService.displayPanelOptions) {
         this.titleOption = this.displayPanelService.panelItemSelected;
+        this.displayPanelService.displayPanelOptions = true;
+        this.displayPanelService.displayPanelMetadata = false;
       }
     });
 
@@ -52,15 +59,6 @@ export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
         this.displayPanelService.displayPanelMetadata = event;
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.init();
-  }
-
-  ngOnDestroy(): void {
-    // this.emitterService.panelDisplayOptions.unsubscribe();
-    // this.emitterService.panelDisplayMetadata.unsubscribe();
   }
 
 }

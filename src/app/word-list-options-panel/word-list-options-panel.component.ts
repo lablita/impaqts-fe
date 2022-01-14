@@ -37,11 +37,13 @@ export class WordListOptionsPanelComponent implements OnInit {
   ];
   public selectedFrequencyFigure: KeyValueItem | null = null;
   public outputTypes: KeyValueItem[] = [new KeyValueItem('SIMPLE', 'SIMPLE'), new KeyValueItem('KEYWORD', 'KEYWORD'), new KeyValueItem('CHANGE_OUT', 'CHANGE_OUT')];
-  public selectedOutputType: KeyValueItem | null = null;
+  public selectedOutputType: KeyValueItem | null = new KeyValueItem('SIMPLE', 'SIMPLE');
   public subcorpusList: KeyValueItem[] = [];
   public selectedSubcorpus: KeyValueItem | null = null;
   public searchAttrList: {}[] = [];
   public selectedSearchAttr: KeyValueItem | null = null;
+  public selectedSearchAttrKeywordsFirst: KeyValueItem | null = null;
+  public selectedSearchAttrKeywordsSecond: KeyValueItem | null = null;
   public valueOfList: KeyValueItem[] = [];
   public selectedValueOf: KeyValueItem | null = null;
   public rareWordsList: KeyValueItem[] = [];

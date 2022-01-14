@@ -97,7 +97,7 @@ export class RxWebsocketSubject extends Subject<any> {
     this.reconnectionObservable = interval(this.reconnectInterval).pipe(
       takeWhile((v, index) => {
         console.log(`WS Reconnection Attempt: ${index}`);
-        return index < this.reconnectAttempts && !this.socket
+        return index < this.reconnectAttempts && !this.socket;
       }));
     this.reconnectionObservable.subscribe(
       {
