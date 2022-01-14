@@ -13,6 +13,7 @@ import {
   RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, VIEW_OPTIONS_LABEL, WORD
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
+import { Corpus } from '../model/corpus';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
@@ -40,8 +41,8 @@ export class ConcordanceComponent implements OnInit {
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
 
-  public installation?: Installation;
   /** public */
+  public installation?: Installation;
   public corpusList: KeyValueItem[] = [];
   public metadataTextTypes: Metadatum[] = [];
 
@@ -105,6 +106,7 @@ export class ConcordanceComponent implements OnInit {
   public resultContext: ResultContext | null = null;
 
   /** private */
+  private endpoint = '';
   private metadataQuery: QueryToken | null = null;
 
   constructor(
@@ -164,17 +166,20 @@ export class ConcordanceComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         const selectedCorpusKey = this.selectedCorpus.key;
         if (selectedCorpusKey) {
-          this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0].
-            metadata.sort((a, b) => a.position - b.position);
-          this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0]
-            .metadata.filter(md => !md.child).forEach(md => {
-              //Attributes in View Options
-              if (!md.documentMetadatum) {
-                this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
-              } else {
-                this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
-              }
-            });
+          const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
+          this.endpoint = corpora.endpoint;
+          this.socketService.setServerHost(this.endpoint);
+          /** Web Socket */
+          this.initWebSocket();
+          corpora.metadata.sort((a, b) => a.position - b.position);
+          corpora.metadata.filter(md => !md.child).forEach(md => {
+            //Attributes in View Options
+            if (!md.documentMetadatum) {
+              this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
+            } else {
+              this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
+            }
+          });
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
@@ -315,8 +320,6 @@ export class ConcordanceComponent implements OnInit {
       this.installation = JSON.parse(inst) as Installation;
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
-    /** Web Socket */
-    this.initWebSocket();
 
     this.queryTypeStatus = false;
     this.contextStatus = false;

@@ -6,6 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { environment } from 'src/environments/environment';
@@ -18,8 +19,11 @@ import { ContextConcordanceComponent } from './context-concordance/context-conco
 import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { CreditsComponent } from './credits/credits.component';
+import { RoleDirective } from './directives/role.directive';
+import { DispalyPanelOptionsComponent } from './dispaly-panel-options/dispaly-panel-options.component';
 import { FilterOptionsPanelComponent } from './filter-options-panel/filter-options-panel.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
+import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.component';
 import { LoginComponent } from './login/login/login.component';
 import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
@@ -27,7 +31,6 @@ import { MetadataPanelComponent } from './metadata-panel/metadata-panel.componen
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
 import { QueryTagComponent } from './query-tag/query-tag.component';
 import { QueryTokenComponent } from './query-token/query-token.component';
-import { QuerypocComponent } from './querypoc/querypoc.component';
 import { RightComponent } from './right/right.component';
 import { AppInitializerService } from './services/app-initializer.service';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
@@ -36,14 +39,9 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-import { RoleDirective } from './directives/role.directive';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.component';
-import { DispalyPanelOptionsComponent } from './dispaly-panel-options/dispaly-panel-options.component';
 @NgModule({
   declarations: [
     AppComponent,
-    QuerypocComponent,
     MainComponent,
     MenuComponent,
     TopComponent,

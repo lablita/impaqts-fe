@@ -9,9 +9,9 @@
 
 <div class="flex ml-3 w-12" *ngIf="displayPanelService.displayPanelOptions && selectedCorpus">
   <div *ngIf="selectedCorpus">
-    <app-view-options-panel #viewOptionsPanel *ngIf="titleOption && titleOption.value === viewOptionsLabel"
-      [corpus]="selectedCorpus.key" [showRightButton]="displayPanelService.displayPanelOptions"
-      [corpusAttributes]="metadataAttributes" (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+    <app-view-options-panel *ngIf="titleOption && titleOption.value === viewOptionsLabel" [corpus]="selectedCorpus.key"
+      [showRightButton]="displayPanelService.displayPanelOptions" [corpusAttributes]="metadataAttributes"
+      (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
     </app-view-options-panel>
     <app-word-list-options-panel *ngIf="titleOption && titleOption.value === wordListOptionsLabel"
       [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"

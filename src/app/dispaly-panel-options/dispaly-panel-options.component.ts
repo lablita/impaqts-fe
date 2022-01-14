@@ -45,7 +45,7 @@ export class DispalyPanelOptionsComponent {
     this.init();
   }
 
-  private init() {
+  private init(): void {
     this.menuEmitterService.menuEvent$.subscribe(
       {
         next: (event: MenuEvent) => {
@@ -108,7 +108,7 @@ export class DispalyPanelOptionsComponent {
     this.translateService.stream(MENU_FILTER).subscribe({ next: res => this.filterOptionsLabel = res });
     this.translateService.stream(VIEW_OPTIONS_LABEL).subscribe({
       next: res => {
-        this.viewOptionsLabel = res
+        this.viewOptionsLabel = res;
         this.titleOption = new KeyValueItem(VIEW_OPTIONS_LABEL, this.viewOptionsLabel);
       }
     });

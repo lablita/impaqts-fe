@@ -16,8 +16,6 @@ export const environment = {
   installation: 'uno',
   installationName: 'IMPAQTS1',
   installationUrl: 'https://impaqts.drwolf.it/impaqts-configurator',
-  queryServerProtocol: 'wss',
-  queryServerHost: 'localhost:9000',
   RECONNECT_INTERVAL: 1000, // ms
   roles: [ADMIN, ADVANCEDUSER, USER],
   menuByRoleList: [
