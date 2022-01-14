@@ -7,7 +7,7 @@ import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  INSTALLATION, SELECT_CORPUS, VIEW_OPTIONS_LABEL, VISUAL_QUERY
+  INSTALLATION, SELECT_CORPUS, VISUAL_QUERY
 } from '../model/constants';
 import { Corpus } from '../model/corpus';
 import { Installation } from '../model/installation';
@@ -100,9 +100,6 @@ export class VisualQueryComponent implements OnInit {
 
   private init(): void {
     this.resultView = false;
-    this.emitterService.pageMenu = VISUAL_QUERY;
-    this.translateService.stream(VIEW_OPTIONS_LABEL).
-      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
@@ -162,7 +159,7 @@ export class VisualQueryComponent implements OnInit {
   public dropdownCorpus(): void {
     this.resultView = false;
     this.noResultFound = false;
-    this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
+    this.emitterService.labelOptionsDisabled.emit(!this.selectedCorpus);
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;

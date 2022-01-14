@@ -10,6 +10,7 @@ import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { User } from '../model/user';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { UserService } from '../services/user.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
@@ -46,7 +47,8 @@ export class MenuComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly displayPanelService: DisplayPanelService
   ) { }
 
   ngOnInit(): void {
@@ -96,6 +98,8 @@ export class MenuComponent implements OnInit {
         routes.forEach(route => {
           const menuItem = this.getMenuByRoute(route, this.menuRoutes);
           menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
+            this.emitterService.pageMenu = route;
+            this.displayPanelService.panelItemSelected = route;
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
           }, null, null, false, false, route));
         }

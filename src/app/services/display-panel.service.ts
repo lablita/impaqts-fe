@@ -4,8 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class DisplayPanelService {
-
   public displayPanelOptions = false;
   public displayPanelMetadata = false;
-
+  public panelItemSelected: string | null = null;
 }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CORPUS_INFO } from '../model/constants';
-import { KeyValueItem } from '../model/key-value-item';
-import { EmitterService } from '../utils/emitter.service';
+import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
   selector: 'app-all-words-or-lemmas',
@@ -11,11 +10,11 @@ import { EmitterService } from '../utils/emitter.service';
 export class AllWordsOrLemmasComponent implements OnInit {
 
   constructor(
-    private readonly emitterService: EmitterService
+    private readonly displayPanelService: DisplayPanelService
   ) { }
 
   ngOnInit(): void {
-    this.emitterService.clickLabel.emit(new KeyValueItem(CORPUS_INFO, CORPUS_INFO));
+    this.displayPanelService.panelItemSelected = CORPUS_INFO;
   }
 
 }
