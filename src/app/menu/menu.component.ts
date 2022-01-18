@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
@@ -42,6 +43,8 @@ export class MenuComponent implements OnInit {
   private menuRoutes: KeyValueItem[] = [];
   public user: User = new User();
 
+  private menuEmitterServiceSubscription: Subscription | null = null;
+
   constructor(
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
@@ -74,16 +77,18 @@ export class MenuComponent implements OnInit {
     }
 
     this.getMenuItems(CONCORDANCE, this.role);
-    this.menuEmitterService.menuEvent$.subscribe({
-      next: (event: MenuEvent) => {
-        if (event && event.item) {
-          this.getMenuItems(event.item, this.role);
+    if (!this.menuEmitterServiceSubscription) {
+      this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe({
+        next: (event: MenuEvent) => {
+          if (event && event.item) {
+            this.getMenuItems(event.item, this.role);
+          }
+          if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
+            this.getMenuItems(RESULT_CONCORDANCE, this.role);
+          }
         }
-        if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
-          this.getMenuItems(RESULT_CONCORDANCE, this.role);
-        }
-      }
-    });
+      });
+    }
   }
 
   private getVoiceMenu(routesRole: string[], routesPage: string[]): void {

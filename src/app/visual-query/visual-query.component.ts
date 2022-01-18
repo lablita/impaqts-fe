@@ -159,7 +159,6 @@ export class VisualQueryComponent implements OnInit {
   public dropdownCorpus(): void {
     this.resultView = false;
     this.noResultFound = false;
-    this.emitterService.labelOptionsDisabled.emit(!this.selectedCorpus);
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;

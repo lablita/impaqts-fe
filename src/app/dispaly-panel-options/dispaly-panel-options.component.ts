@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { COLLOCATIONS, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -11,7 +12,7 @@ import { EmitterService } from '../utils/emitter.service';
   templateUrl: './dispaly-panel-options.component.html',
   styleUrls: ['./dispaly-panel-options.component.scss']
 })
-export class DispalyPanelOptionsComponent {
+export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
 
   @Input() isVisualQuery = false;
   @Input() selectedCorpus: KeyValueItem | null = null;
@@ -27,38 +28,61 @@ export class DispalyPanelOptionsComponent {
   public FILTER = FILTER;
   public FREQUENCY = FREQUENCY;
   public COLLOCATIONS = COLLOCATIONS;
-
-
   public titleOption: string | null = null;
+
+  private menuEmitterServiceSubscription: Subscription | null = null;
+  private emitterServiceOptionsSubcription: Subscription | null = null;
+  private emitterServiceMetadataSubcription: Subscription | null = null;
 
   constructor(
     private readonly emitterService: EmitterService,
     public displayPanelService: DisplayPanelService,
     private readonly menuEmitterService: MenuEmitterService
-  ) {
-    this.init();
-  }
+  ) { }
 
   private init(): void {
     this.titleOption = this.displayPanelService.panelItemSelected;
-    this.emitterService.panelDisplayOptions.subscribe({
-      next: (event: boolean) => {
-        this.displayPanelService.displayPanelOptions = event;
-      }
-    });
-    this.menuEmitterService.menuEvent$.subscribe(() => {
-      if (this.displayPanelService.displayPanelOptions) {
-        this.titleOption = this.displayPanelService.panelItemSelected;
-        this.displayPanelService.displayPanelOptions = true;
-        this.displayPanelService.displayPanelMetadata = false;
-      }
-    });
+    if (!this.emitterServiceOptionsSubcription) {
+      this.emitterServiceOptionsSubcription = this.emitterService.panelDisplayOptions.subscribe({
+        next: (event: boolean) => {
+          this.displayPanelService.displayPanelOptions = event;
+        }
+      });
+    }
+    if (!this.emitterServiceMetadataSubcription) {
+      this.emitterServiceMetadataSubcription = this.emitterService.panelDisplayMetadata.subscribe({
+        next: (event: boolean) => {
+          this.displayPanelService.displayPanelMetadata = event;
+        }
+      });
+    }
+    if (!this.menuEmitterServiceSubscription) {
+      this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe(() => {
+        if (this.displayPanelService.displayPanelOptions) {
+          this.titleOption = this.displayPanelService.panelItemSelected;
+          this.displayPanelService.displayPanelOptions = true;
+          this.displayPanelService.displayPanelMetadata = false;
+        }
+      });
+    }
+  }
 
-    this.emitterService.panelDisplayMetadata.subscribe({
-      next: (event: boolean) => {
-        this.displayPanelService.displayPanelMetadata = event;
-      }
-    });
+  ngOnInit(): void {
+    this.init();
+  }
+
+  ngOnDestroy(): void {
+    if (this.menuEmitterServiceSubscription) {
+      this.menuEmitterServiceSubscription.unsubscribe();
+    }
+    if (this.emitterServiceOptionsSubcription) {
+      this.emitterServiceOptionsSubcription.unsubscribe();
+    }
+    if (this.emitterServiceMetadataSubcription) {
+      this.emitterServiceMetadataSubcription.unsubscribe();
+    }
   }
 
 }
+
+
