@@ -21,7 +21,6 @@ import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
-import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -80,11 +79,10 @@ export class VisualQueryComponent implements OnInit {
 
   // FIXME: a cosa serve?
   private simple?: string;
-  private endpoint: string = '';
+  private endpoint = '';
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
@@ -99,6 +97,7 @@ export class VisualQueryComponent implements OnInit {
   }
 
   private init(): void {
+    this.displayPanelService.reset();
     this.resultView = false;
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {

@@ -137,7 +137,7 @@ export class ConcordanceComponent implements OnInit {
 
   public clickTextType(): void {
     this.textTypeStatus = true;
-    this.emitterService.labelMetadataDisabled.emit(!this.textTypeStatus);
+    this.displayPanelService.labelMetadataDisabled = !!this.textTypeStatus;
   }
 
   public clickClearAll(): void {
@@ -148,8 +148,8 @@ export class ConcordanceComponent implements OnInit {
     this.resultView = false;
     this.noResultFound = false;
     this.clickTextType();
-    this.emitterService.labelOptionsDisabled.emit(!this.selectedCorpus);
-    this.emitterService.labelMetadataDisabled.emit(true);
+    this.displayPanelService.labelOptionsDisabled = !this.selectedCorpus;
+    this.displayPanelService.labelMetadataDisabled = true;
     if (this.selectedCorpus) {
       this.displayPanelMetadata = false;
       this.displayPanelOptions = false;
@@ -185,7 +185,7 @@ export class ConcordanceComponent implements OnInit {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  this.emitterService.labelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+                  this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
                   this.emitterService.spinnerMetadata.emit(false);
@@ -195,7 +195,7 @@ export class ConcordanceComponent implements OnInit {
         }
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-        this.emitterService.labelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+        this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
         this.emitterService.spinnerMetadata.emit(false);
         this.endedMetadataProcess = true;
       }

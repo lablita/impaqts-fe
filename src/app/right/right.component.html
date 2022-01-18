@@ -1,5 +1,6 @@
 <a *ngIf="!hideMetadataLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button disabled"
-  style="top: 200px; z-index: 999;" (click)="openSidebarMetadata()" [ngClass]="{'disabled': labelMetadataDisabled}">
+  style="top: 200px; z-index: 999;" (click)="openSidebarMetadata()"
+  [ngClass]="{'disabled': displayPanelService.labelMetadataDisabled}">
   <div class="flex align-items-center">
     <div>
       <fa-icon *ngIf="checkMetadata()" style="font-size: large" [icon]="faCheck"></fa-icon>
@@ -13,4 +14,4 @@
 
 <a *ngIf="!hideOptionsLabel" p-button class="p-shadow-7 p-component right-button disabled"
   style="top: 276px; z-index:999;" (click)="openSidebarOptions()"
-  [ngClass]="{'disabled': labelOptionsDisabled}">{{titleLabel | translate}}</a>
+  [ngClass]="{'disabled': displayPanelService.labelOptionsDisabled}">{{titleLabel | translate}}</a>

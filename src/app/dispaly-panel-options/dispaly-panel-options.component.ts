@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
-import { COLLOCATIONS, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
+import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { DisplayPanelService } from '../services/display-panel.service';
@@ -41,6 +41,7 @@ export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
   ) { }
 
   private init(): void {
+    this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
     this.titleOption = this.displayPanelService.panelItemSelected;
     if (!this.emitterServiceOptionsSubcription) {
       this.emitterServiceOptionsSubcription = this.emitterService.panelDisplayOptions.subscribe({

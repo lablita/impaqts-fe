@@ -29,8 +29,6 @@ const menuToPanelLabel: KeyValueItem[] = [
 export class RightComponent implements OnInit {
   public titleLabel = '';
   public faCheck = faCheck;
-  public labelOptionsDisabled = true;
-  public labelMetadataDisabled = true;
   public hideMetadataLabel = false;
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
@@ -63,14 +61,13 @@ export class RightComponent implements OnInit {
         this.hideOptionsLabel = true;
       }
     });
-    this.emitterService.labelOptionsDisabled.subscribe({ next: (event: boolean) => this.labelOptionsDisabled = event });
-    this.emitterService.labelMetadataDisabled.subscribe({ next: (event: boolean) => this.labelMetadataDisabled = event });
     this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => this.spinnerMetadata = event });
   }
 
   public openSidebarOptions(): void {
     this.panelOptionOn = !this.panelOptionOn;
-    this.labelMetadataDisabled = this.panelOptionOn;
+    this.displayPanelService.labelMetadataDisabled = this.panelOptionOn;
+    this.displayPanelService.labelOptionsDisabled = !this.panelOptionOn;
     this.displayPanelService.displayPanelOptions = this.panelOptionOn;
     this.displayPanelService.panelItemSelected = this.titleOption;
     this.emitterService.panelDisplayOptions.emit(this.panelOptionOn);
@@ -78,7 +75,7 @@ export class RightComponent implements OnInit {
 
   public openSidebarMetadata(): void {
     this.panelMetaOn = !this.panelMetaOn;
-    this.labelOptionsDisabled = this.panelMetaOn;
+    this.displayPanelService.labelOptionsDisabled = this.panelMetaOn;
     this.displayPanelService.displayPanelMetadata = this.panelMetaOn;
     this.emitterService.panelDisplayMetadata.emit(this.panelMetaOn);
   }
