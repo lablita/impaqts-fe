@@ -35,6 +35,16 @@ export class VisualQueryComponent implements OnInit {
   public typeListQuery: KeyValueItem[] = [
     new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'),
     new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
+  public actionList: KeyValueItem[] = [
+    new KeyValueItem('IS', 'IS'),
+    new KeyValueItem('IS_NOT', 'IS_NOT'),
+    new KeyValueItem('BEGINS', 'BEGINS'),
+    new KeyValueItem('CONTAINS', 'CONTAINS'),
+    new KeyValueItem('ENDS', 'ENDS'),
+    new KeyValueItem('REGEXP', 'REGEXP'),
+    new KeyValueItem('NOT_REG', 'NOT_REG')];
+  public defaultType: KeyValueItem = new KeyValueItem('word', 'word');
+  public defaulAction: KeyValueItem = new KeyValueItem('IS', 'IS');
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadataTextTypes: Array<Metadatum> = Array.from<Metadatum>({ length: 0 });
