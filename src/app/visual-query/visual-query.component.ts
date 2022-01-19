@@ -225,14 +225,8 @@ export class VisualQueryComponent implements OnInit {
     return this.metadataTextTypes;
   }
 
-  public queryTokenOK(): boolean {
-    let result = false;
-    this.queryPattern.tokPattern.forEach(pt => pt.tags.forEach(tg => tg.forEach(t => {
-      if (t && t.name && t.name.length) {
-        result = true;
-      }
-    })));
-    return result;
+  public atLeastOneToken(): boolean {
+    return this.queryPattern.tokPattern.length > 0;
   }
 
   private initWebSocket(): void {

@@ -28,12 +28,21 @@ export class QueryTagComponent implements OnInit {
 
   public action: KeyValueItem | null = null;
   public tagName: KeyValueItem | null = null;
+  public caseSensitive: string | null = null;
+
+  public caseList: Array<string> = Array.from<string>({ length: 0 });
 
   public root: Metadatum = new Metadatum();
 
   ngOnInit(): void {
     this.action = this.defaultAction;
     this.tagName = this.defaultType;
+    this.caseList = ['Aa', 'aa'];
+    this.caseSensitive = 'Aa';
+    if (this.defaultType && this.tag) {
+      this.tag.name = this.defaultType.key;
+      this.tag.matchCase = true;
+    }
     if (this.metadata && this.metadatumTextTypes) {
       this.root.subMetadata = this.metadatumTextTypes;
       this.metadatumTextTypes.forEach(md => {
@@ -123,6 +132,12 @@ export class QueryTagComponent implements OnInit {
           this.tag.matchCase = false;
           break;
       }
+    }
+  }
+
+  public setMatchCase() {
+    if (this.tag) {
+      this.tag.matchCase = this.caseSensitive === 'Aa';
     }
   }
 
