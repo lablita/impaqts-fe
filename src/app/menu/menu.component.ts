@@ -34,7 +34,7 @@ export class MenuComponent implements OnInit {
 
   private readonly menuConcordanceStr: string[] = [CONCORDANCE, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
-  private readonly menuResultConcordanceStr: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
+  private readonly menuDisplayPanel: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
@@ -104,6 +104,7 @@ export class MenuComponent implements OnInit {
           menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
             this.emitterService.pageMenu = route;
             this.displayPanelService.panelItemSelected = route;
+            this.displayPanelService.displayPanelOptions = this.menuDisplayPanel.filter(item => item === route).length > 0;
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
           }, null, null, false, false, route));
         }
@@ -132,7 +133,7 @@ export class MenuComponent implements OnInit {
         case FILTER:
         case FREQUENCY:
         case COLLOCATIONS:
-          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuResultConcordanceStr);
+          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuDisplayPanel);
           break;
 
         default:
