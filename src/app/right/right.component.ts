@@ -33,8 +33,8 @@ export class RightComponent implements OnInit {
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
 
-  private panelMetaOn = false;
-  private panelOptionOn = false;
+  private panelMetaOn: boolean | null = null;
+  private panelOptionOn: boolean | null = null;
   private titleOption: string | null = null;
 
   constructor(
@@ -45,6 +45,8 @@ export class RightComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.panelMetaOn = false;
+    this.panelOptionOn = false;
     this.menuEmitterService.menuEvent$.subscribe(() => {
       this.titleOption = this.displayPanelService.panelItemSelected ? this.displayPanelService.panelItemSelected : VIEW_OPTIONS;
       if (this.emitterService.pageMenu === CONCORDANCE

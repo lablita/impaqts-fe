@@ -44,7 +44,6 @@ export class ViewOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('View Panel Option Start');
     const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST);
     const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     if (voqr) {
