@@ -71,8 +71,9 @@
     <div *ngFor="let level of levels, let i = index" class="field-checkbox" class="d-inline">
       <div class="col">
         <div class="mb-4 ml-2">
-          <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
-          </p-radioButton>
+          <p-checkbox [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevels"
+            (onChange)="multilevelCheckBoxManager(i)" [disabled]="disableMultilevelChechbox[i]">
+          </p-checkbox>
           <label [for]="level.key"
             class="mr-2 ml-1">{{'PAGE.CONCORDANCE.SORT_OPTIONS.' + level.value | translate}}</label>
         </div>
