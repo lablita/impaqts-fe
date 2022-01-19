@@ -25,10 +25,15 @@
           </p-dropdown>
         </div>
       </div>
-      <div *ngIf="!metadata && tag">
-        <input class="mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
-          [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
-        <label [for]="'tag'" class="label-size-enlarged">Aa</label>
+      <div *ngIf="!metadata && tag" class="grid">
+        <div class="col">
+          <input class="mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
+            [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
+        </div>
+        <div class="col" pTooltip="Case sensitive(Aa) / insensitive(aa)" tooltip>
+          <p-selectButton [options]="caseList" [(ngModel)]="caseSensitive" (onChange)="setMatchCase()">
+          </p-selectButton>
+        </div>
       </div>
       <div class="grid" *ngIf="metadata && tag">
         <div class="col">

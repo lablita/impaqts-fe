@@ -6,11 +6,11 @@ export class SortOptionsQueryRequest {
   numberTokens: number;
   ignoreCase: boolean;
   backward: boolean;
-  level: KeyValueItem;
-  attributeMulti: KeyValueItem;
-  ignoreCaseMulti: boolean;
-  backwardMulti: boolean;
-  position: KeyValueItem;
+  levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  attributeMulti: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  ignoreCaseMulti: Array<boolean> = Array.from<boolean>({ length: 0 });
+  backwardMulti: Array<boolean> = Array.from<boolean>({ length: 0 });
+  position: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
 
   constructor(
     attribute: KeyValueItem,
@@ -18,18 +18,18 @@ export class SortOptionsQueryRequest {
     numberTokens: number,
     ignoreCase: boolean,
     backward: boolean,
-    level: KeyValueItem,
-    attributeMulti: KeyValueItem,
-    ignoreCaseMulti: boolean,
-    backwardMulti: boolean,
-    position: KeyValueItem,
+    levels: Array<KeyValueItem>,
+    attributeMulti: Array<KeyValueItem>,
+    ignoreCaseMulti: Array<boolean>,
+    backwardMulti: Array<boolean>,
+    position: Array<KeyValueItem>,
   ) {
     this.attribute = attribute;
     this.sortKey = sortKey;
     this.numberTokens = numberTokens;
     this.ignoreCase = ignoreCase;
     this.backward = backward;
-    this.level = level;
+    this.levels = levels;
     this.attributeMulti = attributeMulti;
     this.ignoreCaseMulti = ignoreCaseMulti;
     this.backwardMulti = backwardMulti;

@@ -13,8 +13,11 @@ import { QueryToken } from '../model/query-token';
 export class QueryTokenComponent {
 
   @Input() token: QueryToken | null = null;
-  @Input() typeList: KeyValueItem[] | null = null;
-  @Input() metaList: KeyValueItem[] | null = null;
+  @Input() typeList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() defaultType: KeyValueItem | null = null;
+  @Input() actionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() defaultAction: KeyValueItem | null = null;
+  @Input() metaList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Input() option = false;
   @Input() metadata = false;
   @Input() metadatumTextTypes: Metadatum[] | null = null;

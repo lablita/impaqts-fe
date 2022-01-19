@@ -6,8 +6,9 @@
   <ng-container *ngIf="token">
     <div *ngFor="let andTag of token.tags" class="mb-3" style="background-color: bisque;">
       <div *ngFor="let tag of andTag" class="mb-1">
-        <app-query-tag [tag]="tag" [typeList]="typeList" [metadatumTextTypes]="metadatumTextTypes"
-          (delete)="deleteTag(tag, andTag)" [metadata]="metadata">
+        <app-query-tag [tag]="tag" [typeList]="typeList" [defaultType]="defaultType" [actionList]="actionList"
+          [defaultAction]="defaultAction" [metadatumTextTypes]="metadatumTextTypes" (delete)="deleteTag(tag, andTag)"
+          [metadata]="metadata">
         </app-query-tag>
       </div>
       <div class="ml-1">

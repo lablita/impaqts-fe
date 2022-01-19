@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
@@ -10,6 +11,7 @@ import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { User } from '../model/user';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { UserService } from '../services/user.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
@@ -19,7 +21,6 @@ export class MenuEvent {
     public item: string,
   ) { }
 }
-
 
 @Component({
   selector: 'app-menu',
@@ -33,7 +34,7 @@ export class MenuComponent implements OnInit {
 
   private readonly menuConcordanceStr: string[] = [CONCORDANCE, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
-  private readonly menuResultConcordanceStr: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
+  private readonly menuDisplayPanel: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
@@ -42,11 +43,14 @@ export class MenuComponent implements OnInit {
   private menuRoutes: KeyValueItem[] = [];
   public user: User = new User();
 
+  private menuEmitterServiceSubscription: Subscription | null = null;
+
   constructor(
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly displayPanelService: DisplayPanelService
   ) { }
 
   ngOnInit(): void {
@@ -73,16 +77,18 @@ export class MenuComponent implements OnInit {
     }
 
     this.getMenuItems(CONCORDANCE, this.role);
-    this.menuEmitterService.menuEvent$.subscribe({
-      next: (event: MenuEvent) => {
-        if (event && event.item) {
-          this.getMenuItems(event.item, this.role);
+    if (!this.menuEmitterServiceSubscription) {
+      this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe({
+        next: (event: MenuEvent) => {
+          if (event && event.item) {
+            this.getMenuItems(event.item, this.role);
+          }
+          if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
+            this.getMenuItems(RESULT_CONCORDANCE, this.role);
+          }
         }
-        if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
-          this.getMenuItems(RESULT_CONCORDANCE, this.role);
-        }
-      }
-    });
+      });
+    }
   }
 
   private getVoiceMenu(routesRole: string[], routesPage: string[]): void {
@@ -96,6 +102,9 @@ export class MenuComponent implements OnInit {
         routes.forEach(route => {
           const menuItem = this.getMenuByRoute(route, this.menuRoutes);
           menuItems.push(new MenuItemObject(this.translateService.instant(menuItem), null, () => {
+            this.emitterService.pageMenu = route;
+            this.displayPanelService.panelItemSelected = route;
+            this.displayPanelService.displayPanelOptions = this.menuDisplayPanel.filter(item => item === route).length > 0;
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
           }, null, null, false, false, route));
         }
@@ -124,7 +133,7 @@ export class MenuComponent implements OnInit {
         case FILTER:
         case FREQUENCY:
         case COLLOCATIONS:
-          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuResultConcordanceStr);
+          this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuDisplayPanel);
           break;
 
         default:

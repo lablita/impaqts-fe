@@ -1,5 +1,8 @@
 import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
-import { FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD } from '../model/constants';
+import {
+  FIRST, LEFT, NODE, OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
+  OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD
+} from '../model/constants';
 import { FilterOptionsQueryRequest } from '../model/filter-options-query.request';
 import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -56,11 +59,11 @@ const startUp1 = new Startup(
     3,
     false,
     false,
-    new KeyValueItem(FIRST, FIRST),
-    new KeyValueItem(WORD, WORD),
-    false,
-    false,
-    new KeyValueItem(NODE, NODE),
+    [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL')],
+    [new KeyValueItem(WORD, WORD)],
+    [false],
+    [false],
+    [new KeyValueItem(NODE, NODE)],
   ), new FreqOptionsQueryRequest(
     0,
     new KeyValueItem(FIRST, FIRST),
@@ -135,11 +138,11 @@ const startUp2 = new Startup(
     3,
     false,
     false,
-    new KeyValueItem(FIRST, FIRST),
-    new KeyValueItem(WORD, WORD),
-    false,
-    false,
-    new KeyValueItem(NODE, NODE),
+    [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL')],
+    [new KeyValueItem(WORD, WORD)],
+    [false],
+    [false],
+    [new KeyValueItem(NODE, NODE)],
   ), new FreqOptionsQueryRequest(
     0,
     new KeyValueItem(FIRST, FIRST),

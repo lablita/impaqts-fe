@@ -10,7 +10,7 @@ import {
   CHARACTER, CONCORDANCE, CONCORDANCE_CHARACTER,
   CONCORDANCE_CQL, CONCORDANCE_LEMMA, CONCORDANCE_PHRASE,
   CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CQL, INSTALLATION, LEMMA, PHRASE,
-  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, VIEW_OPTIONS_LABEL, WORD
+  RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, WORD
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
@@ -122,11 +122,6 @@ export class ConcordanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.emitterService.pageMenu = CONCORDANCE;
-    this.translateService.stream(VIEW_OPTIONS_LABEL).
-      subscribe(
-        {
-          next: res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res))
-        });
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
     this.init();
@@ -142,7 +137,7 @@ export class ConcordanceComponent implements OnInit {
 
   public clickTextType(): void {
     this.textTypeStatus = true;
-    this.emitterService.clickLabelMetadataDisabled.emit(!this.textTypeStatus);
+    this.displayPanelService.labelMetadataDisabled = !!this.textTypeStatus;
   }
 
   public clickClearAll(): void {
@@ -153,8 +148,8 @@ export class ConcordanceComponent implements OnInit {
     this.resultView = false;
     this.noResultFound = false;
     this.clickTextType();
-    this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
-    this.emitterService.clickLabelMetadataDisabled.emit(true);
+    this.displayPanelService.labelOptionsDisabled = !this.selectedCorpus;
+    this.displayPanelService.labelMetadataDisabled = true;
     if (this.selectedCorpus) {
       this.displayPanelMetadata = false;
       this.displayPanelOptions = false;
@@ -190,7 +185,7 @@ export class ConcordanceComponent implements OnInit {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+                  this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
                   this.emitterService.spinnerMetadata.emit(false);
@@ -200,7 +195,7 @@ export class ConcordanceComponent implements OnInit {
         }
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-        this.emitterService.clickLabelMetadataDisabled.emit(!this.selectedCorpus || !this.textTypeStatus);
+        this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
         this.emitterService.spinnerMetadata.emit(false);
         this.endedMetadataProcess = true;
       }

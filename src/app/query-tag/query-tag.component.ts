@@ -12,7 +12,10 @@ import { QueryTag } from '../model/query-tag';
 export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag | null = null;
-  @Input() typeList: Array<KeyValueItem> | null = Array.from<KeyValueItem>({ length: 0 });
+  @Input() typeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  @Input() defaultType: KeyValueItem | null = null;
+  @Input() actionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  @Input() defaultAction: KeyValueItem | null = null;
   @Input() metadata = false;
   @Input() metadatumTextTypes: Array<Metadatum> | null = Array.from<Metadatum>({ length: 0 });
 
@@ -23,21 +26,23 @@ export class QueryTagComponent implements OnInit {
   public freeInputText = '';
   public metadatumSel: Metadatum | null = null;
 
-  public actionList: KeyValueItem[] = [
-    new KeyValueItem('IS', 'IS'),
-    new KeyValueItem('IS_NOT', 'IS_NOT'),
-    new KeyValueItem('BEGINS', 'BEGINS'),
-    new KeyValueItem('CONTAINS', 'CONTAINS'),
-    new KeyValueItem('ENDS', 'ENDS'),
-    new KeyValueItem('REGEXP', 'REGEXP'),
-    new KeyValueItem('NOT_REG', 'NOT_REG')];
-
   public action: KeyValueItem | null = null;
   public tagName: KeyValueItem | null = null;
+  public caseSensitive: string | null = null;
+
+  public caseList: Array<string> = Array.from<string>({ length: 0 });
 
   public root: Metadatum = new Metadatum();
 
   ngOnInit(): void {
+    this.action = this.defaultAction;
+    this.tagName = this.defaultType;
+    this.caseList = ['Aa', 'aa'];
+    this.caseSensitive = 'Aa';
+    if (this.defaultType && this.tag) {
+      this.tag.name = this.defaultType.key;
+      this.tag.matchCase = true;
+    }
     if (this.metadata && this.metadatumTextTypes) {
       this.root.subMetadata = this.metadatumTextTypes;
       this.metadatumTextTypes.forEach(md => {
@@ -127,6 +132,12 @@ export class QueryTagComponent implements OnInit {
           this.tag.matchCase = false;
           break;
       }
+    }
+  }
+
+  public setMatchCase() {
+    if (this.tag) {
+      this.tag.matchCase = this.caseSensitive === 'Aa';
     }
   }
 

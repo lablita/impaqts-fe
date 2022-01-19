@@ -25,7 +25,8 @@
       <div class="p-jc-start mt-2">
         <div *ngFor="let token of queryPattern.tokPattern" class="mr-2 inline-flex">
           <div class="box">
-            <app-query-token [token]="token" [typeList]="typeListQuery" [option]="true"
+            <app-query-token [token]="token" [typeList]="typeListQuery" [defaultType]="defaultType"
+              [actionList]="actionList" [defaultAction]="defaulAction" [option]="true"
               (delete)="deleteTokenQuery(token)" [metadata]="false">
             </app-query-token>
           </div>
@@ -54,7 +55,7 @@
         </div>
       </button>
       <div class="mt-6 text-center">
-        <button [disabled]="!queryTokenOK()" pButton type="button" icon="pi"
+        <button [disabled]="!atLeastOneToken()" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
         </button>
       </div>

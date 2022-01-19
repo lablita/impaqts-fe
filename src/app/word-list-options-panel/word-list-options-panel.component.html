@@ -117,12 +117,12 @@
           <div class="inline mr-2">{{'PAGE.CONCORDANCE.WORD_OPTIONS.REFS_SUB' | translate}}</div>
           <div class="field inline mr-1">
             <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" [options]="searchAttrList"
-              [(ngModel)]="selectedSearchAttr" optionLabel="value" [showClear]="true">
+              [(ngModel)]="selectedSearchAttrKeywordsFirst" optionLabel="value" [showClear]="true">
             </p-dropdown>
           </div>
           <div class="field inline">
             <p-dropdown [disabled]="selectedOutputType !== outputTypes[1]" [options]="searchAttrList"
-              [(ngModel)]="selectedSearchAttr" optionLabel="value" [showClear]="true">
+              [(ngModel)]="selectedSearchAttrKeywordsSecond" optionLabel="value" [showClear]="true">
             </p-dropdown>
           </div>
         </div>

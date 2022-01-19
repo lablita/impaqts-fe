@@ -7,7 +7,7 @@ import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  INSTALLATION, SELECT_CORPUS, VIEW_OPTIONS_LABEL, VISUAL_QUERY
+  INSTALLATION, SELECT_CORPUS, VISUAL_QUERY
 } from '../model/constants';
 import { Corpus } from '../model/corpus';
 import { Installation } from '../model/installation';
@@ -21,7 +21,6 @@ import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
-import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -36,6 +35,16 @@ export class VisualQueryComponent implements OnInit {
   public typeListQuery: KeyValueItem[] = [
     new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'),
     new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
+  public actionList: KeyValueItem[] = [
+    new KeyValueItem('IS', 'IS'),
+    new KeyValueItem('IS_NOT', 'IS_NOT'),
+    new KeyValueItem('BEGINS', 'BEGINS'),
+    new KeyValueItem('CONTAINS', 'CONTAINS'),
+    new KeyValueItem('ENDS', 'ENDS'),
+    new KeyValueItem('REGEXP', 'REGEXP'),
+    new KeyValueItem('NOT_REG', 'NOT_REG')];
+  public defaultType: KeyValueItem = new KeyValueItem('word', 'word');
+  public defaulAction: KeyValueItem = new KeyValueItem('IS', 'IS');
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadataTextTypes: Array<Metadatum> = Array.from<Metadatum>({ length: 0 });
@@ -80,11 +89,10 @@ export class VisualQueryComponent implements OnInit {
 
   // FIXME: a cosa serve?
   private simple?: string;
-  private endpoint: string = '';
+  private endpoint = '';
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
@@ -99,10 +107,8 @@ export class VisualQueryComponent implements OnInit {
   }
 
   private init(): void {
+    this.displayPanelService.reset();
     this.resultView = false;
-    this.emitterService.pageMenu = VISUAL_QUERY;
-    this.translateService.stream(VIEW_OPTIONS_LABEL).
-      subscribe(res => this.emitterService.clickLabel.emit(new KeyValueItem(VIEW_OPTIONS_LABEL, res)));
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
@@ -162,7 +168,6 @@ export class VisualQueryComponent implements OnInit {
   public dropdownCorpus(): void {
     this.resultView = false;
     this.noResultFound = false;
-    this.emitterService.clickLabelOptionsDisabled.emit(!this.selectedCorpus);
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
@@ -220,14 +225,8 @@ export class VisualQueryComponent implements OnInit {
     return this.metadataTextTypes;
   }
 
-  public queryTokenOK(): boolean {
-    let result = false;
-    this.queryPattern.tokPattern.forEach(pt => pt.tags.forEach(tg => tg.forEach(t => {
-      if (t && t.name && t.name.length) {
-        result = true;
-      }
-    })));
-    return result;
+  public atLeastOneToken(): boolean {
+    return this.queryPattern.tokPattern.length > 0;
   }
 
   private initWebSocket(): void {

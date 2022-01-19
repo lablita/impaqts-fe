@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { FIRST, L1, L2, L3, NODE, R1, R2, R3, SECOND } from '../model/constants';
+import { L1, L2, L3, NODE, R1, R2, R3 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
@@ -29,11 +29,12 @@ export class SortOptionsPanelComponent implements OnInit {
   public selectedSortKey: KeyValueItem | null = null;
   public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
   new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
-  public selectedLevel: KeyValueItem | null = null;
+  public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
+  public disableMultilevelChechbox: boolean[] = [false, false, false];
 
 
   ngOnInit(): void {
@@ -42,9 +43,9 @@ export class SortOptionsPanelComponent implements OnInit {
       new KeyValueItem(L2, L2),
       new KeyValueItem(L1, L1),
       new KeyValueItem(NODE, NODE),
-      new KeyValueItem(R3, R3),
+      new KeyValueItem(R1, R1),
       new KeyValueItem(R2, R2),
-      new KeyValueItem(R1, R1)
+      new KeyValueItem(R3, R3),
     ];
 
     this.selectedPosition = [
@@ -67,13 +68,12 @@ export class SortOptionsPanelComponent implements OnInit {
     if (this.sortOptionsQueryRequest) {
       this.selectedSortKey = this.sortKeys.filter(sk => this.sortOptionsQueryRequest &&
         sk.key === this.sortOptionsQueryRequest.sortKey.key)[0];
-      this.selectedLevel = this.levels.filter(l => this.sortOptionsQueryRequest && l.key === this.sortOptionsQueryRequest.level.key)[0];
-      if (!!this.selectedLevel) {
-        const index = this.selectedLevel.key === FIRST ? 0 : (this.selectedLevel.key === SECOND ? 1 : 2);
-        this.selectedMultiAttribute[index] = this.sortOptionsQueryRequest.attributeMulti;
-        this.selectedPosition[index] = this.sortOptionsQueryRequest.position;
-        this.ignoreCase[index] = this.sortOptionsQueryRequest.ignoreCaseMulti;
-        this.backward[index] = this.sortOptionsQueryRequest.backwardMulti;
+      this.selectedLevels = this.sortOptionsQueryRequest.levels;
+      if (this.selectedLevels.length > 0) {
+        this.selectedMultiAttribute = this.sortOptionsQueryRequest.attributeMulti;
+        this.selectedPosition = this.sortOptionsQueryRequest.position;
+        this.ignoreCase = this.sortOptionsQueryRequest.ignoreCaseMulti;
+        this.backward = this.sortOptionsQueryRequest.backwardMulti;
       }
     }
   }
@@ -87,14 +87,13 @@ export class SortOptionsPanelComponent implements OnInit {
       if (this.selectedSortKey) {
         this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
       }
-      if (this.selectedLevel) {
-        this.sortOptionsQueryRequest.level = this.selectedLevel;
+      if (this.selectedLevels.length > 0) {
+        this.sortOptionsQueryRequest.levels = this.selectedLevels;
       }
-      const index = this.sortOptionsQueryRequest.level.key === FIRST ? 0 : (this.sortOptionsQueryRequest.level.key === SECOND ? 1 : 2);
-      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute[index];
-      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase[index];
-      this.sortOptionsQueryRequest.backwardMulti = this.backward[index];
-      this.sortOptionsQueryRequest.position = this.selectedPosition[index];
+      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute.slice(0, this.selectedLevels.length);
+      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase;
+      this.sortOptionsQueryRequest.backwardMulti = this.backward;
+      this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
       localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
     }
   }
@@ -113,5 +112,19 @@ export class SortOptionsPanelComponent implements OnInit {
 
   public clickShuffle(): void {
     return;
+  }
+
+  public multilevelCheckBoxManager(index: number): void {
+    if (this.selectedLevels.filter(l => l.key === 'SECOND_LEVEL').length > 0) {
+      this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
+      new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL')];
+      this.disableMultilevelChechbox = [true, false, false];
+    } else if (this.selectedLevels.filter(l => l.key === 'THIRD_LEVEL').length > 0) {
+      this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
+      new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+      this.disableMultilevelChechbox = [true, true, false];
+    } else {
+      this.disableMultilevelChechbox = [false, false, false];
+    }
   }
 }
