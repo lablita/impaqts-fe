@@ -1,33 +1,33 @@
 <div class="flex flex-row">
 
-  <div class="flex flex-grow-1 flex-column mt-3">
-    <p-card
-      [ngClass]="{'w-12': displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions, 'w-6': !(displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions)}">
-      <div class="mb-3">
-        <label class="mr-3">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
-        <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value" [filter]="true"
-          [showClear]="true" placeholder="{{selectCorpus}}" (onChange)="dropdownCorpus()">
-          <ng-template pTemplate="selectedItem">
-            <div *ngIf="selectedCorpus">
-              <div class="">{{selectedCorpus.value}}</div>
-            </div>
-          </ng-template>
-          <ng-template let-country pTemplate="item">
-            <div>
-              <div class="">{{country.value}}</div>
-            </div>
-          </ng-template>
-        </p-dropdown>
+  <div class="flex flex-grow-1 flex-column mt-3"
+    [ngClass]="{'w-12': !displayPanelService.displayPanelMetadata && !displayPanelService.displayPanelOptions, 'w-6': displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions}">
+    <p-card>
+      <div class="field grid">
+        <label for="corpusSelection" class="col-12 mb-0 md:col-1 md:mb-0">{{"PAGE.CONCORDANCE.CORPUS" |
+          translate}}</label>
+        <div class="col-12 md:col-11">
+          <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value" [filter]="true"
+            [showClear]="true" placeholder="{{selectCorpus}}" (onChange)="dropdownCorpus()" id="corpusSelection"
+            [style]="{'width':'40%'}">
+            <ng-template pTemplate="selectedItem">
+              <div *ngIf="selectedCorpus">
+                <div class="">{{selectedCorpus.value}}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
       </div>
-      <div class="p-field mb-3">
-        <label for="simple_query" class="label-size mr-3">
+      <div class="field grid">
+        <label for="simple_query" class="col-12 mb-0 md:col-1 md:mb-0">
           {{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}
         </label>
-        <input id="simple_query" type="text" pInputText style="width: 350px;" [(ngModel)]="simple">
-        &nbsp;
-        <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
-          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
+        <div class="col-12 md:col-11">
+          <input id="simple_query" type="text" pInputText style="width: 40%;" [(ngModel)]="simple">
+        </div>
       </div>
+      <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
+        label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       <div class="flex justify-content-center">
         <button [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus" class="p-button-text mr-3"
