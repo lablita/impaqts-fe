@@ -33,8 +33,6 @@ export class RightComponent implements OnInit {
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
 
-  private panelMetaOn: boolean | null = null;
-  private panelOptionOn: boolean | null = null;
   private titleOption: string | null = null;
 
   constructor(
@@ -45,17 +43,16 @@ export class RightComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.panelMetaOn = false;
-    this.panelOptionOn = false;
     this.menuEmitterService.menuEvent$.subscribe(() => {
-      this.titleOption = this.displayPanelService.panelItemSelected ? this.displayPanelService.panelItemSelected : VIEW_OPTIONS;
+      this.titleOption = (this.displayPanelService.panelItemSelected && this.displayPanelService.panelItemSelected !== CONCORDANCE)
+        ? this.displayPanelService.panelItemSelected : VIEW_OPTIONS;
       if (this.emitterService.pageMenu === CONCORDANCE
         || menuToPanelLabel.filter(item => item.key === this.emitterService.pageMenu).length > 0) {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
         this.titleLabel = menuToPanelLabel.filter(item => item.key === this.titleOption)[0].value;
 
-        if (!this.panelOptionOn && this.emitterService.pageMenu !== CONCORDANCE) {
+        if (!this.displayPanelService.displayPanelOptions && this.emitterService.pageMenu !== CONCORDANCE) {
           this.openSidebarOptions();
         }
       } else {
@@ -67,19 +64,14 @@ export class RightComponent implements OnInit {
   }
 
   public openSidebarOptions(): void {
-    this.panelOptionOn = !this.panelOptionOn;
-    this.displayPanelService.labelMetadataDisabled = this.panelOptionOn;
-    this.displayPanelService.labelOptionsDisabled = !this.panelOptionOn;
-    this.displayPanelService.displayPanelOptions = this.panelOptionOn;
+    this.displayPanelService.displayPanelOptions = !this.displayPanelService.displayPanelOptions;
+    this.displayPanelService.displayPanelMetadata = false;
     this.displayPanelService.panelItemSelected = this.titleOption;
-    this.emitterService.panelDisplayOptions.emit(this.panelOptionOn);
   }
 
   public openSidebarMetadata(): void {
-    this.panelMetaOn = !this.panelMetaOn;
-    this.displayPanelService.labelOptionsDisabled = this.panelMetaOn;
-    this.displayPanelService.displayPanelMetadata = this.panelMetaOn;
-    this.emitterService.panelDisplayMetadata.emit(this.panelMetaOn);
+    this.displayPanelService.displayPanelMetadata = !this.displayPanelService.displayPanelMetadata;
+    this.displayPanelService.displayPanelOptions = false;
   }
 
   public checkMetadata(): boolean {

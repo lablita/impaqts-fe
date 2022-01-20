@@ -7,8 +7,6 @@ import { User } from '../model/user';
 })
 
 export class EmitterService {
-  public panelDisplayOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
-  public panelDisplayMetadata: EventEmitter<boolean> = new EventEmitter<boolean>();
   public spinnerMetadata: EventEmitter<boolean> = new EventEmitter<boolean>();
   public user: BehaviorSubject<User> = new BehaviorSubject(new User());
   public pageMenu = '';
