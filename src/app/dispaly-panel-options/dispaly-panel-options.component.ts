@@ -42,30 +42,31 @@ export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
 
   private init(): void {
     this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
-    this.titleOption = this.displayPanelService.panelItemSelected;
-    if (!this.emitterServiceOptionsSubcription) {
-      this.emitterServiceOptionsSubcription = this.emitterService.panelDisplayOptions.subscribe({
-        next: (event: boolean) => {
-          this.displayPanelService.displayPanelOptions = event;
-        }
-      });
-    }
-    if (!this.emitterServiceMetadataSubcription) {
-      this.emitterServiceMetadataSubcription = this.emitterService.panelDisplayMetadata.subscribe({
-        next: (event: boolean) => {
-          this.displayPanelService.displayPanelMetadata = event;
-        }
-      });
-    }
-    if (!this.menuEmitterServiceSubscription) {
-      this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe(() => {
-        if (this.displayPanelService.displayPanelOptions) {
-          this.titleOption = this.displayPanelService.panelItemSelected;
-          this.displayPanelService.displayPanelOptions = true;
-          this.displayPanelService.displayPanelMetadata = false;
-        }
-      });
-    }
+    // this.titleOption = this.displayPanelService.panelItemSelected;
+    // this.titleOption = this.displayPanelService.panelItemSelected;
+    // if (!this.emitterServiceOptionsSubcription) {
+    //   this.emitterServiceOptionsSubcription = this.emitterService.panelDisplayOptions.subscribe({
+    //     next: (event: boolean) => {
+    //       this.displayPanelService.displayPanelOptions = event;
+    //     }
+    //   });
+    // }
+    // if (!this.emitterServiceMetadataSubcription) {
+    //   this.emitterServiceMetadataSubcription = this.emitterService.panelDisplayMetadata.subscribe({
+    //     next: (event: boolean) => {
+    //       this.displayPanelService.displayPanelMetadata = event;
+    //     }
+    //   });
+    // }
+    // if (!this.menuEmitterServiceSubscription) {
+    //   this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe(() => {
+    //     if (this.displayPanelService.displayPanelOptions) {
+    //       this.titleOption = this.displayPanelService.panelItemSelected;
+    //       this.displayPanelService.displayPanelOptions = true;
+    //       this.displayPanelService.displayPanelMetadata = false;
+    //     }
+    //   });
+    // }
   }
 
   ngOnInit(): void {
@@ -73,15 +74,15 @@ export class DispalyPanelOptionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.menuEmitterServiceSubscription) {
-      this.menuEmitterServiceSubscription.unsubscribe();
-    }
-    if (this.emitterServiceOptionsSubcription) {
-      this.emitterServiceOptionsSubcription.unsubscribe();
-    }
-    if (this.emitterServiceMetadataSubcription) {
-      this.emitterServiceMetadataSubcription.unsubscribe();
-    }
+    // if (this.menuEmitterServiceSubscription) {
+    //   this.menuEmitterServiceSubscription.unsubscribe();
+    // }
+    // if (this.emitterServiceOptionsSubcription) {
+    //   this.emitterServiceOptionsSubcription.unsubscribe();
+    // }
+    // if (this.emitterServiceMetadataSubcription) {
+    //   this.emitterServiceMetadataSubcription.unsubscribe();
+    // }
   }
 
 }
