@@ -7,9 +7,7 @@ import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
-  CHARACTER, CONCORDANCE, CONCORDANCE_CHARACTER,
-  CONCORDANCE_CQL, CONCORDANCE_LEMMA, CONCORDANCE_PHRASE,
-  CONCORDANCE_SIMPLE, CONCORDANCE_WORD, CQL, INSTALLATION, LEMMA, PHRASE,
+  CHARACTER, CONCORDANCE, CQL, INSTALLATION, LEMMA, PHRASE,
   RESULT_CONCORDANCE, SELECT_CORPUS, SIMPLE, WORD
 } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
@@ -324,28 +322,16 @@ export class ConcordanceComponent implements OnInit {
       next: res => this.selectCorpus = res
     });
 
-    this.translateService.stream(CONCORDANCE_SIMPLE).subscribe({
-      next: res => {
-        this.queryTypes = [];
-        this.queryTypes.push(new KeyValueItem(SIMPLE, res));
-        this.selectedQueryType = res;
-      }
-    });
-    this.translateService.stream(CONCORDANCE_LEMMA).subscribe({
-      next: res => this.queryTypes.push(new KeyValueItem(LEMMA, res))
-    });
-    this.translateService.stream(CONCORDANCE_WORD).subscribe({
-      next: res => this.queryTypes.push(new KeyValueItem(WORD, res))
-    });
-    this.translateService.stream(CONCORDANCE_PHRASE).subscribe({
-      next: res => this.queryTypes.push(new KeyValueItem(PHRASE, res))
-    });
-    this.translateService.stream(CONCORDANCE_CHARACTER).subscribe({
-      next: res => this.queryTypes.push(new KeyValueItem(CHARACTER, res))
-    });
-    this.translateService.stream(CONCORDANCE_CQL).subscribe({
-      next: res => this.queryTypes.push(new KeyValueItem(CQL, res))
-    });
+    this.queryTypes = [
+      new KeyValueItem(SIMPLE, SIMPLE),
+      new KeyValueItem(LEMMA, LEMMA),
+      new KeyValueItem(WORD, WORD),
+      new KeyValueItem(PHRASE, PHRASE),
+      new KeyValueItem(CHARACTER, CHARACTER),
+      new KeyValueItem(CQL, CQL)
+    ];
+
+    this.selectedQueryType = this.queryTypes[0];
   }
 
   private initWebSocket(): void {

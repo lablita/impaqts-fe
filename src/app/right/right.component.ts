@@ -67,13 +67,11 @@ export class RightComponent implements OnInit {
     this.displayPanelService.displayPanelOptions = !this.displayPanelService.displayPanelOptions;
     this.displayPanelService.displayPanelMetadata = false;
     this.displayPanelService.panelItemSelected = this.titleOption;
-    this.emitterService.panelDisplayOptions.emit(this.displayPanelService.displayPanelOptions);
   }
 
   public openSidebarMetadata(): void {
     this.displayPanelService.displayPanelMetadata = !this.displayPanelService.displayPanelMetadata;
     this.displayPanelService.displayPanelOptions = false;
-    this.emitterService.panelDisplayMetadata.emit(this.displayPanelService.displayPanelMetadata);
   }
 
   public checkMetadata(): boolean {
