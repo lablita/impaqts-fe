@@ -5,8 +5,8 @@
   <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
   <div>
     <div class="field grid">
-      <label class="col-12 mb-0 md:col-1 md:mb-0">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
-      <div class="col-12 md:col-11">
+      <label class="col-12 md:col-1">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
+      <div class="col-12 md:col-5">
         <p-dropdown class="mr-3" [options]="windows" *ngIf="contextConcordanceQueryRequest"
           [(ngModel)]="contextConcordanceQueryRequest.window" optionLabel="value" [showClear]="true">
           <ng-template let-option pTemplate="item">
@@ -25,10 +25,10 @@
     </div>
 
     <div class="p-field grid">
-      <label class="col-12 mb-0 md:col-1 md:mb-0" for="lemmas">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
-      <div class="col-12 md:col-11">
-        <input class="mr-3" id="lemmas" *ngIf="contextConcordanceQueryRequest" type="text" pInputText
-          [(ngModel)]="contextConcordanceQueryRequest.lemma">
+      <label class="col-12 md:col-1 align-self-center" for="lemmas">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
+      <div class="col-12 md:col-10" grid>
+        <input class="mr-3" style="width: 40%;" id="lemmas" *ngIf="contextConcordanceQueryRequest" type="text"
+          pInputText [(ngModel)]="contextConcordanceQueryRequest.lemma">
         <p-dropdown *ngIf="contextConcordanceQueryRequest" [options]="items"
           [(ngModel)]="contextConcordanceQueryRequest.item" optionLabel="value" [showClear]="true">
           <ng-template let-option pTemplate="item">
@@ -37,8 +37,8 @@
           <ng-template pTemplate="selectedItem" let-item>
             {{'PAGE.CONCORDANCE.' + item.value | translate}}
           </ng-template>
-        </p-dropdown>&nbsp;
-        <label class="label-size">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
+        </p-dropdown>
+        <label class="label-size ml-3">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
       </div>
     </div>
   </div>

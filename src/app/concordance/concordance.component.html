@@ -3,12 +3,12 @@
     [ngClass]="{'w-12': !displayPanelService.displayPanelMetadata && !displayPanelService.displayPanelOptions, 'w-6': displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions}">
     <p-card>
       <div class="field grid">
-        <label for="corpusSelection" class="col-12 mb-0 md:col-1 md:mb-0">{{"PAGE.CONCORDANCE.CORPUS" |
+        <label for="corpusSelection" class="col-12 md:col-1">{{"PAGE.CONCORDANCE.CORPUS" |
           translate}}</label>
-        <div class="col-12 md:col-11">
+        <div class="col-12 md:col-5">
           <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value" [filter]="true"
             [showClear]="true" placeholder="{{selectCorpus}}" (onChange)="dropdownCorpus()" id="corpusSelection"
-            [style]="{'width':'40%'}">
+            [style]="{'width':'80%'}">
             <ng-template pTemplate="selectedItem">
               <div *ngIf="selectedCorpus">
                 <div class="">{{selectedCorpus.value}}</div>
@@ -18,12 +18,12 @@
         </div>
       </div>
       <div class="field grid">
-        <label for="simple_query" class="col-12 mb-0 md:col-1 md:mb-0">
+        <label for="simple_query" class="col-12 md:col-1">
           {{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}
         </label>
-        <div class="col-12 md:col-11">
-          <input id="simple_query" type="text" pInputText style="width: 40%;" [(ngModel)]="simple"
-            [disabled]="!!selectedQueryType && selectedQueryType.key !== 'simple'">
+        <div class="col-12 md:col-5">
+          <input id="simple_query" type="text" pInputText [(ngModel)]="simple"
+            [disabled]="!!selectedQueryType && selectedQueryType.key !== 'simple'" class="width-80">
         </div>
       </div>
       <div *ngIf="!contextStatus" style="height: 30px;">
@@ -41,13 +41,13 @@
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
       </div>
 
-      <div class="p-field mt-3" *ngIf="queryTypeStatus">
+      <div class="mt-3" *ngIf="queryTypeStatus">
         <div>
           <label class="mb-3">
             <h2>{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</h2>
           </label>
-          <div class="flex justify-content-center">
-            <div *ngFor="let queryType of queryTypes" class="p-field-checkbox">
+          <div class="formgroup-inline justify-content-center">
+            <div *ngFor="let queryType of queryTypes" class="field-radiobutton">
               <p-radioButton class="ml-3 mr-1" [inputId]="queryType.key" name="queryType" [value]="queryType"
                 [(ngModel)]="selectedQueryType">
               </p-radioButton>
@@ -55,42 +55,53 @@
             </div>
           </div>
         </div>
-        <div class="mt-3 p-field grid" *ngIf="selectedQueryType && selectedQueryType.key === LEMMA">
-          <label class="col-12 mb-0 md:col-1 md:mb-0" for="lemma">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
-          <input class="col-12 md:col-5" id="lemma" type="text" pInputText [(ngModel)]="lemma">
-        </div>
-        <div class="mt-3 p-field grid" *ngIf="selectedQueryType && selectedQueryType.key === PHRASE">
-          <label class="col-12 mb-0 md:col-1 md:mb-0" for="phrase">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
-          <input class="col-12 md:col-5" id="phrase" type="text" pInputText [(ngModel)]="phrase">
-        </div>
-        <div class="mt-3 p-field grid" *ngIf="selectedQueryType && selectedQueryType.key === WORD">
-          <label class="col-12 mb-0 md:col-1 md:mb-0" for="word">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
+        <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === LEMMA">
+          <label class="col-12 md:col-1" for="lemma">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
           <div class="col-12 md:col-5">
-            <input id="word" type="text" pInputText [(ngModel)]="word">
-            <p-checkbox class="col" name="iconForOne" [binary]="true"
-              label="{{'PAGE.CONCORDANCE.MATCH_CASE' | translate}}" [(ngModel)]="matchCase">
+            <input id="lemma" type="text" pInputText [(ngModel)]="lemma" class="width-80">
+          </div>
+        </div>
+        <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === PHRASE">
+          <label class="col-12 md:col-1" for="phrase">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
+          <div class="col-12 md:col-5">
+            <input id="phrase" type="text" pInputText [(ngModel)]="phrase" class="width-80">
+          </div>
+        </div>
+        <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === WORD">
+          <label class="col-12 md:col-1 " for="word">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
+          <div class="col-12 md:col-5">
+            <input id="word" type="text" pInputText [(ngModel)]="word" class="width-80">
+          </div>
+          <div class="col-12 md:col-1 align-self-center">
+            <p-checkbox [binary]="true" label="{{'PAGE.CONCORDANCE.MATCH_CASE' | translate}}" [(ngModel)]="matchCase">
             </p-checkbox>
           </div>
         </div>
-        <div class="mt-3 p-field grid" *ngIf="selectedQueryType && selectedQueryType.key === CHARACTER">
-          <label class="col-12 mb-0 md:col-1 md:mb-0"
-            for="character">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
-          <input class="col-12 md:col-11" id="character" type="text" pInputText [(ngModel)]="character">
-        </div>
-        <div class="mt-3 p-field grid" *ngIf="selectedQueryType && selectedQueryType.key === CQL">
-          <label class="col-12 mb-0 md:col-1 md:mb-0" for="cql">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
+        <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === CHARACTER">
+          <label class="col-12 md:col-1 " for="character">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
           <div class="col-12 md:col-5">
-            <input id="cql" type="text" pInputText [(ngModel)]="cql">
-            <label>{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" | translate}}</label>
-            <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL"
-              [style]="{'width':'12rem'}" [showClear]="true">
-              <ng-template let-option pTemplate="item">
-                {{'PAGE.CONCORDANCE.' + option.value | translate}}
-              </ng-template>
-              <ng-template pTemplate="selectedItem" let-item>
-                {{'PAGE.CONCORDANCE.' + item.value | translate}}
-              </ng-template>
-            </p-dropdown>
+            <input id="character" type="text" pInputText [(ngModel)]="character" class="width-80">
+          </div>
+        </div>
+        <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === CQL">
+          <label class="col-12 md:col-1" for="cql">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
+          <div class="col-12 md:col-5">
+            <input id="cql" type="text" pInputText [(ngModel)]="cql" class="width-80">
+          </div>
+          <div class="col-12 md:col-5 grid">
+            <label
+              class="col-12 md:col-3 align-self-center">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" | translate}}</label>
+            <div class="col-12 md:col-5 align-self-center">
+              <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL"
+                [style]="{'width':'12rem'}" [showClear]="true">
+                <ng-template let-option pTemplate="item">
+                  {{'PAGE.CONCORDANCE.' + option.value | translate}}
+                </ng-template>
+                <ng-template pTemplate="selectedItem" let-item>
+                  {{'PAGE.CONCORDANCE.' + item.value | translate}}
+                </ng-template>
+              </p-dropdown>
+            </div>
           </div>
         </div>
       </div>

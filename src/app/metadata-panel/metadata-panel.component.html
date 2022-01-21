@@ -9,24 +9,23 @@
     <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
   </div>
   <p-scrollPanel [style]="{width: '100%'}" styleClass="custombar">
-    <div class="mt-1 mr-3 p-component">
-      <div *ngFor="let metadatum of metadataQueryService.metadata, let i = index" class="field grid mb-2">
-        <!-- FreeText-->
-        <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-1">{{metadatum.name |
+    <div *ngFor="let metadatum of metadataQueryService.metadata, let i = index" class="field grid mb-2">
+      <!-- FreeText-->
+      <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-1">{{metadatum.name |
           translate}}</label>
-        <input class="col-5" *ngIf="!metadatum.multipleChoice && metadatum.freeText" type="text" pInputText
-          [(ngModel)]="metadatum.selection">
-        <!-- Tree & checkbox-->
-        <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
-          <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
-          </p-tree>
-        </div>
-        <!-- Single selection -->
-        <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
-          <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
-            (onNodeSelect)="nodeSelect($event)" stlye="color: red !importatnt;">
-          </p-tree>
-        </div>
+      <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">
+        <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
+      </div>
+      <!-- Tree & checkbox-->
+      <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
+        <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
+        </p-tree>
+      </div>
+      <!-- Single selection -->
+      <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
+        <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
+          (onNodeSelect)="nodeSelect($event)" stlye="color: red !importatnt;">
+        </p-tree>
       </div>
     </div>
   </p-scrollPanel>
