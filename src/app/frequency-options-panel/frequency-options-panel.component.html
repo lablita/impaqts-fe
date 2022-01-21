@@ -1,73 +1,75 @@
-<span class="p-component">
-  <div class="flex justify-content-center">
-    <h2>{{"MENU.FREQUENCY" | translate}}</h2>
-  </div>
-  <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}</h3>
+<div class="mt-3">
+  <p-card>
+    <div class="flex justify-content-center">
+      <h2>{{"MENU.FREQUENCY" | translate}}</h2>
+    </div>
+    <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}</h3>
 
-  <div class="grid ml-4">
-    <div class="col-6">
-      <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE_TAGS' | translate}}"
-        (click)="clickNodeTags()" class="mr-5"></button>
+    <div class="grid ml-4">
+      <div class="col-6">
+        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE_TAGS' | translate}}"
+          (click)="clickNodeTags()" class="mr-5"></button>
+      </div>
+      <div class="col-6">
+        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE_FORMS' | translate}}"
+          (click)="clickNodeForms()" class="mr-5"></button>
+      </div>
     </div>
-    <div class="col-6">
-      <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE_FORMS' | translate}}"
-        (click)="clickNodeForms()" class="mr-5"></button>
+    <div class="field ml-2">
+      <label for="numToken" style="width: 145px;"
+        class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
+      <input id="numToken" type="number" pInputText style="width: 50px;"
+        [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
     </div>
-  </div>
-  <div class="field ml-2">
-    <label for="numToken" style="width: 145px;"
-      class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
-    <input id="numToken" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
-  </div>
-  <div class="grid">
-    <div *ngFor="let level of levels, let i = index" class="field-checkbox" class="p-d-inline">
-      <div class="col">
-        <div class="mb-4 ml-2">
-          <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
-          </p-radioButton>
-          <label [for]="level.key" class="mr-2 ml-1">{{level.value}}</label>
-        </div>
-        <div class="field ml-2 mb-3">
-          <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="key"
-            [showClear]="true">
-          </p-dropdown>
-        </div>
-        <div class="field-checkbox ml-2 mb-3">
-          <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel" [(ngModel)]="ignoreCase[i]">
-          </p-checkbox>
-        </div>
-        <div class="field ml-2">
-          <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value" [showClear]="true">
-          </p-dropdown>
+    <div class="grid">
+      <div *ngFor="let level of levels, let i = index" class="field-checkbox" class="p-d-inline">
+        <div class="col">
+          <div class="mb-4 ml-2">
+            <p-radioButton [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevel">
+            </p-radioButton>
+            <label [for]="level.key" class="mr-2 ml-1">{{level.value}}</label>
+          </div>
+          <div class="field ml-2 mb-3">
+            <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="key"
+              [showClear]="true">
+            </p-dropdown>
+          </div>
+          <div class="field-checkbox ml-2 mb-3">
+            <p-checkbox name="nonWords" [binary]="true" [label]="ignoreCaseLabel" [(ngModel)]="ignoreCase[i]">
+            </p-checkbox>
+          </div>
+          <div class="field ml-2">
+            <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value"
+              [showClear]="true">
+            </p-dropdown>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
-    (click)="clickFreqOption()" class="mr-5"></button>
-
-
-  <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
-  <div class="field ml-2">
-    <label for="numToken" style="width: 145px;"
-      class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
-    <input id="numToken" type="number" pInputText style="width: 50px;"
-      [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
-  </div>
-  <div class="field-checkbox ml-2">
-    <p-checkbox name="nonWords" [binary]="true" [label]="includeCatLabel"
-      [(ngModel)]="freqOptionsQueryRequest.includeCat">
-    </p-checkbox>
-  </div>
-  <div class="col-fixed" style="width: 150px;">
-    <p-listbox id="show" [options]="attributeList" [multiple]="true" [(ngModel)]="freqOptionsQueryRequest.categories"
-      optionLabel="value"></p-listbox>
-  </div>
-
-  <span class="flex justify-content-center mt-3">
     <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
       (click)="clickFreqOption()" class="mr-5"></button>
-  </span>
 
-</span>
+    <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
+    <div class="field ml-2">
+      <label for="numToken" style="width: 145px;"
+        class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
+      <input id="numToken" type="number" pInputText style="width: 50px;"
+        [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
+    </div>
+    <div class="field-checkbox ml-2">
+      <p-checkbox name="nonWords" [binary]="true" [label]="includeCatLabel"
+        [(ngModel)]="freqOptionsQueryRequest.includeCat">
+      </p-checkbox>
+    </div>
+    <div class="col-fixed" style="width: 150px;">
+      <p-listbox id="show" [options]="attributeList" [multiple]="true" [(ngModel)]="freqOptionsQueryRequest.categories"
+        optionLabel="value"></p-listbox>
+    </div>
+
+    <span class="flex justify-content-center mt-3">
+      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
+        (click)="clickFreqOption()" class="mr-5"></button>
+    </span>
+
+  </p-card>
+</div>
