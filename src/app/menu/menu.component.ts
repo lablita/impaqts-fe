@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -12,7 +13,6 @@ import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { User } from '../model/user';
 import { DisplayPanelService } from '../services/display-panel.service';
-import { UserService } from '../services/user.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
@@ -38,7 +38,7 @@ export class MenuComponent implements OnInit {
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
-  private roles: string[] = [];
+  // private roles: string[] | undefined = [];
   private menuNoRole: string[] = [];
   private menuRoutes: KeyValueItem[] = [];
   public user: User = new User();
@@ -49,46 +49,45 @@ export class MenuComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
-    private readonly userService: UserService,
-    private readonly displayPanelService: DisplayPanelService
+    private readonly displayPanelService: DisplayPanelService,
+    private readonly authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    this.emitterService.user.subscribe({
-      next: user => {
-        this.user = user;
+    this.authService.user$.subscribe(u => {
+      if (!!u) {
+        const user: User = new User(u.name, u['https://impaqts.eu.auth0.meta/email'], u['https://impaqts.eu.auth0.meta/role']);
+        this.role = !!user.role ? user.role : '';
+      }
+
+      this.menuByRoleList = environment.menuByRoleList;
+      this.menuNoRole = environment.menuNoRole;
+      this.menuRoutes = environment.menuRoutes;
+
+      const inst = localStorage.getItem(INSTALLATION);
+      if (inst) {
+        const installation = JSON.parse(inst) as Installation;
+        installation.logos.forEach(logo => {
+          if (logo.position === BOTTOM_LEFT) {
+            this.urlBottomLeft = logo.url;
+          }
+        });
+      }
+
+      this.getMenuItems(CONCORDANCE, this.role);
+      if (!this.menuEmitterServiceSubscription) {
+        this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe({
+          next: (event: MenuEvent) => {
+            if (event && event.item) {
+              this.getMenuItems(event.item, this.role);
+            }
+            if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
+              this.getMenuItems(RESULT_CONCORDANCE, this.role);
+            }
+          }
+        });
       }
     });
-
-    this.role = this.userService.getRole();
-    this.roles = environment.roles;
-    this.menuByRoleList = environment.menuByRoleList;
-    this.menuNoRole = environment.menuNoRole;
-    this.menuRoutes = environment.menuRoutes;
-
-    const inst = localStorage.getItem(INSTALLATION);
-    if (inst) {
-      const installation = JSON.parse(inst) as Installation;
-      installation.logos.forEach(logo => {
-        if (logo.position === BOTTOM_LEFT) {
-          this.urlBottomLeft = logo.url;
-        }
-      });
-    }
-
-    this.getMenuItems(CONCORDANCE, this.role);
-    if (!this.menuEmitterServiceSubscription) {
-      this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe({
-        next: (event: MenuEvent) => {
-          if (event && event.item) {
-            this.getMenuItems(event.item, this.role);
-          }
-          if (this.menuEmitterService.corpusSelected && this.items && event.item === CONCORDANCE) {
-            this.getMenuItems(RESULT_CONCORDANCE, this.role);
-          }
-        }
-      });
-    }
   }
 
   private getVoiceMenu(routesRole: string[], routesPage: string[]): void {
@@ -116,7 +115,7 @@ export class MenuComponent implements OnInit {
   }
 
   private getMenuItems(page: string, role: string): void {
-    const menuByRole = this.userService.getRole().length > 0 ? this.getMenuByRole(this.userService.getRole()) : [];
+    const menuByRole = this.getMenuByRole(role);
     if (menuByRole !== undefined) {
       const routesRole = this.getRoutesByMenu(menuByRole !== undefined ? menuByRole : [], this.menuRoutes);
       switch (page) {
