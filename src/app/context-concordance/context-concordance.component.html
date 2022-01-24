@@ -1,5 +1,6 @@
 <div class="mt-4">
-  <h2>{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h2>
+  <h3 *ngIf="panel">{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h3>
+  <h2 *ngIf="!panel">{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h2>
 </div>
 <div class="mt-1">
   <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>

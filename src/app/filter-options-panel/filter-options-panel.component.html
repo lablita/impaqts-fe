@@ -4,9 +4,9 @@
       <h2>{{"MENU.FILTER" | translate}}</h2>
     </div>
     <div class="mt-4">
-      <h2>{{"PAGE.CONCORDANCE.FILTER_OPTIONS.CONCORDANCE_FILTER" | translate}}</h2>
+      <h3>{{"PAGE.CONCORDANCE.FILTER_OPTIONS.CONCORDANCE_FILTER" | translate}}</h3>
     </div>
-    <div class="grid ml-4">
+    <div class="grid ml-4 mb-3">
       <div class="col-6 flex justify-content-center">
         <button pButton type="button" icon="pi" label="{{'MENU.OVERLAPS' | translate}}"
           (click)="clickOverlaps()"></button>
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
+    <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest" [panel]="true">
     </app-context-concordance>
 
     <span class="flex justify-content-center mt-3">

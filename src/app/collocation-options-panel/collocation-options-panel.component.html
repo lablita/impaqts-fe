@@ -4,45 +4,56 @@
       <h2>{{"MENU.COLLOCATIONS" | translate}}</h2>
     </div>
     <h3>{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.CANDIDATES' | translate}}</h3>
-    <div class="inline field ml-2">
-      <label class="label-size mr-1">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
-      <p-dropdown [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.attribute" optionLabel="value"
-        [showClear]="true">
-        <ng-template let-option pTemplate="item">
-          {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
-        </ng-template>
-        <ng-template pTemplate="selectedItem" let-item>
-          {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + item.value | translate}}
-        </ng-template>
-      </p-dropdown>
-    </div>
-    <div class="inline field ml-6">
-      <label for="rangeFrom" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.RANGE" | translate}}</label>
-      <input id="rangeFrom" type="number" pInputText style="width: 50px;"
-        [(ngModel)]="collocationOptionsQueryRequest.rangeFrom" class="mr-3">
-    </div>
-    <div class="inline field ml-2">
-      <label for="rangeTo" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
-      <input id="rangeTo" type="number" pInputText style="width: 50px;"
-        [(ngModel)]="collocationOptionsQueryRequest.rangeTo">
-    </div>
-
-    <div class="field ml-2 mt-3">
-      <label for="minCorpus" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
-      <input id="minCorpus" type="number" pInputText style="width: 50px;"
-        [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="mr-3">
-    </div>
-    <div class="field ml-2">
-      <label for="minRange" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
-      <input id="minRange" type="number" pInputText style="width: 50px;"
-        [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="mr-3">
-    </div>
-
-    <div class="grid ml-4">
-      <div class="col-fixed" style="width: 70px;">
-        <label for="show" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
+    <div class="field grid">
+      <label class="col-12 md:col-2">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
+      <div class="col-12 md:col-3 grid align-items-center">
+        <p-dropdown [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.attribute" optionLabel="value"
+          [showClear]="true" [style]="{'width':'100%'}">
+          <ng-template let-option pTemplate="item">
+            {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
+          </ng-template>
+          <ng-template pTemplate="selectedItem" let-item>
+            {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + item.value | translate}}
+          </ng-template>
+        </p-dropdown>
       </div>
-      <div class="col-fixed" style="width: 150px;">
+      <div class="col-12 md:col-4 grid align-items-center">
+        <label for="rangeFrom" class="col-6">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.RANGE" | translate}}</label>
+        <div class="col-6">
+          <input id="rangeFrom" type="number" pInputText style="width: 50px;"
+            [(ngModel)]="collocationOptionsQueryRequest.rangeFrom" class="mr-3">
+        </div>
+      </div>
+      <div class="col-12 md:col-2 grid align-items-center">
+        <label for="rangeTo" class="col-4">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
+        <div class="col-8">
+          <input id="rangeTo" type="number" pInputText style="width: 50px;"
+            [(ngModel)]="collocationOptionsQueryRequest.rangeTo">
+        </div>
+      </div>
+    </div>
+
+    <div class="field grid">
+      <label for="minCorpus"
+        class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
+      <div class="col-12 md:col-5">
+        <input id="minCorpus" type="number" pInputText style="width: 50px;"
+          [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="mr-3">
+      </div>
+    </div>
+    <div class="field grid">
+      <label for="minRange"
+        class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
+      <div class="col-12 md:col-5">
+        <input id="minRange" type="number" pInputText style="width: 50px;"
+          [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="mr-3">
+      </div>
+    </div>
+
+    <div class="field grid">
+      <label for="show"
+        class="col-12 md:col-2 mr-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
+      <div class="col-12 md:col-3">
         <p-listbox id="show" [options]="attributeList" [multiple]="true"
           [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value">
           <ng-template let-option pTemplate="item">
@@ -50,10 +61,9 @@
           </ng-template>
         </p-listbox>
       </div>
-      <div class="col-fixed" style="width: 70px;">
-        <label for="sort">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
-      </div>
-      <div class="col-fixed" style="width: 150px;">
+      <label for="sort"
+        class="col-12 md:col-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
+      <div class="col-12 md:col-3">
         <p-listbox id="sort" [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
           optionLabel="value">
           <ng-template let-option pTemplate="item">

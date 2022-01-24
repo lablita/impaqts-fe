@@ -10,6 +10,7 @@ import { KeyValueItem } from '../model/key-value-item';
 export class ContextConcordanceComponent implements OnInit {
 
   @Input() public contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
+  @Input() public panel = false;
 
   public windows: KeyValueItem[] = [new KeyValueItem('LEFT', 'LEFT'), new KeyValueItem('RIGHT', 'RIGHT'), new KeyValueItem('BOTH', 'BOTH')];
   public selectedWindow: KeyValueItem | null = null;
