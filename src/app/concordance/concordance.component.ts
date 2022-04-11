@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
@@ -18,6 +17,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
+import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
@@ -218,7 +218,8 @@ export class ConcordanceComponent implements OnInit {
   public loadConcordances(event?: LazyLoadEvent): void {
     this.setMetadataQuery();
     if (!!this.selectedCorpus) {
-      const qr = _.clone(this.queryRequestSevice.queryRequest);
+      // const qr = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
+      const qr = new QueryRequest();
       if (!event) {
         qr.start = 0;
         qr.end = 10;
