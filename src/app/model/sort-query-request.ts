@@ -1,12 +1,14 @@
+export class SortOption {
+  attribute = '';
+  ignoreCase = false;
+  backward = false;
+  position = '';
+}
 export class SortQueryRequest {
   attribute = '';
   sortKey = '';
-  numberTokens = '';
+  numberTokens = 0;
   ignoreCase = false;
   backward = false;
-  levels: string[] = [];
-  attributeMulti: string[] = [];
-  ignoreCaseMulti: boolean[] = [];
-  backwardMulti: boolean[] = [];
-  position: string[] = [];
+  multilevelSort: Array<SortOption> = Array.from<SortOption>({ length: 0 });
 }

@@ -47,20 +47,21 @@ export class CollocationOptionsPanelComponent {
 
   public clickCollocationOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
+    this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
   }
 
   private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequest): CollocationQueryRequest {
     const res = new CollocationQueryRequest();
-    res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute.value : null;
+    res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute.key : null;
     res.minFreqCorpus = collocationOptionsQueryRequest.minFreqCorpus;
     res.minFreqRange = collocationOptionsQueryRequest.minFreqRange;
     res.rangeFrom = collocationOptionsQueryRequest.rangeFrom;
     res.rangeTo = collocationOptionsQueryRequest.rangeTo;
     if (!!collocationOptionsQueryRequest.showFunc) {
-      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(item.value));
+      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(item.key));
     }
-    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? collocationOptionsQueryRequest.sortBy.value : null;
+    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? collocationOptionsQueryRequest.sortBy.key : null;
     return res;
   }
 

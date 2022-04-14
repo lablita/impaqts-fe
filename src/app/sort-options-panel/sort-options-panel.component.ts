@@ -3,6 +3,8 @@ import { environment } from 'src/environments/environment';
 import { L1, L2, L3, NODE, R1, R2, R3 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
+import { SortOption, SortQueryRequest } from '../model/sort-query-request';
+import { QueryRequestService } from '../services/query-request.service';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
@@ -36,6 +38,9 @@ export class SortOptionsPanelComponent implements OnInit {
   public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
   public disableMultilevelChechbox: boolean[] = [false, false, false];
 
+  constructor(
+    private readonly queryRequestService: QueryRequestService
+  ) { }
 
   ngOnInit(): void {
     this.positionList = [
@@ -96,6 +101,10 @@ export class SortOptionsPanelComponent implements OnInit {
       this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
       localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
     }
+    if (this.sortOptionsQueryRequest) {
+      this.queryRequestService.resetOptionsRequest();
+      this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest);
+    }
   }
 
   public clickLeft(): void {
@@ -126,5 +135,22 @@ export class SortOptionsPanelComponent implements OnInit {
     } else {
       this.disableMultilevelChechbox = [false, false, false];
     }
+  }
+
+  private sortQueryRequestBuild(sortOptionsQueryRequest: SortOptionsQueryRequest): SortQueryRequest {
+    const res = new SortQueryRequest();
+    res.sortKey = sortOptionsQueryRequest.sortKey.key;
+    res.numberTokens = sortOptionsQueryRequest.numberTokens;
+    res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
+    res.backward = sortOptionsQueryRequest.backward;
+    sortOptionsQueryRequest.levels.forEach((opt, index) => {
+      const sortOption = new SortOption();
+      sortOption.attribute = sortOptionsQueryRequest.attributeMulti[index].value;
+      sortOption.ignoreCase = sortOptionsQueryRequest.ignoreCaseMulti[index];
+      sortOption.backward = sortOptionsQueryRequest.backwardMulti[index];
+      sortOption.position = sortOptionsQueryRequest.position[index].value;
+      res.multilevelSort.push(sortOption);
+    });
+    return res;
   }
 }

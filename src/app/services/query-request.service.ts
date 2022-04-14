@@ -9,4 +9,9 @@ export class QueryRequestService {
   public queryRequest = new QueryRequest();
 
   constructor() { }
+
+  public resetOptionsRequest(): void {
+    this.queryRequest.collocationQueryRequest = null;
+    this.queryRequest.sortQueryRequest = null;
+  }
 }

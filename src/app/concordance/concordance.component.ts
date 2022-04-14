@@ -110,7 +110,7 @@ export class ConcordanceComponent implements OnInit {
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly menuEmitterService: MenuEmitterService,
+    public menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
@@ -148,13 +148,12 @@ export class ConcordanceComponent implements OnInit {
     this.resultView = false;
     this.noResultFound = false;
     this.clickTextType();
-    this.displayPanelService.labelOptionsDisabled = !this.selectedCorpus;
+    this.displayPanelService.labelOptionsDisabled = true;
     this.displayPanelService.labelMetadataDisabled = true;
     if (this.selectedCorpus) {
       this.displayPanelMetadata = false;
       this.displayPanelOptions = false;
 
-      this.menuEmitterService.corpusSelected = true;
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
@@ -218,8 +217,8 @@ export class ConcordanceComponent implements OnInit {
   public loadConcordances(event?: LazyLoadEvent): void {
     this.setMetadataQuery();
     if (!!this.selectedCorpus) {
-      // const qr = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
-      const qr = new QueryRequest();
+      const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
+      // const qr = new QueryRequest();
       if (!event) {
         qr.start = 0;
         qr.end = 10;
@@ -241,6 +240,7 @@ export class ConcordanceComponent implements OnInit {
         qr.queryPattern.structPattern = this.metadataQuery;
       }
       qr.corpus = this.selectedCorpus.key;
+
       this.socketService.sendMessage(qr);
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     }
@@ -309,6 +309,36 @@ export class ConcordanceComponent implements OnInit {
     }
   }
 
+  public showVideoDlg(rowIndex: number): void {
+    const youtubeVideo = rowIndex % 2 > 0;
+    let url = '';
+
+    if (youtubeVideo) {
+      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
+      const start = Math.floor((Math.random() * 200) + 1);
+      const end = start + Math.floor((Math.random() * 20) + 1);
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `${url}?autoplay=1&start=${start}&end=${end}`
+        );
+      }
+    } else {
+      url = 'https://player.vimeo.com/video/637089218';
+      const start = `${Math.floor((Math.random() * 5) + 1)}m${Math.floor((Math.random() * 60) + 1)}s`;
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
+      }
+    }
+
+    this.displayModal = true;
+  }
+
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic,
+      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+  }
+
   private init(): void {
     this.resultView = false;
     const inst = localStorage.getItem(INSTALLATION);
@@ -363,40 +393,13 @@ export class ConcordanceComponent implements OnInit {
           complete: () => console.log('IMPAQTS WS disconnected')
         })
       ).subscribe({
-        next: () => { return; }
+        next: () => {
+          this.displayPanelService.labelOptionsDisabled = !this.resultView;
+          this.menuEmitterService.corpusSelected = this.resultView;
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+        }
       });
     }
   }
-
-  public showVideoDlg(rowIndex: number): void {
-    const youtubeVideo = rowIndex % 2 > 0;
-    let url = '';
-
-    if (youtubeVideo) {
-      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
-      const start = Math.floor((Math.random() * 200) + 1);
-      const end = start + Math.floor((Math.random() * 20) + 1);
-      if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-          `${url}?autoplay=1&start=${start}&end=${end}`
-        );
-      }
-    } else {
-      url = 'https://player.vimeo.com/video/637089218';
-      const start = `${Math.floor((Math.random() * 5) + 1)}m${Math.floor((Math.random() * 60) + 1)}s`;
-      if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
-      }
-    }
-
-    this.displayModal = true;
-  }
-
-  public showDialog(kwicline: KWICline): void {
-    // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic,
-      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
-  }
-
 
 }

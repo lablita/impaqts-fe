@@ -1,5 +1,4 @@
 import { KeyValueItem } from "./key-value-item";
-
 export class SortOptionsQueryRequest {
   attribute: KeyValueItem;
   sortKey: KeyValueItem;
