@@ -14,4 +14,8 @@ export class QueryRequestService {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
   }
+
+  public isOptionSet(): boolean {
+    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest;
+  }
 }

@@ -13,6 +13,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { User } from '../model/user';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
@@ -50,7 +51,8 @@ export class MenuComponent implements OnInit {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly translateService: TranslateService,
     private readonly displayPanelService: DisplayPanelService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
@@ -105,6 +107,7 @@ export class MenuComponent implements OnInit {
             this.displayPanelService.panelItemSelected = route;
             this.displayPanelService.displayPanelOptions = this.menuDisplayPanel.filter(item => item === route).length > 0;
             this.displayPanelService.displayPanelMetadata = false;
+            this.queryRequestService.resetOptionsRequest();
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
           }, null, null, false, false, route));
         }

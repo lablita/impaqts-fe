@@ -87,7 +87,7 @@ export class SortOptionsPanelComponent implements OnInit {
     this.closeSidebarEvent.emit(true);
   }
 
-  public clickSortOption(): void {
+  public setSortOption(): void {
     if (this.sortOptionsQueryRequest) {
       if (this.selectedSortKey) {
         this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
@@ -105,6 +105,10 @@ export class SortOptionsPanelComponent implements OnInit {
       this.queryRequestService.resetOptionsRequest();
       this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest);
     }
+  }
+
+  public removeSortOption(): void {
+    this.queryRequestService.resetOptionsRequest();
   }
 
   public clickLeft(): void {

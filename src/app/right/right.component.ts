@@ -9,6 +9,7 @@ import {
 import { KeyValueItem } from '../model/key-value-item';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
 const menuToPanelLabel: KeyValueItem[] = [
@@ -36,9 +37,10 @@ export class RightComponent implements OnInit {
   private titleOption: string | null = null;
 
   constructor(
+    public displayPanelService: DisplayPanelService,
+    public queryRequestService: QueryRequestService,
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
-    public displayPanelService: DisplayPanelService,
     private readonly menuEmitterService: MenuEmitterService
   ) { }
 
@@ -51,10 +53,9 @@ export class RightComponent implements OnInit {
         this.hideMetadataLabel = false;
         this.hideOptionsLabel = false;
         this.titleLabel = menuToPanelLabel.filter(item => item.key === this.titleOption)[0].value;
-
-        if (!this.displayPanelService.displayPanelOptions && this.emitterService.pageMenu !== CONCORDANCE) {
-          this.openSidebarOptions();
-        }
+        // if (!this.displayPanelService.displayPanelOptions && this.emitterService.pageMenu !== CONCORDANCE) {
+        //   this.openSidebarOptions();
+        // }
       } else {
         this.hideMetadataLabel = true;
         this.hideOptionsLabel = true;

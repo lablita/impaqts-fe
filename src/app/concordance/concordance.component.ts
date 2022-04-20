@@ -81,8 +81,6 @@ export class ConcordanceComponent implements OnInit {
     new KeyValueItem('WORD_LC', 'WORD_LC'),
     new KeyValueItem('LEMMA_LC', 'LEMMA_LC')
   ];
-  public displayPanelMetadata = false;
-  public displayPanelOptions = false;
   public totalResults = 0;
   public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
   public totalKwicline: Array<KWICline> = Array.from<KWICline>({ length: 0 });
@@ -144,16 +142,15 @@ export class ConcordanceComponent implements OnInit {
     return;
   }
 
+
+
   public dropdownCorpus(): void {
     this.resultView = false;
     this.noResultFound = false;
     this.clickTextType();
-    this.displayPanelService.labelOptionsDisabled = true;
-    this.displayPanelService.labelMetadataDisabled = true;
+    this.displayPanelService.reset();
+    this.queryRequestSevice.resetOptionsRequest();
     if (this.selectedCorpus) {
-      this.displayPanelMetadata = false;
-      this.displayPanelOptions = false;
-
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
       this.textTypesAttributes = [];

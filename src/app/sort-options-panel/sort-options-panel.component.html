@@ -98,8 +98,10 @@
     </div>
 
     <span class="flex justify-content-center">
-      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
-        (click)="clickSortOption()" class="mr-5"></button>
+      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SET_SORT' | translate}}"
+        (click)="setSortOption()" class="mr-5"></button>
+      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.REMOVE_SORT' | translate}}"
+        (click)="removeSortOption()" class="mr-5"></button>
     </span>
   </p-card>
 </div>

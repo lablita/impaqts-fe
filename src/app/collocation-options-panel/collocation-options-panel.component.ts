@@ -45,10 +45,14 @@ export class CollocationOptionsPanelComponent {
   }
 
 
-  public clickCollocationOption(): void {
+  public setCollocationOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
+  }
+
+  public removeCollocationOption(): void {
+    this.queryRequestService.resetOptionsRequest();
   }
 
   private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequest): CollocationQueryRequest {
