@@ -141,9 +141,9 @@ export class SortOptionsPanelComponent implements OnInit {
       res.attribute = sortOptionsQueryRequest.attribute.key;
       res.sortKey = sortOptionsQueryRequest.sortKey.key;
       res.numberTokens = sortOptionsQueryRequest.numberTokens;
-    } else {
       res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
       res.backward = sortOptionsQueryRequest.backward;
+    } else {
       sortOptionsQueryRequest.levels.forEach((opt, index) => {
         const sortOption = new SortOption();
         sortOption.attribute = sortOptionsQueryRequest.attributeMulti[index].value;

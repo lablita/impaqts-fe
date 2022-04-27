@@ -25,7 +25,8 @@
 
     <div class="field ml-2 mb-3">
       <p-dropdown [options]="attributeList" [(ngModel)]="sortOptionsQueryRequest.attribute" optionLabel="key"
-        [showClear]="true" *ngIf="sortOptionsQueryRequest" [disabled]="!enableSimpleSort">
+        [showClear]="true" *ngIf="sortOptionsQueryRequest" [disabled]="!enableSimpleSort"
+        (ngModelChange)="removeSortOption()">
       </p-dropdown>
     </div>
 
@@ -36,7 +37,7 @@
       <div class="col">
         <div *ngFor="let sortkey of sortKeys" class="field-checkbox d-inline">
           <p-radioButton [inputId]="sortkey.key" name="sortkey" [value]="sortkey" [(ngModel)]="selectedSortKey"
-            [disabled]="!enableSimpleSort">
+            [disabled]="!enableSimpleSort" (ngModelChange)="removeSortOption()">
           </p-radioButton>
           <label [for]="sortkey.key" class="mr-2 ml-1">{{sortkey.value | translate}}</label>
         </div>
@@ -47,7 +48,23 @@
       <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.SORT_OPTIONS.NUM_TOKEN" |
       translate}}</label>
       <input *ngIf="sortOptionsQueryRequest" id="numToken" type="number" pInputText style="width: 50px;"
-        [(ngModel)]="sortOptionsQueryRequest.numberTokens" [disabled]="!enableSimpleSort">
+        [(ngModel)]="sortOptionsQueryRequest.numberTokens" [disabled]="!enableSimpleSort"
+        (ngModelChange)="removeSortOption()">
+    </div>
+
+    <div class="field-checkbox ml-2">
+      <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
+        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}"
+        [(ngModel)]="sortOptionsQueryRequest.ignoreCase" [disabled]="!enableSimpleSort"
+        (ngModelChange)="removeSortOption()">
+      </p-checkbox>
+    </div>
+
+    <div class="field-checkbox ml-2">
+      <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
+        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}" [(ngModel)]="sortOptionsQueryRequest.backward"
+        [disabled]="!enableSimpleSort" (ngModelChange)="removeSortOption()">
+      </p-checkbox>
     </div>
 
     <span class="flex justify-content-center">
@@ -57,19 +74,6 @@
         (click)="removeSortOption()" class="mr-5" [disabled]="!enableSimpleSort"></button>
     </span>
 
-    <div class="field-checkbox ml-2">
-      <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
-        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}"
-        [(ngModel)]="sortOptionsQueryRequest.ignoreCase" [disabled]="!enableMultilevelSort">
-      </p-checkbox>
-    </div>
-
-    <div class="field-checkbox ml-2">
-      <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
-        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}" [(ngModel)]="sortOptionsQueryRequest.backward"
-        [disabled]="!enableMultilevelSort">
-      </p-checkbox>
-    </div>
 
     <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.MULTILEVEL_SORT' | translate}}</h3>
     <div class="grid">
@@ -77,31 +81,31 @@
         <div>
           <div class="mb-4 ml-2">
             <p-checkbox [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevels"
-              (onChange)="multilevelCheckBoxManager(i)" [disabled]="disableMultilevelChechbox[i]"
-              [disabled]="!enableMultilevelSort">
+              (onChange)="multilevelCheckBoxManager(i)"
+              [disabled]="disableMultilevelChechbox[i] ||!enableMultilevelSort" (ngModelChange)="removeSortOption()">
             </p-checkbox>
             <label [for]="level.key"
               class="mr-2 ml-1">{{'PAGE.CONCORDANCE.SORT_OPTIONS.' + level.value | translate}}</label>
           </div>
           <div class="field ml-2 mb-3">
             <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="value"
-              [showClear]="true" [disabled]="!enableMultilevelSort">
+              [showClear]="true" [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
             </p-dropdown>
           </div>
           <div class="field-checkbox ml-2 mb-3">
             <p-checkbox name="nonWords" [binary]="true"
               label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}" [(ngModel)]="ignoreCase[i]"
-              [disabled]="!enableMultilevelSort">
+              [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
             </p-checkbox>
           </div>
           <div class="field-checkbox ml-2 mb-3">
             <p-checkbox name="nonWords" [binary]="true" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}"
-              [(ngModel)]="backward[i]" [disabled]="!enableMultilevelSort">
+              [(ngModel)]="backward[i]" [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
             </p-checkbox>
           </div>
           <div class="field ml-2">
             <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value"
-              [showClear]="true" [disabled]="!enableMultilevelSort">
+              [showClear]="true" [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
             </p-dropdown>
           </div>
         </div>
