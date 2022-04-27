@@ -68,7 +68,7 @@ export class MetadataUtilService {
         obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
       }
     });
-    // elimino metadata che partecimano ad alberi
+    // elimino metadata che partecipano ad alberi
     metadata = metadata.filter(md => !md.child);
     const lenObsArray = obsArray.length;
     if (lenObsArray > 0) {

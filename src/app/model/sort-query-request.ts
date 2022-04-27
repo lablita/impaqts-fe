@@ -1,14 +1,14 @@
 export class SortOption {
-  attribute = '';
-  ignoreCase = false;
-  backward = false;
-  position = '';
+  attribute: string | null = null;
+  ignoreCase: boolean | null = null;
+  backward: boolean | null = null;
+  position: string | null = null;
 }
 export class SortQueryRequest {
-  attribute = '';
-  sortKey = '';
+  attribute: string | null = null;
+  sortKey: string | null = null;
   numberTokens = 0;
-  ignoreCase = false;
-  backward = false;
+  ignoreCase: boolean | null = null;
+  backward: boolean | null = null;
   multilevelSort: Array<SortOption> = Array.from<SortOption>({ length: 0 });
 }

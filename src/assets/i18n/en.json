@@ -146,8 +146,10 @@
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "THIRD_LEVEL": "third level (... finally sort by)",
         "POSITION": "Position",
-        "SET_SORT": "Set Sort Opt.",
-        "REMOVE_SORT": "Remove Sort Opt."
+        "SET_SIMPLE_SORT": "Set Simple Sort Opt.",
+        "REMOVE_SIMPLE_SORT": "Remove Simple Sort Opt.",
+        "SET_MULTILEVEL_SORT": "Set Multilevel Sort Opt.",
+        "REMOVE_MULTILEVEL_SORT": "Remove Multilevel Sort Opt."
       },
       "FREQ_OPTIONS": {
         "FREQ_OPTIONS": "Frequency opt.",

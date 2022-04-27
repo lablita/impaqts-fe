@@ -30,13 +30,16 @@ export class SortOptionsPanelComponent implements OnInit {
   new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
   public selectedSortKey: KeyValueItem | null = null;
   public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'),
+  new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
   public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
   public disableMultilevelChechbox: boolean[] = [false, false, false];
+  public enableSimpleSort = true;
+  public enableMultilevelSort = true;
 
   constructor(
     private readonly queryRequestService: QueryRequestService
@@ -87,27 +90,18 @@ export class SortOptionsPanelComponent implements OnInit {
     this.closeSidebarEvent.emit(true);
   }
 
-  public setSortOption(): void {
-    if (this.sortOptionsQueryRequest) {
-      if (this.selectedSortKey) {
-        this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
-      }
-      if (this.selectedLevels.length > 0) {
-        this.sortOptionsQueryRequest.levels = this.selectedLevels;
-      }
-      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute.slice(0, this.selectedLevels.length);
-      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase;
-      this.sortOptionsQueryRequest.backwardMulti = this.backward;
-      this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
-      localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
-    }
-    if (this.sortOptionsQueryRequest) {
-      this.queryRequestService.resetOptionsRequest();
-      this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest);
-    }
+  public setSimpleSortOption(): void {
+    this.enableMultilevelSort = false;
+    this.setSortOption(true);
+  }
+
+  public setMultilevelSortOption(): void {
+    this.enableSimpleSort = false;
+    this.setSortOption(false);
   }
 
   public removeSortOption(): void {
+    this.enableSimpleSort = this.enableMultilevelSort = true;
     this.queryRequestService.resetOptionsRequest();
   }
 
@@ -141,20 +135,44 @@ export class SortOptionsPanelComponent implements OnInit {
     }
   }
 
-  private sortQueryRequestBuild(sortOptionsQueryRequest: SortOptionsQueryRequest): SortQueryRequest {
+  private sortQueryRequestBuild(sortOptionsQueryRequest: SortOptionsQueryRequest, isSimpleSort: boolean): SortQueryRequest {
     const res = new SortQueryRequest();
-    res.sortKey = sortOptionsQueryRequest.sortKey.key;
-    res.numberTokens = sortOptionsQueryRequest.numberTokens;
-    res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
-    res.backward = sortOptionsQueryRequest.backward;
-    sortOptionsQueryRequest.levels.forEach((opt, index) => {
-      const sortOption = new SortOption();
-      sortOption.attribute = sortOptionsQueryRequest.attributeMulti[index].value;
-      sortOption.ignoreCase = sortOptionsQueryRequest.ignoreCaseMulti[index];
-      sortOption.backward = sortOptionsQueryRequest.backwardMulti[index];
-      sortOption.position = sortOptionsQueryRequest.position[index].value;
-      res.multilevelSort.push(sortOption);
-    });
+    if (isSimpleSort) {
+      res.attribute = sortOptionsQueryRequest.attribute.key;
+      res.sortKey = sortOptionsQueryRequest.sortKey.key;
+      res.numberTokens = sortOptionsQueryRequest.numberTokens;
+    } else {
+      res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
+      res.backward = sortOptionsQueryRequest.backward;
+      sortOptionsQueryRequest.levels.forEach((opt, index) => {
+        const sortOption = new SortOption();
+        sortOption.attribute = sortOptionsQueryRequest.attributeMulti[index].value;
+        sortOption.ignoreCase = sortOptionsQueryRequest.ignoreCaseMulti[index];
+        sortOption.backward = sortOptionsQueryRequest.backwardMulti[index];
+        sortOption.position = sortOptionsQueryRequest.position[index].value;
+        res.multilevelSort.push(sortOption);
+      });
+    }
     return res;
+  }
+
+  private setSortOption(isSimpleSort: boolean): void {
+    if (this.sortOptionsQueryRequest) {
+      if (this.selectedSortKey) {
+        this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
+      }
+      if (this.selectedLevels.length > 0) {
+        this.sortOptionsQueryRequest.levels = this.selectedLevels;
+      }
+      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute.slice(0, this.selectedLevels.length);
+      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase;
+      this.sortOptionsQueryRequest.backwardMulti = this.backward;
+      this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
+      localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
+    }
+    if (this.sortOptionsQueryRequest) {
+      this.queryRequestService.resetOptionsRequest();
+      this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
+    }
   }
 }
