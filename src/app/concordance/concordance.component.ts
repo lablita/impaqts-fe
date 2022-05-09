@@ -45,7 +45,7 @@ export class ConcordanceComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public metadataTextTypes: Metadatum[] = [];
 
-  public lemma: string | null = null;
+  public lemma = '';
   public selectedCorpus: KeyValueItem | null = null;
   public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedQueryType: KeyValueItem | null = null;
@@ -142,8 +142,6 @@ export class ConcordanceComponent implements OnInit {
     return;
   }
 
-
-
   public dropdownCorpus(): void {
     this.resultView = false;
     this.noResultFound = false;
@@ -215,7 +213,6 @@ export class ConcordanceComponent implements OnInit {
     this.setMetadataQuery();
     if (!!this.selectedCorpus) {
       const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
-      // const qr = new QueryRequest();
       if (!event) {
         qr.start = 0;
         qr.end = 10;
@@ -225,19 +222,41 @@ export class ConcordanceComponent implements OnInit {
           qr.end = qr.start + event.rows;
         }
       }
+      let queryTags: QueryTag[] = [];
+      let tag: QueryTag;
+      switch (this.selectedQueryType?.key) {
+        case WORD:
+          tag = this.tagBuilder('word', this.word);
+          tag.matchCase = this.matchCase;
+          queryTags.push(tag);
+          break;
+        case LEMMA:
+          queryTags.push(this.tagBuilder('lemma', this.lemma));
+          break;
+        case PHRASE:
+          queryTags.push(this.tagBuilder('phrase', this.phrase));
+          break;
+        case CHARACTER:
+          queryTags.push(this.tagBuilder('character', this.character));
+          break;
+        case CQL:
+          tag = this.tagBuilder('cql', this.word);
+          tag.defaultAttributeCQL = this.defaultAttributeCQL?.key ? this.defaultAttributeCQL?.key : '';
+          queryTags.push(this.tagBuilder('cql', this.cql));
+          break;
+        default: //SIMPLE
+          queryTags.push(this.tagBuilder('word', this.simple));
+          queryTags.push(this.tagBuilder('lemma', this.simple));
+      }
       qr.queryPattern = new QueryPattern();
       qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
       const simpleQueryToken = new QueryToken(TOKEN);
-      const simpleQueryTag = new QueryTag(TOKEN);
-      simpleQueryTag.name = 'word';
-      simpleQueryTag.value = this.simple;
-      simpleQueryToken.tags[0][0] = simpleQueryTag;
+      simpleQueryToken.tags[0] = queryTags;
       qr.queryPattern.tokPattern.push(simpleQueryToken);
       if (this.metadataQuery) {
         qr.queryPattern.structPattern = this.metadataQuery;
       }
       qr.corpus = this.selectedCorpus.key;
-
       this.socketService.sendMessage(qr);
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     }
@@ -397,6 +416,13 @@ export class ConcordanceComponent implements OnInit {
         }
       });
     }
+  }
+
+  private tagBuilder(type: string, value: string): QueryTag {
+    const tag = new QueryTag(TOKEN);
+    tag.name = type;
+    tag.value = this.simple;
+    return tag;
   }
 
 }

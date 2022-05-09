@@ -9,6 +9,7 @@ export class QueryTag {
   containsValue = false;
   matchCase = true;
   negation = false;
+  defaultAttributeCQL = '';
 
   constructor(struct: string) {
     this.structure = struct === TOKEN ? TOKEN : STRUCT_DOC;
