@@ -122,16 +122,24 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public multilevelCheckBoxManager(index: number): void {
-    if (this.selectedLevels.filter(l => l.key === 'SECOND_LEVEL').length > 0) {
-      this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-      new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL')];
-      this.disableMultilevelChechbox = [true, false, false];
-    } else if (this.selectedLevels.filter(l => l.key === 'THIRD_LEVEL').length > 0) {
-      this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-      new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
-      this.disableMultilevelChechbox = [true, true, false];
-    } else {
+    if (index === 0) {
+      // this.selectedLevels = this.selectedLevels.filter(l => l.key === 'FIRST_LEVEL').length > 0
+      //   ? [] : [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL')];
       this.disableMultilevelChechbox = [false, false, false];
+    } else if (index === 1) {
+      if (this.selectedLevels.filter(l => l.key === 'SECOND_LEVEL').length > 0) {
+        this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'), new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL')];
+        this.disableMultilevelChechbox = [true, false, false];
+      } else {
+        this.disableMultilevelChechbox = [false, false, false];
+      }
+    } else { //index === 2 
+      if (this.selectedLevels.filter(l => l.key === 'THIRD_LEVEL').length > 0) {
+        this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'), new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+        this.disableMultilevelChechbox = [true, true, false];
+      } else {
+        this.disableMultilevelChechbox = [true, false, false];
+      }
     }
   }
 
