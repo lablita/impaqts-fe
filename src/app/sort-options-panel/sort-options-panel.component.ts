@@ -123,8 +123,6 @@ export class SortOptionsPanelComponent implements OnInit {
 
   public multilevelCheckBoxManager(index: number): void {
     if (index === 0) {
-      // this.selectedLevels = this.selectedLevels.filter(l => l.key === 'FIRST_LEVEL').length > 0
-      //   ? [] : [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL')];
       this.disableMultilevelChechbox = [false, false, false];
     } else if (index === 1) {
       if (this.selectedLevels.filter(l => l.key === 'SECOND_LEVEL').length > 0) {
