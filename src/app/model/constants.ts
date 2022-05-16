@@ -47,7 +47,7 @@ export const SIMPLE = 'simple';
 export const LEMMA = 'lemma';
 export const PHRASE = 'phrase';
 export const WORD = 'word';
-export const CHARACTER = 'characher';
+export const CHARACTER = 'character';
 export const CQL = 'cql';
 
 export const BOTH = 'both';

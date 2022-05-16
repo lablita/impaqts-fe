@@ -252,6 +252,14 @@ export class ConcordanceComponent implements OnInit {
       qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
       const simpleQueryToken = new QueryToken(TOKEN);
       simpleQueryToken.tags[0] = queryTags;
+
+
+      // const simpleQueryTag = new QueryTag(TOKEN);
+      // simpleQueryTag.name = 'word';
+      // simpleQueryTag.value = this.simple;
+      // simpleQueryToken.tags[0][0] = simpleQueryTag;
+
+
       qr.queryPattern.tokPattern.push(simpleQueryToken);
       if (this.metadataQuery) {
         qr.queryPattern.structPattern = this.metadataQuery;
@@ -421,7 +429,7 @@ export class ConcordanceComponent implements OnInit {
   private tagBuilder(type: string, value: string): QueryTag {
     const tag = new QueryTag(TOKEN);
     tag.name = type;
-    tag.value = this.simple;
+    tag.value = value;
     return tag;
   }
 
