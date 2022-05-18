@@ -24,7 +24,6 @@ import { DispalyPanelOptionsComponent } from './dispaly-panel-options/dispaly-pa
 import { FilterOptionsPanelComponent } from './filter-options-panel/filter-options-panel.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
 import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.component';
-import { LoginComponent } from './login/login/login.component';
 import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
 import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
@@ -63,7 +62,6 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     QueryTokenComponent,
     QueryTagComponent,
     VideoPlayerComponent,
-    LoginComponent,
     RoleDirective,
     KwicLinesViewComponent,
     DispalyPanelOptionsComponent
