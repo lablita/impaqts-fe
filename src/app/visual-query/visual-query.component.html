@@ -1,0 +1,127 @@
+<div class="flex flex-row">
+
+  <div class="flex flex-grow-1 flex-column mt-3">
+    <p-card>
+      <div class="field flex">
+        <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
+        <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value"
+          [placeholder]="'Select a Corpus'" [filter]="true" [showClear]="true" (onChange)="dropdownCorpus()">
+          <ng-template pTemplate="selectedItem">
+            <div *ngIf="selectedCorpus">
+              <div class="label-size">{{selectedCorpus.value}}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div>
+              <div class="label-size">{{country.value}}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
+
+      <span class="p-component">
+        <h2>{{"PAGE.VISUAL_QUERY.QUERY" | translate}}</h2>
+      </span>
+      <div class="p-jc-start mt-2">
+        <div *ngFor="let token of queryPattern.tokPattern" class="mr-2 inline-flex">
+          <div class="box">
+            <app-query-token [token]="token" [typeList]="typeListQuery" [defaultType]="defaultType"
+              [actionList]="actionList" [defaultAction]="defaulAction" [option]="true"
+              (delete)="deleteTokenQuery(token)" [metadata]="false">
+            </app-query-token>
+          </div>
+        </div>
+      </div>
+      <button pButton label=" " icon="pi" (click)="addTokenQuery()" [disabled]="!enableAddToken"><i
+          class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_TOKEN" | translate}}</button>
+
+      <hr>
+      <span class="p-component">
+        <h2>{{"PAGE.VISUAL_QUERY.METADATA" | translate}}</h2>
+      </span>
+      <div class="jc-start mt-2">
+        <div *ngFor="let token of metadata" class="mr-2">
+          <div class="box">
+            <app-query-token [token]="token" [metadatumTextTypes]="getMetadatumTextTypes()"
+              (delete)="deleteTokenMetadata(token)" [metadata]="true">
+            </app-query-token>
+          </div>
+        </div>
+      </div>
+      <button pButton label=" " icon="pi" (click)="addTokenMetadata()" [disabled]="!enableAddMetadata"><i
+          class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_METADATA" | translate}}
+        <div *ngIf="enableSpinner">
+          <p-progressSpinner [style]="{width: '25px', height: '25px'}"></p-progressSpinner>
+        </div>
+      </button>
+      <div class="mt-6 text-center">
+        <button [disabled]="!atLeastOneToken()" pButton type="button" icon="pi"
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
+        </button>
+      </div>
+
+      <div class="text-center mt-6" *ngIf="loading">
+        <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
+      </div>
+      <div *ngIf="resultView" class="p-d-block">
+        <p-card>
+          <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
+          </h3>
+          <div class="" style="width: 150px;">
+            <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
+              [style]="{width: '700'}" [baseZIndex]="10000">
+              <iframe *ngIf="youtubeVideo" title="youtubeVideo" style="border: 0px;" width="600" height="450"
+                [src]="videoUrl" allowfullscreen></iframe>
+              <iframe *ngIf="!youtubeVideo" title="otherTypeVideo" [src]="videoUrl" width="600" height="450"
+                allowfullscreen></iframe>
+            </p-dialog>
+          </div>
+          <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
+            styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
+            currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+            [rowsPerPageOptions]="[10,25,50]">
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 80px;" scope="col"></th>
+                <th class="p-text-center" style="width: 180px;" scope="col">Left</th>
+                <th class="p-text-center" style="width: 80px;" scope="col">Kwic</th>
+                <th class="p-text-center" style="width: 180px;" scope="col">Right</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
+              <tr>
+                <td>
+                  <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
+                    (click)="showVideoDlg(rowIndex)"></button>
+                </td>
+                <td class="p-text-right">{{kwicLine.leftContext}}</td>
+                <td class="p-text-center">
+                  <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
+                    (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
+                </td>
+                <td class="p-text-left">{{kwicLine.rightContext}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <p-overlayPanel #op [style]="{width: '450px'}">
+            <ng-template pTemplate>
+              <div>{{resultContext?.after}}</div>
+              <div style="text-align: center; color: red;">
+                {{resultContext?.keyword}}
+              </div>
+              <div>
+                {{resultContext?.before}}
+              </div>
+            </ng-template>
+          </p-overlayPanel>
+
+        </p-card>
+      </div>
+      <div *ngIf="!resultView && noResultFound && !loading" class="mt-6">
+        <p-card>
+          <h3 style="color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+        </p-card>
+      </div>
+    </p-card>
+  </div>
+</div>

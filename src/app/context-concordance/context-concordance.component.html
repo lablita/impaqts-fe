@@ -1,0 +1,46 @@
+<div class="mt-4">
+  <h3 *ngIf="panel">{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h3>
+  <h2 *ngIf="!panel">{{"PAGE.CONCORDANCE.CONTEXT" | translate}}</h2>
+</div>
+<div class="mt-1">
+  <h3>{{"PAGE.CONCORDANCE.LEMMA_FILTER" | translate}}</h3>
+  <div>
+    <div class="field grid">
+      <label class="col-12 md:col-1">{{"PAGE.CONCORDANCE.WINDOW" | translate}}</label>
+      <div class="col-12 md:col-5">
+        <p-dropdown class="mr-3" [options]="windows" *ngIf="contextConcordanceQueryRequest"
+          [(ngModel)]="contextConcordanceQueryRequest.window" optionLabel="value" [showClear]="true">
+          <ng-template let-option pTemplate="item">
+            {{'PAGE.CONCORDANCE.' + option.value | translate}}
+          </ng-template>
+          <ng-template pTemplate="selectedItem" let-item>
+            {{'PAGE.CONCORDANCE.' + item.value | translate}}
+          </ng-template>
+        </p-dropdown>
+        <p-dropdown class="mr-3" [options]="tokens" *ngIf="contextConcordanceQueryRequest"
+          [(ngModel)]="contextConcordanceQueryRequest.token" optionLabel="value" [showClear]="true">
+        </p-dropdown>
+        <label class="col label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
+      </div>
+
+    </div>
+
+    <div class="field grid">
+      <label class="col-12 md:col-1 align-self-center" for="lemmas">{{"PAGE.CONCORDANCE.LEMMAS" | translate}}</label>
+      <div class="col-12 md:col-10" grid>
+        <input class="mr-3" style="width: 40%;" id="lemmas" *ngIf="contextConcordanceQueryRequest" type="text"
+          pInputText [(ngModel)]="contextConcordanceQueryRequest.lemma">
+        <p-dropdown *ngIf="contextConcordanceQueryRequest" [options]="items"
+          [(ngModel)]="contextConcordanceQueryRequest.item" optionLabel="value" [showClear]="true">
+          <ng-template let-option pTemplate="item">
+            {{'PAGE.CONCORDANCE.' + option.value | translate}}
+          </ng-template>
+          <ng-template pTemplate="selectedItem" let-item>
+            {{'PAGE.CONCORDANCE.' + item.value | translate}}
+          </ng-template>
+        </p-dropdown>
+        <label class="label-size ml-3">{{"PAGE.CONCORDANCE.OF_THESE_ITEMS" | translate}}</label>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div style="height: 100%;">
+  <div>
+    <p-panelMenu [model]="items"></p-panelMenu>
+  </div>
+  <div style="position: fixed; bottom: 0px; left: 0px;">
+    <p-card *ngIf="!!user.name">
+      <div pTooltip="{{('USER.' + user.role + '_ROLE' | translate)}} - {{user.email}}" tooltipPosition="top">
+        {{user.name}}
+      </div>
+    </p-card>
+
+    <div class="flex justify-content-between p-component mt-3" style="width: 240px;">
+      <a class="ml-6" [routerLink]="['/credits']">credits</a>
+      <a class="mr-6" [routerLink]="['/copyright']">copyright</a>
+    </div>
+    <img *ngIf="urlBottomLeft" [src]="urlBottomLeft" class="logo" alt="logoMenu">
+  </div>
+</div>

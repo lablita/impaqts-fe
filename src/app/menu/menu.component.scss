@@ -1,0 +1,16 @@
+:host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin-top: 50px;
+  height: 100%;
+  width: 240px;
+  background-color: var(--primary-color);
+  overflow: auto;
+}
+
+.logo {
+  height: 40px;
+  margin-left: 20px;
+  margin-top: 5px;
+}

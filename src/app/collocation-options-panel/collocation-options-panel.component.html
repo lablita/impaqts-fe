@@ -1,0 +1,85 @@
+<div class="mt-3">
+  <p-card>
+    <div class="flex justify-content-center">
+      <h2>{{"MENU.COLLOCATIONS" | translate}}</h2>
+    </div>
+    <h3>{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.CANDIDATES' | translate}}</h3>
+    <div class="field grid">
+      <label class="col-12 md:col-2">{{"PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTE" | translate}}</label>
+      <div class="col-12 md:col-3 grid align-items-center">
+        <p-dropdown [options]="attributeList" [(ngModel)]="collocationOptionsQueryRequest.attribute" optionLabel="value"
+          [showClear]="true" [style]="{'width':'100%'}">
+          <ng-template let-option pTemplate="item">
+            {{'PAGE.CONCORDANCE.' + option.value | translate}}
+          </ng-template>
+          <ng-template pTemplate="selectedItem" let-item>
+            {{'PAGE.CONCORDANCE.' + item.value | translate}}
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <div class="col-12 md:col-4 grid align-items-center">
+        <label for="rangeFrom" class="col-6">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.RANGE" | translate}}</label>
+        <div class="col-6">
+          <input id="rangeFrom" type="number" pInputText style="width: 50px;"
+            [(ngModel)]="collocationOptionsQueryRequest.rangeFrom" class="mr-3">
+        </div>
+      </div>
+      <div class="col-12 md:col-2 grid align-items-center">
+        <label for="rangeTo" class="col-4">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
+        <div class="col-8">
+          <input id="rangeTo" type="number" pInputText style="width: 50px;"
+            [(ngModel)]="collocationOptionsQueryRequest.rangeTo">
+        </div>
+      </div>
+    </div>
+
+    <div class="field grid">
+      <label for="minCorpus"
+        class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
+      <div class="col-12 md:col-5">
+        <input id="minCorpus" type="number" pInputText style="width: 50px;"
+          [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="mr-3">
+      </div>
+    </div>
+    <div class="field grid">
+      <label for="minRange"
+        class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
+      <div class="col-12 md:col-5">
+        <input id="minRange" type="number" pInputText style="width: 50px;"
+          [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="mr-3">
+      </div>
+    </div>
+
+    <div class="field grid">
+      <label for="show"
+        class="col-12 md:col-2 mr-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
+      <div class="col-12 md:col-3">
+        <p-listbox id="show" [options]="optionList" [multiple]="true"
+          [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value">
+          <ng-template let-option pTemplate="item">
+            {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
+          </ng-template>
+        </p-listbox>
+      </div>
+      <label for="sort"
+        class="col-12 md:col-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
+      <div class="col-12 md:col-3">
+        <p-listbox id="sort" [options]="optionList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
+          optionLabel="value">
+          <ng-template let-option pTemplate="item">
+            {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
+          </ng-template>
+        </p-listbox>
+      </div>
+    </div>
+
+    <span class="flex justify-content-center mt-3">
+      <button pButton type="button" icon="pi"
+        label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SET_COLLOCATION' | translate}}" (click)="setCollocationOption()"
+        class="mr-5 mt-6"></button>
+      <button pButton type="button" icon="pi"
+        label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.REMOVE_COLLOCATION' | translate}}"
+        (click)="removeCollocationOption()" class="mr-5 mt-6"></button>
+    </span>
+  </p-card>
+</div>

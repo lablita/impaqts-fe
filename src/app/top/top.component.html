@@ -1,0 +1,14 @@
+<div class="flex justify-content-between">
+  <img *ngIf="urlTopLeft" [src]="urlTopLeft" class="logo" alt="logoLeft">
+  <img *ngIf="urlTopRight" [src]="urlTopRight" class="logo" alt="logoRight">
+
+  <div class="flex">
+    <p-selectButton class="mt-3 mr-3" [options]="languages" optionLabel="value" optionValue="key"
+      [(ngModel)]="selectedLang" (onChange)="selectLanguage($event)">
+      <ng-template let-item>
+        {{('LANGUAGE.' + item.value) | translate}}
+      </ng-template>
+    </p-selectButton>
+    <button pButton type="button" icon="pi" (click)="loginLogout()" [label]="authLabel"></button>
+  </div>
+</div>

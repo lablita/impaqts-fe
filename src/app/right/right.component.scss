@@ -1,0 +1,36 @@
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity:0.6;
+}
+
+a.right-button {
+  position: absolute;
+  width: 108px;
+  height: 52px;
+  line-height: 52px;
+  background-color: var(--primary-color);
+  text-align: center;
+  color: var(--primary-color-text);
+  right: 0px;
+  z-index: 1;
+  overflow: hidden;
+  cursor: pointer;
+  outline: 0 none;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+}
+
+.progress-spinner {
+  position: absolute;
+  width: 108px;
+  height: 52px;
+  z-index: 999;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0px;
+  right: 0;
+}

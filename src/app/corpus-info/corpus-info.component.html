@@ -1,0 +1,63 @@
+<p></p>
+<span class="p-component">
+  <h2>{{"PAGE.CONCORDANCE.CORPUS" | translate}} - {{"PAGE.CORPUS_INFO.STAT_INFO" | translate}}</h2>
+</span>
+<div class="p-d-flex p-flex-wrap">
+
+  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 240px;">
+    <p-table id="myTable" [value]="counts" styleClass="p-datatable-gridlines">
+      <ng-template pTemplate="caption">
+        {{countsLabel | translate}}
+      </ng-template>
+      <ng-template pTemplate="body" let-count>
+        <tr>
+          <td><b>{{count.label | translate | titlecase}}</b></td>
+          <td class="p-text-right">{{count.value}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 340px;">
+    <p-table id="myTable" [value]="generalInfo" styleClass="p-datatable-gridlines">
+      <ng-template pTemplate="caption">
+        {{generalInfosLabel | translate}}
+      </ng-template>
+      <ng-template pTemplate="body" let-genInfo>
+        <tr>
+          <td><b>{{genInfo.label | translate | titlecase}}</b></td>
+          <td *ngIf="!genInfo.url" class="p-text-right">{{genInfo.value}}</td>
+          <td *ngIf="genInfo.url" class="p-text-right"><a href="{{genInfo.url}}">{{genInfo.value}}</a></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 240px;">
+    <p-table [value]="counts" styleClass="p-datatable-gridlines">
+      <ng-template pTemplate="caption">
+        {{lexiconSizesLabel | translate}}
+      </ng-template>
+      <ng-template pTemplate="body" let-count>
+        <tr>
+          <td><b>{{count.label | translate | lowercase}}</b></td>
+          <td class="p-text-right">{{count.value}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<span class="p-component">
+  <h3>{{"PAGE.CORPUS_INFO.STRUCT_ATTR" | translate}}</h3>
+</span>
+<div class="p-d-flex p-mb-3 p-mr-3" style="width: 240px;">
+  <p-table id="struct_attr" [value]="structArt">
+    <ng-template pTemplate="body" let-strArt>
+      <tr>
+        <td><b>{{strArt.label | translate | lowercase}}</b></td>
+        <td class="p-text-right">{{strArt.value}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

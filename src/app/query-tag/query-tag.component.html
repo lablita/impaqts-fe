@@ -1,0 +1,66 @@
+<span class="p-component">
+  <div class="grid">
+    <div class="col-1">
+      <button pButton pTooltip="Delete Tag" type="button" icon="pi pi-minus" class="p-button-rounded"
+        (click)="deleteTag($event)"></button>
+    </div>
+    <div class="col">
+      <div class="grid mb-1" *ngIf="!metadata && typeList">
+        <div class="col">
+          <p-dropdown [options]="typeList" [(ngModel)]="tagName" optionLabel="value" (onChange)="setTagName($event)"
+            [placeholder]="'PAGE.VISUAL_QUERY.SEL_TYPE' | translate">
+          </p-dropdown>
+        </div>
+        <div class="col">
+          <p-dropdown [(ngModel)]="action" (onChange)="setTagAttr($event)" [options]="actionList"
+            [placeholder]="'PAGE.VISUAL_QUERY.SEL_ACTION' | translate" optionLabel="value">
+            <ng-template pTemplate="selectedItem">
+              <div *ngIf="action">
+                {{'PAGE.VISUAL_QUERY.' + action.key | translate}}
+              </div>
+            </ng-template>
+            <ng-template let-action pTemplate="item">
+              {{'PAGE.VISUAL_QUERY.' + action.value | translate}}
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+      <div *ngIf="!metadata && tag" class="grid">
+        <div class="col">
+          <input class="mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
+            [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
+        </div>
+        <div class="col" pTooltip="Case sensitive(Aa) / insensitive(aa)" tooltip>
+          <p-selectButton [options]="caseList" [(ngModel)]="caseSensitive" (onChange)="setMatchCase()">
+          </p-selectButton>
+        </div>
+      </div>
+      <div class="grid" *ngIf="metadata && tag">
+        <div class="col">
+          <button pButton icon="pi" label="Select Type" type="button" (click)="op.toggle($event)"></button>
+        </div>
+        <div class="col flex">{{selectedMetadata}}</div>
+      </div>
+
+      <div *ngIf="freeText && tag">
+        <input type="text" pInputText style="width: 200px;" [(ngModel)]="tag.value">
+      </div>
+
+      <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '350px'}">
+        <ng-template pTemplate>
+          <p-scrollPanel [style]="{width: '100%', height: '400px'}" styleClass="custombar">
+            <div class="mt-1 ml-3 p-component">
+              <div>
+                <p-tree [value]="root.tree" selectionMode="single" [(selection)]="root.selection"
+                  (onNodeSelect)="selectedNode(root)" stlye="color: red !importatnt;">
+                </p-tree>
+              </div>
+            </div>
+          </p-scrollPanel>
+
+        </ng-template>
+      </p-overlayPanel>
+
+    </div>
+  </div>
+</span>

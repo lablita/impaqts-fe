@@ -1,0 +1,34 @@
+<div class="ml-3" *ngIf="displayPanelService.displayPanelMetadata">
+  <div *ngIf="selectedCorpus">
+    <app-metadata-panel *ngIf="displayPanelService.displayPanelMetadata" [corpus]="selectedCorpus?.key"
+      (closeSidebarEvent)="displayPanelService.displayPanelMetadata=false">
+    </app-metadata-panel>
+  </div>
+</div>
+
+<div class="ml-3" *ngIf="displayPanelService.displayPanelOptions && selectedCorpus">
+  <app-view-options-panel *ngIf="displayPanelService.panelItemSelected === VIEW_OPTIONS"
+    [showRightButton]="displayPanelService.displayPanelOptions" [corpusAttributes]="metadataAttributes"
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+  </app-view-options-panel>
+  <app-word-list-options-panel *ngIf="displayPanelService.panelItemSelected === WORD_LIST"
+    [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
+    [showRightButton]="displayPanelService.displayPanelOptions"
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+  </app-word-list-options-panel>
+  <app-sort-options-panel *ngIf="displayPanelService.panelItemSelected === SORT" [corpusAttributes]="metadataAttributes"
+    [showRightButton]="displayPanelService.displayPanelOptions"
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+  </app-sort-options-panel>
+  <app-frequency-options-panel *ngIf="displayPanelService.panelItemSelected === FREQUENCY"
+    [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelService.displayPanelOptions"
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+  </app-frequency-options-panel>
+  <app-collocation-options-panel *ngIf="displayPanelService.panelItemSelected === COLLOCATIONS"
+    [showRightButton]="displayPanelService.displayPanelOptions"
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+  </app-collocation-options-panel>
+  <app-filter-options-panel *ngIf="displayPanelService.panelItemSelected === FILTER" [corpus]="selectedCorpus.key"
+    [metadata]="metadataTextTypes">
+  </app-filter-options-panel>
+</div>
