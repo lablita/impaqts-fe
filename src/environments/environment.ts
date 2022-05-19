@@ -18,6 +18,7 @@ export const environment = {
   auth0Domain: 'impaqts.eu.auth0.com',
   auth0ClientId: 'qNCjNNTK0firA2j8LP8JwJQXJzbfDF1V',
   production: false,
+  secureUrl: false,
   installation: 'uno',
   installationName: 'IMPAQTS1',
   installationUrl: 'http://localhost:9001/impaqts-configurator',

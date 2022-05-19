@@ -3,7 +3,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
-import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
+import { environment } from 'src/environments/environment';
+import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN, WS, WSS } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
@@ -155,8 +156,9 @@ export class ConcordanceComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         const selectedCorpusKey = this.selectedCorpus.key;
         if (selectedCorpusKey) {
+          this.closeWebSocket();
           const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
-          this.endpoint = corpora.endpoint;
+          this.endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
           this.socketService.setServerHost(this.endpoint);
           /** Web Socket */
           this.initWebSocket();
@@ -194,6 +196,7 @@ export class ConcordanceComponent implements OnInit {
         this.endedMetadataProcess = true;
       }
     } else {
+      this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
       this.kwicLines = Array.from<KWICline>({ length: 0 });
@@ -252,13 +255,13 @@ export class ConcordanceComponent implements OnInit {
       qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
       const simpleQueryToken = new QueryToken(TOKEN);
       // release develop_guasti
-      simpleQueryToken.tags[0] = queryTags;
+      // simpleQueryToken.tags[0] = queryTags;
 
       // release visualQuery
-      // const simpleQueryTag = new QueryTag(TOKEN);
-      // simpleQueryTag.name = 'word';
-      // simpleQueryTag.value = this.simple;
-      // simpleQueryToken.tags[0][0] = simpleQueryTag;
+      const simpleQueryTag = new QueryTag(TOKEN);
+      simpleQueryTag.name = 'word';
+      simpleQueryTag.value = this.simple;
+      simpleQueryToken.tags[0][0] = simpleQueryTag;
       /* */
 
       qr.queryPattern.tokPattern.push(simpleQueryToken);
@@ -425,6 +428,10 @@ export class ConcordanceComponent implements OnInit {
         }
       });
     }
+  }
+
+  private closeWebSocket(): void {
+    this.socketService.closeSocket();
   }
 
   private tagBuilder(type: string, value: string): QueryTag {

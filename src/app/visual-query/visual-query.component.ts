@@ -3,7 +3,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
-import { STRUCT_DOC, TOKEN } from '../common/constants';
+import { environment } from 'src/environments/environment';
+import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
@@ -177,8 +178,9 @@ export class VisualQueryComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         const selectedCorpusKey = this.selectedCorpus.key;
         if (selectedCorpusKey) {
+          this.closeWebSocket();
           const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
-          this.endpoint = corpora.endpoint;
+          this.endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
           this.socketService.setServerHost(this.endpoint);
           /** Web Socket */
           this.initWebSocket();
@@ -210,6 +212,7 @@ export class VisualQueryComponent implements OnInit {
         this.enableAddMetadata = true;
       }
     } else {
+      this.closeWebSocket();
       this.enableAddToken = false;
       this.enableAddMetadata = false;
       this.enableSpinner = false;
@@ -285,6 +288,10 @@ export class VisualQueryComponent implements OnInit {
     // kwicline.ref to retrive info
     this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext,
       kwicline.rightContext + kwicline.rightContext);
+  }
+
+  private closeWebSocket(): void {
+    this.socketService.closeSocket();
   }
 
 }

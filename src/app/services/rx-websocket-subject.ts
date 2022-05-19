@@ -123,4 +123,8 @@ export class RxWebsocketSubject extends Subject<any> {
       this.socket.next(data);
     }
   }
+
+  close(): void {
+    this.socket?.complete();
+  }
 }

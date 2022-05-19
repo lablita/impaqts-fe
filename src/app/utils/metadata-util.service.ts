@@ -65,7 +65,7 @@ export class MetadataUtilService {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
-        obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
+        obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(installation, corpus, metadatum));
       }
     });
     // elimino metadata che partecipano ad alberi

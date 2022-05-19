@@ -33,5 +33,9 @@ export class SocketService {
     this.serverHost = serverHost;
     this.wsEndpoint = `${this.serverHost}/${WS_URL}`;
   }
+
+  public closeSocket(): void {
+    this.socketSubject?.close();
+  }
 }
 
