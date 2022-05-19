@@ -3,7 +3,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
-import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
+import { environment } from 'src/environments/environment';
+import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN, WS, WSS } from '../common/constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import {
@@ -26,6 +27,7 @@ import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
@@ -44,7 +46,7 @@ export class ConcordanceComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public metadataTextTypes: Metadatum[] = [];
 
-  public lemma: string | null = null;
+  public lemma = '';
   public selectedCorpus: KeyValueItem | null = null;
   public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedQueryType: KeyValueItem | null = null;
@@ -80,8 +82,6 @@ export class ConcordanceComponent implements OnInit {
     new KeyValueItem('WORD_LC', 'WORD_LC'),
     new KeyValueItem('LEMMA_LC', 'LEMMA_LC')
   ];
-  public displayPanelMetadata = false;
-  public displayPanelOptions = false;
   public totalResults = 0;
   public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
   public totalKwicline: Array<KWICline> = Array.from<KWICline>({ length: 0 });
@@ -109,13 +109,14 @@ export class ConcordanceComponent implements OnInit {
 
   constructor(
     private readonly translateService: TranslateService,
-    private readonly menuEmitterService: MenuEmitterService,
+    public menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
     public displayPanelService: DisplayPanelService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly queryRequestSevice: QueryRequestService
   ) { }
 
   ngOnInit(): void {
@@ -146,21 +147,18 @@ export class ConcordanceComponent implements OnInit {
     this.resultView = false;
     this.noResultFound = false;
     this.clickTextType();
-    this.displayPanelService.labelOptionsDisabled = !this.selectedCorpus;
-    this.displayPanelService.labelMetadataDisabled = true;
+    this.displayPanelService.reset();
+    this.queryRequestSevice.resetOptionsRequest();
     if (this.selectedCorpus) {
-      this.displayPanelMetadata = false;
-      this.displayPanelOptions = false;
-
-      this.menuEmitterService.corpusSelected = true;
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
       if (this.installation && this.installation.corpora) {
         const selectedCorpusKey = this.selectedCorpus.key;
         if (selectedCorpusKey) {
+          this.closeWebSocket();
           const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
-          this.endpoint = corpora.endpoint;
+          this.endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
           this.socketService.setServerHost(this.endpoint);
           /** Web Socket */
           this.initWebSocket();
@@ -198,6 +196,7 @@ export class ConcordanceComponent implements OnInit {
         this.endedMetadataProcess = true;
       }
     } else {
+      this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
       this.kwicLines = Array.from<KWICline>({ length: 0 });
@@ -216,7 +215,7 @@ export class ConcordanceComponent implements OnInit {
   public loadConcordances(event?: LazyLoadEvent): void {
     this.setMetadataQuery();
     if (!!this.selectedCorpus) {
-      const qr = new QueryRequest();
+      const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
       if (!event) {
         qr.start = 0;
         qr.end = 10;
@@ -226,13 +225,45 @@ export class ConcordanceComponent implements OnInit {
           qr.end = qr.start + event.rows;
         }
       }
+      let queryTags: QueryTag[] = [];
+      let tag: QueryTag;
+      switch (this.selectedQueryType?.key) {
+        case WORD:
+          tag = this.tagBuilder('word', this.word);
+          tag.matchCase = this.matchCase;
+          queryTags.push(tag);
+          break;
+        case LEMMA:
+          queryTags.push(this.tagBuilder('lemma', this.lemma));
+          break;
+        case PHRASE:
+          queryTags.push(this.tagBuilder('phrase', this.phrase));
+          break;
+        case CHARACTER:
+          queryTags.push(this.tagBuilder('character', this.character));
+          break;
+        case CQL:
+          tag = this.tagBuilder('cql', this.word);
+          tag.defaultAttributeCQL = this.defaultAttributeCQL?.key ? this.defaultAttributeCQL?.key : '';
+          queryTags.push(this.tagBuilder('cql', this.cql));
+          break;
+        default: //SIMPLE
+          queryTags.push(this.tagBuilder('word', this.simple));
+          queryTags.push(this.tagBuilder('lemma', this.simple));
+      }
       qr.queryPattern = new QueryPattern();
       qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
       const simpleQueryToken = new QueryToken(TOKEN);
+      // release develop_guasti
+      // simpleQueryToken.tags[0] = queryTags;
+
+      // release visualQuery
       const simpleQueryTag = new QueryTag(TOKEN);
       simpleQueryTag.name = 'word';
       simpleQueryTag.value = this.simple;
       simpleQueryToken.tags[0][0] = simpleQueryTag;
+      /* */
+
       qr.queryPattern.tokPattern.push(simpleQueryToken);
       if (this.metadataQuery) {
         qr.queryPattern.structPattern = this.metadataQuery;
@@ -306,6 +337,36 @@ export class ConcordanceComponent implements OnInit {
     }
   }
 
+  public showVideoDlg(rowIndex: number): void {
+    const youtubeVideo = rowIndex % 2 > 0;
+    let url = '';
+
+    if (youtubeVideo) {
+      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
+      const start = Math.floor((Math.random() * 200) + 1);
+      const end = start + Math.floor((Math.random() * 20) + 1);
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `${url}?autoplay=1&start=${start}&end=${end}`
+        );
+      }
+    } else {
+      url = 'https://player.vimeo.com/video/637089218';
+      const start = `${Math.floor((Math.random() * 5) + 1)}m${Math.floor((Math.random() * 60) + 1)}s`;
+      if (url?.length > 0) {
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
+      }
+    }
+
+    this.displayModal = true;
+  }
+
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic,
+      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+  }
+
   private init(): void {
     this.resultView = false;
     const inst = localStorage.getItem(INSTALLATION);
@@ -360,40 +421,24 @@ export class ConcordanceComponent implements OnInit {
           complete: () => console.log('IMPAQTS WS disconnected')
         })
       ).subscribe({
-        next: () => { return; }
+        next: () => {
+          this.displayPanelService.labelOptionsDisabled = !this.resultView;
+          this.menuEmitterService.corpusSelected = this.resultView;
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+        }
       });
     }
   }
 
-  public showVideoDlg(rowIndex: number): void {
-    const youtubeVideo = rowIndex % 2 > 0;
-    let url = '';
-
-    if (youtubeVideo) {
-      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
-      const start = Math.floor((Math.random() * 200) + 1);
-      const end = start + Math.floor((Math.random() * 20) + 1);
-      if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-          `${url}?autoplay=1&start=${start}&end=${end}`
-        );
-      }
-    } else {
-      url = 'https://player.vimeo.com/video/637089218';
-      const start = `${Math.floor((Math.random() * 5) + 1)}m${Math.floor((Math.random() * 60) + 1)}s`;
-      if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
-      }
-    }
-
-    this.displayModal = true;
+  private closeWebSocket(): void {
+    this.socketService.closeSocket();
   }
 
-  public showDialog(kwicline: KWICline): void {
-    // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic,
-      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+  private tagBuilder(type: string, value: string): QueryTag {
+    const tag = new QueryTag(TOKEN);
+    tag.name = type;
+    tag.value = value;
+    return tag;
   }
-
 
 }

@@ -12,6 +12,14 @@
   </div>
 </a>
 
-<a *ngIf="!hideOptionsLabel" p-button class="p-shadow-7 p-component right-button disabled"
+<a *ngIf="!hideOptionsLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button disabled"
   style="top: 276px; z-index:999;" (click)="openSidebarOptions()"
-  [ngClass]="{'disabled': displayPanelService.labelOptionsDisabled}">{{titleLabel | translate}}</a>
+  [ngClass]="{'disabled': displayPanelService.labelOptionsDisabled}">
+  <div class="flex align-items-center">
+    <div>
+      <fa-icon *ngIf="queryRequestService.isOptionSet()" style="font-size: large" [icon]="faCheck">
+      </fa-icon>
+      {{titleLabel | translate}}
+    </div>
+  </div>
+</a>

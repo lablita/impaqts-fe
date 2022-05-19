@@ -65,10 +65,10 @@ export class MetadataUtilService {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
-        obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(corpus, metadatum));
+        obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(installation, corpus, metadatum));
       }
     });
-    // elimino metadata che partecimano ad alberi
+    // elimino metadata che partecipano ad alberi
     metadata = metadata.filter(md => !md.child);
     const lenObsArray = obsArray.length;
     if (lenObsArray > 0) {

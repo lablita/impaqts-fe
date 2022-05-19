@@ -61,8 +61,8 @@ const startUp1 = new Startup(
     false,
     [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL')],
     [new KeyValueItem(WORD, WORD)],
-    [false],
-    [false],
+    [false, false, false],
+    [false, false, false],
     [new KeyValueItem(NODE, NODE)],
   ), new FreqOptionsQueryRequest(
     0,

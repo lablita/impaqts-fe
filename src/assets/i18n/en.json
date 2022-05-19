@@ -145,7 +145,11 @@
         "FIRST_LEVEL": "first level (Sort by ...)",
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "THIRD_LEVEL": "third level (... finally sort by)",
-        "POSITION": "Position"
+        "POSITION": "Position",
+        "SET_SIMPLE_SORT": "Set Simple Sort Opt.",
+        "REMOVE_SIMPLE_SORT": "Remove Simple Sort Opt.",
+        "SET_MULTILEVEL_SORT": "Set Multilevel Sort Opt.",
+        "REMOVE_MULTILEVEL_SORT": "Remove Multilevel Sort Opt."
       },
       "FREQ_OPTIONS": {
         "FREQ_OPTIONS": "Frequency opt.",
@@ -174,7 +178,9 @@
         "LOG": "log likeihood",
         "MIN": "min. sensitivity",
         "LOG_DICE": "logDice",
-        "MI_LOG": "MI.log_f"
+        "MI_LOG": "MI.log_f",
+        "SET_COLLOCATION": "Set Collocation Opt.",
+        "REMOVE_COLLOCATION": "Remove Collocation Opt."
       },
       "FILTER_OPTIONS": {
         "CONCORDANCE_FILTER": "Concordance filter",

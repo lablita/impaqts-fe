@@ -1,4 +1,6 @@
+import { CollocationQueryRequest } from "./collocation-query-request";
 import { QueryPattern } from "./query-pattern";
+import { SortQueryRequest } from "./sort-query-request";
 
 export class WordListOption {
   subcorpus = '';
@@ -14,4 +16,6 @@ export class QueryRequest {
   cql = '';
   queryInCql = false;
   queryPattern: QueryPattern = new QueryPattern();
+  collocationQueryRequest: CollocationQueryRequest | null = null;
+  sortQueryRequest: SortQueryRequest | null = null;
 }

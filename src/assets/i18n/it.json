@@ -142,7 +142,11 @@
         "SORT_CONCORDANCE": "Sort concordance",
         "SORT_KEY": "Sort key",
         "SORT_OPTIONS": "Sort options",
-        "THIRD_LEVEL": "third level (... finally sort by)"
+        "THIRD_LEVEL": "third level (... finally sort by)",
+        "SET_SIMPLE_SORT": "Set Simple Sort Opt.",
+        "REMOVE_SIMPLE_SORT": "Remove Simple Sort Opt.",
+        "SET_MULTILEVEL_SORT": "Set Multilevel Sort Opt.",
+        "REMOVE_MULTILEVEL_SORT": "Remove Multilevel Sort Opt."
       },
       "FREQ_OPTIONS": {
         "FIRST_LEVEL": "first level",
@@ -171,7 +175,9 @@
         "SHOW": "Show functions",
         "SORT_BY": "Sort by",
         "T_SCORE": "T-score",
-        "TO": "to"
+        "TO": "to",
+        "SET_COLLOCATION": "Set Collocation Opt.",
+        "REMOVE_COLLOCATION": "Remove Collocation Opt."
       },
       "FILTER_OPTIONS": {
         "CONCORDANCE_FILTER": "Concordance filter",

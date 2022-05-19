@@ -70,6 +70,7 @@ export class TopComponent {
 
   public loginLogout(): void {
     if (this.authLabel === LOGOUT) {
+      localStorage.removeItem(INSTALLATION);
       this.logout();
     } else {
       this.loginWithRedirect();

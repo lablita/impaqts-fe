@@ -3,6 +3,8 @@ import { environment } from 'src/environments/environment';
 import { L1, L2, L3, NODE, R1, R2, R3 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
+import { SortOption, SortQueryRequest } from '../model/sort-query-request';
+import { QueryRequestService } from '../services/query-request.service';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
@@ -28,14 +30,20 @@ export class SortOptionsPanelComponent implements OnInit {
   new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
   public selectedSortKey: KeyValueItem | null = null;
   public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'),
+  new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
   public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
   public disableMultilevelChechbox: boolean[] = [false, false, false];
+  public enableSimpleSort = true;
+  public enableMultilevelSort = true;
 
+  constructor(
+    private readonly queryRequestService: QueryRequestService
+  ) { }
 
   ngOnInit(): void {
     this.positionList = [
@@ -82,20 +90,19 @@ export class SortOptionsPanelComponent implements OnInit {
     this.closeSidebarEvent.emit(true);
   }
 
-  public clickSortOption(): void {
-    if (this.sortOptionsQueryRequest) {
-      if (this.selectedSortKey) {
-        this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
-      }
-      if (this.selectedLevels.length > 0) {
-        this.sortOptionsQueryRequest.levels = this.selectedLevels;
-      }
-      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute.slice(0, this.selectedLevels.length);
-      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase;
-      this.sortOptionsQueryRequest.backwardMulti = this.backward;
-      this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
-      localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
-    }
+  public setSimpleSortOption(): void {
+    this.enableMultilevelSort = false;
+    this.setSortOption(true);
+  }
+
+  public setMultilevelSortOption(): void {
+    this.enableSimpleSort = false;
+    this.setSortOption(false);
+  }
+
+  public removeSortOption(): void {
+    this.enableSimpleSort = this.enableMultilevelSort = true;
+    this.queryRequestService.resetOptionsRequest();
   }
 
   public clickLeft(): void {
@@ -115,16 +122,63 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public multilevelCheckBoxManager(index: number): void {
-    if (this.selectedLevels.filter(l => l.key === 'SECOND_LEVEL').length > 0) {
-      this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-      new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL')];
-      this.disableMultilevelChechbox = [true, false, false];
-    } else if (this.selectedLevels.filter(l => l.key === 'THIRD_LEVEL').length > 0) {
-      this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-      new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
-      this.disableMultilevelChechbox = [true, true, false];
-    } else {
+    if (index === 0) {
       this.disableMultilevelChechbox = [false, false, false];
+    } else if (index === 1) {
+      if (this.selectedLevels.filter(l => l.key === 'SECOND_LEVEL').length > 0) {
+        this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'), new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL')];
+        this.disableMultilevelChechbox = [true, false, false];
+      } else {
+        this.disableMultilevelChechbox = [false, false, false];
+      }
+    } else { //index === 2 
+      if (this.selectedLevels.filter(l => l.key === 'THIRD_LEVEL').length > 0) {
+        this.selectedLevels = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'), new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'), new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+        this.disableMultilevelChechbox = [true, true, false];
+      } else {
+        this.disableMultilevelChechbox = [true, false, false];
+      }
+    }
+  }
+
+  private sortQueryRequestBuild(sortOptionsQueryRequest: SortOptionsQueryRequest, isSimpleSort: boolean): SortQueryRequest {
+    const res = new SortQueryRequest();
+    if (isSimpleSort) {
+      res.attribute = sortOptionsQueryRequest.attribute.key;
+      res.sortKey = sortOptionsQueryRequest.sortKey.key;
+      res.numberTokens = sortOptionsQueryRequest.numberTokens;
+      res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
+      res.backward = sortOptionsQueryRequest.backward;
+    } else {
+      sortOptionsQueryRequest.levels.forEach((opt, index) => {
+        const sortOption = new SortOption();
+        sortOption.attribute = sortOptionsQueryRequest.attributeMulti[index].value;
+        sortOption.ignoreCase = sortOptionsQueryRequest.ignoreCaseMulti[index];
+        sortOption.backward = sortOptionsQueryRequest.backwardMulti[index];
+        sortOption.position = sortOptionsQueryRequest.position[index].value;
+        res.multilevelSort.push(sortOption);
+      });
+    }
+    return res;
+  }
+
+  private setSortOption(isSimpleSort: boolean): void {
+    if (this.sortOptionsQueryRequest) {
+      if (this.selectedSortKey) {
+        this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
+      }
+      if (this.selectedLevels.length > 0) {
+        this.sortOptionsQueryRequest.levels = this.selectedLevels;
+      }
+      this.sortOptionsQueryRequest.attributeMulti = this.selectedMultiAttribute.slice(0, this.selectedLevels.length);
+      this.sortOptionsQueryRequest.ignoreCaseMulti = this.ignoreCase;
+      this.sortOptionsQueryRequest.backwardMulti = this.backward;
+      this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
+      localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
+    }
+    if (this.sortOptionsQueryRequest) {
+      this.queryRequestService.resetOptionsRequest();
+      this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
     }
   }
 }
