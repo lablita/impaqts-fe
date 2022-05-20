@@ -125,6 +125,8 @@ export class RxWebsocketSubject extends Subject<any> {
   }
 
   close(): void {
-    this.socket?.complete();
+    if (!!this.socket) {
+      this.socket.unsubscribe();
+    }
   }
 }
