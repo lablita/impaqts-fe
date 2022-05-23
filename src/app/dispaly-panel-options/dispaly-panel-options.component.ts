@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
@@ -16,6 +16,7 @@ export class DispalyPanelOptionsComponent implements OnInit {
   @Input() metadataAttributes: KeyValueItem[] = [];
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
+  @Output() public loadCollocations = new EventEmitter<boolean>();
 
   public selectCorpus = SELECT_CORPUS;
 
@@ -38,6 +39,10 @@ export class DispalyPanelOptionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.init();
+  }
+
+  public loadColl(): void {
+    this.loadCollocations.emit(true);
   }
 }
 

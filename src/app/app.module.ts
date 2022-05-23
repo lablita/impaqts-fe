@@ -1,6 +1,7 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import localeIt from '@angular/common/locales/it';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -38,6 +39,9 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+
+registerLocaleData(localeIt);
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -107,7 +111,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
       provide: HTTP_INTERCEPTORS,
       useClass: AuthHttpInterceptor,
       multi: true,
-    }
+    },
+    { provide: LOCALE_ID, useValue: 'it-IT' },
   ],
   bootstrap: [AppComponent]
 })
