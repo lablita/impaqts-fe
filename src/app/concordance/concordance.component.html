@@ -142,9 +142,9 @@
           </p-dialog>
         </div>
 
-        <p-table [value]="collocations" [paginator]="false" (onLazyLoad)="loadResults($event)"
-          (sortFunction)="collocationCustomSort($event)" [customSort]="true" [defaultSortOrder]="defaultSortOrder"
-          [sortField]="headerSortBy">
+        <p-table *ngIf="collocations.length > 0" [value]="collocations" [paginator]="false"
+          (onLazyLoad)="loadResults($event)" (sortFunction)="collocationCustomSort($event)" [customSort]="true"
+          [sortField]="headerSortBy" [sortOrder]="-1">
           <ng-template pTemplate="header">
             <tr>
               <th>

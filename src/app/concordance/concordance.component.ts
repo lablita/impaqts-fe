@@ -118,7 +118,6 @@ export class ConcordanceComponent implements OnInit {
   public colHeader: Array<string> = Array.from<string>({ length: 0 });
   public titleResult: string | null = null;
   public headerSortBy = '';
-  public defaultSortOrder = 1;
 
   /** private */
   private endpoint = '';
@@ -234,6 +233,8 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public makeCollocations(): void {
+    this.kwicLines = [];
+    this.collocations = [];
     this.titleResult = 'MENU.COLLOCATIONS';
     const sortBy = this.queryRequestSevice.queryRequest.collocationQueryRequest?.sortBy;
     this.headerSortBy = this.colHeaderList.filter(h => h.key === sortBy)[0].value;
@@ -401,8 +402,14 @@ export class ConcordanceComponent implements OnInit {
   }
 
   public collocationCustomSort(event: SortEvent): void {
-
-    console.log("..." + JSON.stringify(event.order));
+    if (!!this.queryRequestSevice.queryRequest.collocationQueryRequest) {
+      const sortField = this.colHeaderList.filter(c => c.value === event.field).length > 0
+        ? this.colHeaderList.filter(c => c.value === event.field)[0].key : 'r';
+      if (sortField !== this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy) {
+        this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy = sortField;
+        this.makeCollocations();
+      }
+    }
   }
 
   private init(): void {
