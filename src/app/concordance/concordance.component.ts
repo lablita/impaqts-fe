@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent, SortEvent, TreeNode } from 'primeng/api';
+import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN, WS, WSS } from '../common/constants';
@@ -118,10 +118,14 @@ export class ConcordanceComponent implements OnInit {
   public colHeader: Array<string> = Array.from<string>({ length: 0 });
   public titleResult: string | null = null;
   public headerSortBy = '';
+  public paginations: number[] = [10, 25, 50];
+  public initialPagination = 10;
 
   /** private */
   private endpoint = '';
   private metadataQuery: QueryToken | null = null;
+  private rowsPrev = 0;
+  private sortFieldPrev = '';
 
   constructor(
     private readonly translateService: TranslateService,
@@ -226,22 +230,24 @@ export class ConcordanceComponent implements OnInit {
     this.titleResult = 'MENU.CONCORDANCE';
     this.kwicLines = [];
     this.collocations = [];
-    this.loading = true;
+    // this.loading = true;
     this.resultView = false;
     this.queryRequestSevice.resetOptionsRequest();
     this.loadResults();
   }
 
   public makeCollocations(): void {
+    this.titleResult = 'MENU.COLLOCATIONS';
     this.kwicLines = [];
     this.collocations = [];
-    this.titleResult = 'MENU.COLLOCATIONS';
+    // this.loading = true;
     const sortBy = this.queryRequestSevice.queryRequest.collocationQueryRequest?.sortBy;
     this.headerSortBy = this.colHeaderList.filter(h => h.key === sortBy)[0].value;
     this.loadResults();
   }
 
   public loadResults(event?: LazyLoadEvent): void {
+    this.loading = true;
     this.setMetadataQuery();
     if (!!this.selectedCorpus) {
       const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
@@ -258,40 +264,38 @@ export class ConcordanceComponent implements OnInit {
       let tag: QueryTag;
       switch (this.selectedQueryType?.key) {
         case WORD:
+          this.simpleResult = this.word;
           tag = this.tagBuilder('word', this.word);
           tag.matchCase = this.matchCase;
           queryTags.push(tag);
           break;
         case LEMMA:
+          this.simpleResult = this.lemma;
           queryTags.push(this.tagBuilder('lemma', this.lemma));
           break;
         case PHRASE:
+          this.simpleResult = this.phrase;
           queryTags.push(this.tagBuilder('phrase', this.phrase));
           break;
         case CHARACTER:
+          this.simpleResult = this.character;
           queryTags.push(this.tagBuilder('character', this.character));
           break;
         case CQL:
-          tag = this.tagBuilder('cql', this.word);
+          this.simpleResult = this.cql;
+          tag = this.tagBuilder('cql', this.cql);
           tag.defaultAttributeCQL = this.defaultAttributeCQL?.key ? this.defaultAttributeCQL?.key : '';
           queryTags.push(this.tagBuilder('cql', this.cql));
           break;
         default: //SIMPLE
+          this.simpleResult = this.simple;
           queryTags.push(this.tagBuilder('word', this.simple));
           queryTags.push(this.tagBuilder('lemma', this.simple));
       }
       qr.queryPattern = new QueryPattern();
       qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
       const simpleQueryToken = new QueryToken(TOKEN);
-      // release develop_guasti
       simpleQueryToken.tags[0] = queryTags;
-
-      // release visualQuery
-      // const simpleQueryTag = new QueryTag(TOKEN);
-      // simpleQueryTag.name = 'word';
-      // simpleQueryTag.value = this.simple;
-      // simpleQueryToken.tags[0][0] = simpleQueryTag;
-      /* */
 
       if (qr.collocationQueryRequest?.showFunc && qr.collocationQueryRequest?.showFunc?.length > 0) {
         this.colHeader = ['PAGE.COLLOCATION.CONC_COUNT', 'PAGE.COLLOCATION.CAND_COUNT'];
@@ -371,46 +375,27 @@ export class ConcordanceComponent implements OnInit {
     }
   }
 
-  public showVideoDlg(rowIndex: number): void {
-    const youtubeVideo = rowIndex % 2 > 0;
-    let url = '';
-
-    if (youtubeVideo) {
-      url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
-      const start = Math.floor((Math.random() * 200) + 1);
-      const end = start + Math.floor((Math.random() * 20) + 1);
-      if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-          `${url}?autoplay=1&start=${start}&end=${end}`
-        );
-      }
-    } else {
-      url = 'https://player.vimeo.com/video/637089218';
-      const start = `${Math.floor((Math.random() * 5) + 1)}m${Math.floor((Math.random() * 60) + 1)}s`;
-      if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
-      }
-    }
-
-    this.displayModal = true;
-  }
-
-  public showDialog(kwicline: KWICline): void {
-    // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic,
-      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
-  }
-
-  public collocationCustomSort(event: SortEvent): void {
-    if (!!this.queryRequestSevice.queryRequest.collocationQueryRequest) {
-      const sortField = this.colHeaderList.filter(c => c.value === event.field).length > 0
-        ? this.colHeaderList.filter(c => c.value === event.field)[0].key : 'r';
-      if (sortField !== this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy) {
-        this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy = sortField;
-        this.makeCollocations();
-      }
+  public collocationCustomSort(event: any): void {
+    if (!!this.queryRequestSevice.queryRequest.collocationQueryRequest && (this.rowsPrev !== event.rows || this.sortFieldPrev !== event.sortField)) {
+      this.rowsPrev = event.rows;
+      this.sortFieldPrev = event.sortField;
+      const sortField = this.colHeaderList.filter(c => c.value === event.sortField).length > 0
+        ? this.colHeaderList.filter(c => c.value === event.sortField)[0].key : 'r';
+      this.makeCollocations();
     }
   }
+
+  // public collocationCustomSort(event: SortEvent): void {
+  //   if (!!this.queryRequestSevice.queryRequest.collocationQueryRequest) {
+  //     const sortField = this.colHeaderList.filter(c => c.value === event.field).length > 0
+  //       ? this.colHeaderList.filter(c => c.value === event.field)[0].key : 'r';
+  //     if (sortField !== this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy) {
+  //       this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy = sortField;
+  //       this.makeCollocations();
+  //     }
+  //     this.makeCollocations();
+  //   }
+  // }
 
   private init(): void {
     this.resultView = false;
@@ -461,7 +446,6 @@ export class ConcordanceComponent implements OnInit {
             }
             this.loading = false;
             this.totalResults = qr.currentSize;
-            this.simpleResult = this.simple;
           }
         }),
         catchError(err => { throw err; }),

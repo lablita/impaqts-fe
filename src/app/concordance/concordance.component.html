@@ -119,7 +119,8 @@
       </div>
     </p-card>
 
-    <div class="flex mt-3 w-12 justify-content-center" *ngIf="loading">
+    <div class="flex mt-3 w-12 justify-content-center"
+      *ngIf="loading && !(kwicLines.length > 0 || collocations.length > 0)">
       <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
     </div>
     <div class="flex mt-3" *ngIf="resultView">
@@ -134,88 +135,17 @@
           </div>
         </div>
 
-        <div *ngIf="kwicLines.length > 0" style="width: 150px;">
-          <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
-            [style]="{width: '700'}" [baseZIndex]="10000">
-            <iframe title="Video" style="border: 0px;" width="600" height="450" [src]="videoUrl" allow="autoplay"
-              allowfullscreen></iframe>
-          </p-dialog>
-        </div>
+        <app-collocation-table
+          [visible]="collocations.length > 0 && !((displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus)"
+          [loading]="loading" [initialPagination]="initialPagination" [paginations]="paginations"
+          [colHeader]="colHeader" [sortField]="headerSortBy" [sortOrder]="-1" [totalResults]="totalResults"
+          [collocations]="collocations" (loadResults)="loadResults($event)">
+        </app-collocation-table>
 
-        <p-table *ngIf="collocations.length > 0" [value]="collocations" [paginator]="false"
-          (onLazyLoad)="loadResults($event)" (sortFunction)="collocationCustomSort($event)" [customSort]="true"
-          [sortField]="headerSortBy" [sortOrder]="-1">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>
-              </th>
-              <th *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
-                <p-sortIcon [field]="col"></p-sortIcon>
-              </th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-collocation>
-            <tr>
-              <td *ngIf="!!collocation.word">{{collocation.word}}</td>
-              <td class="text-right" *ngIf="!!collocation.concurrenceCount">
-                {{collocation.concurrenceCount | number: '1.1-4'}}</td>
-              <td class="text-right" *ngIf="!!collocation.candidateCount">
-                {{collocation.candidateCount | number: '1.1-4'}}</td>
-              <td class="text-right" *ngIf="!!collocation.mi">{{collocation.mi | number: '1.1-4'}}</td>
-              <td class="text-right" *ngIf="!!collocation.mi3">{{collocation.mi3 | number: '1.1-4'}}</td>
-              <td class="text-right" *ngIf="!!collocation.logLikelihood">
-                {{collocation.logLikelihood | number: '1.1-4'}}</td>
-              <td class="text-right" *ngIf="!!collocation.minSensitivity">
-                {{collocation.minSensitivity | number: '1.1-4'}}</td>
-              <td class="text-right" *ngIf="!!collocation.logDice">
-                {{collocation.logDice | number: '1.1-4'}}
-              </td>
-              <td class="text-right" *ngIf="!!collocation.miLogF">{{collocation.miLogF | number: '1.1-4'}}
-              </td>
-              <td class="text-right" *ngIf="!!collocation.tscore">{{collocation.tscore | number: '1.1-4'}}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-
-        <p-table *ngIf="kwicLines.length > 0" [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadResults($event)"
-          [paginator]="true" styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults"
-          [loading]="loading" currentPageReportTemplate="'page: {currentPage} of {totalPages}'"
-          [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]">
-          <ng-template pTemplate="header">
-            <tr>
-              <th style="width: 80px;"></th>
-              <th class="p-text-center" style="width: 180px;">Left</th>
-              <th class="p-text-center" style="width: 80px;">Kwic</th>
-              <th class="p-text-center" style="width: 180px;">Right</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
-            <tr>
-              <td>
-                <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-                  (click)="showVideoDlg(rowIndex)"></button>
-              </td>
-              <td class="p-text-right">{{kwicLine.leftContext}}</td>
-              <td class="p-text-center">
-                <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
-                  (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
-              </td>
-              <td class="p-text-left">{{kwicLine.rightContext}}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-        <p-overlayPanel #op [style]="{width: '450px'}">
-          <ng-template pTemplate>
-            <div>{{resultContext?.after}}</div>
-            <div style="text-align: center; color: red;">
-              {{resultContext?.keyword}}
-            </div>
-            <div>
-              {{resultContext?.before}}
-            </div>
-          </ng-template>
-        </p-overlayPanel>
+        <app-concordance-table [visible]="kwicLines.length > 0" [loading]="loading"
+          [initialPagination]="initialPagination" [paginations]="paginations" [totalResults]="totalResults"
+          [kwicLines]="kwicLines" (loadResults)="loadResults($event)">
+        </app-concordance-table>
 
       </p-card>
     </div>

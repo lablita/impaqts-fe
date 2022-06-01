@@ -1,0 +1,42 @@
+<!-- <p-table
+  *ngIf="collocations.length > 0 && !((displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus)"
+  [value]="collocations" [paginator]="true" styleClass="p-datatable-striped" [rows]="initialPagination"
+  [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true" [rowsPerPageOptions]="paginations" [totalRecords]="totalRecords"> -->
+<p-table *ngIf="visible" [value]="collocations" [lazy]="true" (onLazyLoad)="loadCollocations($event)" [paginator]="true"
+  styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults" [loading]="loading"
+  currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="paginations" (sortFunction)="loadCollocations($event)" [customSort]="true"
+  [sortField]="sortField" [sortOrder]="sortOrder">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>
+      </th>
+      <th *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
+        <p-sortIcon [field]="col"></p-sortIcon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-collocation>
+    <tr>
+      <td *ngIf="!!collocation.word">{{collocation.word}}</td>
+      <td class="text-right" *ngIf="!!collocation.concurrenceCount">
+        {{collocation.concurrenceCount | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.candidateCount">
+        {{collocation.candidateCount | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.tscore">{{collocation.tscore | number: '1.1-4'}}
+      </td>
+      <td class="text-right" *ngIf="!!collocation.mi">{{collocation.mi | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.mi3">{{collocation.mi3 | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.logLikelihood">
+        {{collocation.logLikelihood | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.minSensitivity">
+        {{collocation.minSensitivity | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.logDice">
+        {{collocation.logDice | number: '1.1-4'}}
+      </td>
+      <td class="text-right" *ngIf="!!collocation.miLogF">{{collocation.miLogF | number: '1.1-4'}}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

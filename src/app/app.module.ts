@@ -39,6 +39,8 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+import { ConcordanceTableComponent } from './concordance-table/concordance-table.component';
+import { CollocationTableComponent } from './collocation-table/collocation-table.component';
 
 registerLocaleData(localeIt);
 
@@ -68,7 +70,9 @@ registerLocaleData(localeIt);
     VideoPlayerComponent,
     RoleDirective,
     KwicLinesViewComponent,
-    DispalyPanelOptionsComponent
+    DispalyPanelOptionsComponent,
+    ConcordanceTableComponent,
+    CollocationTableComponent
   ],
   imports: [
     BrowserModule,
