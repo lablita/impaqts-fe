@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { LazyLoadEvent, TreeNode } from 'primeng/api';
@@ -38,7 +38,7 @@ import { MetadataUtilService } from '../utils/metadata-util.service';
   templateUrl: './concordance.component.html',
   styleUrls: ['./concordance.component.scss']
 })
-export class ConcordanceComponent implements OnInit {
+export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
 
@@ -143,6 +143,10 @@ export class ConcordanceComponent implements OnInit {
     this.emitterService.pageMenu = CONCORDANCE;
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    // this.init();
+  }
+
+  ngAfterViewInit(): void {
     this.init();
   }
 
@@ -228,9 +232,7 @@ export class ConcordanceComponent implements OnInit {
 
   public makeConcordances(): void {
     this.titleResult = 'MENU.CONCORDANCE';
-    this.kwicLines = [];
     this.collocations = [];
-    // this.loading = true;
     this.resultView = false;
     this.queryRequestSevice.resetOptionsRequest();
     this.loadResults();
@@ -239,8 +241,6 @@ export class ConcordanceComponent implements OnInit {
   public makeCollocations(): void {
     this.titleResult = 'MENU.COLLOCATIONS';
     this.kwicLines = [];
-    this.collocations = [];
-    // this.loading = true;
     const sortBy = this.queryRequestSevice.queryRequest.collocationQueryRequest?.sortBy;
     this.headerSortBy = this.colHeaderList.filter(h => h.key === sortBy)[0].value;
     this.loadResults();
@@ -259,8 +259,13 @@ export class ConcordanceComponent implements OnInit {
           qr.start = event.first;
           qr.end = qr.start + event.rows;
         }
+        if (qr.collocationQueryRequest !== null && event.sortField !== undefined && event.sortField !== null) {
+          //collocation sorting
+          const sortBy = this.colHeaderList.find(c => c.value === event.sortField)?.key;
+          qr.collocationQueryRequest.sortBy = (sortBy !== null && sortBy !== undefined) ? sortBy : 'm';
+        }
       }
-      let queryTags: QueryTag[] = [];
+      const queryTags: QueryTag[] = [];
       let tag: QueryTag;
       switch (this.selectedQueryType?.key) {
         case WORD:
@@ -385,18 +390,6 @@ export class ConcordanceComponent implements OnInit {
     }
   }
 
-  // public collocationCustomSort(event: SortEvent): void {
-  //   if (!!this.queryRequestSevice.queryRequest.collocationQueryRequest) {
-  //     const sortField = this.colHeaderList.filter(c => c.value === event.field).length > 0
-  //       ? this.colHeaderList.filter(c => c.value === event.field)[0].key : 'r';
-  //     if (sortField !== this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy) {
-  //       this.queryRequestSevice.queryRequest.collocationQueryRequest.sortBy = sortField;
-  //       this.makeCollocations();
-  //     }
-  //     this.makeCollocations();
-  //   }
-  // }
-
   private init(): void {
     this.resultView = false;
     const inst = localStorage.getItem(INSTALLATION);
@@ -434,10 +427,12 @@ export class ConcordanceComponent implements OnInit {
           if (this.selectedCorpus) {
             const qr = resp as QueryResponse;
             if (qr.kwicLines.length > 0) {
+              this.collocations = [];
               this.resultView = true;
               this.noResultFound = false;
               this.kwicLines = (resp as QueryResponse).kwicLines;
             } else if (qr.collocations.length > 0) {
+              this.kwicLines = [];
               this.resultView = true;
               this.noResultFound = false;
               this.collocations = (resp as QueryResponse).collocations;

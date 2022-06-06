@@ -1,19 +1,13 @@
-<!-- <p-table
-  *ngIf="collocations.length > 0 && !((displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus)"
-  [value]="collocations" [paginator]="true" styleClass="p-datatable-striped" [rows]="initialPagination"
-  [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-  [showCurrentPageReport]="true" [rowsPerPageOptions]="paginations" [totalRecords]="totalRecords"> -->
-<p-table *ngIf="visible" [value]="collocations" [lazy]="true" (onLazyLoad)="loadCollocations($event)" [paginator]="true"
-  styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults" [loading]="loading"
-  currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="paginations" (sortFunction)="loadCollocations($event)" [customSort]="true"
-  [sortField]="sortField" [sortOrder]="sortOrder">
+<p-table [value]="collocations" [lazy]="true" (onLazyLoad)="loadCollocations($event)" [paginator]="true"
+  [value]="collocations" [rows]="10" [rowsPerPageOptions]="paginations" [totalRecords]="totalResults"
+  [loading]="loading" [customSort]="true" currentPageReportTemplate="'page: {currentPage} of {totalPages}'"
+  [showCurrentPageReport]="true" [sortField]="sortField">
   <ng-template pTemplate="header">
     <tr>
       <th>
       </th>
       <th *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
-        <p-sortIcon [field]="col"></p-sortIcon>
+        <fa-icon style="font-size: small" [icon]="faSortAmountDown"></fa-icon>
       </th>
     </tr>
   </ng-template>

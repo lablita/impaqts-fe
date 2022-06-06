@@ -15,6 +15,8 @@ import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-le
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
+import { CollocationTableComponent } from './collocation-table/collocation-table.component';
+import { ConcordanceTableComponent } from './concordance-table/concordance-table.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { ContextConcordanceComponent } from './context-concordance/context-concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
@@ -34,13 +36,12 @@ import { QueryTokenComponent } from './query-token/query-token.component';
 import { RightComponent } from './right/right.component';
 import { AppInitializerService } from './services/app-initializer.service';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
+import { TestPaginationComponent } from './test-pagination/test-pagination.component';
 import { TopComponent } from './top/top.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-import { ConcordanceTableComponent } from './concordance-table/concordance-table.component';
-import { CollocationTableComponent } from './collocation-table/collocation-table.component';
 
 registerLocaleData(localeIt);
 
@@ -72,7 +73,8 @@ registerLocaleData(localeIt);
     KwicLinesViewComponent,
     DispalyPanelOptionsComponent,
     ConcordanceTableComponent,
-    CollocationTableComponent
+    CollocationTableComponent,
+    TestPaginationComponent
   ],
   imports: [
     BrowserModule,

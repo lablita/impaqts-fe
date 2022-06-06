@@ -4,7 +4,7 @@ export class CollocationItem {
   word: string | null = null;
   concurrenceCount: number | null = null;
   candidateCount: number | null = null;
-  tScore: number | null = null;
+  tscore: number | null = null;
   mi: number | null = null;
   mi3: number | null = null;
   logLikelihood: number | null = null;
