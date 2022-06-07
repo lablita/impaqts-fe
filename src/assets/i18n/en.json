@@ -196,7 +196,7 @@
       "TEXT_TYPE_SECTION": {}
     },
     "COLLOCATION": {
-      "CONC_COUNT": "Cooccurrence count",
+      "CONC_COUNT": "Concurrence count",
       "CAND_COUNT": "Candidate count",
       "T_SCORE": "T-score",
       "MI": "MI",

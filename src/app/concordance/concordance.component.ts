@@ -105,8 +105,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public displayModal = false;
   public resultContext: ResultContext | null = null;
   public colHeaderList: KeyValueItem[] = [
-    new KeyValueItem('r', 'PAGE.COLLOCATION.CONC_COUNT'),
-    new KeyValueItem('f', 'PAGE.COLLOCATION.CAND_COUNT'),
+    new KeyValueItem('f', 'PAGE.COLLOCATION.CONC_COUNT'),
+    new KeyValueItem('F', 'PAGE.COLLOCATION.CAND_COUNT'),
     new KeyValueItem('t', 'PAGE.COLLOCATION.T_SCORE'),
     new KeyValueItem('m', 'PAGE.COLLOCATION.MI'),
     new KeyValueItem('3', 'PAGE.COLLOCATION.MI3'),

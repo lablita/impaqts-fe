@@ -15,6 +15,7 @@ export class CollocationTableComponent implements OnInit {
   @Input() public colHeader: Array<string> = Array.from<string>({ length: 0 });
   @Input() public sortField = '';
   @Input() public totalResults = 0;
+  @Input() public visible = false;
   @Input() public collocations: Array<CollocationItem> = Array.from<CollocationItem>({ length: 0 });
   @Output() public loadResults = new EventEmitter<any>();
 

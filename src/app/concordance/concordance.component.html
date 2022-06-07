@@ -134,14 +134,15 @@
             </h3>
           </div>
         </div>
-        <div
-          *ngIf="collocations.length > 0 && !((displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus)">
-          <app-collocation-table [loading]="loading" [initialPagination]="initialPagination" [paginations]="paginations"
-            [colHeader]="colHeader" [sortField]="headerSortBy" [totalResults]="totalResults"
-            [collocations]="collocations" (loadResults)="loadResults($event)">
+        <div>
+          <app-collocation-table [visible]="collocations.length> 0 && !((displayPanelService.displayPanelMetadata ||
+            displayPanelService.displayPanelOptions) && !!selectedCorpus)" [loading]="loading"
+            [initialPagination]="initialPagination" [paginations]="paginations" [colHeader]="colHeader"
+            [sortField]="headerSortBy" [totalResults]="totalResults" [collocations]="collocations"
+            (loadResults)="loadResults($event)">
           </app-collocation-table>
         </div>
-        <div *ngIf="kwicLines.length > 0">
+        <div>
           <app-concordance-table [visible]="kwicLines.length > 0" [loading]="loading"
             [initialPagination]="initialPagination" [paginations]="paginations" [totalResults]="totalResults"
             [kwicLines]="kwicLines" (loadResults)="loadResults($event)">
