@@ -10,7 +10,8 @@ import { CollocationItem } from '../model/collocation-item';
 export class CollocationTableComponent implements OnInit {
 
   // @Input() public visible = false;
-  @Input() public loading = false; @Input() public initialPagination = 0;
+  @Input() public loading = false;
+  @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
   @Input() public colHeader: Array<string> = Array.from<string>({ length: 0 });
   @Input() public sortField = '';

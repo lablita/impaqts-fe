@@ -1,5 +1,5 @@
 <p-table *ngIf="visible" [value]="collocations" [lazy]="true" (onLazyLoad)="loadCollocations($event)" [paginator]="true"
-  [value]="collocations" [rows]="10" [rowsPerPageOptions]="paginations" [totalRecords]="totalResults"
+  [value]="collocations" [rows]="initialPagination" [rowsPerPageOptions]="paginations" [totalRecords]="totalResults"
   [loading]="loading" [customSort]="true" currentPageReportTemplate="'page: {currentPage} of {totalPages}'"
   [showCurrentPageReport]="true" [sortField]="sortField">
   <ng-template pTemplate="header">

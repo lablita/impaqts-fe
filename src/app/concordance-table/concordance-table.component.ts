@@ -11,7 +11,7 @@ import { ResultContext } from '../model/result-context';
 export class ConcordanceTableComponent implements OnInit {
 
   @Input() public loading = false;
-  @Input() public initialPagination = 0;
+  @Input() public initialPagination = 10;
   @Input() public totalResults = 0;
   @Input() public paginations: number[] = [];
   @Input() public kwicLines: KWICline[] = [];
