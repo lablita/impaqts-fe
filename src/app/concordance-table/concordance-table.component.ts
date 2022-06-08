@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { KWICline } from '../model/kwicline';
 import { ResultContext } from '../model/result-context';
+import { EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-concordance-table',
@@ -20,13 +21,15 @@ export class ConcordanceTableComponent implements OnInit {
 
   public resultContext: ResultContext | null = null;
   public displayModal = false;
-  public videoUrl: SafeResourceUrl | null = null;
+  public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
 
   constructor(
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
+    this.emitterService.makeConconrdance.subscribe(() => this.loadResults.emit());
   }
 
   public loadConcordance(event: any): void {

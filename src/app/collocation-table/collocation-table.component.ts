@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { CollocationItem } from '../model/collocation-item';
+import { EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-collocation-table',
@@ -9,7 +10,6 @@ import { CollocationItem } from '../model/collocation-item';
 })
 export class CollocationTableComponent implements OnInit {
 
-  // @Input() public visible = false;
   @Input() public loading = false;
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
@@ -22,9 +22,12 @@ export class CollocationTableComponent implements OnInit {
 
   public faSortAmountDown = faSortAmountDown;
 
-  constructor() { }
+  constructor(
+    private readonly emitterService: EmitterService
+  ) { }
 
   ngOnInit(): void {
+    this.emitterService.makeCollocation.subscribe(() => this.loadResults.emit());
   }
 
   public loadCollocations(event: any): void {

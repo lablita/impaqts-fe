@@ -119,11 +119,8 @@
       </div>
     </p-card>
 
-    <div class="flex mt-3 w-12 justify-content-center"
-      *ngIf="loading && !(kwicLines.length > 0 || collocations.length > 0)">
-      <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-    </div>
-    <div class="flex mt-3" *ngIf="resultView">
+
+    <div class="flex mt-3" *ngIf="titleResult">
       <p-card class="w-12">
         <div>
           <div class="flex justify-content-center">
@@ -134,16 +131,15 @@
             </h3>
           </div>
         </div>
-        <div>
-          <app-collocation-table [visible]="collocations.length> 0 && !((displayPanelService.displayPanelMetadata ||
+        <div [ngStyle]="{'display': (!resultView && noResultFound && !loading) ? 'none' : 'inline'}">
+          <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
             displayPanelService.displayPanelOptions) && !!selectedCorpus)" [loading]="loading"
             [initialPagination]="initialPagination" [paginations]="paginations" [colHeader]="colHeader"
             [sortField]="headerSortBy" [totalResults]="totalResults" [collocations]="collocations"
             (loadResults)="loadResults($event)">
           </app-collocation-table>
-        </div>
-        <div>
-          <app-concordance-table [visible]="kwicLines.length > 0" [loading]="loading"
+
+          <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [loading]="loading"
             [initialPagination]="initialPagination" [paginations]="paginations" [totalResults]="totalResults"
             [kwicLines]="kwicLines" (loadResults)="loadResults($event)">
           </app-concordance-table>

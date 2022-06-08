@@ -6,7 +6,7 @@
     <tr>
       <th>
       </th>
-      <th *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
+      <th class="text-right" *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
         <fa-icon style="font-size: small" [icon]="faSortAmountDown"></fa-icon>
       </th>
     </tr>

@@ -232,18 +232,18 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   public makeConcordances(): void {
     this.titleResult = 'MENU.CONCORDANCE';
+    this.emitterService.makeConconrdance.emit();
     this.collocations = [];
     this.resultView = false;
     this.queryRequestSevice.resetOptionsRequest();
-    this.loadResults();
   }
 
   public makeCollocations(): void {
     this.titleResult = 'MENU.COLLOCATIONS';
+    this.emitterService.makeCollocation.emit();
     this.kwicLines = [];
     const sortBy = this.queryRequestSevice.queryRequest.collocationQueryRequest?.sortBy;
     this.headerSortBy = this.colHeaderList.filter(h => h.key === sortBy)[0].value;
-    this.loadResults();
   }
 
   public loadResults(event?: LazyLoadEvent): void {
@@ -380,16 +380,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public collocationCustomSort(event: any): void {
-    if (!!this.queryRequestSevice.queryRequest.collocationQueryRequest && (this.rowsPrev !== event.rows || this.sortFieldPrev !== event.sortField)) {
-      this.rowsPrev = event.rows;
-      this.sortFieldPrev = event.sortField;
-      const sortField = this.colHeaderList.filter(c => c.value === event.sortField).length > 0
-        ? this.colHeaderList.filter(c => c.value === event.sortField)[0].key : 'r';
-      this.makeCollocations();
-    }
-  }
-
   private init(): void {
     this.resultView = false;
     const inst = localStorage.getItem(INSTALLATION);
@@ -441,6 +431,10 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
             }
             this.loading = false;
             this.totalResults = qr.currentSize;
+            if (this.totalResults === 0) {
+              this.kwicLines = [];
+              this.collocations = [];
+            }
           }
         }),
         catchError(err => { throw err; }),
