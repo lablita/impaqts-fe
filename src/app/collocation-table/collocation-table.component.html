@@ -1,0 +1,49 @@
+<div *ngIf="visible">
+  <div class="flex justify-content-center">
+    <h3><b>{{'MENU.COLLOCATIONS' | translate}}</b></h3>
+  </div>
+  <div style="width: 250px;" *ngIf="collocations.length > 0 && !loading">
+    <h3 *ngIf="totalResults">Query <span
+        style="color:red;">{{fieldRequest ? fieldRequest.simpleResult : ''}}</span>&nbsp;<b>{{totalResults}}</b>
+    </h3>
+  </div>
+</div>
+<p-table *ngIf="visible" [value]="collocations" [lazy]="true" (onLazyLoad)="loadCollocations($event)" [paginator]="true"
+  [value]="collocations" [rows]="initialPagination" [rowsPerPageOptions]="paginations" [totalRecords]="totalResults"
+  [loading]="loading" [customSort]="true" currentPageReportTemplate="'page: {currentPage} of {totalPages}'"
+  [showCurrentPageReport]="true" [sortField]="sortField">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>
+      </th>
+      <th class="text-right" *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
+        <fa-icon style="font-size: small" [icon]="faSortAmountDown"></fa-icon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-collocation>
+    <tr>
+      <td *ngIf="!!collocation.word">{{collocation.word}}</td>
+      <td class="text-right" *ngIf="!!collocation.concurrenceCount">
+        {{collocation.concurrenceCount | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.candidateCount">
+        {{collocation.candidateCount | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.tscore">{{collocation.tscore | number: '1.1-4'}}
+      </td>
+      <td class="text-right" *ngIf="!!collocation.mi">{{collocation.mi | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.mi3">{{collocation.mi3 | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.logLikelihood">
+        {{collocation.logLikelihood | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.minSensitivity">
+        {{collocation.minSensitivity | number: '1.1-4'}}</td>
+      <td class="text-right" *ngIf="!!collocation.logDice">
+        {{collocation.logDice | number: '1.1-4'}}
+      </td>
+      <td class="text-right" *ngIf="!!collocation.miLogF">{{collocation.miLogF | number: '1.1-4'}}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+<div class="mt-3 w-12" *ngIf="visible && noResultFound && !loading">
+  <h3 style="text-align: center; color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+</div>

@@ -7,6 +7,18 @@ import { QueryRequestService } from '../services/query-request.service';
 import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
+
+const STAT_DESC: { [key: string]: string } = {
+  T_SCORE: 't',
+  MI: 'm',
+  MI3: '3',
+  LOG: 'l',
+  MIN: 's',
+  MI_LOG: 'p',
+  REL_FREQ: 'r',
+  ABS_FREQ: 'f',
+  LOG_DICE: 'd',
+}
 @Component({
   selector: 'app-collocation-options-panel',
   templateUrl: './collocation-options-panel.component.html',
@@ -15,6 +27,7 @@ const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
 export class CollocationOptionsPanelComponent {
 
   @Input() public showRightButton = false;
+  @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
@@ -45,14 +58,12 @@ export class CollocationOptionsPanelComponent {
   }
 
 
-  public setCollocationOption(): void {
+  public loadCollocationsOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
-  }
-
-  public removeCollocationOption(): void {
-    this.queryRequestService.resetOptionsRequest();
+    this.loadCollocations.emit(true);
+    this.closeSidebarEvent.emit(true);
   }
 
   private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequest): CollocationQueryRequest {
@@ -63,9 +74,9 @@ export class CollocationOptionsPanelComponent {
     res.rangeFrom = collocationOptionsQueryRequest.rangeFrom;
     res.rangeTo = collocationOptionsQueryRequest.rangeTo;
     if (!!collocationOptionsQueryRequest.showFunc) {
-      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(item.key));
+      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(STAT_DESC[item.key]));
     }
-    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? collocationOptionsQueryRequest.sortBy.key : null;
+    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? STAT_DESC[collocationOptionsQueryRequest.sortBy.key] : null;
     return res;
   }
 

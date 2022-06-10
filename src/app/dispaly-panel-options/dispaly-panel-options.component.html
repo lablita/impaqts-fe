@@ -26,7 +26,7 @@
   </app-frequency-options-panel>
   <app-collocation-options-panel *ngIf="displayPanelService.panelItemSelected === COLLOCATIONS"
     [showRightButton]="displayPanelService.displayPanelOptions"
-    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false" (loadCollocations)="loadColl()">
   </app-collocation-options-panel>
   <app-filter-options-panel *ngIf="displayPanelService.panelItemSelected === FILTER" [corpus]="selectedCorpus.key"
     [metadata]="metadataTextTypes">

@@ -25,7 +25,7 @@
     "FREQUENCY": "Frequency",
     "NODE_TAGS": "Node tags",
     "NODE_FORMS": "Node forms",
-    "COLLOCATIONS": "Collocations",
+    "COLLOCATIONS": "Collocazioni",
     "CONC_DECS": "ConcDesc",
     "VISUALIZE": "Visualize",
     "VISUAL_QUERY": "Visual Query"
@@ -176,8 +176,7 @@
         "SORT_BY": "Sort by",
         "T_SCORE": "T-score",
         "TO": "to",
-        "SET_COLLOCATION": "Set Collocation Opt.",
-        "REMOVE_COLLOCATION": "Remove Collocation Opt."
+        "MAKE_COLLOCATION": "Make Collocations"
       },
       "FILTER_OPTIONS": {
         "CONCORDANCE_FILTER": "Concordance filter",
@@ -192,6 +191,17 @@
         "SEL_TOKEN": "Selected token"
       },
       "TEXT_TYPE_SECTION": {}
+    },
+    "COLLOCATION": {
+      "CONC_COUNT": "Concurrence count",
+      "CAND_COUNT": "Candidate count",
+      "T_SCORE": "T-score",
+      "MI": "MI",
+      "MI3": "MI3",
+      "LOG_LIKELIHOOD": "log likelihood",
+      "MIN_SENS": "min. sensitivity",
+      "LOG_DICE": "logDice",
+      "MI_LOG_F": "MI.log_f"
     },
     "CREDITS": {
       "LABEL": "Credits"

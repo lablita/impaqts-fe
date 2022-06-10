@@ -13,6 +13,7 @@ import {
   ALL_LEMMANS, ALL_WORDS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, MENU_ALL_LEMMANS,
   MENU_ALL_WORDS, MENU_CONCORDANCE, MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_VISUAL_QUERY, VISUAL_QUERY
 } from './model/constants';
+import { TestPaginationComponent } from './test-pagination/test-pagination.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 
 
@@ -60,6 +61,11 @@ const routes: Routes = [
         path: VISUAL_QUERY,
         component: VisualQueryComponent,
         canActivate: environment.menuNoRole.findIndex(m => m === MENU_VISUAL_QUERY) > 0 ? [] : [AuthGuard, HasRoleGuard]
+      }
+      ,
+      {
+        path: 'test',
+        component: TestPaginationComponent
       }
     ]
   },

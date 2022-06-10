@@ -1,6 +1,7 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import localeIt from '@angular/common/locales/it';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,6 +15,8 @@ import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-le
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
+import { CollocationTableComponent } from './collocation-table/collocation-table.component';
+import { ConcordanceTableComponent } from './concordance-table/concordance-table.component';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { ContextConcordanceComponent } from './context-concordance/context-concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
@@ -33,11 +36,15 @@ import { QueryTokenComponent } from './query-token/query-token.component';
 import { RightComponent } from './right/right.component';
 import { AppInitializerService } from './services/app-initializer.service';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
+import { TestPaginationComponent } from './test-pagination/test-pagination.component';
 import { TopComponent } from './top/top.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+
+registerLocaleData(localeIt);
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,7 +71,10 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
     VideoPlayerComponent,
     RoleDirective,
     KwicLinesViewComponent,
-    DispalyPanelOptionsComponent
+    DispalyPanelOptionsComponent,
+    ConcordanceTableComponent,
+    CollocationTableComponent,
+    TestPaginationComponent
   ],
   imports: [
     BrowserModule,
@@ -107,7 +117,8 @@ import { WordListOptionsPanelComponent } from './word-list-options-panel/word-li
       provide: HTTP_INTERCEPTORS,
       useClass: AuthHttpInterceptor,
       multi: true,
-    }
+    },
+    { provide: LOCALE_ID, useValue: 'it-IT' },
   ],
   bootstrap: [AppComponent]
 })

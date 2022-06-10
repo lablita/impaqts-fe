@@ -12,7 +12,7 @@
             [style]="{'width':'80%'}">
             <ng-template pTemplate="selectedItem">
               <div *ngIf="selectedCorpus">
-                <div class="">{{selectedCorpus.value}}</div>
+                <div>{{selectedCorpus.value}}</div>
               </div>
             </ng-template>
           </p-dropdown>
@@ -52,7 +52,7 @@
               <p-radioButton class="ml-3 mr-1" [inputId]="queryType.key" name="queryType" [value]="queryType"
                 [(ngModel)]="selectedQueryType">
               </p-radioButton>
-              <label class="mr-3" [for]="queryType.key" class="">{{queryType.value | translate}}</label>
+              <label class="mr-3" [for]="queryType.key">{{queryType.value | translate}}</label>
             </div>
           </div>
         </div>
@@ -119,69 +119,15 @@
       </div>
     </p-card>
 
-    <div class="flex mt-3 w-12 justify-content-center" *ngIf="loading">
-      <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-    </div>
-    <div class="flex mt-3" *ngIf="resultView">
+    <div class="flex mt-3" *ngIf="titleResult">
       <p-card class="w-12">
-        <div class="">
-          <div class="" style="width: 250px;">
-            <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
-            </h3>
-          </div>
-        </div>
-
-        <div class="" style="width: 150px;">
-          <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
-            [style]="{width: '700'}" [baseZIndex]="10000">
-            <iframe title="Video" style="border: 0px;" width="600" height="450" [src]="videoUrl" allow="autoplay"
-              allowfullscreen></iframe>
-          </p-dialog>
-        </div>
-        <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
-          styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
-          currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-          [rowsPerPageOptions]="[10,25,50]">
-          <ng-template pTemplate="header">
-            <tr>
-              <th style="width: 80px;"></th>
-              <th class="p-text-center" style="width: 180px;">Left</th>
-              <th class="p-text-center" style="width: 80px;">Kwic</th>
-              <th class="p-text-center" style="width: 180px;">Right</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
-            <tr>
-              <td>
-                <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-                  (click)="showVideoDlg(rowIndex)"></button>
-              </td>
-              <td class="p-text-right">{{kwicLine.leftContext}}</td>
-              <td class="p-text-center">
-                <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
-                  (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
-              </td>
-              <td class="p-text-left">{{kwicLine.rightContext}}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-        <p-overlayPanel #op [style]="{width: '450px'}">
-          <ng-template pTemplate>
-            <div>{{resultContext?.after}}</div>
-            <div style="text-align: center; color: red;">
-              {{resultContext?.keyword}}
-            </div>
-            <div>
-              {{resultContext?.before}}
-            </div>
-          </ng-template>
-        </p-overlayPanel>
-
-      </p-card>
-    </div>
-    <div class="mt-3 w-12" *ngIf="!resultView && noResultFound && !loading">
-      <p-card>
-        <h3 style="text-align: center; color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
+        displayPanelService.displayPanelOptions) && !!selectedCorpus)" [initialPagination]="initialPagination"
+          [paginations]="paginations">
+        </app-collocation-table>
+        <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
+          [paginations]="paginations">
+        </app-concordance-table>
       </p-card>
     </div>
   </div>
@@ -189,7 +135,7 @@
     *ngIf="(displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [metadataTextTypes]="metadataTextTypes">
+      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()">
     </app-dispaly-panel-options>
   </div>
 </div>

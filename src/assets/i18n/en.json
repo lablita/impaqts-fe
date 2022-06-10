@@ -179,8 +179,7 @@
         "MIN": "min. sensitivity",
         "LOG_DICE": "logDice",
         "MI_LOG": "MI.log_f",
-        "SET_COLLOCATION": "Set Collocation Opt.",
-        "REMOVE_COLLOCATION": "Remove Collocation Opt."
+        "MAKE_COLLOCATIONS": "Make Collocations"
       },
       "FILTER_OPTIONS": {
         "CONCORDANCE_FILTER": "Concordance filter",
@@ -195,6 +194,17 @@
         "FILTER_CON": "Filter concordance"
       },
       "TEXT_TYPE_SECTION": {}
+    },
+    "COLLOCATION": {
+      "CONC_COUNT": "Concurrence count",
+      "CAND_COUNT": "Candidate count",
+      "T_SCORE": "T-score",
+      "MI": "MI",
+      "MI3": "MI3",
+      "LOG_LIKELIHOOD": "log likelihood",
+      "MIN_SENS": "min. sensitivity",
+      "LOG_DICE": "logDice",
+      "MI_LOG_F": "MI.log_f"
     },
     "CREDITS": {
       "LABEL": "Credits"
