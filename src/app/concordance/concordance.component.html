@@ -119,37 +119,15 @@
       </div>
     </p-card>
 
-
     <div class="flex mt-3" *ngIf="titleResult">
       <p-card class="w-12">
-        <div>
-          <div class="flex justify-content-center">
-            <h3><b>{{!!titleResult ? (titleResult | translate) : ''}}</b></h3>
-          </div>
-          <div style="width: 250px;" *ngIf="kwicLines.length > 0 || collocations.length > 0">
-            <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
-            </h3>
-          </div>
-        </div>
-        <div [ngStyle]="{'display': (!resultView && noResultFound && !loading) ? 'none' : 'inline'}">
-          <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
-            displayPanelService.displayPanelOptions) && !!selectedCorpus)" [loading]="loading"
-            [initialPagination]="initialPagination" [paginations]="paginations" [colHeader]="colHeader"
-            [sortField]="headerSortBy" [totalResults]="totalResults" [collocations]="collocations"
-            (loadResults)="loadResults($event)">
-          </app-collocation-table>
-
-          <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [loading]="loading"
-            [initialPagination]="initialPagination" [paginations]="paginations" [totalResults]="totalResults"
-            [kwicLines]="kwicLines" (loadResults)="loadResults($event)">
-          </app-concordance-table>
-        </div>
-
-      </p-card>
-    </div>
-    <div class="mt-3 w-12" *ngIf="!resultView && noResultFound && !loading">
-      <p-card>
-        <h3 style="text-align: center; color: red;">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
+        displayPanelService.displayPanelOptions) && !!selectedCorpus)" [initialPagination]="initialPagination"
+          [paginations]="paginations">
+        </app-collocation-table>
+        <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
+          [paginations]="paginations">
+        </app-concordance-table>
       </p-card>
     </div>
   </div>
