@@ -110,6 +110,7 @@ export class SortOptionsPanelComponent implements OnInit {
     const sortOptionsQueryRequest = new SortOptionsQueryRequest();
     sortOptionsQueryRequest.sortKey = new KeyValueItem('LEFT_CONTEXT', 'LEFT_CONTEXT');
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    sortOptionsQueryRequest.numberTokens = 3;
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.quickSort.emit(sortQueryRequest);
   }
@@ -118,6 +119,7 @@ export class SortOptionsPanelComponent implements OnInit {
     const sortOptionsQueryRequest = new SortOptionsQueryRequest();
     sortOptionsQueryRequest.sortKey = new KeyValueItem('RIGHT_CONTEXT', 'RIGHT_CONTEXT');
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    sortOptionsQueryRequest.numberTokens = 3;
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.quickSort.emit(sortQueryRequest);
   }
@@ -126,6 +128,7 @@ export class SortOptionsPanelComponent implements OnInit {
     const sortOptionsQueryRequest = new SortOptionsQueryRequest();
     sortOptionsQueryRequest.sortKey = new KeyValueItem('NODE_CONTEXT', 'NODE_CONTEXT');
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    sortOptionsQueryRequest.numberTokens = 3;
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.quickSort.emit(sortQueryRequest);
   }
