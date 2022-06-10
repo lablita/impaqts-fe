@@ -53,7 +53,7 @@ const startUp1 = new Startup(
     null,
     null,
     null
-  ), new SortOptionsQueryRequest(
+  ), SortOptionsQueryRequest.build(
     new KeyValueItem(WORD, WORD),
     new KeyValueItem(LEFT, LEFT),
     3,
@@ -132,7 +132,7 @@ const startUp2 = new Startup(
     null,
     null,
     null
-  ), new SortOptionsQueryRequest(
+  ), SortOptionsQueryRequest.build(
     new KeyValueItem(WORD, WORD),
     new KeyValueItem(LEFT, LEFT),
     3,

@@ -1,17 +1,18 @@
 import { KeyValueItem } from "./key-value-item";
 export class SortOptionsQueryRequest {
-  attribute: KeyValueItem;
-  sortKey: KeyValueItem;
-  numberTokens: number;
-  ignoreCase: boolean;
-  backward: boolean;
+  attribute: KeyValueItem = new KeyValueItem('', '');
+  sortKey: KeyValueItem = new KeyValueItem('', '');
+  numberTokens: number = 0;
+  ignoreCase: boolean = false;
+  backward: boolean = false;
   levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   attributeMulti: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   ignoreCaseMulti: Array<boolean> = Array.from<boolean>({ length: 0 });
   backwardMulti: Array<boolean> = Array.from<boolean>({ length: 0 });
   position: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
 
-  constructor(
+  constructor() { }
+  public static build(
     attribute: KeyValueItem,
     sortKey: KeyValueItem,
     numberTokens: number,
@@ -22,16 +23,18 @@ export class SortOptionsQueryRequest {
     ignoreCaseMulti: Array<boolean>,
     backwardMulti: Array<boolean>,
     position: Array<KeyValueItem>,
-  ) {
-    this.attribute = attribute;
-    this.sortKey = sortKey;
-    this.numberTokens = numberTokens;
-    this.ignoreCase = ignoreCase;
-    this.backward = backward;
-    this.levels = levels;
-    this.attributeMulti = attributeMulti;
-    this.ignoreCaseMulti = ignoreCaseMulti;
-    this.backwardMulti = backwardMulti;
-    this.position = position;
+  ): SortOptionsQueryRequest {
+    const sortOptionsQueryRequest = new SortOptionsQueryRequest();
+    sortOptionsQueryRequest.attribute = attribute;
+    sortOptionsQueryRequest.sortKey = sortKey;
+    sortOptionsQueryRequest.numberTokens = numberTokens;
+    sortOptionsQueryRequest.ignoreCase = ignoreCase;
+    sortOptionsQueryRequest.backward = backward;
+    sortOptionsQueryRequest.levels = levels;
+    sortOptionsQueryRequest.attributeMulti = attributeMulti;
+    sortOptionsQueryRequest.ignoreCaseMulti = ignoreCaseMulti;
+    sortOptionsQueryRequest.backwardMulti = backwardMulti;
+    sortOptionsQueryRequest.position = position;
+    return sortOptionsQueryRequest;
   }
 }

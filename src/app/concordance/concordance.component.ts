@@ -15,6 +15,7 @@ import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { ResultContext } from '../model/result-context';
+import { SortQueryRequest } from '../model/sort-query-request';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
@@ -188,7 +189,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
   }
 
-  public makeConcordances(): void {
+  public makeConcordances(sortQueryRequest?: SortQueryRequest): void {
     this.titleResult = 'MENU.CONCORDANCE';
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
@@ -202,6 +203,9 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.matchCase,
       this.selectedQueryType,
       this.defaultAttributeCQL);
+    if (sortQueryRequest && sortQueryRequest !== undefined) {
+      this.fieldRequest.quickSort = sortQueryRequest;
+    }
     this.emitterService.makeConcordance.next(this.fieldRequest);
     this.queryRequestSevice.resetOptionsRequest();
   }

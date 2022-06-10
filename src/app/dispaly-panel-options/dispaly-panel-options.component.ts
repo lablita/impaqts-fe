@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
+import { SortQueryRequest } from '../model/sort-query-request';
 import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class DispalyPanelOptionsComponent implements OnInit {
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
   @Output() public loadCollocations = new EventEmitter<boolean>();
+  @Output() public quickSort = new EventEmitter<SortQueryRequest>();
 
   public selectCorpus = SELECT_CORPUS;
 
@@ -43,6 +45,10 @@ export class DispalyPanelOptionsComponent implements OnInit {
 
   public loadColl(): void {
     this.loadCollocations.emit(true);
+  }
+
+  public quickSortCallback(sortQueryRequest: SortQueryRequest): void {
+    this.quickSort.emit(sortQueryRequest);
   }
 }
 

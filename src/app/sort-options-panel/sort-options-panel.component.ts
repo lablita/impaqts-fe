@@ -19,6 +19,7 @@ export class SortOptionsPanelComponent implements OnInit {
   @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
+  @Output() public quickSort = new EventEmitter<SortQueryRequest>();
 
   public sortOptionsQueryRequest: SortOptionsQueryRequest | null = null;
 
@@ -106,19 +107,35 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickLeft(): void {
-    return;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequest();
+    sortOptionsQueryRequest.sortKey = new KeyValueItem('LEFT_CONTEXT', 'LEFT_CONTEXT');
+    sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.quickSort.emit(sortQueryRequest);
   }
 
   public clickRight(): void {
-    return;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequest();
+    sortOptionsQueryRequest.sortKey = new KeyValueItem('RIGHT_CONTEXT', 'RIGHT_CONTEXT');
+    sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.quickSort.emit(sortQueryRequest);
   }
 
   public clickNode(): void {
-    return;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequest();
+    sortOptionsQueryRequest.sortKey = new KeyValueItem('NODE_CONTEXT', 'NODE_CONTEXT');
+    sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.quickSort.emit(sortQueryRequest);
   }
 
   public clickShuffle(): void {
-    return;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequest();
+    sortOptionsQueryRequest.sortKey = new KeyValueItem('SHUFFLE_CONTEXT', 'SHUFFLE_CONTEXT');
+    sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
+    const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.quickSort.emit(sortQueryRequest);
   }
 
   public multilevelCheckBoxManager(index: number): void {
@@ -181,4 +198,7 @@ export class SortOptionsPanelComponent implements OnInit {
       this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
     }
   }
+
+
+
 }

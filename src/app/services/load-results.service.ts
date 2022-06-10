@@ -125,6 +125,13 @@ export class LoadResultsService {
         qr.queryPattern.structPattern = this.metadataQuery;
       }
       qr.corpus = fieldRequest.selectedCorpus.key;
+      /**quick sort */
+      if (fieldRequest.quickSort) {
+        qr.start = 0;
+        qr.end = 10;
+        qr.sortQueryRequest = fieldRequest.quickSort;
+      }
+      /** */
       this.socketService.sendMessage(qr);
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     }

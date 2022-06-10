@@ -135,7 +135,8 @@
     *ngIf="(displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()">
+      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()"
+      (quickSort)="makeConcordances($event)">
     </app-dispaly-panel-options>
   </div>
 </div>

@@ -18,7 +18,7 @@
   </app-word-list-options-panel>
   <app-sort-options-panel *ngIf="displayPanelService.panelItemSelected === SORT" [corpusAttributes]="metadataAttributes"
     [showRightButton]="displayPanelService.displayPanelOptions"
-    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false">
+    (closeSidebarEvent)="displayPanelService.displayPanelOptions=false" (quickSort)="quickSortCallback($event)">
   </app-sort-options-panel>
   <app-frequency-options-panel *ngIf="displayPanelService.panelItemSelected === FREQUENCY"
     [corpusAttributes]="metadataAttributes" [showRightButton]="displayPanelService.displayPanelOptions"
