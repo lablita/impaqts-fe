@@ -1,3 +1,4 @@
+import { OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH } from "./constants";
 import { KeyValueItem } from "./key-value-item";
 
 export class ViewOptionsQueryRequest {
@@ -64,3 +65,24 @@ export class ViewOptionsQueryRequest {
       '', false, false, 0, 0, false, false, 0, false, false, false, false, false, false);
   }
 }
+
+export const DEFAULT_VIEW_OPTIONS_QUERY_REQUEST = new ViewOptionsQueryRequest(
+  [],
+  [],
+  [],
+  OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
+  false,
+  false,
+  20,
+  40,
+  false,
+  false,
+  100,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false
+);
+

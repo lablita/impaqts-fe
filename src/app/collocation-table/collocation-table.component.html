@@ -3,8 +3,8 @@
     <h3><b>{{'MENU.COLLOCATIONS' | translate}}</b></h3>
   </div>
   <div style="width: 250px;" *ngIf="collocations.length > 0 && !loading">
-    <h3 *ngIf="totalResults">Query <span
-        style="color:red;">{{fieldRequest ? fieldRequest.simpleResult : ''}}</span>&nbsp;<b>{{totalResults}}</b>
+    <h3 *ngIf="totalResults">Query <span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult :
+        ''}}</span>&nbsp;<b>{{totalResults}}</b>
     </h3>
   </div>
 </div>
@@ -22,7 +22,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-collocation>
-    <tr>
+    <tr *ngIf="collocation">
       <td *ngIf="!!collocation.word">{{collocation.word}}</td>
       <td class="text-right" *ngIf="!!collocation.concurrenceCount">
         {{collocation.concurrenceCount | number: '1.1-4'}}</td>

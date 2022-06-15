@@ -2,12 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { environment } from '../../environments/environment';
-import {
-  ALL_LEMMANS, ALL_WORDS, AS_SUBCORPUS,
-  BOTTOM_LEFT, COLLOCATIONS, CONCORDANCE, CORPUS_INFO,
-  FILTER, FREQUENCY, INSTALLATION, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
-} from '../model/constants';
+import { ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, CORPUS_INFO, FILTER, FREQUENCY, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST } from '../common/routes-constants';
+import { BOTTOM_LEFT, INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
@@ -34,12 +30,11 @@ export class MenuComponent implements OnInit {
   public urlBottomLeft: string | null = null;
 
   private readonly menuConcordanceStr: string[] = [CONCORDANCE, CORPUS_INFO, VISUAL_QUERY];
-  private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMANS];
+  private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
   private readonly menuDisplayPanel: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
-  // private roles: string[] | undefined = [];
   private menuNoRole: string[] = [];
   private menuRoutes: KeyValueItem[] = [];
   public user: User = new User();
@@ -62,9 +57,9 @@ export class MenuComponent implements OnInit {
         this.role = !!user.role ? user.role : '';
       }
 
-      this.menuByRoleList = environment.menuByRoleList;
-      this.menuNoRole = environment.menuNoRole;
-      this.menuRoutes = environment.menuRoutes;
+      this.menuByRoleList = this.menuEmitterService.menuByRoleList;
+      this.menuNoRole = this.menuEmitterService.menuNoRole;
+      this.menuRoutes = this.menuEmitterService.menuRoutes;
 
       const inst = localStorage.getItem(INSTALLATION);
       if (inst) {
@@ -125,7 +120,7 @@ export class MenuComponent implements OnInit {
         case CONCORDANCE:
         case VISUAL_QUERY:
         case ALL_WORDS:
-        case ALL_LEMMANS:
+        case ALL_LEMMAS:
           this.getVoiceMenu(!!routesRole ? routesRole : [], this.menuWordListStr);
           break;
         case RESULT_CONCORDANCE:

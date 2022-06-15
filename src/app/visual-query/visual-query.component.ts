@@ -5,11 +5,11 @@ import { LazyLoadEvent } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
+import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { VISUAL_QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import {
-  INSTALLATION, SELECT_CORPUS, VISUAL_QUERY
-} from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { Corpus } from '../model/corpus';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
@@ -55,7 +55,7 @@ export class VisualQueryComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public selectedCorpus: KeyValueItem | null = null;
   public holdSelectedCorpusStr?: string;
-  public selectCorpus = SELECT_CORPUS;
+  public selectCorpus = SELECT_CORPUS_LABEL;
 
   public totalResults = 0;
   public simpleResult?: string;
@@ -116,7 +116,7 @@ export class VisualQueryComponent implements OnInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.translateService.stream(SELECT_CORPUS).subscribe(res => this.selectCorpus = res);
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe(res => this.selectCorpus = res);
   }
 
   public addTokenQuery(): void {

@@ -1,3 +1,4 @@
+import { LEFT, NODE, WORD } from "../common/sort-constants";
 import { KeyValueItem } from "./key-value-item";
 export class SortOptionsQueryRequest {
   attribute: KeyValueItem;
@@ -35,3 +36,16 @@ export class SortOptionsQueryRequest {
     this.position = position;
   }
 }
+
+export const DEFAULT_SORT_OPTION_QUERY_REQUEST = new SortOptionsQueryRequest(
+  new KeyValueItem(WORD, WORD),
+  new KeyValueItem(LEFT, LEFT),
+  3,
+  false,
+  false,
+  [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL')],
+  [new KeyValueItem(WORD, WORD)],
+  [false, false, false],
+  [false, false, false],
+  [new KeyValueItem(NODE, NODE)],
+)

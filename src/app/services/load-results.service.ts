@@ -3,9 +3,10 @@ import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
+import { CHARACTER, CONCORDANCE, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
+import { RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { CHARACTER, CONCORDANCE, CQL, LEMMA, PHRASE, RESULT_CONCORDANCE, WORD } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
@@ -224,6 +225,7 @@ export class LoadResultsService {
 
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<SocketResponse> {
     let socketResponse: SocketResponse | null = null;
+    // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
       tap(resp => console.log(resp)),
       map(resp => {

@@ -1,3 +1,4 @@
+import { FIRST, NODE, WORD } from '../common/frequency-constants';
 import { KeyValueItem } from './key-value-item';
 
 export class FreqOptionsQueryRequest {
@@ -35,3 +36,15 @@ export class FreqOptionsQueryRequest {
       new KeyValueItem('', ''), false, new KeyValueItem('', ''), 0, false, Array.from<KeyValueItem>({ length: 0 }));
   }
 }
+
+export const DEFAULT_FREQUENCY_QUERY_REQUEST = new FreqOptionsQueryRequest(
+  0,
+  new KeyValueItem(FIRST, FIRST),
+  new KeyValueItem(WORD, WORD),
+  false,
+  new KeyValueItem(NODE, NODE),
+  0,
+  false,
+  []
+);
+

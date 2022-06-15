@@ -3,11 +3,12 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
+import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
+import { CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import {
-  CHARACTER, CONCORDANCE, CQL, INSTALLATION, LEMMA, PHRASE, SELECT_CORPUS, SIMPLE, WORD
-} from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
@@ -41,7 +42,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public selectedCorpus: KeyValueItem | null = null;
   public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedQueryType: KeyValueItem | null = null;
-  public selectCorpus = SELECT_CORPUS;
+  public selectCorpus = SELECT_CORPUS_LABEL;
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
@@ -89,17 +90,19 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
+  public wideDisplay = true;
+
   /** private */
   private endpoint = '';
 
   constructor(
     private readonly translateService: TranslateService,
-    public menuEmitterService: MenuEmitterService,
+    private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
-    public displayPanelService: DisplayPanelService,
+    private readonly displayPanelService: DisplayPanelService,
     private readonly queryRequestSevice: QueryRequestService,
   ) { }
 
@@ -111,6 +114,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.init();
+    this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
   }
 
   public clickQueryType(): void {
@@ -234,7 +238,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     this.contextStatus = false;
     this.textTypeStatus = false;
 
-    this.translateService.stream(SELECT_CORPUS).subscribe({
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
       next: res => this.selectCorpus = res
     });
 

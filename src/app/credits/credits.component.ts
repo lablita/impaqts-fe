@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CREDITS, INSTALLATION } from '../model/constants';
+import { CREDITS } from '../common/label-constants';
+import { INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
 import { DisplayPanelService } from '../services/display-panel.service';
 

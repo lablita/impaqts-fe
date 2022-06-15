@@ -1,3 +1,5 @@
+import { POSITIVE } from "../common/filter-constants";
+import { FIRST } from "../common/frequency-constants";
 import { ContextConcordanceQueryRequest } from "./context-concordance-query-request";
 import { KeyValueItem } from "./key-value-item";
 
@@ -29,3 +31,12 @@ export class FilterOptionsQueryRequest {
     return new FilterOptionsQueryRequest(new KeyValueItem('', ''), new KeyValueItem('', ''), 0, 0, false);
   }
 }
+
+export const DEFAULT_FILTER_OPTIONS_QUERY_REQUEST = new FilterOptionsQueryRequest(
+  new KeyValueItem(POSITIVE, POSITIVE),
+  new KeyValueItem(FIRST, FIRST),
+  -5,
+  5,
+  false
+);
+

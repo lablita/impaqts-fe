@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'src/environments/environment';
 import {
   OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH,
   OPTIONAL_DISPLAY_ATTR_URL_KWIC
 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
+import { DEFAULT_VIEW_OPTIONS_QUERY_REQUEST, ViewOptionsQueryRequest } from '../model/view-options-query-request';
 
 const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 @Component({
@@ -45,10 +43,9 @@ export class ViewOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST);
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     if (voqr) {
       this.viewOptionsQueryRequest = voqr ?
-        JSON.parse(voqr) : inst && inst.startup.viewOptionsQueryRequest;
+        JSON.parse(voqr) : DEFAULT_VIEW_OPTIONS_QUERY_REQUEST;
     }
     this.corpusAttributes.forEach((attribute, index) => {
       this.translateService.stream(attribute.value).subscribe({

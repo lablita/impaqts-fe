@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { FREQ_OPTIONS_LABEL, MENU_COLL_OPTIONS, MENU_FILTER, SORT_OPTIONS_LABEL, VIEW_OPTIONS_LABEL, WORD_OPTIONS_LABEL } from '../common/label-constants';
+import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
-import {
-  COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, FREQ_OPTIONS_LABEL,
-  MENU_COLL_OPTIONS, MENU_FILTER, SORT, SORT_OPTIONS_LABEL,
-  VIEW_OPTIONS, VIEW_OPTIONS_LABEL, WORD_LIST, WORD_OPTIONS_LABEL
-} from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
