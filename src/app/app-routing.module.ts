@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@auth0/auth0-angular';
 import { environment } from '../environments/environment';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
-import { MENU_ALL_LEMMANS, MENU_ALL_WORDS, MENU_CONCORDANCE, MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_VISUAL_QUERY } from './common/menu-constants';
+import { MENU_ALL_LEMMANS, MENU_ALL_WORDS, MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_VISUAL_QUERY } from './common/menu-constants';
 import { ALL_LEMMAS, ALL_WORDS, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, QUERY, VISUAL_QUERY } from './common/routes-constants';
 import { ConcordanceComponent } from './concordance/concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
@@ -28,7 +28,8 @@ const routes: Routes = [
       {
         path: QUERY,
         component: ConcordanceComponent,
-        canActivate: environment.menuNoRole.findIndex(m => m === MENU_CONCORDANCE) > 0 ? [] : [AuthGuard, HasRoleGuard]
+        canActivate: [EMMACorpGuard] // EmmaCorp guard controlla se il menu che gli viene passato è in menuNoRole. Se sì, fa passare altrimenti chiama le due guard [AuthGuard, HasRoleGuard]
+        // canActivate: environment.menuNoRole.findIndex(m => m === MENU_CONCORDANCE) > 0 ? [] : [AuthGuard, HasRoleGuard]
       },
       {
         path: CORPUS_INFO,
