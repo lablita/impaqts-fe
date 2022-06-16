@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MENU_ALL_LEMMAS, MENU_ALL_WORDS, MENU_AS_SUBCORPUS, MENU_COLL_OPTIONS, MENU_CONCORDANCE, MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_FILTER, MENU_FREQUENCY, MENU_LOGIN, MENU_RESULT_CONCORDANCE, MENU_SORT, MENU_VIEW_OPTION, MENU_VISUAL_QUERY, MENU_WORD_LIST } from '../common/label-constants';
 import { ADMIN, ADVANCEDUSER, USER } from '../common/roles-constants';
-import { ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST } from '../common/routes-constants';
+import { ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_CONCORDANCE, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { MenuEvent } from './menu.component';
@@ -50,6 +50,7 @@ export class MenuEmitterService {
 
   private initMenuRoutes(): Array<KeyValueItem> {
     return [
+      new KeyValueItem(MENU_CONCORDANCE, QUERY),
       new KeyValueItem(MENU_CONCORDANCE, CONCORDANCE),
       new KeyValueItem(MENU_CORPUS_INFO, CORPUS_INFO),
       new KeyValueItem(MENU_ALL_WORDS, ALL_WORDS),
