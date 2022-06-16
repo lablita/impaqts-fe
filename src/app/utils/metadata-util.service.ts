@@ -3,12 +3,12 @@ import { TreeNode } from 'primeng/api';
 import { concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
-import { ConcordanceService } from '../concordance/concordance.service';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
+import { QueriesContainerService } from '../queries-container/queries-container.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class MetadataUtilService {
   private textTypesRequest: TextTypesRequest = new TextTypesRequest();
 
   constructor(
-    private readonly concordanceService: ConcordanceService
+    private readonly queriesContainerService: QueriesContainerService
   ) { }
 
   public createMatadataTree(corpus: string, installation: Installation, visualQueryFlag: boolean): Observable<any> {
@@ -65,7 +65,7 @@ export class MetadataUtilService {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
-        obsArray.push(this.concordanceService.getMetadatumValuesWithMetadatum(installation, corpus, metadatum));
+        obsArray.push(this.queriesContainerService.getMetadatumValuesWithMetadatum(installation, corpus, metadatum));
       }
     });
     // elimino metadata che partecipano ad alberi

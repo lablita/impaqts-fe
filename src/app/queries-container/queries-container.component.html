@@ -26,13 +26,11 @@
             [disabled]="!!selectedQueryType && selectedQueryType.key !== 'simple'" class="width-80">
         </div>
       </div>
-      <div *ngIf="!contextStatus" style="height: 30px;">
+      <div *ngIf="!isContextVisible" style="height: 30px;">
         <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       </div>
-      <div *ngIf="contextStatus" style="height: 30px;">
-
-      </div>
+      <div *ngIf="isContextVisible" style="height: 30px;"></div>
       <div class="flex justify-content-center">
         <button [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus" class="p-button-text mr-3"
@@ -41,7 +39,7 @@
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
       </div>
 
-      <div class="mt-3" *ngIf="queryTypeStatus">
+      <div class="mt-3" *ngIf="isQueryTypeVisible">
         <div>
           <label class="mb-3">
             <h2>{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</h2>
@@ -106,7 +104,7 @@
         </div>
       </div>
 
-      <div class="mt-3" *ngIf="contextStatus">
+      <div class="mt-3" *ngIf="isContextVisible">
         <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
         </app-context-concordance>
         <div class="flex justify-content-center mt-3">
@@ -118,9 +116,9 @@
       </div>
     </p-card>
 
-    <div class="flex mt-3" *ngIf="titleResult">
+    <div class="flex mt-3" *ngIf="isResultTabelVisible">
       <p-card class="w-12">
-        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && (!wideDisplay && !!selectedCorpus)"
+        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && isDisplayPanelVisible"
           [initialPagination]="initialPagination" [paginations]="paginations">
         </app-collocation-table>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
@@ -129,7 +127,7 @@
       </p-card>
     </div>
   </div>
-  <div class="flex flex-column w-6" *ngIf="!wideDisplay && !!selectedCorpus">
+  <div class="flex flex-column w-6" *ngIf="isVisibleDisplayPanel()">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
       [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()">

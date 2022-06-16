@@ -13,7 +13,7 @@ import { UtilService } from '../utils/util.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ConcordanceService {
+export class QueriesContainerService {
 
   private readonly installationName: string;
 

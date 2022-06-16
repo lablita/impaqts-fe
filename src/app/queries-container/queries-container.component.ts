@@ -25,10 +25,10 @@ import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
   selector: 'app-concordance',
-  templateUrl: './concordance.component.html',
-  styleUrls: ['./concordance.component.scss']
+  templateUrl: './queries-container.component.html',
+  styleUrls: ['./queries-container.component.scss']
 })
-export class ConcordanceComponent implements OnInit, AfterViewInit {
+export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
 
@@ -54,8 +54,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public word = '';
   public character = '';
   public cql = '';
-  public queryTypeStatus = false;
-  public contextStatus = false;
   public textTypeStatus = false;
   public attributesSelection: string[] = [];
   public viewOptionsLabel = '';
@@ -91,7 +89,10 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public initialPagination = 10;
 
   public wideDisplay = true;
-
+  public isDisplayPanelVisible = false;
+  public isResultTabelVisible = false;
+  public isContextVisible = false;
+  public isQueryTypeVisible = false;
   /** private */
   private endpoint = '';
 
@@ -115,14 +116,15 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.init();
     this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
+    // this.updateVisibilityFlags();
   }
 
   public clickQueryType(): void {
-    this.queryTypeStatus = !this.queryTypeStatus;
+    this.isQueryTypeVisible = !this.isQueryTypeVisible;
   }
 
   public clickContext(): void {
-    this.contextStatus = !this.contextStatus;
+    this.isContextVisible = !this.isContextVisible;
   }
 
   public clickTextType(): void {
@@ -135,7 +137,9 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   }
 
   public dropdownCorpus(): void {
+    this.updateVisibilityFlags();
     this.titleResult = '';
+    this.updateVisibilityFlags();
     this.clickTextType();
     this.displayPanelService.reset();
     this.queryRequestSevice.resetOptionsRequest();
@@ -186,14 +190,15 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
-      this.contextStatus = false;
-      this.queryTypeStatus = false;
+      this.isContextVisible = false;
+      this.isQueryTypeVisible = false;
     }
     this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
   }
 
   public makeConcordances(): void {
     this.titleResult = 'MENU.CONCORDANCE';
+    this.updateVisibilityFlags();
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
       this.simpleResult,
@@ -212,6 +217,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   public makeCollocations(): void {
     this.titleResult = 'MENU.COLLOCATIONS';
+    this.updateVisibilityFlags();
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
       this.simpleResult,
@@ -234,8 +240,8 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.queryTypeStatus = false;
-    this.contextStatus = false;
+    this.isQueryTypeVisible = false;
+    this.isContextVisible = false;
     this.textTypeStatus = false;
 
     this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
@@ -256,6 +262,17 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   private closeWebSocket(): void {
     this.socketService.closeSocket();
+  }
+
+  private updateVisibilityFlags() {
+    this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
+    this.isDisplayPanelVisible = !this.wideDisplay && !!this.selectedCorpus;
+    this.isResultTabelVisible = !!this.titleResult;
+  }
+
+  public isVisibleDisplayPanel(): boolean {
+    this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
+    return !this.wideDisplay && !!this.selectedCorpus;
   }
 
 }

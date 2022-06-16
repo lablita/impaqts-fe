@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { ALL_LEMMAS, ALL_WORDS, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, QUERY, VISUAL_QUERY } from './common/routes-constants';
-import { ConcordanceComponent } from './concordance/concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
 import { CreditsComponent } from './credits/credits.component';
 import { EMMACorpGuard } from './guards/emmacorp.guard';
 import { MainComponent } from './main/main.component';
+import { QueriesContainerComponent } from './queries-container/queries-container.component';
 import { TestPaginationComponent } from './test-pagination/test-pagination.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 
@@ -24,7 +24,7 @@ const routes: Routes = [
       },
       {
         path: QUERY,
-        component: ConcordanceComponent,
+        component: QueriesContainerComponent,
         canActivate: [EMMACorpGuard]
       },
       {
