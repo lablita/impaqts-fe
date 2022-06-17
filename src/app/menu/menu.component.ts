@@ -102,6 +102,7 @@ export class MenuComponent implements OnInit {
             this.displayPanelService.panelItemSelected = route;
             this.displayPanelService.displayPanelOptions = this.menuDisplayPanel.filter(item => item === route).length > 0;
             this.displayPanelService.displayPanelMetadata = false;
+            this.displayPanelService.panelDisplaySubject.next(this.displayPanelService.displayPanelOptions || this.displayPanelService.displayPanelMetadata);
             this.queryRequestService.resetOptionsRequest();
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
           }, null, null, false, false, route));

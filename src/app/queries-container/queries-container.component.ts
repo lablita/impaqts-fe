@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
@@ -54,7 +55,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public word = '';
   public character = '';
   public cql = '';
-  public textTypeStatus = false;
   public attributesSelection: string[] = [];
   public viewOptionsLabel = '';
   public wordListOptionsLabel = '';
@@ -88,13 +88,14 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
-  public wideDisplay = true;
-  public isDisplayPanelVisible = false;
-  public isResultTabelVisible = false;
-  public isContextVisible = false;
-  public isQueryTypeVisible = false;
+  public displayRightPanel: Subject<boolean> | null = null;
+  public displayResultPanel = false;
+  public displayQueryType = false;
+  public displayContext = false;
+
   /** private */
   private endpoint = '';
+  private textTypeStatus = false;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -103,7 +104,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
-    private readonly displayPanelService: DisplayPanelService,
+    public readonly displayPanelService: DisplayPanelService,
     private readonly queryRequestSevice: QueryRequestService,
   ) { }
 
@@ -115,16 +116,15 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.init();
-    this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
-    // this.updateVisibilityFlags();
+    this.displayRightPanel = this.displayPanelService.panelDisplaySubject;
   }
 
   public clickQueryType(): void {
-    this.isQueryTypeVisible = !this.isQueryTypeVisible;
+    this.displayQueryType = !this.displayQueryType;
   }
 
   public clickContext(): void {
-    this.isContextVisible = !this.isContextVisible;
+    this.displayContext = !this.displayContext;
   }
 
   public clickTextType(): void {
@@ -137,9 +137,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   }
 
   public dropdownCorpus(): void {
-    this.updateVisibilityFlags();
     this.titleResult = '';
-    this.updateVisibilityFlags();
     this.clickTextType();
     this.displayPanelService.reset();
     this.queryRequestSevice.resetOptionsRequest();
@@ -190,15 +188,14 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
-      this.isContextVisible = false;
-      this.isQueryTypeVisible = false;
+      this.hideQueryTypeAndContext();
     }
     this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    this.updateVisibilityFlags();
   }
 
   public makeConcordances(): void {
     this.titleResult = 'MENU.CONCORDANCE';
-    this.updateVisibilityFlags();
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
       this.simpleResult,
@@ -217,7 +214,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public makeCollocations(): void {
     this.titleResult = 'MENU.COLLOCATIONS';
-    this.updateVisibilityFlags();
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
       this.simpleResult,
@@ -233,6 +229,10 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.emitterService.makeCollocation.next(this.fieldRequest);
   }
 
+  public updateVisibilityFlags(): void {
+    this.displayResultPanel = !!this.titleResult;
+  }
+
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
@@ -240,9 +240,8 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.isQueryTypeVisible = false;
-    this.isContextVisible = false;
-    this.textTypeStatus = false;
+    this.displayQueryType = false;
+    this.hideQueryTypeAndContext();
 
     this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
       next: res => this.selectCorpus = res
@@ -264,15 +263,9 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.socketService.closeSocket();
   }
 
-  private updateVisibilityFlags() {
-    this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
-    this.isDisplayPanelVisible = !this.wideDisplay && !!this.selectedCorpus;
-    this.isResultTabelVisible = !!this.titleResult;
-  }
-
-  public isVisibleDisplayPanel(): boolean {
-    this.wideDisplay = !this.displayPanelService.displayPanelMetadata && !this.displayPanelService.displayPanelOptions;
-    return !this.wideDisplay && !!this.selectedCorpus;
+  private hideQueryTypeAndContext(): void {
+    this.displayContext = false;
+    this.displayQueryType = false;
   }
 
 }

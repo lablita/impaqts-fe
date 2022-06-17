@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ export class DisplayPanelService {
   public labelOptionsDisabled = true;
   public labelMetadataDisabled = true;
   public panelItemSelected: string | null = null;
+  public panelDisplaySubject: Subject<boolean> = new Subject();
 
   public reset(): void {
     this.displayPanelMetadata = false;
