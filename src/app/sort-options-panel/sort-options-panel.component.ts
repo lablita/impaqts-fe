@@ -1,11 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { L1, L2, L3, NODE, R1, R2, R3 } from '../model/constants';
+import { L1, L2, L3, NODE, R1, R2, R3 } from '../common/sort-constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
+import { DEFAULT_SORT_OPTION_QUERY_REQUEST, SortOptionsQueryRequest } from '../model/sort-options-query-request';
 import { SortOption, SortQueryRequest } from '../model/sort-query-request';
 import { QueryRequestService } from '../services/query-request.service';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
@@ -69,10 +67,9 @@ export class SortOptionsPanelComponent implements OnInit {
     this.ignoreCase = [false, false, false];
     this.backward = [false, false, false];
     const soqr = localStorage.getItem(SORT_OPTIONS_QUERY_REQUEST);
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     this.sortOptionsQueryRequest = soqr ?
       JSON.parse(soqr) :
-      inst && inst.startup.sortOptionsQueryRequest;
+      DEFAULT_SORT_OPTION_QUERY_REQUEST;
 
     if (this.sortOptionsQueryRequest) {
       this.selectedSortKey = this.sortKeys.filter(sk => this.sortOptionsQueryRequest &&

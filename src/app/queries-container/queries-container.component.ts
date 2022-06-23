@@ -3,11 +3,12 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
+import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
+import { CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import {
-  CHARACTER, CONCORDANCE, CQL, INSTALLATION, LEMMA, PHRASE, SELECT_CORPUS, SIMPLE, WORD
-} from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
@@ -23,12 +24,22 @@ import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
+export class ConcordanceResult {
+  fieldRequest: FieldRequest = new FieldRequest();
+  typeSearch: string[] = [];
+
+  constructor(fieldRequest: FieldRequest, typeSearch: string[]) {
+    this.fieldRequest = fieldRequest;
+    this.typeSearch = typeSearch;
+  }
+}
+
 @Component({
   selector: 'app-concordance',
-  templateUrl: './concordance.component.html',
-  styleUrls: ['./concordance.component.scss']
+  templateUrl: './queries-container.component.html',
+  styleUrls: ['./queries-container.component.scss']
 })
-export class ConcordanceComponent implements OnInit, AfterViewInit {
+export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
 
@@ -42,7 +53,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public selectedCorpus: KeyValueItem | null = null;
   public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedQueryType: KeyValueItem | null = null;
-  public selectCorpus = SELECT_CORPUS;
+  public selectCorpus = SELECT_CORPUS_LABEL;
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
@@ -54,9 +65,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public word = '';
   public character = '';
   public cql = '';
-  public queryTypeStatus = false;
-  public contextStatus = false;
-  public textTypeStatus = false;
   public attributesSelection: string[] = [];
   public viewOptionsLabel = '';
   public wordListOptionsLabel = '';
@@ -90,17 +98,23 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
+  // public displayRightPanel: Subject<boolean> | null = null;
+  public displayResultPanel = false;
+  public displayQueryType = false;
+  public displayContext = false;
+
   /** private */
   private endpoint = '';
+  private textTypeStatus = false;
 
   constructor(
     private readonly translateService: TranslateService,
-    public menuEmitterService: MenuEmitterService,
+    private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
-    public displayPanelService: DisplayPanelService,
+    public readonly displayPanelService: DisplayPanelService,
     private readonly queryRequestSevice: QueryRequestService,
   ) { }
 
@@ -112,14 +126,15 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.init();
+    // this.displayRightPanel = this.displayPanelService.panelDisplaySubject;
   }
 
   public clickQueryType(): void {
-    this.queryTypeStatus = !this.queryTypeStatus;
+    this.displayQueryType = !this.displayQueryType;
   }
 
   public clickContext(): void {
-    this.contextStatus = !this.contextStatus;
+    this.displayContext = !this.displayContext;
   }
 
   public clickTextType(): void {
@@ -183,13 +198,14 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
-      this.contextStatus = false;
-      this.queryTypeStatus = false;
+      this.hideQueryTypeAndContext();
     }
     this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    this.updateVisibilityFlags();
   }
 
   public makeConcordances(sortQueryRequest?: SortQueryRequest): void {
+    let typeSearch = ['Query'];
     this.titleResult = 'MENU.CONCORDANCE';
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
@@ -205,8 +221,9 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.defaultAttributeCQL);
     if (sortQueryRequest && sortQueryRequest !== undefined) {
       this.fieldRequest.quickSort = sortQueryRequest;
+      typeSearch = ['Sort', sortQueryRequest.sortKey!]
     }
-    this.emitterService.makeConcordance.next(this.fieldRequest);
+    this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
     this.queryRequestSevice.resetOptionsRequest();
   }
 
@@ -227,6 +244,10 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     this.emitterService.makeCollocation.next(this.fieldRequest);
   }
 
+  public updateVisibilityFlags(): void {
+    this.displayResultPanel = !!this.titleResult;
+  }
+
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
@@ -234,11 +255,10 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.queryTypeStatus = false;
-    this.contextStatus = false;
-    this.textTypeStatus = false;
+    this.displayQueryType = false;
+    this.hideQueryTypeAndContext();
 
-    this.translateService.stream(SELECT_CORPUS).subscribe({
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
       next: res => this.selectCorpus = res
     });
 
@@ -256,6 +276,11 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   private closeWebSocket(): void {
     this.socketService.closeSocket();
+  }
+
+  private hideQueryTypeAndContext(): void {
+    this.displayContext = false;
+    this.displayQueryType = false;
   }
 
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CORPUS_INFO } from '../model/constants';
+import { CORPUS_INFO } from '../common/routes-constants';
 import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({

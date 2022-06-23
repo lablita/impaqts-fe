@@ -37,7 +37,7 @@ export class CollocationTableComponent implements OnInit {
         this.noResultFound = socketResponse.noResultFound;
       }
     });
-    this.emitterService.makeConcordance.subscribe(fieldRequest => {
+    this.emitterService.makeCollocation.subscribe(fieldRequest => {
       this.loading = true;
       this.fieldRequest = fieldRequest;
       this.loadResultService.loadResults(fieldRequest);

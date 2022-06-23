@@ -1,12 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'src/environments/environment';
-import { FIRST, LAST, NEGATIVE, POSITIVE } from '../model/constants';
+import { FIRST, LAST, NEGATIVE, POSITIVE } from '../common/filter-constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
-import { FilterOptionsQueryRequest } from '../model/filter-options-query.request';
+import { DEFAULT_FILTER_OPTIONS_QUERY_REQUEST, FilterOptionsQueryRequest } from '../model/filter-options-query.request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const FILTER_OPTIONS_QUERY_REQUEST = 'filterOptionsQueryRequest';
 @Component({
@@ -35,9 +33,8 @@ export class FilterOptionsPanelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     const foqr = localStorage.getItem(FILTER_OPTIONS_QUERY_REQUEST)
-    this.filterOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst && inst.startup.filterOptionsQueryRequest;
+    this.filterOptionsQueryRequest = foqr ? JSON.parse(foqr) : DEFAULT_FILTER_OPTIONS_QUERY_REQUEST;
 
     this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.POSITIVE').subscribe({
       next: res => {

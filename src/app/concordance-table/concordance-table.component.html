@@ -3,8 +3,8 @@
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
   <div style="width: 250px;" *ngIf="kwicLines.length > 0">
-    <h3 *ngIf="totalResults && !loading">Query <span
-        style="color:red;">{{fieldRequest ? fieldRequest.simpleResult : ''}}</span>&nbsp;<b>{{totalResults}}</b>
+    <h3 *ngIf="totalResults && !loading">{{typeSearch.length > 1 ? typeSearch[0] + " " + typeSearch[1] : typeSearch[0]}}
+      <span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult : ''}}</span>&nbsp;<b>{{totalResults}}</b>
     </h3>
   </div>
 </div>

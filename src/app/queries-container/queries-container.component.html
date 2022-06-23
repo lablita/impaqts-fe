@@ -1,7 +1,10 @@
 <div class="flex flex-row">
 
-  <div class="flex flex-grow-1 flex-column mt-3"
-    [ngClass]="{'w-12': !displayPanelService.displayPanelMetadata && !displayPanelService.displayPanelOptions, 'w-6': displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions}">
+  <!-- <div class="flex flex-grow-1 flex-column mt-3"
+    [ngClass]="{'w-12': !(displayRightPanel | async), 'w-6': (displayRightPanel | async)}"> -->
+  <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !(displayPanelService.displayPanelMetadata ||
+    displayPanelService.displayPanelOptions), 'w-6': displayPanelService.displayPanelMetadata ||
+    displayPanelService.displayPanelOptions}">
     <p-card>
       <div class="field grid">
         <label for="corpusSelection" class="col-12 md:col-1">{{"PAGE.CONCORDANCE.CORPUS" |
@@ -27,11 +30,11 @@
             [disabled]="!!selectedQueryType && selectedQueryType.key !== 'simple'" class="width-80">
         </div>
       </div>
-      <div *ngIf="!contextStatus" style="height: 30px;">
+      <div *ngIf="!displayContext" style="height: 30px;">
         <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
       </div>
-      <div *ngIf="contextStatus" style="height: 30px;">
+      <div *ngIf="displayContext" style="height: 30px;">
 
       </div>
       <div class="flex justify-content-center">
@@ -42,7 +45,7 @@
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
       </div>
 
-      <div class="mt-3" *ngIf="queryTypeStatus">
+      <div class="mt-3" *ngIf="displayQueryType">
         <div>
           <label class="mb-3">
             <h2>{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</h2>
@@ -107,7 +110,7 @@
         </div>
       </div>
 
-      <div class="mt-3" *ngIf="contextStatus">
+      <div class="mt-3" *ngIf="displayContext">
         <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
         </app-context-concordance>
         <div class="flex justify-content-center mt-3">
@@ -119,8 +122,13 @@
       </div>
     </p-card>
 
-    <div class="flex mt-3" *ngIf="titleResult">
+    <!-- <div class="flex mt-3" *ngIf="displayResultPanel"> -->
+    <div class="flex mt-3" *ngIf="!!this.titleResult">
       <p-card class="w-12">
+        <!-- <app-collocation-table
+          [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayRightPanel | async) && !!selectedCorpus)"
+          [initialPagination]="initialPagination" [paginations]="paginations">
+        </app-collocation-table> -->
         <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
         displayPanelService.displayPanelOptions) && !!selectedCorpus)" [initialPagination]="initialPagination"
           [paginations]="paginations">
@@ -131,8 +139,9 @@
       </p-card>
     </div>
   </div>
-  <div class="flex flex-column w-6"
-    *ngIf="(displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus">
+  <!-- <div class="flex flex-column w-6" *ngIf="(displayRightPanel | async) && !!selectedCorpus"> -->
+  <div class="flex flex-column w-6" *ngIf="(displayPanelService.displayPanelMetadata ||
+    displayPanelService.displayPanelOptions) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
       [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()"

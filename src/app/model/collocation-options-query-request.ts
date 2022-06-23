@@ -27,3 +27,5 @@ export class CollocationOptionsQueryRequest {
     this.sortBy = sortBy;
   }
 }
+
+export const DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST = new CollocationOptionsQueryRequest(null, -5, 5, 5, 3, []);

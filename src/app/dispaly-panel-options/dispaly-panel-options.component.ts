@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
+import {
+  COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
+} from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { SortQueryRequest } from '../model/sort-query-request';
@@ -19,8 +21,6 @@ export class DispalyPanelOptionsComponent implements OnInit {
   @Input() metadataTextTypes: Metadatum[] = [];
   @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public quickSort = new EventEmitter<SortQueryRequest>();
-
-  public selectCorpus = SELECT_CORPUS;
 
   public VIEW_OPTIONS = VIEW_OPTIONS;
   public WORD_LIST = WORD_LIST;

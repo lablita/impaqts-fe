@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CONCORDANCE_LEMMA, CONCORDANCE_WORD, CORPUS_INFO } from '../model/constants';
+import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
+import { CORPUS_INFO } from '../common/routes-constants';
 import { CorpusInfoObj } from '../model/corpus-info-obj';
 import { DisplayPanelService } from '../services/display-panel.service';
 
