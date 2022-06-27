@@ -2,9 +2,10 @@
 
   <!-- <div class="flex flex-grow-1 flex-column mt-3"
     [ngClass]="{'w-12': !(displayRightPanel | async), 'w-6': (displayRightPanel | async)}"> -->
-  <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !(displayPanelService.displayPanelMetadata ||
-    displayPanelService.displayPanelOptions), 'w-6': displayPanelService.displayPanelMetadata ||
-    displayPanelService.displayPanelOptions}">
+  ++{{(displayMetadataPanel() | async)}}--{{(displayOptionsPanel() | async)}}**
+  <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !((displayMetadataPanel() | async) ||
+  (displayOptionsPanel() | async)), 'w-6': (displayMetadataPanel() | async) ||
+  (displayOptionsPanel() | async)}">
     <p-card>
       <div class="field grid">
         <label for="corpusSelection" class="col-12 md:col-1">{{"PAGE.CONCORDANCE.CORPUS" |
@@ -93,8 +94,8 @@
             <input id="cql" type="text" pInputText [(ngModel)]="cql" class="width-80">
           </div>
           <div class="col-12 md:col-5 grid">
-            <label
-              class="col-12 md:col-3 align-self-center">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" | translate}}</label>
+            <label class="col-12 md:col-3 align-self-center">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" |
+              translate}}</label>
             <div class="col-12 md:col-5 align-self-center">
               <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL"
                 [style]="{'width':'12rem'}" [showClear]="true">
@@ -129,8 +130,8 @@
           [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayRightPanel | async) && !!selectedCorpus)"
           [initialPagination]="initialPagination" [paginations]="paginations">
         </app-collocation-table> -->
-        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
-        displayPanelService.displayPanelOptions) && !!selectedCorpus)" [initialPagination]="initialPagination"
+        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayMetadataPanel() | async) ||
+        (displayOptionsPanel() | async)) && !!selectedCorpus" [initialPagination]="initialPagination"
           [paginations]="paginations">
         </app-collocation-table>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
@@ -140,8 +141,8 @@
     </div>
   </div>
   <!-- <div class="flex flex-column w-6" *ngIf="(displayRightPanel | async) && !!selectedCorpus"> -->
-  <div class="flex flex-column w-6" *ngIf="(displayPanelService.displayPanelMetadata ||
-    displayPanelService.displayPanelOptions) && !!selectedCorpus">
+  <div class="flex flex-column w-6"
+    *ngIf="((displayMetadataPanel() | async) || (displayOptionsPanel() | async)) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
       [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()"

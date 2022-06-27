@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
-import { CONCORDANCE } from '../common/routes-constants';
+import { CONCORDANCE, QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
@@ -200,7 +201,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.simple = '';
       this.hideQueryTypeAndContext();
     }
-    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
     this.updateVisibilityFlags();
   }
 
@@ -246,6 +247,14 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public updateVisibilityFlags(): void {
     this.displayResultPanel = !!this.titleResult;
+  }
+
+  public displayOptionsPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.optionsPanelSubject;
+  }
+
+  public displayMetadataPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.metadataPanelSubject;
   }
 
   private init(): void {

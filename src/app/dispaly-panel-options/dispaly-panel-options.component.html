@@ -1,7 +1,6 @@
-<div class="ml-3" *ngIf="displayPanelService.displayPanelMetadata">
+<div class="ml-3" *ngIf="displayMetadataPanel() | async">
   <div *ngIf="selectedCorpus">
-    <app-metadata-panel *ngIf="displayPanelService.displayPanelMetadata" [corpus]="selectedCorpus?.key"
-      (closeSidebarEvent)="displayPanelService.displayPanelMetadata=false">
+    <app-metadata-panel [corpus]="selectedCorpus?.key" (closeSidebarEvent)="closeMetadataPanel()">
     </app-metadata-panel>
   </div>
 </div>

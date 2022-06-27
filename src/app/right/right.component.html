@@ -11,12 +11,11 @@
     </div>
   </div>
 </a>
-
 <a *ngIf="!hideOptionsLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button disabled"
   style="top: 276px; z-index:999;" (click)="openSidebarOptions()"
-  [ngClass]="{'disabled': displayPanelService.labelOptionsDisabled}">
+  [ngClass]="{'disabled': !(optionsButtonEnabled() | async)}">
   <div class="flex align-items-center">
-    <div>
+    <div *ngIf="titleLabel">
       {{titleLabel | translate}}
     </div>
   </div>

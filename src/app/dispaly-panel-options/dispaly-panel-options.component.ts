@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import {
   COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../common/routes-constants';
@@ -34,11 +35,6 @@ export class DispalyPanelOptionsComponent implements OnInit {
     public displayPanelService: DisplayPanelService
   ) { }
 
-  private init(): void {
-    this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE
-      ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
-  }
-
   ngOnInit(): void {
     this.init();
   }
@@ -50,6 +46,24 @@ export class DispalyPanelOptionsComponent implements OnInit {
   public quickSortCallback(sortQueryRequest: SortQueryRequest): void {
     this.quickSort.emit(sortQueryRequest);
   }
+
+  public displayOptionsPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.optionsPanelSubject;
+  }
+
+  public displayMetadataPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.metadataPanelSubject;
+  }
+
+  public closeMetadataPanel(): void {
+    this.displayPanelService.metadataButtonSubject.next();
+  }
+
+  private init(): void {
+    this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE
+      ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
+  }
+
 }
 
 
