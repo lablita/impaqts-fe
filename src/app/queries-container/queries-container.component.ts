@@ -224,7 +224,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       typeSearch = ['Sort', sortQueryRequest.sortKey!]
     }
     this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
-    this.queryRequestSevice.resetOptionsRequest();
+    // this.queryRequestSevice.resetOptionsRequest();
   }
 
   public makeCollocations(): void {

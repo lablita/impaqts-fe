@@ -25,7 +25,7 @@ export class SortOptionsPanelComponent implements OnInit {
 
   public selectedMultiAttribute: KeyValueItem[] = [new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD')];
   public sortKeys: KeyValueItem[] = [new KeyValueItem('LEFT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT'),
-  new KeyValueItem('NODE', 'MENU.NODE'),
+  new KeyValueItem('NODE_CONTEXT', 'MENU.NODE'),
   new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
   public selectedSortKey: KeyValueItem | null = null;
   public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
