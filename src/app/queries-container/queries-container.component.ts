@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
-import { CONCORDANCE, QUERY } from '../common/routes-constants';
+import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
@@ -120,9 +120,9 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.emitterService.pageMenu = CONCORDANCE;
+    this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
   }
 
   ngAfterViewInit(): void {
@@ -140,7 +140,8 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public clickTextType(): void {
     this.textTypeStatus = true;
-    this.displayPanelService.labelMetadataDisabled = !!this.textTypeStatus;
+    // this.displayPanelService.labelMetadataDisabled = !!this.textTypeStatus;
+    this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
   }
 
   public clickClearAll(): void {
@@ -181,7 +182,8 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
+                  // this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
+                  this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
                   this.emitterService.spinnerMetadata.emit(false);
@@ -191,7 +193,8 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
         }
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-        this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
+        //this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
+        this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
         this.emitterService.spinnerMetadata.emit(false);
         this.endedMetadataProcess = true;
       }

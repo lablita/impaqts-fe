@@ -1,6 +1,6 @@
 <a *ngIf="!hideMetadataLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button disabled"
   style="top: 200px; z-index: 999;" (click)="openSidebarMetadata()"
-  [ngClass]="{'disabled': displayPanelService.labelMetadataDisabled}">
+  [ngClass]="{'disabled': !(metadataButtonEnabled() | async)}">
   <div class="flex align-items-center">
     <div>
       <fa-icon *ngIf="checkMetadata()" style="font-size: large" [icon]="faCheck"></fa-icon>

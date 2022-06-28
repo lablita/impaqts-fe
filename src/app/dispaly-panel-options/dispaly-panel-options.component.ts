@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
-  COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
+  COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
@@ -36,7 +36,6 @@ export class DispalyPanelOptionsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.init();
   }
 
   public loadColl(): void {
@@ -57,11 +56,6 @@ export class DispalyPanelOptionsComponent implements OnInit {
 
   public closeMetadataPanel(): void {
     this.displayPanelService.metadataButtonSubject.next();
-  }
-
-  private init(): void {
-    this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE
-      ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
   }
 
 }

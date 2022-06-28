@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CORPUS_INFO } from '../common/routes-constants';
 import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
@@ -14,7 +13,7 @@ export class AllWordsOrLemmasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.displayPanelService.panelItemSelected = CORPUS_INFO;
+    // this.displayPanelService.panelSelectedSubject.next(CORPUS_INFO);
   }
 
 }

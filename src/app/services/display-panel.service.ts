@@ -1,21 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { QUERY } from '../common/routes-constants';
+import { QUERY, VIEW_OPTIONS } from '../common/routes-constants';
 
+const METADATA = 'METADATA';
+const OPTIONS = 'OPTIONS';
 @Injectable({
   providedIn: 'root'
 })
 export class DisplayPanelService {
-  public displayPanelOptions = false;
-  public labelOptionsDisabled = true;
-  public labelMetadataDisabled = true;
-  public panelItemSelected: string | null = null;
-
-
 
   // signals for page events
   public metadataPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelOptionsSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public labelMetadataSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public optionsPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public displayPanelMetadataSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public menuChangedSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(QUERY);
@@ -26,19 +23,21 @@ export class DisplayPanelService {
   public optionsButtonSubject: Subject<void> = new Subject();
   public menuItemClickSubject: Subject<string> = new Subject();
 
+  //states
   private metadataButtonStatus = false;
   private optionsButtonStatus = false;
-  private metadataPanelStatus = false;
   private lastClickedMenuItem: string | null = null;
+
+  public panelSelectedSubject: BehaviorSubject<string> = new BehaviorSubject<string>(VIEW_OPTIONS);
 
   constructor() {
     this.metadataButtonSubject.subscribe(() => {
       this.metadataButtonStatus = !this.metadataButtonStatus;
-      this.recalculateShowFlags();
+      this.recalculateShowFlags(METADATA);
     });
     this.optionsButtonSubject.subscribe(() => {
       this.optionsButtonStatus = !this.optionsButtonStatus;
-      this.recalculateShowFlags();
+      this.recalculateShowFlags(OPTIONS);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
       this.menuItemClicked(this.lastClickedMenuItem, menuItem);
@@ -47,19 +46,42 @@ export class DisplayPanelService {
   }
 
   public reset(): void {
-    this.displayPanelOptions = false;
-    this.labelMetadataDisabled = true;
-    this.labelOptionsDisabled = true;
+    this.closeOptionsPanel();
+    this.labelMetadataSubject.next(false);
+    this.labelOptionsSubject.next(false);
   }
 
-  private recalculateShowFlags(): void {
-    if (this.metadataButtonStatus) {
-      // open metadata panel and disable options button
-      this.metadataPanelSubject.next(true);
-      this.labelOptionsSubject.next(false);
+  public activeMetadataButton(): void {
+    this.labelMetadataSubject.next(true);
+  }
+
+  public activeOptionsButton(): void {
+    this.labelOptionsSubject.next(true);
+  }
+
+  public closeOptionsPanel(): void {
+    this.optionsPanelSubject.next(false);
+  }
+
+  private recalculateShowFlags(buttonClicked: string): void {
+    if (buttonClicked === METADATA) {
+      if (this.metadataButtonStatus) {
+        // open metadata panel and disable options button
+        this.metadataPanelSubject.next(true);
+        this.labelOptionsSubject.next(false);
+      } else {
+        this.metadataPanelSubject.next(false);
+        this.labelOptionsSubject.next(true);
+      }
     } else {
-      this.metadataPanelSubject.next(false);
-      this.labelOptionsSubject.next(true);
+      if (this.optionsButtonStatus) {
+        // open options panel and disable metadata button
+        this.optionsPanelSubject.next(true);
+        this.labelMetadataSubject.next(false);
+      } else {
+        this.optionsPanelSubject.next(false);
+        this.labelMetadataSubject.next(true);
+      }
     }
   }
 
