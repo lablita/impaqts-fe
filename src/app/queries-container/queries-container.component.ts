@@ -127,7 +127,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.init();
-    // this.displayRightPanel = this.displayPanelService.panelDisplaySubject;
   }
 
   public clickQueryType(): void {
@@ -140,7 +139,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public clickTextType(): void {
     this.textTypeStatus = true;
-    // this.displayPanelService.labelMetadataDisabled = !!this.textTypeStatus;
     this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
   }
 
@@ -182,7 +180,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  // this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
                   this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
@@ -193,7 +190,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
         }
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-        //this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
         this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
         this.emitterService.spinnerMetadata.emit(false);
         this.endedMetadataProcess = true;
@@ -223,7 +219,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.matchCase,
       this.selectedQueryType,
       this.defaultAttributeCQL);
-    if (sortQueryRequest && sortQueryRequest !== undefined) {
+    if (sortQueryRequest && !!sortQueryRequest.sortKey) {
       typeSearch = ['Sort', sortQueryRequest.sortKey!];
     } else if (this.queryRequestSevice.queryRequest.sortQueryRequest
       && this.queryRequestSevice.queryRequest.sortQueryRequest !== undefined) {

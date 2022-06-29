@@ -49,7 +49,7 @@
       "LEMMA_LC": "lemma (lowercase)",
       "LEMMA": "Lemma",
       "LEMMAS": "Lemma(s)",
-      "MAKE_CONCORDANCE": "Make Concordance",
+      "MAKE_CONCORDANCE": "Concordanze",
       "MATCH_CASE": "match case",
       "METADATA": "Metadati",
       "NONE": "none",
@@ -139,14 +139,11 @@
         "RIGHT_CONTEXT": "Right contenxt",
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "SIMPLE_SORT": "Simple sort",
-        "SORT_CONCORDANCE": "Sort concordance",
         "SORT_KEY": "Sort key",
         "SORT_OPTIONS": "Sort options",
         "THIRD_LEVEL": "third level (... finally sort by)",
-        "SET_SIMPLE_SORT": "Set Simple Sort Opt.",
-        "REMOVE_SIMPLE_SORT": "Remove Simple Sort Opt.",
-        "SET_MULTILEVEL_SORT": "Set Multilevel Sort Opt.",
-        "REMOVE_MULTILEVEL_SORT": "Remove Multilevel Sort Opt."
+        "CLEAR_SORT_OPT": "Cancella Opz. Ord.",
+        "SORT_CONCORDANCE": "Concordanze Ord."
       },
       "FREQ_OPTIONS": {
         "FIRST_LEVEL": "first level",
@@ -255,7 +252,8 @@
       "START": "sentence start",
       "TIMES": "times"
     },
-    "RESET": "Reset"
+    "RESET": "Reset",
+    "CLEAR": "Cancella"
   },
   "USER": {
     "USER": "Utente",

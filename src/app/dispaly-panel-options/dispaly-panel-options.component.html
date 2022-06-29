@@ -17,7 +17,7 @@
   </app-word-list-options-panel>
   <app-sort-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === SORT"
     [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (quickSort)="quickSortCallback($event)">
+    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceSort)="quickSortCallback($event)">
   </app-sort-options-panel>
   <app-frequency-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === FREQUENCY"
     [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"

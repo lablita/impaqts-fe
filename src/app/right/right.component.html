@@ -16,6 +16,7 @@
   [ngClass]="{'disabled': !(optionsButtonEnabled() | async)}">
   <div class="flex align-items-center">
     <div *ngIf="titleLabel">
+      <fa-icon *ngIf="checkOptions()" style="font-size: large" [icon]="faCheck"></fa-icon>
       {{titleLabel | translate}}
     </div>
   </div>

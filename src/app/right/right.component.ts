@@ -3,10 +3,10 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
 import { FREQ_OPTIONS_LABEL, MENU_COLL_OPTIONS, MENU_FILTER, SORT_OPTIONS_LABEL, VIEW_OPTIONS_LABEL, WORD_OPTIONS_LABEL } from '../common/label-constants';
 import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, QUERY, SORT, VIEW_OPTIONS, WORD_LIST } from '../common/routes-constants';
-import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { KeyValueItem } from '../model/key-value-item';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
 const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
@@ -37,7 +37,7 @@ export class RightComponent implements OnInit {
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
-    private readonly menuEmitterService: MenuEmitterService,
+    private readonly queryRequestService: QueryRequestService,
   ) { }
 
   ngOnInit(): void {
@@ -76,6 +76,10 @@ export class RightComponent implements OnInit {
 
   public checkMetadata(): boolean {
     return this.metadataQueryService.isCompiled();
+  }
+
+  public checkOptions(): boolean {
+    return this.queryRequestService.isOptionSet();
   }
 
   public optionsButtonEnabled(): BehaviorSubject<boolean> {

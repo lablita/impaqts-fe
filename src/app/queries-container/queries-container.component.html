@@ -30,7 +30,8 @@
       </div>
       <div *ngIf="!displayContext" style="height: 30px;">
         <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
-          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"
+          [disabled]="displayPanelService.optionsPanelSubject | async"></button>
       </div>
       <div *ngIf="displayContext" style="height: 30px;">
 
@@ -113,7 +114,8 @@
         </app-context-concordance>
         <div class="flex justify-content-center mt-3">
           <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-            (click)="makeConcordances()" class="mr-3"></button>
+            (click)="makeConcordances()" class="mr-3"
+            [disabled]="displayPanelService.optionsPanelSubject | async"></button>
           <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
             (click)="clickClearAll()"></button>
         </div>

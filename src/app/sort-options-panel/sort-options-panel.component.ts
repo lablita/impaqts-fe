@@ -7,6 +7,21 @@ import { QueryRequestService } from '../services/query-request.service';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
+const POSITION_LIST = [
+  new KeyValueItem(L3, L3),
+  new KeyValueItem(L2, L2),
+  new KeyValueItem(L1, L1),
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(R1, R1),
+  new KeyValueItem(R2, R2),
+  new KeyValueItem(R3, R3),
+];
+
+const SELECTED_POSITION = [
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(NODE, NODE),
+];
 @Component({
   selector: 'app-sort-options-panel',
   templateUrl: './sort-options-panel.component.html',
@@ -17,7 +32,7 @@ export class SortOptionsPanelComponent implements OnInit {
   @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
-  @Output() public quickSort = new EventEmitter<SortQueryRequest>();
+  @Output() public concordanceSort = new EventEmitter<SortQueryRequest>();
 
   public sortOptionsQueryRequest: SortOptionsQueryRequest | null = null;
 
@@ -37,29 +52,15 @@ export class SortOptionsPanelComponent implements OnInit {
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
   public disableMultilevelChechbox: boolean[] = [false, false, false];
-  public enableSimpleSort = true;
-  public enableMultilevelSort = true;
+  public isSimpleSort = true;
 
   constructor(
     private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
-    this.positionList = [
-      new KeyValueItem(L3, L3),
-      new KeyValueItem(L2, L2),
-      new KeyValueItem(L1, L1),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(R1, R1),
-      new KeyValueItem(R2, R2),
-      new KeyValueItem(R3, R3),
-    ];
-
-    this.selectedPosition = [
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE),
-    ];
+    this.positionList = POSITION_LIST;
+    this.selectedPosition = SELECTED_POSITION;
 
     if (this.corpusAttributes && this.corpusAttributes.length > 0) {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
@@ -82,24 +83,27 @@ export class SortOptionsPanelComponent implements OnInit {
         this.backward = this.sortOptionsQueryRequest.backwardMulti;
       }
     }
+
+    this.isSimpleSort = this.queryRequestService.queryRequest.sortQueryRequest === null ? true : !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey;
   }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
   }
 
-  public setSimpleSortOption(): void {
-    this.enableMultilevelSort = false;
+  public makeSort(): void {
+    this.isSimpleSort = true;
     this.setSortOption(true);
+    this.concordanceSort.emit(this.getSortOption());
   }
 
-  public setMultilevelSortOption(): void {
-    this.enableSimpleSort = false;
+  public makeMultilevelSort(): void {
+    this.isSimpleSort = false;
     this.setSortOption(false);
+    this.concordanceSort.emit(this.getSortOption());
   }
 
   public removeSortOption(): void {
-    this.enableSimpleSort = this.enableMultilevelSort = true;
     this.queryRequestService.resetOptionsRequest();
   }
 
@@ -109,7 +113,7 @@ export class SortOptionsPanelComponent implements OnInit {
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
     sortOptionsQueryRequest.numberTokens = 3;
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
-    this.quickSort.emit(sortQueryRequest);
+    this.concordanceSort.emit(sortQueryRequest);
   }
 
   public clickRight(): void {
@@ -118,7 +122,7 @@ export class SortOptionsPanelComponent implements OnInit {
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
     sortOptionsQueryRequest.numberTokens = 3;
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
-    this.quickSort.emit(sortQueryRequest);
+    this.concordanceSort.emit(sortQueryRequest);
   }
 
   public clickNode(): void {
@@ -127,7 +131,7 @@ export class SortOptionsPanelComponent implements OnInit {
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
     sortOptionsQueryRequest.numberTokens = 3;
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
-    this.quickSort.emit(sortQueryRequest);
+    this.concordanceSort.emit(sortQueryRequest);
   }
 
   public clickShuffle(): void {
@@ -135,7 +139,7 @@ export class SortOptionsPanelComponent implements OnInit {
     sortOptionsQueryRequest.sortKey = new KeyValueItem('SHUFFLE_CONTEXT', 'SHUFFLE_CONTEXT');
     sortOptionsQueryRequest.attribute = new KeyValueItem('word', 'word');
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
-    this.quickSort.emit(sortQueryRequest);
+    this.concordanceSort.emit(sortQueryRequest);
   }
 
   public multilevelCheckBoxManager(index: number): void {
@@ -180,6 +184,7 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   private setSortOption(isSimpleSort: boolean): void {
+    this.queryRequestService.resetOptionsRequest();
     if (this.sortOptionsQueryRequest) {
       if (this.selectedSortKey) {
         this.sortOptionsQueryRequest.sortKey = this.selectedSortKey;
@@ -197,6 +202,10 @@ export class SortOptionsPanelComponent implements OnInit {
       this.queryRequestService.resetOptionsRequest();
       this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
     }
+  }
+
+  private getSortOption(): SortQueryRequest {
+    return this.queryRequestService.queryRequest.sortQueryRequest!;
   }
 
 
