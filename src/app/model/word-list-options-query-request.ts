@@ -64,3 +64,24 @@ export class WordListOptionsQueryRequest {
   }
 
 }
+
+export const DEFAULT_WORD_LIST_OPTION_QUERY_REQUEST = new WordListOptionsQueryRequest(
+  null,
+  null,
+  false,
+  2,
+  null,
+  5,
+  0,
+  null,
+  null,
+  false,
+  null,
+  null,
+  null,
+  null,
+  1,
+  null,
+  null,
+  null
+);

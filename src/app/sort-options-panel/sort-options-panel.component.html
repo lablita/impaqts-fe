@@ -3,7 +3,6 @@
     <div class="flex justify-content-center">
       <h2>{{"PAGE.CONCORDANCE.SORT_OPTIONS.SORT_OPTIONS" | translate}}</h2>
     </div>
-    <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SIMPLE_SORT' | translate}}</h3>
     <div class="grid ml-4 mb-3">
       <div class="col-12 md:col-3">
         <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.LEFT' | translate}}"
@@ -23,102 +22,110 @@
       </div>
     </div>
 
-    <div class="field ml-2 mb-3">
-      <p-dropdown [options]="attributeList" [(ngModel)]="sortOptionsQueryRequest.attribute" optionLabel="key"
-        [showClear]="true" *ngIf="sortOptionsQueryRequest" [disabled]="!enableSimpleSort"
-        (ngModelChange)="removeSortOption()">
-      </p-dropdown>
-    </div>
-
-    <div class="grid">
-      <div class="col-fixed ml-2" style="width: 145px;">
-        <b>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_KEY' | translate}}</b>
-      </div>
-      <div class="col">
-        <div *ngFor="let sortkey of sortKeys" class="field-checkbox d-inline">
-          <p-radioButton [inputId]="sortkey.key" name="sortkey" [value]="sortkey" [(ngModel)]="selectedSortKey"
-            [disabled]="!enableSimpleSort" (ngModelChange)="removeSortOption()">
-          </p-radioButton>
-          <label [for]="sortkey.key" class="mr-2 ml-1">{{sortkey.value | translate}}</label>
+    <p-accordion>
+      <p-accordionTab header="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SIMPLE_SORT' | translate}}" [selected]="isSimpleSort">
+        <div class="field ml-2 mb-3">
+          <p-dropdown [options]="attributeList" [(ngModel)]="sortOptionsQueryRequest.attribute" optionLabel="key"
+            [showClear]="true" *ngIf="sortOptionsQueryRequest" (ngModelChange)="removeSortOption()">
+          </p-dropdown>
         </div>
-      </div>
-    </div>
 
-    <div class="field ml-2">
-      <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.SORT_OPTIONS.NUM_TOKEN" |
-      translate}}</label>
-      <input *ngIf="sortOptionsQueryRequest" id="numToken" type="number" pInputText style="width: 50px;"
-        [(ngModel)]="sortOptionsQueryRequest.numberTokens" [disabled]="!enableSimpleSort"
-        (ngModelChange)="removeSortOption()">
-    </div>
-
-    <div class="field-checkbox ml-2">
-      <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
-        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}"
-        [(ngModel)]="sortOptionsQueryRequest.ignoreCase" [disabled]="!enableSimpleSort"
-        (ngModelChange)="removeSortOption()">
-      </p-checkbox>
-    </div>
-
-    <div class="field-checkbox ml-2">
-      <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
-        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}" [(ngModel)]="sortOptionsQueryRequest.backward"
-        [disabled]="!enableSimpleSort" (ngModelChange)="removeSortOption()">
-      </p-checkbox>
-    </div>
-
-    <span class="flex justify-content-center">
-      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SET_SIMPLE_SORT' | translate}}"
-        (click)="setSimpleSortOption()" class="mr-5" [disabled]="!enableSimpleSort"></button>
-      <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.REMOVE_SIMPLE_SORT' | translate}}"
-        (click)="removeSortOption()" class="mr-5" [disabled]="!enableSimpleSort"></button>
-    </span>
-
-
-    <h3>{{'PAGE.CONCORDANCE.SORT_OPTIONS.MULTILEVEL_SORT' | translate}}</h3>
-    <div class="grid">
-      <div *ngFor="let level of levels, let i = index" class="field-checkbox" class="d-inline" class="col-4">
-        <div>
-          <div class="mb-4 ml-2">
-            <p-checkbox [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevels"
-              (onChange)="multilevelCheckBoxManager(i)"
-              [disabled]="disableMultilevelChechbox[i] ||!enableMultilevelSort" (ngModelChange)="removeSortOption()">
-            </p-checkbox>
-            <label [for]="level.key"
-              class="mr-2 ml-1">{{'PAGE.CONCORDANCE.SORT_OPTIONS.' + level.value | translate}}</label>
+        <div class="grid">
+          <div class="col-fixed ml-2" style="width: 145px;">
+            <b>{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_KEY' | translate}}</b>
           </div>
-          <div class="field ml-2 mb-3">
-            <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="value"
-              [showClear]="true" [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
-            </p-dropdown>
-          </div>
-          <div class="field-checkbox ml-2 mb-3">
-            <p-checkbox name="nonWords" [binary]="true"
-              label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}" [(ngModel)]="ignoreCase[i]"
-              [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
-            </p-checkbox>
-          </div>
-          <div class="field-checkbox ml-2 mb-3">
-            <p-checkbox name="nonWords" [binary]="true" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}"
-              [(ngModel)]="backward[i]" [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
-            </p-checkbox>
-          </div>
-          <div class="field ml-2">
-            <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value"
-              [showClear]="true" [disabled]="!enableMultilevelSort" (ngModelChange)="removeSortOption()">
-            </p-dropdown>
+          <div class="col">
+            <div *ngFor="let sortkey of sortKeys" class="field-checkbox d-inline">
+              <p-radioButton [inputId]="sortkey.key" name="sortkey" [value]="sortkey" [(ngModel)]="selectedSortKey"
+                (ngModelChange)="removeSortOption()">
+              </p-radioButton>
+              <label [for]="sortkey.key" class="mr-2 ml-1">{{sortkey.value | translate}}</label>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <span class="flex justify-content-center">
-      <button pButton type="button" icon="pi"
-        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SET_MULTILEVEL_SORT' | translate}}" (click)="setMultilevelSortOption()"
-        class="mr-5" [disabled]="!enableMultilevelSort"></button>
-      <button pButton type="button" icon="pi"
-        label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.REMOVE_MULTILEVEL_SORT' | translate}}" (click)="removeSortOption()"
-        class="mr-5" [disabled]="!enableMultilevelSort"></button>
-    </span>
+        <div class="field ml-2">
+          <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.SORT_OPTIONS.NUM_TOKEN" |
+          translate}}</label>
+          <input *ngIf="sortOptionsQueryRequest" id="numToken" type="number" pInputText style="width: 50px;"
+            [(ngModel)]="sortOptionsQueryRequest.numberTokens" (ngModelChange)="removeSortOption()">
+        </div>
+
+        <div class="field-checkbox ml-2">
+          <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
+            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}"
+            [(ngModel)]="sortOptionsQueryRequest.ignoreCase" (ngModelChange)="removeSortOption()">
+          </p-checkbox>
+        </div>
+
+        <div class="field-checkbox ml-2">
+          <p-checkbox *ngIf="sortOptionsQueryRequest" name="nonWords" [binary]="true"
+            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}"
+            [(ngModel)]="sortOptionsQueryRequest.backward" (ngModelChange)="removeSortOption()">
+          </p-checkbox>
+        </div>
+
+        <span class="flex justify-content-center">
+          <button pButton type="button" icon="pi"
+            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}" (click)="makeSort()"
+            class="mr-5"></button>
+          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.CLEAR_SORT_OPT' | translate}}"
+            (click)="removeSortOption()" class="mr-5"></button>
+        </span>
+      </p-accordionTab>
+      <p-accordionTab header="{{'PAGE.CONCORDANCE.SORT_OPTIONS.MULTILEVEL_SORT' | translate}}"
+        [selected]="!isSimpleSort">
+        <div class="grid">
+          <div *ngFor="let level of levels, let i = index" class="field-checkbox" class="d-inline" class="col-4">
+            <div>
+              <div class="mb-4 ml-2">
+                <p-checkbox [inputId]="level.key" name="displayAttr" [value]="level" [(ngModel)]="selectedLevels"
+                  (onChange)="multilevelCheckBoxManager(i)" [disabled]="disableMultilevelChechbox[i]"
+                  (ngModelChange)="removeSortOption()">
+                </p-checkbox>
+                <label [for]="level.key"
+                  class="mr-2 ml-1">{{'PAGE.CONCORDANCE.SORT_OPTIONS.' + level.value | translate}}</label>
+              </div>
+              <div class="field ml-2 mb-3">
+                <p-dropdown [options]="attributeList" [(ngModel)]="selectedMultiAttribute[i]" optionLabel="value"
+                  [showClear]="true" (ngModelChange)="removeSortOption()">
+                </p-dropdown>
+              </div>
+              <div class="field-checkbox ml-2 mb-3">
+                <p-checkbox name="nonWords" [binary]="true"
+                  label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE' | translate}}" [(ngModel)]="ignoreCase[i]"
+                  (ngModelChange)="removeSortOption()">
+                </p-checkbox>
+              </div>
+              <div class="field-checkbox ml-2 mb-3">
+                <p-checkbox name="nonWords" [binary]="true"
+                  label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.BACKWARD' | translate}}" [(ngModel)]="backward[i]"
+                  (ngModelChange)="removeSortOption()">
+                </p-checkbox>
+              </div>
+              <div class="field ml-2">
+                <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value"
+                  [showClear]="true" (ngModelChange)="removeSortOption()">
+                </p-dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <span class="flex justify-content-center">
+          <button pButton type="button" icon="pi"
+            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}" (click)="makeMultilevelSort()"
+            class="mr-5"></button>
+          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.CLEAR_SORT_OPT' | translate}}"
+            (click)="removeSortOption()" class="mr-5"></button>
+        </span>
+      </p-accordionTab>
+    </p-accordion>
+
+
+
+
+
+
   </p-card>
 </div>

@@ -1,7 +1,8 @@
 <div class="flex flex-row">
 
-  <div class="flex flex-grow-1 flex-column mt-3"
-    [ngClass]="{'w-12': !displayPanelService.displayPanelMetadata && !displayPanelService.displayPanelOptions, 'w-6': displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions}">
+  <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !((displayMetadataPanel() | async) ||
+  (displayOptionsPanel() | async)), 'w-6': (displayMetadataPanel() | async) ||
+  (displayOptionsPanel() | async)}">
     <p-card>
       <div class="field grid">
         <label for="corpusSelection" class="col-12 md:col-1">{{"PAGE.CONCORDANCE.CORPUS" |
@@ -27,11 +28,12 @@
             [disabled]="!!selectedQueryType && selectedQueryType.key !== 'simple'" class="width-80">
         </div>
       </div>
-      <div *ngIf="!contextStatus" style="height: 30px;">
+      <div *ngIf="!displayContext" style="height: 30px;">
         <button [disabled]="!selectedCorpus" pButton type="button" icon="pi"
-          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"></button>
+          label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordances()"
+          [disabled]="displayPanelService.optionsPanelSubject | async"></button>
       </div>
-      <div *ngIf="contextStatus" style="height: 30px;">
+      <div *ngIf="displayContext" style="height: 30px;">
 
       </div>
       <div class="flex justify-content-center">
@@ -42,7 +44,7 @@
           [disabled]="!selectedCorpus" class="p-button-text" (click)="clickContext()"></button>&nbsp;
       </div>
 
-      <div class="mt-3" *ngIf="queryTypeStatus">
+      <div class="mt-3" *ngIf="displayQueryType">
         <div>
           <label class="mb-3">
             <h2>{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</h2>
@@ -90,8 +92,8 @@
             <input id="cql" type="text" pInputText [(ngModel)]="cql" class="width-80">
           </div>
           <div class="col-12 md:col-5 grid">
-            <label
-              class="col-12 md:col-3 align-self-center">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" | translate}}</label>
+            <label class="col-12 md:col-3 align-self-center">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" |
+              translate}}</label>
             <div class="col-12 md:col-5 align-self-center">
               <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL"
                 [style]="{'width':'12rem'}" [showClear]="true">
@@ -107,22 +109,23 @@
         </div>
       </div>
 
-      <div class="mt-3" *ngIf="contextStatus">
+      <div class="mt-3" *ngIf="displayContext">
         <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
         </app-context-concordance>
         <div class="flex justify-content-center mt-3">
           <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-            (click)="makeConcordances()" class="mr-3"></button>
+            (click)="makeConcordances()" class="mr-3"
+            [disabled]="displayPanelService.optionsPanelSubject | async"></button>
           <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
             (click)="clickClearAll()"></button>
         </div>
       </div>
     </p-card>
 
-    <div class="flex mt-3" *ngIf="titleResult">
+    <div class="flex mt-3" *ngIf="!!this.titleResult">
       <p-card class="w-12">
-        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayPanelService.displayPanelMetadata ||
-        displayPanelService.displayPanelOptions) && !!selectedCorpus)" [initialPagination]="initialPagination"
+        <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayMetadataPanel() | async) ||
+        (displayOptionsPanel() | async)) && !!selectedCorpus" [initialPagination]="initialPagination"
           [paginations]="paginations">
         </app-collocation-table>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
@@ -132,10 +135,11 @@
     </div>
   </div>
   <div class="flex flex-column w-6"
-    *ngIf="(displayPanelService.displayPanelMetadata || displayPanelService.displayPanelOptions) && !!selectedCorpus">
+    *ngIf="((displayMetadataPanel() | async) || (displayOptionsPanel() | async)) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()">
+      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()"
+      (quickSort)="makeConcordances($event)">
     </app-dispaly-panel-options>
   </div>
 </div>

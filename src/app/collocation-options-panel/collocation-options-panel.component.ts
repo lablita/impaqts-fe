@@ -1,10 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
+import { CollocationOptionsQueryRequest, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request';
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
 
@@ -47,10 +45,8 @@ export class CollocationOptionsPanelComponent {
     private readonly queryRequestService: QueryRequestService
   ) {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     this.collocationOptionsQueryRequest = collOptReq ?
-      JSON.parse(collOptReq) :
-      inst && inst.startup.collocationOptionsQueryRequest;
+      JSON.parse(collOptReq) : DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST;
   }
 
   public closeSidebar(): void {

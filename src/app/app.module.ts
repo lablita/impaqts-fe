@@ -17,7 +17,6 @@ import { AppComponent } from './app.component';
 import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
 import { CollocationTableComponent } from './collocation-table/collocation-table.component';
 import { ConcordanceTableComponent } from './concordance-table/concordance-table.component';
-import { ConcordanceComponent } from './concordance/concordance.component';
 import { ContextConcordanceComponent } from './context-concordance/context-concordance.component';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
@@ -31,6 +30,7 @@ import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
 import { MetadataPanelComponent } from './metadata-panel/metadata-panel.component';
 import { PrimeNgModule } from './modules/prime-ng/prime-ng.module';
+import { QueriesContainerComponent } from './queries-container/queries-container.component';
 import { QueryTagComponent } from './query-tag/query-tag.component';
 import { QueryTokenComponent } from './query-token/query-token.component';
 import { RightComponent } from './right/right.component';
@@ -51,7 +51,7 @@ registerLocaleData(localeIt);
     MainComponent,
     MenuComponent,
     TopComponent,
-    ConcordanceComponent,
+    QueriesContainerComponent,
     CorpusInfoComponent,
     AllWordsOrLemmasComponent,
     ViewOptionsPanelComponent,

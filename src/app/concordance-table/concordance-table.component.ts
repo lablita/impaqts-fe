@@ -1,11 +1,21 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
+import { SHUFFLE } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
+import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { ResultContext } from '../model/result-context';
 import { LoadResultsService } from '../services/load-results.service';
 import { EmitterService } from '../utils/emitter.service';
 
+const SORT_LABELS = [
+  new KeyValueItem('LEFT_CONTEXT', LEFT),
+  new KeyValueItem('RIGHT_CONTEXT', RIGHT),
+  new KeyValueItem('NODE_CONTEXT', NODE),
+  new KeyValueItem('SHUFFLE_CONTEXT', SHUFFLE),
+  new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL)
+]
 @Component({
   selector: 'app-concordance-table',
   templateUrl: './concordance-table.component.html',
@@ -24,6 +34,7 @@ export class ConcordanceTableComponent implements OnInit {
   public resultContext: ResultContext | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
+  public typeSearch: string[] = [];
 
   public fieldRequest: FieldRequest | null = null;
 
@@ -40,10 +51,14 @@ export class ConcordanceTableComponent implements OnInit {
         this.noResultFound = socketResponse.noResultFound;
       }
     });
-    this.emitterService.makeConcordance.subscribe(fieldRequest => {
+    this.emitterService.makeConcordance.subscribe(res => {
       this.loading = true;
-      this.fieldRequest = fieldRequest;
-      this.loadResultService.loadResults(fieldRequest);
+      this.fieldRequest = res.fieldRequest;
+      if (res.typeSearch.length > 1) {
+        res.typeSearch[1] = SORT_LABELS.find(sl => sl.key === res.typeSearch[1])?.value!;
+      }
+      this.typeSearch = res.typeSearch;
+      this.loadResultService.loadResults(res.fieldRequest);
     });
   }
 

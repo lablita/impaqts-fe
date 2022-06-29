@@ -1,4 +1,5 @@
 import { KeyValueItem } from "./key-value-item";
+import { SortQueryRequest } from "./sort-query-request";
 
 export class FieldRequest {
   selectedCorpus: KeyValueItem | null = null;
@@ -12,6 +13,7 @@ export class FieldRequest {
   matchCase = false;
   selectedQueryType: KeyValueItem | null = null;
   defaultAttributeCQL: KeyValueItem | null = null;
+  quickSort?: SortQueryRequest | null = null;
 
   constructor() { }
 

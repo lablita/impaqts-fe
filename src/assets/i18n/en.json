@@ -10,7 +10,7 @@
     "MY_JOBS": "My jobs",
     "USER_GUIDE": "User guide",
     "ALL_WORDS": "All words",
-    "ALL_LEMMANS": "All lemmans",
+    "ALL_LEMMAS": "All lemmas",
     "SAVE": "Save",
     "AS_SUBCORPUS": "as subcorpus",
     "VIEW_OPTION": "View options",
@@ -140,16 +140,13 @@
         "NUM_TOKEN": "Number of tokens to sort",
         "IGNORE_CASE": "Ignore case",
         "BACKWARD": "Backward",
-        "SORT_CONCORDANCE": "Sort concordance",
         "MULTILEVEL_SORT": "Multilevel sort",
         "FIRST_LEVEL": "first level (Sort by ...)",
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "THIRD_LEVEL": "third level (... finally sort by)",
         "POSITION": "Position",
-        "SET_SIMPLE_SORT": "Set Simple Sort Opt.",
-        "REMOVE_SIMPLE_SORT": "Remove Simple Sort Opt.",
-        "SET_MULTILEVEL_SORT": "Set Multilevel Sort Opt.",
-        "REMOVE_MULTILEVEL_SORT": "Remove Multilevel Sort Opt."
+        "CLEAR_SORT_OPT": "Cancella Opz. Ord.",
+        "SORT_CONCORDANCE": "Concordanze Ord."
       },
       "FREQ_OPTIONS": {
         "FREQ_OPTIONS": "Frequency opt.",
@@ -258,7 +255,8 @@
       "FOR": "for",
       "TIMES": "times"
     },
-    "RESET": "Reset"
+    "RESET": "Reset",
+    "CLEAR": "Clear"
   },
   "USER": {
     "USER": "User",

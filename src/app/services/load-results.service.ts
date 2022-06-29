@@ -3,9 +3,10 @@ import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
+import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { CHARACTER, CONCORDANCE, CQL, LEMMA, PHRASE, RESULT_CONCORDANCE, WORD } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
@@ -31,8 +32,6 @@ export class CollocationSortingParams {
   providedIn: 'root'
 })
 export class LoadResultsService {
-
-  // public colHeader: Array<string> = Array.from<string>({ length: 0 });
 
   /** private */
   private metadataQuery: QueryToken | null = null;
@@ -125,8 +124,14 @@ export class LoadResultsService {
         qr.queryPattern.structPattern = this.metadataQuery;
       }
       qr.corpus = fieldRequest.selectedCorpus.key;
+      /**quick sort */
+      if (fieldRequest.quickSort) {
+        qr.start = 0;
+        qr.end = qr.end > 0 ? qr.end : 10;
+        qr.sortQueryRequest = fieldRequest.quickSort;
+      }
+      /** */
       this.socketService.sendMessage(qr);
-      this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     }
   }
 
@@ -224,6 +229,7 @@ export class LoadResultsService {
 
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<SocketResponse> {
     let socketResponse: SocketResponse | null = null;
+    // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
       tap(resp => console.log(resp)),
       map(resp => {
@@ -235,6 +241,7 @@ export class LoadResultsService {
             true,
             false,
             qr.currentSize);
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
         } else if (qr.collocations.length > 0) {
           socketResponse = new SocketResponse(
             [],
@@ -242,6 +249,7 @@ export class LoadResultsService {
             true,
             false,
             qr.currentSize);
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
         } else {
           socketResponse = new SocketResponse(
             [],
@@ -251,8 +259,8 @@ export class LoadResultsService {
             0);
         }
         if (socketResponse) {
-          this.displayPanelService.labelOptionsDisabled = !socketResponse.resultView;
-          this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+          // this.displayPanelService.labelOptionsDisabled = !socketResponse.resultView;
+          this.displayPanelService.activeOptionsButton();
           this.menuEmitterService.corpusSelected = socketResponse.resultView;
         };
         return socketResponse;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CONCORDANCE_LEMMA, CONCORDANCE_WORD, CORPUS_INFO } from '../model/constants';
+import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
 import { CorpusInfoObj } from '../model/corpus-info-obj';
 import { DisplayPanelService } from '../services/display-panel.service';
 
@@ -25,7 +25,7 @@ export class CorpusInfoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.displayPanelService.panelItemSelected = CORPUS_INFO;
+    // this.displayPanelService.panelSelectedSubject.next(CORPUS_INFO);
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
     this.counts = [
       new CorpusInfoObj('PAGE.CONCORDANCE.TOKENS', '380,823,725'),

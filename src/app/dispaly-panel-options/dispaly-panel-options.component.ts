@@ -1,7 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
+import { BehaviorSubject } from 'rxjs';
+import {
+  COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
+} from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
+import { SortQueryRequest } from '../model/sort-query-request';
 import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
@@ -17,8 +21,7 @@ export class DispalyPanelOptionsComponent implements OnInit {
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
   @Output() public loadCollocations = new EventEmitter<boolean>();
-
-  public selectCorpus = SELECT_CORPUS;
+  @Output() public quickSort = new EventEmitter<SortQueryRequest>();
 
   public VIEW_OPTIONS = VIEW_OPTIONS;
   public WORD_LIST = WORD_LIST;
@@ -32,18 +35,29 @@ export class DispalyPanelOptionsComponent implements OnInit {
     public displayPanelService: DisplayPanelService
   ) { }
 
-  private init(): void {
-    this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE
-      ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
-  }
-
   ngOnInit(): void {
-    this.init();
   }
 
   public loadColl(): void {
     this.loadCollocations.emit(true);
   }
+
+  public quickSortCallback(sortQueryRequest: SortQueryRequest): void {
+    this.quickSort.emit(sortQueryRequest);
+  }
+
+  public displayOptionsPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.optionsPanelSubject;
+  }
+
+  public displayMetadataPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.metadataPanelSubject;
+  }
+
+  public closeMetadataPanel(): void {
+    this.displayPanelService.metadataButtonSubject.next();
+  }
+
 }
 
 

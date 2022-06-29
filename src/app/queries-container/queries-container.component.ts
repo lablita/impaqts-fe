@@ -1,13 +1,15 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
+import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
+import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import {
-  CHARACTER, CONCORDANCE, CQL, INSTALLATION, LEMMA, PHRASE, SELECT_CORPUS, SIMPLE, WORD
-} from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
@@ -15,6 +17,7 @@ import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { ResultContext } from '../model/result-context';
+import { SortQueryRequest } from '../model/sort-query-request';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
@@ -22,12 +25,22 @@ import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
+export class ConcordanceResult {
+  fieldRequest: FieldRequest = new FieldRequest();
+  typeSearch: string[] = [];
+
+  constructor(fieldRequest: FieldRequest, typeSearch: string[]) {
+    this.fieldRequest = fieldRequest;
+    this.typeSearch = typeSearch;
+  }
+}
+
 @Component({
   selector: 'app-concordance',
-  templateUrl: './concordance.component.html',
-  styleUrls: ['./concordance.component.scss']
+  templateUrl: './queries-container.component.html',
+  styleUrls: ['./queries-container.component.scss']
 })
-export class ConcordanceComponent implements OnInit, AfterViewInit {
+export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
 
@@ -41,7 +54,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public selectedCorpus: KeyValueItem | null = null;
   public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedQueryType: KeyValueItem | null = null;
-  public selectCorpus = SELECT_CORPUS;
+  public selectCorpus = SELECT_CORPUS_LABEL;
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
@@ -53,9 +66,6 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public word = '';
   public character = '';
   public cql = '';
-  public queryTypeStatus = false;
-  public contextStatus = false;
-  public textTypeStatus = false;
   public attributesSelection: string[] = [];
   public viewOptionsLabel = '';
   public wordListOptionsLabel = '';
@@ -89,24 +99,30 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
+  // public displayRightPanel: Subject<boolean> | null = null;
+  public displayResultPanel = false;
+  public displayQueryType = false;
+  public displayContext = false;
+
   /** private */
   private endpoint = '';
+  private textTypeStatus = false;
 
   constructor(
     private readonly translateService: TranslateService,
-    public menuEmitterService: MenuEmitterService,
+    private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
-    public displayPanelService: DisplayPanelService,
+    public readonly displayPanelService: DisplayPanelService,
     private readonly queryRequestSevice: QueryRequestService,
   ) { }
 
   ngOnInit(): void {
-    this.emitterService.pageMenu = CONCORDANCE;
+    this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
   }
 
   ngAfterViewInit(): void {
@@ -114,16 +130,16 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
   }
 
   public clickQueryType(): void {
-    this.queryTypeStatus = !this.queryTypeStatus;
+    this.displayQueryType = !this.displayQueryType;
   }
 
   public clickContext(): void {
-    this.contextStatus = !this.contextStatus;
+    this.displayContext = !this.displayContext;
   }
 
   public clickTextType(): void {
     this.textTypeStatus = true;
-    this.displayPanelService.labelMetadataDisabled = !!this.textTypeStatus;
+    this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
   }
 
   public clickClearAll(): void {
@@ -164,7 +180,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
+                  this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
                   this.emitterService.spinnerMetadata.emit(false);
@@ -174,7 +190,7 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
         }
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-        this.displayPanelService.labelMetadataDisabled = !this.selectedCorpus || !this.textTypeStatus;
+        this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
         this.emitterService.spinnerMetadata.emit(false);
         this.endedMetadataProcess = true;
       }
@@ -182,13 +198,14 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.simple = '';
-      this.contextStatus = false;
-      this.queryTypeStatus = false;
+      this.hideQueryTypeAndContext();
     }
-    this.menuEmitterService.menuEvent$.next(new MenuEvent(CONCORDANCE));
+    this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
+    this.updateVisibilityFlags();
   }
 
-  public makeConcordances(): void {
+  public makeConcordances(sortQueryRequest?: SortQueryRequest): void {
+    let typeSearch = ['Query'];
     this.titleResult = 'MENU.CONCORDANCE';
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,
@@ -202,8 +219,14 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.matchCase,
       this.selectedQueryType,
       this.defaultAttributeCQL);
-    this.emitterService.makeConcordance.next(this.fieldRequest);
-    this.queryRequestSevice.resetOptionsRequest();
+    if (sortQueryRequest && !!sortQueryRequest.sortKey) {
+      typeSearch = ['Sort', sortQueryRequest.sortKey!];
+    } else if (this.queryRequestSevice.queryRequest.sortQueryRequest
+      && this.queryRequestSevice.queryRequest.sortQueryRequest !== undefined) {
+      typeSearch = ['Sort', !!this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey
+        ? this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+    }
+    this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
   }
 
   public makeCollocations(): void {
@@ -223,6 +246,18 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
     this.emitterService.makeCollocation.next(this.fieldRequest);
   }
 
+  public updateVisibilityFlags(): void {
+    this.displayResultPanel = !!this.titleResult;
+  }
+
+  public displayOptionsPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.optionsPanelSubject;
+  }
+
+  public displayMetadataPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.metadataPanelSubject;
+  }
+
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
@@ -230,11 +265,10 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.queryTypeStatus = false;
-    this.contextStatus = false;
-    this.textTypeStatus = false;
+    this.displayQueryType = false;
+    this.hideQueryTypeAndContext();
 
-    this.translateService.stream(SELECT_CORPUS).subscribe({
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
       next: res => this.selectCorpus = res
     });
 
@@ -252,6 +286,11 @@ export class ConcordanceComponent implements OnInit, AfterViewInit {
 
   private closeWebSocket(): void {
     this.socketService.closeSocket();
+  }
+
+  private hideQueryTypeAndContext(): void {
+    this.displayContext = false;
+    this.displayQueryType = false;
   }
 
 }

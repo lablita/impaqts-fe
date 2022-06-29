@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'src/environments/environment';
-import { CONCORDANCE_WORD, FIRST, FOURTH, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, SECOND, THIRD } from '../model/constants';
-import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
+import { CONCORDANCE_WORD } from '../common/label-constants';
+import { FIRST, FOURTH, SECOND, THIRD } from '../common/sort-constants';
+import { DEFAULT_FREQUENCY_QUERY_REQUEST, FreqOptionsQueryRequest } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 
@@ -41,9 +41,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false, false];
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)
-    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : inst && inst.startup.freqOptionsQueryRequest;
+    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : DEFAULT_FREQUENCY_QUERY_REQUEST;
 
     this.positionList = [
       new KeyValueItem(L6, L6),

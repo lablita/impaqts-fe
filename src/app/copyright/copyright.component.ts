@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { COPYRIGHT, INSTALLATION } from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
 import { DisplayPanelService } from '../services/display-panel.service';
 
@@ -17,7 +17,7 @@ export class CopyrightComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.displayPanelService.panelItemSelected = COPYRIGHT;
+    // this.displayPanelService.panelSelectedSubject.next(COPYRIGHT_ROUTE);
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.copyright = (JSON.parse(inst) as Installation).credits;

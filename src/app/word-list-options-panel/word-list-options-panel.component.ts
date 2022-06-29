@@ -1,10 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { environment } from 'src/environments/environment';
 import { KeyValueItem } from '../model/key-value-item';
-import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
+import { DEFAULT_WORD_LIST_OPTION_QUERY_REQUEST, WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
 
 const WORD_LIST_OPTIONS_QUERY_REQUEST = 'wordListOptionsQueryRequest';
 class DropdownIG {
@@ -104,11 +102,10 @@ export class WordListOptionsPanelComponent implements OnInit {
       new KeyValueItem('100000', '100000'),
     ];
     const wordList = localStorage.getItem(WORD_LIST_OPTIONS_QUERY_REQUEST);
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     if (wordList) {
       this.wordListOptionsQueryRequest = wordList ?
         JSON.parse(wordList) :
-        inst && inst.startup.wordListOptionsQueryRequest;
+        DEFAULT_WORD_LIST_OPTION_QUERY_REQUEST;
     }
     this.translateService.stream('PAGE.CONCORDANCE.FILE_UPLOADED').subscribe({
       next: res => this.fileUploadedInfo = res
