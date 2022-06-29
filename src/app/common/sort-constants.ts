@@ -20,3 +20,4 @@ export const WORD = 'word';
 export const LEFT = 'left';
 export const RIGHT = 'right';
 export const NODE = 'node';
+export const MULTILEVEL = 'multilevel';

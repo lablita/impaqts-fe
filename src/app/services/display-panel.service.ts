@@ -36,12 +36,12 @@ export class DisplayPanelService {
       this.recalculateShowFlags(METADATA);
     });
     this.optionsButtonSubject.subscribe(() => {
-      this.optionsButtonStatus = !this.optionsButtonStatus;
-      this.recalculateShowFlags(OPTIONS);
+      this.optionsClick();
     });
     this.menuItemClickSubject.subscribe(menuItem => {
       this.menuItemClicked(this.lastClickedMenuItem, menuItem);
       this.lastClickedMenuItem = menuItem;
+      this.optionsClick();
     });
   }
 
@@ -83,6 +83,11 @@ export class DisplayPanelService {
         this.labelMetadataSubject.next(true);
       }
     }
+  }
+
+  private optionsClick(): void {
+    this.optionsButtonStatus = !this.optionsButtonStatus;
+    this.recalculateShowFlags(OPTIONS);
   }
 
   private menuItemClicked(oldMenuItem: string | null, newMenuItem: string): void {

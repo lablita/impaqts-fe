@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { LEFT, NODE, RIGHT } from '../common/sort-constants';
+import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -14,6 +14,7 @@ const SORT_LABELS = [
   new KeyValueItem('RIGHT_CONTEXT', RIGHT),
   new KeyValueItem('NODE_CONTEXT', NODE),
   new KeyValueItem('SHUFFLE_CONTEXT', SHUFFLE),
+  new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL)
 ]
 @Component({
   selector: 'app-concordance-table',

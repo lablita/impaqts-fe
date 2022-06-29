@@ -1,12 +1,3 @@
-<!-- <p-table *ngIf="visible" [value]="collocations" [lazy]="true" (onLazyLoad)="loadResults($event)" [paginator]="true"
-  styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults" [loading]="loading"
-  currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="paginations" (sortFunction)="loadResults($event)" [customSort]="true"
-  [sortField]="sortField" [sortOrder]="sortOrder"> -->
-<!-- <p-table *ngIf="visible" [value]="collocations" [paginator]="true" [rows]="initialPagination"
-  [showCurrentPageReport]="true" responsiveLayout="scroll" styleClass="p-datatable-striped"
-  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [rowsPerPageOptions]="paginations"
-  (sortFunction)="customSort($event)" [customSort]="true"> -->
 <p-table [value]="collocations" [lazy]="true" (onLazyLoad)="loadResults($event)" [paginator]="true" [rows]="10"
   [rowsPerPageOptions]="paginations" [totalRecords]="totalRecords" [loading]="loading" [customSort]="true"
   currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
@@ -17,8 +8,6 @@
       </th>
       <th *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}&nbsp;
         <fa-icon style="font-size: small" [icon]="faSortAmountDown"></fa-icon>
-        <!-- <i class="fa-solid fa-arrow-down-wide-short"></i> -->
-        <!-- <p-sortIcon [field]="col" ariaLabel="Activate to sort"></p-sortIcon> -->
       </th>
     </tr>
   </ng-template>

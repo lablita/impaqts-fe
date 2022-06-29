@@ -224,11 +224,13 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.selectedQueryType,
       this.defaultAttributeCQL);
     if (sortQueryRequest && sortQueryRequest !== undefined) {
-      this.fieldRequest.quickSort = sortQueryRequest;
-      typeSearch = ['Sort', sortQueryRequest.sortKey!]
+      typeSearch = ['Sort', sortQueryRequest.sortKey!];
+    } else if (this.queryRequestSevice.queryRequest.sortQueryRequest
+      && this.queryRequestSevice.queryRequest.sortQueryRequest !== undefined) {
+      typeSearch = ['Sort', !!this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey
+        ? this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
     }
     this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
-    // this.queryRequestSevice.resetOptionsRequest();
   }
 
   public makeCollocations(): void {

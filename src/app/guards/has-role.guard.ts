@@ -45,12 +45,12 @@ export class HasRoleGuard implements CanActivate {
 
   private getRoutesByMenu(menu: string[], menuRoutes: KeyValueItem[]): string[] {
     const result: string[] = [];
-    menu.forEach(voiceMenu => {
-      const route = menuRoutes.find(i => i.key === voiceMenu)?.value;
+    menu.forEach(itemMenu => {
+      const route = menuRoutes.find(i => i.key === itemMenu)?.value;
       if (route !== undefined) {
         result.push(route);
       }
-    })
+    });
     return result;
   }
 

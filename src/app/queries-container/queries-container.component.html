@@ -1,8 +1,5 @@
 <div class="flex flex-row">
 
-  <!-- <div class="flex flex-grow-1 flex-column mt-3"
-    [ngClass]="{'w-12': !(displayRightPanel | async), 'w-6': (displayRightPanel | async)}"> -->
-  <!-- ++{{(displayMetadataPanel() | async)}}--{{(displayOptionsPanel() | async)}}** -->
   <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !((displayMetadataPanel() | async) ||
   (displayOptionsPanel() | async)), 'w-6': (displayMetadataPanel() | async) ||
   (displayOptionsPanel() | async)}">
@@ -123,13 +120,8 @@
       </div>
     </p-card>
 
-    <!-- <div class="flex mt-3" *ngIf="displayResultPanel"> -->
     <div class="flex mt-3" *ngIf="!!this.titleResult">
       <p-card class="w-12">
-        <!-- <app-collocation-table
-          [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayRightPanel | async) && !!selectedCorpus)"
-          [initialPagination]="initialPagination" [paginations]="paginations">
-        </app-collocation-table> -->
         <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayMetadataPanel() | async) ||
         (displayOptionsPanel() | async)) && !!selectedCorpus" [initialPagination]="initialPagination"
           [paginations]="paginations">
@@ -140,7 +132,6 @@
       </p-card>
     </div>
   </div>
-  <!-- <div class="flex flex-column w-6" *ngIf="(displayRightPanel | async) && !!selectedCorpus"> -->
   <div class="flex flex-column w-6"
     *ngIf="((displayMetadataPanel() | async) || (displayOptionsPanel() | async)) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus"
