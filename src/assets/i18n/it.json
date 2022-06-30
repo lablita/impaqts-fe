@@ -142,8 +142,8 @@
         "SORT_KEY": "Sort key",
         "SORT_OPTIONS": "Sort options",
         "THIRD_LEVEL": "third level (... finally sort by)",
-        "CLEAR_SORT_OPT": "Cancella Opz. Ord.",
-        "SORT_CONCORDANCE": "Concordanze Ord."
+        "CLEAR_SORT_OPT": "Svuota Opzioni",
+        "SORT_CONCORDANCE": "Ordina Concordanze"
       },
       "FREQ_OPTIONS": {
         "FIRST_LEVEL": "first level",
@@ -152,10 +152,13 @@
         "FREQ_LIMIT": "Frequency limit",
         "FREQ_OPTIONS": "Frequency opt.",
         "INCLUDE_CAT": "Includi categorie senza risultati",
+        "IGNORE_CASE": "Ignore case",
         "MAKE_FREQ": "Make frequency list",
         "MULTI_FREQ_DIST": "Multilevel frequency distribution",
         "SECOND_LEVEL": "second level",
-        "THIRD_LEVEL": "third level"
+        "THIRD_LEVEL": "third level",
+        "CLEAR_FREQ_OPT": "Svuota Opzioni",
+        "FREQ_CONCORDANCE": "Frequenza Concordanze"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",

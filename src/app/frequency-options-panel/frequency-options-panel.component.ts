@@ -1,12 +1,50 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { FIRST, FOURTH, SECOND, THIRD } from '../common/sort-constants';
-import { DEFAULT_FREQUENCY_QUERY_REQUEST, FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
+import { QueryRequestService } from '../services/query-request.service';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
+
+const POSITION_LIST = [
+  new KeyValueItem(L6, L6),
+  new KeyValueItem(L5, L5),
+  new KeyValueItem(L4, L4),
+  new KeyValueItem(L3, L3),
+  new KeyValueItem(L2, L2),
+  new KeyValueItem(L1, L1),
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(R1, R1),
+  new KeyValueItem(R2, R2),
+  new KeyValueItem(R3, R3),
+  new KeyValueItem(R4, R4),
+  new KeyValueItem(R5, R5),
+  new KeyValueItem(R6, R6)
+];
+
+const SELECTED_POSITION = [
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(NODE, NODE)
+];
+
+const LEVELS = [
+  new KeyValueItem(FIRST, 'PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL'),
+  new KeyValueItem(SECOND, 'PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL'),
+  new KeyValueItem(THIRD, 'PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL'),
+  new KeyValueItem(FOURTH, 'PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL')
+];
+
+const MULTI_ATTRIBUTE = [
+  new KeyValueItem('word', CONCORDANCE_WORD),
+  new KeyValueItem('word', CONCORDANCE_WORD),
+  new KeyValueItem('word', CONCORDANCE_WORD),
+  new KeyValueItem('word', CONCORDANCE_WORD)
+];
 
 @Component({
   selector: 'app-frequency-options-panel',
@@ -18,6 +56,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
+  @Output() public concordanceFrequency = new EventEmitter<FrequencyQueryRequest>();
 
   public freqOptionsQueryRequest: FreqOptionsQueryRequest = FreqOptionsQueryRequest.getInstance();
 
@@ -29,11 +68,11 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public positionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public ignoreCaseLabel = '';
-  public includeCatLabel = ''
+  public isSimpleFreq = true;
+
 
   constructor(
-    private readonly translateService: TranslateService
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
@@ -41,80 +80,16 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
     }
     this.ignoreCase = [false, false, false, false];
-    const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST)
-    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : DEFAULT_FREQUENCY_QUERY_REQUEST;
-
-    this.positionList = [
-      new KeyValueItem(L6, L6),
-      new KeyValueItem(L5, L5),
-      new KeyValueItem(L4, L4),
-      new KeyValueItem(L3, L3),
-      new KeyValueItem(L2, L2),
-      new KeyValueItem(L1, L1),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(R6, R6),
-      new KeyValueItem(R5, R5),
-      new KeyValueItem(R4, R4),
-      new KeyValueItem(R3, R3),
-      new KeyValueItem(R2, R2),
-      new KeyValueItem(R1, R1)
-    ];
-
-    this.selectedPosition = [
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE),
-      new KeyValueItem(NODE, NODE)
-    ];
-
-    this.translateService.stream(CONCORDANCE_WORD).subscribe({
-      next: res => {
-        this.selectedMultiAttribute = [];
-        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-        this.selectedMultiAttribute.push(new KeyValueItem('word', res));
-      }
-    });
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.INCLUDE_CAT').subscribe({ next: res => this.includeCatLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.SORT_OPTIONS.IGNORE_CASE').subscribe({ next: res => this.ignoreCaseLabel = res });
-
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FIRST_LEVEL').subscribe({
-      next: res => {
-        this.levels = [];
-        this.levels.push(new KeyValueItem(FIRST, res));
-      }
-    });
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.SECOND_LEVEL').subscribe({ next: res => this.levels.push(new KeyValueItem(SECOND, res)) });
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.THIRD_LEVEL').subscribe({ next: res => this.levels.push(new KeyValueItem(THIRD, res)) });
-    this.translateService.stream('PAGE.CONCORDANCE.FREQ_OPTIONS.FOURTH_LEVEL').subscribe({
-      next: res => {
-        this.levels.push(new KeyValueItem(FOURTH, res));
-        this.selectedLevel = this.levels.filter(l => l.key === this.freqOptionsQueryRequest.level.key)[0];
-        const index = this.selectedLevel.key === FIRST ? 0 :
-          (this.selectedLevel.key === SECOND ? 1 : (this.selectedLevel.key === THIRD ? 2 : 3));
-        this.selectedMultiAttribute[index] = this.freqOptionsQueryRequest.attribute;
-        this.selectedPosition[index] = this.freqOptionsQueryRequest.position;
-        this.ignoreCase[index] = this.freqOptionsQueryRequest.ignoreCase;
-      }
-    });
+    const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST);
+    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : FreqOptionsQueryRequest.getInstance();
+    this.positionList = POSITION_LIST;
+    this.selectedPosition = SELECTED_POSITION;
+    this.levels = LEVELS;
+    this.selectedMultiAttribute = MULTI_ATTRIBUTE;
   }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
-  }
-
-  public clickFreqOption(): void {
-    if (this.selectedLevel) {
-      this.freqOptionsQueryRequest.level = this.selectedLevel;
-    }
-    const index = this.freqOptionsQueryRequest.level.key === FIRST ? 0 :
-      (this.freqOptionsQueryRequest.level.key === SECOND ? 1 : (this.freqOptionsQueryRequest.level.key === THIRD ? 2 : 3));
-    this.freqOptionsQueryRequest.attribute = this.selectedMultiAttribute[index];
-    this.freqOptionsQueryRequest.ignoreCase = this.ignoreCase[index];
-    this.freqOptionsQueryRequest.position = this.selectedPosition[index];
-
-    localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
   }
 
   public clickNodeTags(): void {
@@ -123,6 +98,60 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   public clickNodeForms(): void {
     return;
+  }
+
+  public removeSortOption(): void {
+    this.queryRequestService.resetOptionsRequest();
+  }
+
+  public makeFreq(): void {
+    this.isSimpleFreq = true;
+    this.setFrequencyOption(true);
+    this.concordanceFrequency.emit(this.getFrequencyOption());
+  }
+
+  public makeMultilevelFreq(): void {
+    this.isSimpleFreq = false;
+    this.setFrequencyOption(false);
+    this.concordanceFrequency.emit(this.getFrequencyOption());
+  }
+
+  public levelCheck(event: any, i: number): void {
+    this.freqOptionsQueryRequest.levelSelected = event.checked ? i : i - 1;
+    if (event.checked) {
+      this.freqOptionsQueryRequest.freqOptionList.forEach((f, index) => f.level = index <= i - 1);
+    }
+  }
+
+  private setFrequencyOption(isSimpleFreq: boolean): void {
+    this.queryRequestService.resetOptionsRequest();
+    if (this.freqOptionsQueryRequest) {
+      this.queryRequestService.queryRequest.frequencyQueryRequest = this.frequencyQueryRequestBuild(this.freqOptionsQueryRequest, isSimpleFreq);
+      localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
+    }
+  }
+
+  private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptionsQueryRequest, isSimpleFreq: boolean): FrequencyQueryRequest {
+    const res = new FrequencyQueryRequest();
+    if (isSimpleFreq) {
+      res.frequencyLimit = freqOptionsQueryRequest.freqLimit;
+      res.includeCategories = freqOptionsQueryRequest.includeCat;
+      res.categories = freqOptionsQueryRequest.categories.map(cat => cat.key);
+    } else {
+      res.frequencyLimit = freqOptionsQueryRequest.freqLimitMulti;
+      for (let i = 0; i < freqOptionsQueryRequest.levelSelected; i++) {
+        const freqOption = new FrequencyOption();
+        freqOption.attribute = freqOptionsQueryRequest.freqOptionList[i].attribute;
+        freqOption.ignoreCase = freqOptionsQueryRequest.freqOptionList[i].ignoreCase;
+        freqOption.position = freqOptionsQueryRequest.freqOptionList[i].position;
+        res.multilevelFrequency.push(freqOption);
+      }
+    }
+    return res;
+  }
+
+  private getFrequencyOption(): FrequencyQueryRequest {
+    return this.queryRequestService.queryRequest.frequencyQueryRequest!;
   }
 
 }

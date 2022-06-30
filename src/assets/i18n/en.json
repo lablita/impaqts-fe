@@ -145,8 +145,8 @@
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "THIRD_LEVEL": "third level (... finally sort by)",
         "POSITION": "Position",
-        "CLEAR_SORT_OPT": "Cancella Opz. Ord.",
-        "SORT_CONCORDANCE": "Concordanze Ord."
+        "CLEAR_SORT_OPT": "Clear Options",
+        "SORT_CONCORDANCE": "Sort Concordances"
       },
       "FREQ_OPTIONS": {
         "FREQ_OPTIONS": "Frequency opt.",
@@ -158,7 +158,10 @@
         "THIRD_LEVEL": "third level",
         "FOURTH_LEVEL": "fourth level",
         "MAKE_FREQ": "Make frequency list",
-        "INCLUDE_CAT": "Include categories with no hits"
+        "INCLUDE_CAT": "Include categories with no hits",
+        "IGNORE_CASE": "Ignore case",
+        "CLEAR_FREQ_OPT": "Clear Options",
+        "FREQ_CONCORDANCE": "Frequency Concordances"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",

@@ -5,7 +5,7 @@ export class FrequencyOption {
 }
 export class FrequencyQueryRequest {
   frequencyLimit = 0;
-  categoryWithoutResults: boolean | null = null;
-  category: Array<string> = Array.from<string>({ length: 0 });
+  includeCategories: boolean | null = null;
+  categories: Array<string> = Array.from<string>({ length: 0 });
   multilevelFrequency: Array<FrequencyOption> = Array.from<FrequencyOption>({ length: 0 });
 }

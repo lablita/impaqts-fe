@@ -13,9 +13,10 @@ export class QueryRequestService {
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
+    this.queryRequest.frequencyQueryRequest = null;
   }
 
   public isOptionSet(): boolean {
-    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest;
+    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || !!this.queryRequest.frequencyQueryRequest;
   }
 }

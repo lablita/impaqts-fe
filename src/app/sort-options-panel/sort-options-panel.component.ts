@@ -22,6 +22,23 @@ const SELECTED_POSITION = [
   new KeyValueItem(NODE, NODE),
   new KeyValueItem(NODE, NODE),
 ];
+
+const SORT_KEYS = [
+  new KeyValueItem('LEFT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT'),
+  new KeyValueItem('NODE_CONTEXT', 'MENU.NODE'),
+  new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')
+];
+
+const LEVELS = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
+new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'),
+new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')
+];
+
+const MULTI_ATTRIBUTE = [
+  new KeyValueItem('WORD', 'WORD'),
+  new KeyValueItem('WORD', 'WORD'),
+  new KeyValueItem('WORD', 'WORD')
+];
 @Component({
   selector: 'app-sort-options-panel',
   templateUrl: './sort-options-panel.component.html',
@@ -38,14 +55,10 @@ export class SortOptionsPanelComponent implements OnInit {
 
   public attributeList: KeyValueItem[] = [];
 
-  public selectedMultiAttribute: KeyValueItem[] = [new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD'), new KeyValueItem('WORD', 'WORD')];
-  public sortKeys: KeyValueItem[] = [new KeyValueItem('LEFT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.LEFT_CONTEXT'),
-  new KeyValueItem('NODE_CONTEXT', 'MENU.NODE'),
-  new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')];
+  public selectedMultiAttribute = MULTI_ATTRIBUTE;
+  public sortKeys = SORT_KEYS;
   public selectedSortKey: KeyValueItem | null = null;
-  public levels: KeyValueItem[] = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'),
-  new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')];
+  public levels = LEVELS;
   public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
@@ -83,7 +96,6 @@ export class SortOptionsPanelComponent implements OnInit {
         this.backward = this.sortOptionsQueryRequest.backwardMulti;
       }
     }
-
     this.isSimpleSort = this.queryRequestService.queryRequest.sortQueryRequest === null ? true : !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey;
   }
 
@@ -197,9 +209,6 @@ export class SortOptionsPanelComponent implements OnInit {
       this.sortOptionsQueryRequest.backwardMulti = this.backward;
       this.sortOptionsQueryRequest.position = this.selectedPosition.slice(0, this.selectedLevels.length);
       localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
-    }
-    if (this.sortOptionsQueryRequest) {
-      this.queryRequestService.resetOptionsRequest();
       this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
     }
   }
@@ -207,7 +216,5 @@ export class SortOptionsPanelComponent implements OnInit {
   private getSortOption(): SortQueryRequest {
     return this.queryRequestService.queryRequest.sortQueryRequest!;
   }
-
-
 
 }
