@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { FIRST, FOURTH, SECOND, THIRD } from '../common/sort-constants';
-import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query_request';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
@@ -58,7 +58,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public concordanceFrequency = new EventEmitter<FrequencyQueryRequest>();
 
-  public freqOptionsQueryRequest: FreqOptionsQueryRequest = FreqOptionsQueryRequest.getInstance();
+  public freqOptionsQueryRequest: FreqOptionsQueryRequestDTO = FreqOptionsQueryRequestDTO.build();
 
   public attributeList: Array<KeyValueItem> = [];
   public levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
@@ -81,7 +81,9 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     }
     this.ignoreCase = [false, false, false, false];
     const foqr = localStorage.getItem(FREQ_OPTIONS_QUERY_REQUEST);
-    this.freqOptionsQueryRequest = foqr ? JSON.parse(foqr) : FreqOptionsQueryRequest.getInstance();
+    if (foqr) {
+      this.freqOptionsQueryRequest = JSON.parse(foqr);
+    }
     this.positionList = POSITION_LIST;
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
@@ -131,7 +133,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     }
   }
 
-  private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptionsQueryRequest, isSimpleFreq: boolean): FrequencyQueryRequest {
+  private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptionsQueryRequestDTO, isSimpleFreq: boolean): FrequencyQueryRequest {
     const res = new FrequencyQueryRequest();
     if (isSimpleFreq) {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimit;

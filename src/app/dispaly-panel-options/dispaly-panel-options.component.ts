@@ -22,8 +22,8 @@ export class DispalyPanelOptionsComponent implements OnInit {
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
   @Output() public loadCollocations = new EventEmitter<boolean>();
-  @Output() public sortEmitter = new EventEmitter<SortQueryRequest>();
-  @Output() public frequencyEmitter = new EventEmitter<FrequencyQueryRequest>();
+  @Output() public sort = new EventEmitter<SortQueryRequest>();
+  @Output() public frequency = new EventEmitter<FrequencyQueryRequest>();
 
   public VIEW_OPTIONS = VIEW_OPTIONS;
   public WORD_LIST = WORD_LIST;
@@ -45,11 +45,11 @@ export class DispalyPanelOptionsComponent implements OnInit {
   }
 
   public sortCallback(sortQueryRequest: SortQueryRequest): void {
-    this.sortEmitter.emit(sortQueryRequest);
+    this.sort.emit(sortQueryRequest);
   }
 
   public frequencyCallback(frequencyQueryRequest: FrequencyQueryRequest): void {
-    this.frequencyEmitter.emit(frequencyQueryRequest);
+    this.frequency.emit(frequencyQueryRequest);
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {

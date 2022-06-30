@@ -21,3 +21,8 @@ export const LEFT = 'left';
 export const RIGHT = 'right';
 export const NODE = 'node';
 export const MULTILEVEL = 'multilevel';
+
+export const LEFT_CONTEXT = 'LEFT_CONTEXT';
+export const NODE_CONTEXT = 'NODE_CONTEXT';
+export const RIGHT_CONTEXT = 'RIGHT_CONTEXT';
+export const SHUFFLE_CONTEXT = 'SHUFFLE_CONTEXT';

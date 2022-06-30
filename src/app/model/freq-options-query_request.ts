@@ -1,24 +1,24 @@
 import { NODE, WORD } from '../common/frequency-constants';
 import { KeyValueItem } from './key-value-item';
 
-export class FreqOption {
+export class FreqOptionDTO {
   level = false;
   attribute = WORD;
   ignoreCase = false;
   position = NODE;
 }
-export class FreqOptionsQueryRequest {
+export class FreqOptionsQueryRequestDTO {
   freqLimit = 0;
   freqLimitMulti = 0;
   includeCat = false;
   categories: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   levelSelected = 0;
-  freqOptionList: Array<FreqOption> = Array.from<FreqOption>({ length: 0 });
+  freqOptionList: Array<FreqOptionDTO> = Array.from<FreqOptionDTO>({ length: 0 });
 
-  public static getInstance(): FreqOptionsQueryRequest {
-    const freqOptionsQueryRequest = new FreqOptionsQueryRequest();
+  public static build(): FreqOptionsQueryRequestDTO {
+    const freqOptionsQueryRequest = new FreqOptionsQueryRequestDTO();
     for (let i = 0; i <= 3; i++) {
-      const freqOption = new FreqOption();
+      const freqOption = new FreqOptionDTO();
       freqOptionsQueryRequest.freqOptionList.push(freqOption);
     }
     return freqOptionsQueryRequest;

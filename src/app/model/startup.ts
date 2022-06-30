@@ -1,8 +1,8 @@
 import { CollocationOptionsQueryRequest } from './collocation-options-query-request';
 import { FilterOptionsQueryRequest } from './filter-options-query.request';
-import { FreqOptionsQueryRequest } from './freq-options-query_request';
+import { FreqOptionsQueryRequestDTO } from './freq-options-query_request';
 import { KeyValueItem } from './key-value-item';
-import { SortOptionsQueryRequest } from './sort-options-query-request';
+import { SortOptionsQueryRequestDTO } from './sort-options-query-request';
 import { ViewOptionsQueryRequest } from './view-options-query-request';
 import { WordListOptionsQueryRequest } from './word-list-options-query-request';
 
@@ -10,8 +10,8 @@ export class Startup {
   corpusList: KeyValueItem[];
   viewOptionsQueryRequest: ViewOptionsQueryRequest;
   wordListOptionsQueryRequest: WordListOptionsQueryRequest;
-  sortOptionsQueryRequest: SortOptionsQueryRequest;
-  freqOptionsQueryRequest: FreqOptionsQueryRequest;
+  sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
+  freqOptionsQueryRequest: FreqOptionsQueryRequestDTO;
   collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
   filterOptionsQueryRequest: FilterOptionsQueryRequest;
 
@@ -19,8 +19,8 @@ export class Startup {
     corpusList: KeyValueItem[],
     viewOptionsQueryRequest: ViewOptionsQueryRequest,
     wordListOptionsQueryRequest: WordListOptionsQueryRequest,
-    sortOptionsQueryRequest: SortOptionsQueryRequest,
-    freqOptionsQueryRequest: FreqOptionsQueryRequest,
+    sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
+    freqOptionsQueryRequest: FreqOptionsQueryRequestDTO,
     collocationOptionsQueryRequest: CollocationOptionsQueryRequest,
     filterOptionsQueryRequest: FilterOptionsQueryRequest
   ) {

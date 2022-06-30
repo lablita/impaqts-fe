@@ -30,7 +30,7 @@
               <div class="mb-4 ml-2">
                 <p-checkbox name="level" [binary]="true" [label]="level.value | translate"
                   [(ngModel)]="freqOptionsQueryRequest.freqOptionList[i].level" (onChange)="levelCheck($event, i+1)"
-                  [disabled]=" (i+1) <freqOptionsQueryRequest.levelSelected">
+                  [disabled]="(i+1) <freqOptionsQueryRequest.levelSelected">
                 </p-checkbox>
               </div>
               <div class="field ml-2 mb-3">

@@ -4,9 +4,9 @@ import {
   OPTIONAL_DISPLAY_ATTR_URL_KWIC, REPUBBLICA, WORD
 } from '../model/constants';
 import { FilterOptionsQueryRequest } from '../model/filter-options-query.request';
-import { FreqOptionsQueryRequest } from '../model/freq-options-query_request';
+import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query_request';
 import { KeyValueItem } from '../model/key-value-item';
-import { SortOptionsQueryRequest } from '../model/sort-options-query-request';
+import { SortOptionsQueryRequestDTO } from '../model/sort-options-query-request';
 import { Startup } from '../model/startup';
 import { ViewOptionsQueryRequest } from '../model/view-options-query-request';
 import { WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
@@ -53,7 +53,7 @@ const startUp1 = new Startup(
     null,
     null,
     null
-  ), SortOptionsQueryRequest.build(
+  ), SortOptionsQueryRequestDTO.build(
     new KeyValueItem(WORD, WORD),
     new KeyValueItem(LEFT, LEFT),
     3,
@@ -64,7 +64,7 @@ const startUp1 = new Startup(
     [false, false, false],
     [false, false, false],
     [new KeyValueItem(NODE, NODE)],
-  ), new FreqOptionsQueryRequest(
+  ), new FreqOptionsQueryRequestDTO(
     0,
     new KeyValueItem(FIRST, FIRST),
     new KeyValueItem(WORD, WORD),
@@ -132,7 +132,7 @@ const startUp2 = new Startup(
     null,
     null,
     null
-  ), SortOptionsQueryRequest.build(
+  ), SortOptionsQueryRequestDTO.build(
     new KeyValueItem(WORD, WORD),
     new KeyValueItem(LEFT, LEFT),
     3,
@@ -143,7 +143,7 @@ const startUp2 = new Startup(
     [false],
     [false],
     [new KeyValueItem(NODE, NODE)],
-  ), new FreqOptionsQueryRequest(
+  ), new FreqOptionsQueryRequestDTO(
     0,
     new KeyValueItem(FIRST, FIRST),
     new KeyValueItem(WORD, WORD),
