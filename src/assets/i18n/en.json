@@ -160,7 +160,7 @@
         "MAKE_FREQ": "Make frequency list",
         "INCLUDE_CAT": "Include categories with no hits",
         "IGNORE_CASE": "Ignore case",
-        "CLEAR_FREQ_OPT": "Clear Options",
+        "CLEAR_FREQ_OPT": "Default Value",
         "FREQ_CONCORDANCE": "Frequency Concordances"
       },
       "COLLOCATION_OPTIONS": {

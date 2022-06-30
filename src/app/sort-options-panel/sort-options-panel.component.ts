@@ -84,6 +84,7 @@ export class SortOptionsPanelComponent implements OnInit {
     if (soqr) {
       this.sortOptionsQueryRequest = JSON.parse(soqr);
     }
+    this.isSimpleSort = this.queryRequestService.queryRequest.sortQueryRequest === null ? true : !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey;
   }
 
   public closeSidebar(): void {
@@ -102,8 +103,10 @@ export class SortOptionsPanelComponent implements OnInit {
     this.concordanceSort.emit(this.getSortOption());
   }
 
-  public removeSortOption(): void {
+  public deafultValues(): void {
     this.queryRequestService.resetOptionsRequest();
+    localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
+    this.sortOptionsQueryRequest = SortOptionsQueryRequestDTO.build();
   }
 
   public clickLeft(): void {
