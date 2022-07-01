@@ -13,6 +13,7 @@ export class EmitterService {
   public user: BehaviorSubject<User> = new BehaviorSubject(new User());
   public makeConcordance: BehaviorSubject<ConcordanceResult> = new BehaviorSubject<ConcordanceResult>(new ConcordanceResult(new FieldRequest(), []));
   public makeCollocation: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
+  public makeFrequency: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
   public pageMenu = '';
 
 }

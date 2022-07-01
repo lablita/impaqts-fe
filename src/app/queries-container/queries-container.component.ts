@@ -247,6 +247,23 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.emitterService.makeCollocation.next(this.fieldRequest);
   }
 
+  public makeFrequency(): void {
+    this.titleResult = 'MENU.FREQUENCY';
+    this.fieldRequest = FieldRequest.build(
+      this.selectedCorpus,
+      this.simpleResult,
+      this.simple,
+      this.lemma,
+      this.phrase,
+      this.word,
+      this.character,
+      this.cql,
+      this.matchCase,
+      this.selectedQueryType,
+      this.defaultAttributeCQL);
+    this.emitterService.makeFrequency.next(this.fieldRequest);
+  }
+
   public updateVisibilityFlags(): void {
     this.displayResultPanel = !!this.titleResult;
   }

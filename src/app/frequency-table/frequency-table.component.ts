@@ -1,14 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FieldRequest } from '../model/field-request';
 import { LoadResultsService } from '../services/load-results.service';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
-  selector: 'app-frequency',
-  templateUrl: './frequency.component.html',
-  styleUrls: ['./frequency.component.scss']
+  selector: 'app-frequency-table',
+  templateUrl: './frequency-table.component.html',
+  styleUrls: ['./frequency-table.component.scss']
 })
-export class FrequencyComponent implements OnInit {
+export class FrequencyTableComponent implements OnInit {
+  @Input() public initialPagination = 10;
+  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
+  @Input() public visible = false;
+
   public loading = false;
   public fieldRequest: FieldRequest | null = null;
 
@@ -32,10 +36,6 @@ export class FrequencyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
-
-
-
 
 }
