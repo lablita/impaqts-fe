@@ -145,7 +145,7 @@
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "THIRD_LEVEL": "third level (... finally sort by)",
         "POSITION": "Position",
-        "CLEAR_SORT_OPT": "Clear Options",
+        "CLEAR_SORT_OPT": "Default Value",
         "SORT_CONCORDANCE": "Sort Concordances"
       },
       "FREQ_OPTIONS": {

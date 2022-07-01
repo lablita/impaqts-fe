@@ -1,8 +1,8 @@
-import { CollocationOptionsQueryRequest } from './collocation-options-query-request';
-import { FilterOptionsQueryRequest } from './filter-options-query.request';
-import { FreqOptionsQueryRequestDTO } from './freq-options-query_request';
+import { CollocationOptionsQueryRequestDTO } from './collocation-options-query-request-dto';
+import { FilterOptionsQueryRequest } from './filter-options-query-request-dto';
+import { FreqOptionsQueryRequestDTO } from './freq-options-query-request-dto';
 import { KeyValueItem } from './key-value-item';
-import { SortOptionsQueryRequestDTO } from './sort-options-query-request';
+import { SortOptionsQueryRequestDTO } from './sort-options-query-request-dto';
 import { ViewOptionsQueryRequest } from './view-options-query-request';
 import { WordListOptionsQueryRequest } from './word-list-options-query-request';
 
@@ -12,7 +12,7 @@ export class Startup {
   wordListOptionsQueryRequest: WordListOptionsQueryRequest;
   sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
   freqOptionsQueryRequest: FreqOptionsQueryRequestDTO;
-  collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
+  collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
   filterOptionsQueryRequest: FilterOptionsQueryRequest;
 
   constructor(
@@ -21,7 +21,7 @@ export class Startup {
     wordListOptionsQueryRequest: WordListOptionsQueryRequest,
     sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
     freqOptionsQueryRequest: FreqOptionsQueryRequestDTO,
-    collocationOptionsQueryRequest: CollocationOptionsQueryRequest,
+    collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO,
     filterOptionsQueryRequest: FilterOptionsQueryRequest
   ) {
     this.corpusList = corpusList;

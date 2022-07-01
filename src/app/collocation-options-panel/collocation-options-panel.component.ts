@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CollocationOptionsQueryRequest, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request';
+import { CollocationOptionsQueryRequestDTO, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request-dto';
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
@@ -28,7 +28,7 @@ export class CollocationOptionsPanelComponent {
   @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
+  public collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
   public attributeList: KeyValueItem[] = [
     new KeyValueItem('WORD', 'WORD'),
     new KeyValueItem('TAG', 'TAG'),
@@ -62,7 +62,7 @@ export class CollocationOptionsPanelComponent {
     this.closeSidebarEvent.emit(true);
   }
 
-  private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequest): CollocationQueryRequest {
+  private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO): CollocationQueryRequest {
     const res = new CollocationQueryRequest();
     res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute.key : null;
     res.minFreqCorpus = collocationOptionsQueryRequest.minFreqCorpus;

@@ -9,7 +9,7 @@ import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
-const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
+export const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
   new KeyValueItem(CONCORDANCE, VIEW_OPTIONS_LABEL),
   new KeyValueItem(VIEW_OPTIONS, VIEW_OPTIONS_LABEL),
   new KeyValueItem(WORD_LIST, WORD_OPTIONS_LABEL),

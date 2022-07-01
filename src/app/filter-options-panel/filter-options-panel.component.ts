@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FIRST, LAST, NEGATIVE, POSITIVE } from '../common/filter-constants';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
-import { DEFAULT_FILTER_OPTIONS_QUERY_REQUEST, FilterOptionsQueryRequest } from '../model/filter-options-query.request';
+import { DEFAULT_FILTER_OPTIONS_QUERY_REQUEST, FilterOptionsQueryRequest } from '../model/filter-options-query-request-dto';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 

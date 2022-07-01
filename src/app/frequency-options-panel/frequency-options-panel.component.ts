@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { FIRST, FOURTH, SECOND, THIRD } from '../common/sort-constants';
-import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query_request';
+import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query-request-dto';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';

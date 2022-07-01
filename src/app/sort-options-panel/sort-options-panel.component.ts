@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { L1, L2, L3, LEFT_CONTEXT, NODE, NODE_CONTEXT, R1, R2, R3, RIGHT_CONTEXT, SHUFFLE_CONTEXT, WORD } from '../common/sort-constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request';
+import { SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request-dto';
 import { SortQueryRequest } from '../model/sort-query-request';
 import { QueryRequestService } from '../services/query-request.service';
 

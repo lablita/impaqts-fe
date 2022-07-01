@@ -27,6 +27,8 @@ export class DisplayPanelService {
   private metadataButtonStatus = false;
   private optionsButtonStatus = false;
   private lastClickedMenuItem: string | null = null;
+  private panelMustBeOpened = false;
+  private lastPanelOpened: string | null = null;
 
   public panelSelectedSubject: BehaviorSubject<string> = new BehaviorSubject<string>(VIEW_OPTIONS);
 
@@ -39,6 +41,8 @@ export class DisplayPanelService {
       this.optionsClick();
     });
     this.menuItemClickSubject.subscribe(menuItem => {
+      this.panelMustBeOpened = this.lastPanelOpened !== menuItem;
+      this.lastPanelOpened = menuItem;
       this.menuItemClicked(this.lastClickedMenuItem, menuItem);
       this.lastClickedMenuItem = menuItem;
       this.optionsClick();
@@ -74,7 +78,7 @@ export class DisplayPanelService {
         this.labelOptionsSubject.next(true);
       }
     } else {
-      if (this.optionsButtonStatus) {
+      if (this.optionsButtonStatus && !this.metadataButtonStatus || this.panelMustBeOpened) {
         // open options panel and disable metadata button
         this.optionsPanelSubject.next(true);
         this.labelMetadataSubject.next(false);

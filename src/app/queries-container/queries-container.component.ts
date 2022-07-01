@@ -120,6 +120,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
+    this.displayPanelService.reset()
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
