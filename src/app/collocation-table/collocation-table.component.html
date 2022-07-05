@@ -23,7 +23,7 @@
   </ng-template>
   <ng-template pTemplate="body" let-collocation>
     <tr *ngIf="collocation">
-      <td *ngIf="!!collocation.word">{{collocation.word}}</td>
+      <td>{{collocation.word}}</td>
       <td class="text-right" *ngIf="!!collocation.concurrenceCount">
         {{collocation.concurrenceCount | number: '1.1-4'}}</td>
       <td class="text-right" *ngIf="!!collocation.candidateCount">

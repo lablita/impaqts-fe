@@ -234,7 +234,7 @@ export class LoadResultsService {
       tap(resp => console.log(resp)),
       map(resp => {
         const qr = resp as QueryResponse;
-        if (qr.kwicLines.length > 0) {
+        if (qr.kwicLines && qr.kwicLines.length > 0) {
           socketResponse = new SocketResponse(
             (resp as QueryResponse).kwicLines,
             [],
@@ -242,7 +242,7 @@ export class LoadResultsService {
             false,
             qr.currentSize);
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
-        } else if (qr.collocations.length > 0) {
+        } else if (qr.collocations && qr.collocations.length > 0) {
           socketResponse = new SocketResponse(
             [],
             (resp as QueryResponse).collocations,
