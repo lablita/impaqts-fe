@@ -2,6 +2,18 @@
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
+
+  <!-- <p-dialog header="Loading" [(visible)]="loading" [modal]="true" [style]="{width: '10vw'}" [draggable]="false"
+    [closable]="false" [resizable]="false">
+    <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration="1.5s"
+      class="flex align-items-center">
+    </p-progressSpinner>
+  </p-dialog> -->
+
+
+  <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
+    class="flex align-items-center">
+  </p-progressSpinner>
   <div style="width: 250px;" *ngIf="kwicLines.length > 0">
     <h3 *ngIf="totalResults && !loading">{{typeSearch.length > 1 ? typeSearch[0] + " " + typeSearch[1] : typeSearch[0]}}
       <span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult : ''}}</span>&nbsp;<b>{{totalResults}}</b>
@@ -17,8 +29,12 @@
 </div>
 <p-table *ngIf="visible && !noResultFound" [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordance($event)"
   [paginator]="true" styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults"
-  [loading]="loading" currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+  currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
   [rowsPerPageOptions]="paginations">
+  <!-- <p-table *ngIf="visible && !noResultFound" [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordance($event)"
+  [paginator]="true" styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults"
+  [loading]="loading" currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="paginations"> -->
   <ng-template pTemplate="header">
     <tr>
       <th style="width: 80px;"></th>
