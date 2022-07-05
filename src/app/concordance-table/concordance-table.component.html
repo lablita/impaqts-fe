@@ -2,15 +2,6 @@
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
-
-  <!-- <p-dialog header="Loading" [(visible)]="loading" [modal]="true" [style]="{width: '10vw'}" [draggable]="false"
-    [closable]="false" [resizable]="false">
-    <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration="1.5s"
-      class="flex align-items-center">
-    </p-progressSpinner>
-  </p-dialog> -->
-
-
   <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
     class="flex align-items-center">
   </p-progressSpinner>
@@ -31,10 +22,6 @@
   [paginator]="true" styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults"
   currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
   [rowsPerPageOptions]="paginations">
-  <!-- <p-table *ngIf="visible && !noResultFound" [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordance($event)"
-  [paginator]="true" styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults"
-  [loading]="loading" currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-  [rowsPerPageOptions]="paginations"> -->
   <ng-template pTemplate="header">
     <tr>
       <th style="width: 80px;"></th>
@@ -46,12 +33,12 @@
   <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
     <tr>
       <td>
-        <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
+        <button [disabled]="loading" pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
           (click)="showVideoDlg(rowIndex)"></button>
       </td>
       <td class="p-text-right">{{kwicLine.leftContext}}</td>
       <td class="p-text-center">
-        <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
+        <p-button [disabled]="loading" label="{{kwicLine.kwic}}" styleClass="p-button-link"
           (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
       </td>
       <td class="p-text-left">{{kwicLine.rightContext}}</td>

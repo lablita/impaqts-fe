@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
-import { FIRST, FOURTH, SECOND, THIRD } from '../common/sort-constants';
+import { FIRST, FOURTH, NODE_CONTEXT, SECOND, THIRD } from '../common/sort-constants';
 import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query-request-dto';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -16,7 +16,7 @@ const POSITION_LIST = [
   new KeyValueItem(L3, L3),
   new KeyValueItem(L2, L2),
   new KeyValueItem(L1, L1),
-  new KeyValueItem(NODE, NODE),
+  new KeyValueItem(NODE_CONTEXT, NODE),
   new KeyValueItem(R1, R1),
   new KeyValueItem(R2, R2),
   new KeyValueItem(R3, R3),

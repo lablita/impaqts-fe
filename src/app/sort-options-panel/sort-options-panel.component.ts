@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { L1, L2, L3, LEFT_CONTEXT, NODE, NODE_CONTEXT, R1, R2, R3, RIGHT_CONTEXT, SHUFFLE_CONTEXT, WORD } from '../common/sort-constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request-dto';
+import { DEFAULT_SORT_OPTIONS_QUERY_REQUEST, SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request-dto';
 import { SortQueryRequest } from '../model/sort-query-request';
 import { QueryRequestService } from '../services/query-request.service';
 
@@ -51,7 +51,7 @@ export class SortOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public concordanceSort = new EventEmitter<SortQueryRequest>();
 
-  public sortOptionsQueryRequest: SortOptionsQueryRequestDTO = SortOptionsQueryRequestDTO.build();
+  public sortOptionsQueryRequest: SortOptionsQueryRequestDTO = DEFAULT_SORT_OPTIONS_QUERY_REQUEST;
 
   public attributeList: KeyValueItem[] = [];
 
@@ -74,6 +74,7 @@ export class SortOptionsPanelComponent implements OnInit {
   ngOnInit(): void {
     this.positionList = POSITION_LIST;
     this.selectedPosition = SELECTED_POSITION;
+    this.sortOptionsQueryRequest.sortOptionList[0].level = true;
 
     if (this.corpusAttributes && this.corpusAttributes.length > 0) {
       this.corpusAttributes.forEach(ca => this.attributeList.push(new KeyValueItem(ca.key, ca.value)));
@@ -106,40 +107,62 @@ export class SortOptionsPanelComponent implements OnInit {
   public deafultValues(): void {
     this.queryRequestService.resetOptionsRequest();
     localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
-    this.sortOptionsQueryRequest = SortOptionsQueryRequestDTO.build();
+    this.sortOptionsQueryRequest = DEFAULT_SORT_OPTIONS_QUERY_REQUEST;
+    this.sortOptionsQueryRequest.sortOptionList[0].level = true;
   }
 
   public clickLeft(): void {
-    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO();
-    sortOptionsQueryRequest.sortKey = LEFT_CONTEXT;
-    sortOptionsQueryRequest.attribute = WORD;
-    sortOptionsQueryRequest.numberTokens = 3;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
+      WORD,
+      LEFT_CONTEXT,
+      3,
+      false,
+      false,
+      0,
+      []
+    );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
   public clickRight(): void {
-    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO();
-    sortOptionsQueryRequest.sortKey = RIGHT_CONTEXT;
-    sortOptionsQueryRequest.attribute = WORD;
-    sortOptionsQueryRequest.numberTokens = 3;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
+      WORD,
+      RIGHT_CONTEXT,
+      3,
+      false,
+      false,
+      0,
+      []
+    );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
   public clickNode(): void {
-    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO();
-    sortOptionsQueryRequest.sortKey = NODE_CONTEXT;
-    sortOptionsQueryRequest.attribute = WORD;
-    sortOptionsQueryRequest.numberTokens = 3;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
+      WORD,
+      NODE_CONTEXT,
+      3,
+      false,
+      false,
+      0,
+      []
+    );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
   public clickShuffle(): void {
-    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO();
-    sortOptionsQueryRequest.sortKey = SHUFFLE_CONTEXT;
-    sortOptionsQueryRequest.attribute = WORD;
+    const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
+      WORD,
+      SHUFFLE_CONTEXT,
+      3,
+      false,
+      false,
+      0,
+      []
+    );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.concordanceSort.emit(sortQueryRequest);
   }
@@ -161,11 +184,13 @@ export class SortOptionsPanelComponent implements OnInit {
       res.backward = sortOptionsQueryRequest.backward;
     } else {
       for (let i = 0; i < sortOptionsQueryRequest.levelSelected; i++) {
-        const sortOption = new SortOptionDTO();
-        sortOption.attribute = sortOptionsQueryRequest.sortOptionList[i].attribute;
-        sortOption.ignoreCase = sortOptionsQueryRequest.sortOptionList[i].ignoreCase;
-        sortOption.backward = sortOptionsQueryRequest.sortOptionList[i].backward;
-        sortOption.position = sortOptionsQueryRequest.sortOptionList[i].position;
+        const sortOption = new SortOptionDTO(
+          false,
+          sortOptionsQueryRequest.sortOptionList[i].attribute,
+          sortOptionsQueryRequest.sortOptionList[i].ignoreCase,
+          sortOptionsQueryRequest.sortOptionList[i].backward,
+          sortOptionsQueryRequest.sortOptionList[i].position
+        );
         res.multilevelSort.push(sortOption);
       }
     }

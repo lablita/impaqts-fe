@@ -102,8 +102,8 @@
                 </p-checkbox>
               </div>
               <div class="field ml-2">
-                <p-dropdown [options]="positionList" [(ngModel)]="selectedPosition[i]" optionLabel="value"
-                  optionValue="key" [showClear]="true">
+                <p-dropdown [options]="positionList" [(ngModel)]="sortOptionsQueryRequest.sortOptionList[i].position"
+                  optionLabel="value" optionValue="key" [showClear]="true">
                 </p-dropdown>
               </div>
             </div>

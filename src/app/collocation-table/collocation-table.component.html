@@ -2,6 +2,9 @@
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.COLLOCATIONS' | translate}}</b></h3>
   </div>
+  <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
+    class="flex align-items-center">
+  </p-progressSpinner>
   <div style="width: 250px;" *ngIf="collocations.length > 0 && !loading">
     <h3 *ngIf="totalResults">Query <span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult :
         ''}}</span>&nbsp;<b>{{totalResults}}</b>
@@ -10,8 +13,8 @@
 </div>
 <p-table *ngIf="visible" [value]="collocations" [lazy]="true" (onLazyLoad)="loadCollocations($event)" [paginator]="true"
   [value]="collocations" [rows]="initialPagination" [rowsPerPageOptions]="paginations" [totalRecords]="totalResults"
-  [loading]="loading" [customSort]="true" currentPageReportTemplate="'page: {currentPage} of {totalPages}'"
-  [showCurrentPageReport]="true" [sortField]="sortField">
+  [customSort]="true" currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+  [sortField]="sortField">
   <ng-template pTemplate="header">
     <tr>
       <th>

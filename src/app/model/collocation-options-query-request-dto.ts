@@ -1,22 +1,21 @@
-import { KeyValueItem } from "./key-value-item";
 
 export class CollocationOptionsQueryRequestDTO {
-  attribute: KeyValueItem | null;
+  attribute: string | null;
   rangeFrom: number;
   rangeTo: number;
   minFreqCorpus: number;
   minFreqRange: number;
-  showFunc: KeyValueItem[] | null;
-  sortBy?: KeyValueItem;
+  showFunc: string[] | null;
+  sortBy?: string | null = null;
 
   constructor(
-    attribute: KeyValueItem | null,
+    attribute: string | null,
     rangeFrom: number,
     rangeTo: number,
     minFreqCorpus: number,
     minFreqRange: number,
-    showFunc: KeyValueItem[],
-    sortBy?: KeyValueItem
+    showFunc: string[],
+    sortBy?: string
   ) {
     this.attribute = attribute;
     this.rangeFrom = rangeFrom;
@@ -28,4 +27,12 @@ export class CollocationOptionsQueryRequestDTO {
   }
 }
 
-export const DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST = new CollocationOptionsQueryRequestDTO(null, -5, 5, 5, 3, []);
+export const DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST = new CollocationOptionsQueryRequestDTO(
+  null,
+  -5,
+  5,
+  5,
+  3,
+  [
+    'T_SCORE', 'MI', 'LOG_DICE'],
+  'LOG_DICE');

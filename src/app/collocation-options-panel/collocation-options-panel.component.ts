@@ -16,7 +16,21 @@ const STAT_DESC: { [key: string]: string } = {
   REL_FREQ: 'r',
   ABS_FREQ: 'f',
   LOG_DICE: 'd',
-}
+};
+
+const OPTIOIN_LIST = [
+  new KeyValueItem('T_SCORE', 'T_SCORE'),
+  new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
+  new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
+  new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
+];
+
+const ATTRIBUTE_LIST = [
+  new KeyValueItem('WORD', 'WORD'),
+  new KeyValueItem('TAG', 'TAG'),
+  new KeyValueItem('LEMMA', 'LEMMA')
+];
+
 @Component({
   selector: 'app-collocation-options-panel',
   templateUrl: './collocation-options-panel.component.html',
@@ -29,17 +43,8 @@ export class CollocationOptionsPanelComponent {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
-  public attributeList: KeyValueItem[] = [
-    new KeyValueItem('WORD', 'WORD'),
-    new KeyValueItem('TAG', 'TAG'),
-    new KeyValueItem('LEMMA', 'LEMMA')
-  ];
-  public optionList: KeyValueItem[] = [
-    new KeyValueItem('T_SCORE', 'T_SCORE'),
-    new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
-    new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
-    new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
-  ];
+  public attributeList: KeyValueItem[] = ATTRIBUTE_LIST;
+  public optionList: KeyValueItem[] = OPTIOIN_LIST;
 
   constructor(
     private readonly queryRequestService: QueryRequestService
@@ -64,15 +69,15 @@ export class CollocationOptionsPanelComponent {
 
   private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO): CollocationQueryRequest {
     const res = new CollocationQueryRequest();
-    res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute.key : null;
+    res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute : null;
     res.minFreqCorpus = collocationOptionsQueryRequest.minFreqCorpus;
     res.minFreqRange = collocationOptionsQueryRequest.minFreqRange;
     res.rangeFrom = collocationOptionsQueryRequest.rangeFrom;
     res.rangeTo = collocationOptionsQueryRequest.rangeTo;
     if (!!collocationOptionsQueryRequest.showFunc) {
-      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(STAT_DESC[item.key]));
+      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(STAT_DESC[item]));
     }
-    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? STAT_DESC[collocationOptionsQueryRequest.sortBy.key] : null;
+    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? STAT_DESC[collocationOptionsQueryRequest.sortBy] : null;
     return res;
   }
 
