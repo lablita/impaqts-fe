@@ -35,24 +35,29 @@ export class DisplayPanelService {
   constructor() {
     this.metadataButtonSubject.subscribe(() => {
       this.metadataButtonStatus = !this.metadataButtonStatus;
-      this.recalculateShowFlags(METADATA);
+      this.recalculateShowFlags(METADATA, true);
     });
     this.optionsButtonSubject.subscribe(() => {
-      this.optionsClick();
+      this.optionsClick(true);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
       this.panelMustBeOpened = this.lastPanelOpened !== menuItem;
       this.lastPanelOpened = menuItem;
       this.menuItemClicked(this.lastClickedMenuItem, menuItem);
       this.lastClickedMenuItem = menuItem;
-      this.optionsClick();
+      if (!this.metadataButtonStatus) {
+        this.optionsClick(false);
+      }
     });
   }
 
   public reset(): void {
+    this.metadataButtonStatus = false;
+    this.optionsButtonStatus = false;
+    this.panelMustBeOpened = false;
     this.closeOptionsPanel();
-    this.labelMetadataSubject.next(false);
-    this.labelOptionsSubject.next(false);
+    this.closeMetadataPanel();
+    this.disableLabes();
   }
 
   public activeMetadataButton(): void {
@@ -67,7 +72,16 @@ export class DisplayPanelService {
     this.optionsPanelSubject.next(false);
   }
 
-  private recalculateShowFlags(buttonClicked: string): void {
+  private closeMetadataPanel(): void {
+    this.metadataPanelSubject.next(false);
+  }
+
+  private disableLabes(): void {
+    this.labelMetadataSubject.next(false);
+    this.labelOptionsSubject.next(false);
+  }
+
+  private recalculateShowFlags(buttonClicked: string, clickFromLabel: boolean): void {
     if (buttonClicked === METADATA) {
       if (this.metadataButtonStatus) {
         // open metadata panel and disable options button
@@ -78,7 +92,7 @@ export class DisplayPanelService {
         this.labelOptionsSubject.next(true);
       }
     } else {
-      if (this.optionsButtonStatus && !this.metadataButtonStatus || this.panelMustBeOpened) {
+      if (this.optionsButtonStatus && !this.metadataButtonStatus || this.panelMustBeOpened && !clickFromLabel) {
         // open options panel and disable metadata button
         this.optionsPanelSubject.next(true);
         this.labelMetadataSubject.next(false);
@@ -89,9 +103,9 @@ export class DisplayPanelService {
     }
   }
 
-  private optionsClick(): void {
+  private optionsClick(clickFromLabel: boolean): void {
     this.optionsButtonStatus = !this.optionsButtonStatus;
-    this.recalculateShowFlags(OPTIONS);
+    this.recalculateShowFlags(OPTIONS, clickFromLabel);
   }
 
   private menuItemClicked(oldMenuItem: string | null, newMenuItem: string): void {
