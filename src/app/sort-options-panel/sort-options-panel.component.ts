@@ -94,13 +94,13 @@ export class SortOptionsPanelComponent implements OnInit {
 
   public makeSort(): void {
     this.isSimpleSort = true;
-    this.setSortOption(true);
+    this.setSortOption(true, null);
     this.concordanceSort.emit(this.getSortOption());
   }
 
   public makeMultilevelSort(): void {
     this.isSimpleSort = false;
-    this.setSortOption(false);
+    this.setSortOption(false, null);
     this.concordanceSort.emit(this.getSortOption());
   }
 
@@ -122,6 +122,7 @@ export class SortOptionsPanelComponent implements OnInit {
       []
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
@@ -136,6 +137,7 @@ export class SortOptionsPanelComponent implements OnInit {
       []
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
@@ -150,6 +152,7 @@ export class SortOptionsPanelComponent implements OnInit {
       []
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
@@ -164,6 +167,7 @@ export class SortOptionsPanelComponent implements OnInit {
       []
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
+    this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
   }
 
@@ -197,10 +201,11 @@ export class SortOptionsPanelComponent implements OnInit {
     return res;
   }
 
-  private setSortOption(isSimpleSort: boolean): void {
+  private setSortOption(isSimpleSort: boolean, quickSortQueryRequest: SortQueryRequest | null): void {
     this.queryRequestService.resetOptionsRequest();
     if (this.sortOptionsQueryRequest) {
-      this.queryRequestService.queryRequest.sortQueryRequest = this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
+      this.queryRequestService.queryRequest.sortQueryRequest = !!quickSortQueryRequest
+        ? quickSortQueryRequest : this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
       localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
     }
   }
