@@ -203,6 +203,14 @@
       "LOG_DICE": "logDice",
       "MI_LOG_F": "MI.log_f"
     },
+    "FREQUENCY": {
+      "WORD": "Parola",
+      "LEMMA": "Lemma",
+      "TAG": "Tag",
+      "FREQUENCY": "Frequenza",
+      "ITEMS": "Elementi",
+      "TOTAL_FREQ": "Frequenza complessiva"
+    },
     "CREDITS": {
       "LABEL": "Credits"
     },

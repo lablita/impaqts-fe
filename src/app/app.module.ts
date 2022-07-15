@@ -25,6 +25,7 @@ import { RoleDirective } from './directives/role.directive';
 import { DispalyPanelOptionsComponent } from './dispaly-panel-options/dispaly-panel-options.component';
 import { FilterOptionsPanelComponent } from './filter-options-panel/filter-options-panel.component';
 import { FrequencyOptionsPanelComponent } from './frequency-options-panel/frequency-options-panel.component';
+import { FrequencyTableComponent } from './frequency-table/frequency-table.component';
 import { KwicLinesViewComponent } from './kwic-lines-view/kwic-lines-view.component';
 import { MainComponent } from './main/main.component';
 import { MenuComponent } from './menu/menu.component';
@@ -42,8 +43,6 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
-import { FrequencyComponent } from './frequency/frequency.component';
-import { FrequencyTableComponent } from './frequency-table/frequency-table.component';
 
 registerLocaleData(localeIt);
 
@@ -77,7 +76,6 @@ registerLocaleData(localeIt);
     ConcordanceTableComponent,
     CollocationTableComponent,
     TestPaginationComponent,
-    FrequencyComponent,
     FrequencyTableComponent
   ],
   imports: [

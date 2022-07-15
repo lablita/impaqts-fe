@@ -50,7 +50,7 @@ export class CollocationTableComponent implements OnInit {
   public loadCollocations(event: any): void {
     if (this.fieldRequest) {
       this.loading = true;
-      const collocationSortingParams = this.loadResultService.getCollocationSortingParams(this.fieldRequest, event);
+      const collocationSortingParams = this.loadResultService.getCollocationSortingParams();
       this.colHeader = collocationSortingParams.colHeader;
       this.sortField = collocationSortingParams.headerSortBy;
       this.loadResultService.loadResults(this.fieldRequest, event);

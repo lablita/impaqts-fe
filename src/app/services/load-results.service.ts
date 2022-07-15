@@ -135,7 +135,7 @@ export class LoadResultsService {
     }
   }
 
-  public getCollocationSortingParams(fieldRequest: FieldRequest, event?: LazyLoadEvent): CollocationSortingParams {
+  public getCollocationSortingParams(): CollocationSortingParams {
     const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
     /** return collocation sorting params */
     const collocationSortingParams = new CollocationSortingParams();
@@ -238,6 +238,7 @@ export class LoadResultsService {
           socketResponse = new SocketResponse(
             (resp as QueryResponse).kwicLines,
             [],
+            [],
             true,
             false,
             qr.currentSize);
@@ -246,12 +247,24 @@ export class LoadResultsService {
           socketResponse = new SocketResponse(
             [],
             (resp as QueryResponse).collocations,
+            [],
+            true,
+            false,
+            qr.currentSize);
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
+        } else if (qr.frequencies && qr.frequencies.length > 0) {
+          const a = (resp as QueryResponse).frequencies;
+          socketResponse = new SocketResponse(
+            [],
+            [],
+            (resp as QueryResponse).frequencies,
             true,
             false,
             qr.currentSize);
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
         } else {
           socketResponse = new SocketResponse(
+            [],
             [],
             [],
             false,

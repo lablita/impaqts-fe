@@ -45,7 +45,7 @@ export class ConcordanceTableComponent implements OnInit {
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;
-      if (socketResponse) {
+      if (socketResponse && socketResponse.kwicLines.length > 0) {
         this.totalResults = socketResponse.totalResults;
         this.kwicLines = socketResponse.kwicLines;
         this.noResultFound = socketResponse.noResultFound;

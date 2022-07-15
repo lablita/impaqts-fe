@@ -102,7 +102,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     return;
   }
 
-  public removeSortOption(): void {
+  public removeFrequencyOption(): void {
     this.queryRequestService.resetOptionsRequest();
   }
 
@@ -135,6 +135,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptionsQueryRequestDTO, isSimpleFreq: boolean): FrequencyQueryRequest {
     const res = new FrequencyQueryRequest();
+    res.frequencyColSort = 'freq';
+    res.frequencyTypeSort = 'desc';
     if (isSimpleFreq) {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimit;
       res.includeCategories = freqOptionsQueryRequest.includeCat;

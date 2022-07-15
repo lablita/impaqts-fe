@@ -55,7 +55,7 @@
         class="col-12 md:col-2 mr-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
       <div class="col-12 md:col-3">
         <p-listbox id="show" [options]="optionList" [multiple]="true"
-          [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value">
+          [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value" optionValue="key">
           <ng-template let-option pTemplate="item">
             {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
           </ng-template>

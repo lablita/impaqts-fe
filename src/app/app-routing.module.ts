@@ -56,8 +56,12 @@ const routes: Routes = [
         path: VISUAL_QUERY,
         component: VisualQueryComponent,
         canActivate: [EMMACorpGuard]
-      }
-      ,
+      },
+      // {
+      //   path: FREQUENCY,
+      //   component: FrequencyComponent,
+      //   canActivate: [EMMACorpGuard]
+      // },
       {
         path: 'test',
         component: TestPaginationComponent
