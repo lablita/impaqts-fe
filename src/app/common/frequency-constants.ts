@@ -14,3 +14,5 @@ export const R1 = '1R';
 export const FIRST = 'first';
 export const WORD = 'word';
 export const NODE = 'node';
+
+export const FREQ = 'freq';

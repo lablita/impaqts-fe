@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
+import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { FIRST, FOURTH, NODE_CONTEXT, SECOND, THIRD } from '../common/sort-constants';
+import { DESC } from '../model/constants';
 import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query-request-dto';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -135,8 +136,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptionsQueryRequestDTO, isSimpleFreq: boolean): FrequencyQueryRequest {
     const res = new FrequencyQueryRequest();
-    res.frequencyColSort = 'freq';
-    res.frequencyTypeSort = 'desc';
+    res.frequencyColSort = FREQ;
+    res.frequencyTypeSort = DESC;
     if (isSimpleFreq) {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimit;
       res.includeCategories = freqOptionsQueryRequest.includeCat;

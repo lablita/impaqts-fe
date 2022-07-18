@@ -31,7 +31,7 @@ export class CollocationTableComponent implements OnInit {
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;
-      if (socketResponse) {
+      if (socketResponse && socketResponse.collocations.length > 0) {
         this.totalResults = socketResponse.totalResults;
         this.collocations = socketResponse.collocations;
         this.noResultFound = socketResponse.noResultFound;

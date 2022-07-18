@@ -208,6 +208,7 @@
     },
     "FREQUENCY": {
       "WORD": "Word",
+      "WORD_LAST": "Word",
       "LEMMA": "Lemma",
       "TAG": "Tag",
       "FREQUENCY": "Frequency",

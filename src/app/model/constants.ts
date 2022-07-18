@@ -61,3 +61,9 @@ export const ARF = 'arf';
 export const KEYWORD = 'keyword';
 export const CHANGE_OUT = 'change_out';
 
+
+/**  */
+export const ASC = 'asc';
+export const DESC = 'desc';
+
+
