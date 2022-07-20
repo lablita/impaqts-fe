@@ -58,6 +58,9 @@ export class FrequencyTableComponent implements OnInit {
         this.totalFrequency = this.frequencies[0].totalFreq;
         this.noResultFound = socketResponse.noResultFound;
         this.maxRel = Math.max(...this.lines.map(l => l.rel));
+
+        this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
+        this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
       }
     });
     this.emitterService.makeFrequency.subscribe(fieldRequest => {
