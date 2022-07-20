@@ -22,7 +22,7 @@
     "FILTER": "Filter",
     "OVERLAPS": "Overlaps",
     "FIRST_HIT_IN_DOC": "1th hit in doc",
-    "FREQUENCY": "Frequency",
+    "FREQUENCY": "Frequenza",
     "NODE_TAGS": "Node tags",
     "NODE_FORMS": "Node forms",
     "COLLOCATIONS": "Collocazioni",
@@ -210,7 +210,8 @@
       "TAG": "Tag",
       "FREQUENCY": "Frequenza",
       "ITEMS": "Elementi",
-      "TOTAL_FREQ": "Frequenza complessiva"
+      "TOTAL_FREQ": "Frequenza complessiva",
+      "REL": "Rel [%]"
     },
     "CREDITS": {
       "LABEL": "Credits"

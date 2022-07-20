@@ -8,12 +8,17 @@ import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
-const COL_HEADER = [
+const COL_HEADER_MULTILEVEL = [
   'PAGE.FREQUENCY.WORD',
   'PAGE.FREQUENCY.LEMMA',
   'PAGE.FREQUENCY.TAG',
   'PAGE.FREQUENCY.WORD_LAST',
   'PAGE.FREQUENCY.FREQUENCY'
+];
+
+const COL_HEADER_TEXTTYPE = [
+  'PAGE.FREQUENCY.FREQUENCY',
+  'PAGE.FREQUENCY.REL',
 ];
 @Component({
   selector: 'app-frequency-table',
@@ -33,9 +38,10 @@ export class FrequencyTableComponent implements OnInit {
   public noResultFound = true;
   public frequencies: Array<FrequencyItem> = Array.from<FrequencyItem>({ length: 0 });
   public lines: Array<FrequencyResultLine> = Array.from<FrequencyResultLine>({ length: 0 });
-  public colHeader: Array<string> = COL_HEADER;
+  public colHeader: Array<string> = Array.from<string>({ length: 0 });
   public sortField = '';
-
+  public multilevel = false;
+  public maxRel = 0;
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -51,6 +57,7 @@ export class FrequencyTableComponent implements OnInit {
         this.totalItems = this.frequencies[0].total;
         this.totalFrequency = this.frequencies[0].totalFreq;
         this.noResultFound = socketResponse.noResultFound;
+        this.maxRel = Math.max(...this.lines.map(l => l.rel));
       }
     });
     this.emitterService.makeFrequency.subscribe(fieldRequest => {
@@ -61,14 +68,13 @@ export class FrequencyTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
+    this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
   }
 
   public loadFrequencies(event: any): void {
     if (this.fieldRequest && this.queryRequestService.queryRequest.frequencyQueryRequest) {
       this.loading = true;
-      // const collocationSortingParams = this.loadResultService.getCollocationSortingParams(this.fieldRequest, event);
-      // this.colHeader = collocationSortingParams.colHeader;
-      // this.sortField = collocationSortingParams.headerSortBy;
       if (event.sortField === '' || event.sortField === 'PAGE.FREQUENCY.FREQUENCY') {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = FREQ;
       } else {

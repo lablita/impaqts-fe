@@ -47,6 +47,14 @@ const MULTI_ATTRIBUTE = [
   new KeyValueItem('word', CONCORDANCE_WORD)
 ];
 
+const METADATA_ATTRIBUTES = [
+  'doc.sito',
+  'doc.url',
+  'doc.categoria',
+  'doc.produzione',
+  'doc.wordcount'
+]
+
 @Component({
   selector: 'app-frequency-options-panel',
   templateUrl: './frequency-options-panel.component.html',
@@ -61,7 +69,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   public freqOptionsQueryRequest: FreqOptionsQueryRequestDTO = FreqOptionsQueryRequestDTO.build();
 
-  public attributeList: Array<KeyValueItem> = [];
+  public attributeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedLevel: KeyValueItem | null = null;
   public selectedAttribute: KeyValueItem | null = null;
@@ -70,6 +78,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public positionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public isSimpleFreq = true;
+  public metadataAttributes: Array<string> = Array.from<string>({ length: 0 });
 
 
   constructor(
@@ -89,6 +98,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
     this.selectedMultiAttribute = MULTI_ATTRIBUTE;
+    this.metadataAttributes = METADATA_ATTRIBUTES;
   }
 
   public closeSidebar(): void {
@@ -141,7 +151,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     if (isSimpleFreq) {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimit;
       res.includeCategories = freqOptionsQueryRequest.includeCat;
-      res.categories = freqOptionsQueryRequest.categories.map(cat => cat.key);
+      res.categories = freqOptionsQueryRequest.categories;
     } else {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimitMulti;
       for (let i = 0; i < freqOptionsQueryRequest.levelSelected; i++) {

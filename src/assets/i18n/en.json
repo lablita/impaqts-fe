@@ -213,7 +213,8 @@
       "TAG": "Tag",
       "FREQUENCY": "Frequency",
       "ITEMS": "Items",
-      "TOTAL_FREQ": "Total frequency"
+      "TOTAL_FREQ": "Total frequency",
+      "REL": "Rel [%]"
     },
     "CREDITS": {
       "LABEL": "Credits"

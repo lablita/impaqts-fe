@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { ChartModule } from 'primeng/chart';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ChipsModule } from 'primeng/chips';
 import { DialogModule } from 'primeng/dialog';
@@ -16,6 +17,7 @@ import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { PanelMenuModule } from 'primeng/panelmenu';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
@@ -58,7 +60,9 @@ import { TreeModule } from 'primeng/tree';
     ChipsModule,
     OverlayPanelModule,
     SelectButtonModule,
-    DialogModule
+    DialogModule,
+    ProgressBarModule,
+    ChartModule
   ],
   exports: [
     CommonModule,
@@ -88,7 +92,9 @@ import { TreeModule } from 'primeng/tree';
     ChipsModule,
     OverlayPanelModule,
     SelectButtonModule,
-    DialogModule
+    DialogModule,
+    ProgressBarModule,
+    ChartModule
   ]
 })
 export class PrimeNgModule { }

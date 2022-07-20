@@ -15,11 +15,11 @@
   [rows]="initialPagination" [rowsPerPageOptions]="paginations" [totalRecords]="totalItems" [customSort]="true"
   currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
   [sortField]="sortField" [sortOrder]="-1">
-
   <ng-template pTemplate="header">
     <tr>
       <th>
       </th>
+      <th *ngIf="!multilevel" class="text-right">doc.sito</th>
       <th class="text-right" *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
         <p-sortIcon [field]="col"></p-sortIcon>
       </th>
@@ -30,13 +30,21 @@
   <ng-template pTemplate="body" let-line>
     <tr *ngIf="line">
       <td> P | N</td>
-      <td class="text-right">{{line.word[0]}}</td>
-      <td class="text-right">{{line.word[1]}}</td>
-      <td class="text-right">{{line.word[2]}}</td>
-      <td class="text-right">{{line.word[3]}}</td>
+      <td *ngIf="multilevel" class="text-right">{{line.word[0]}}</td>
+      <td *ngIf="!multilevel" class="text-right"><a href="{{line.word[0]}}">{{line.word[0]}}</a></td>
+      <td *ngIf="multilevel" class="text-right">{{line.word[1]}}</td>
+      <td *ngIf="multilevel" class="text-right">{{line.word[2]}}</td>
+      <td *ngIf="multilevel" class="text-right">{{line.word[3]}}</td>
       <td class="text-right">{{line.freq}}</td>
+      <td *ngIf="!multilevel" class="text-right">{{line.rel}}</td>
       <td>
-        <p-progressBar [value]="(line.fbar / 301) * 100" [showValue]="false"></p-progressBar>
+        <p-progressBar *ngIf="multilevel" [value]="(line.fBar / 301) * 100" [showValue]="false" tooltipPosition="bottom"
+          pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}}">
+        </p-progressBar>
+        <p-progressBar *ngIf="!multilevel" [value]="(line.rel / maxRel) * 100" [showValue]="false"
+          tooltipPosition="bottom" fitContent="true"
+          pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}}</p> {{'PAGE.FREQUENCY.REL' | translate}}: {{line.rel}}">
+        </p-progressBar>
       </td>
     </tr>
   </ng-template>

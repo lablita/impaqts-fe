@@ -1,5 +1,4 @@
 import { NODE, WORD } from '../common/frequency-constants';
-import { KeyValueItem } from './key-value-item';
 
 export class FreqOptionDTO {
   level = false;
@@ -11,7 +10,7 @@ export class FreqOptionsQueryRequestDTO {
   freqLimit = 0;
   freqLimitMulti = 0;
   includeCat = false;
-  categories: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  categories: Array<string> = Array.from<string>({ length: 0 });
   levelSelected = 0;
   freqOptionList: Array<FreqOptionDTO> = Array.from<FreqOptionDTO>({ length: 0 });
 
