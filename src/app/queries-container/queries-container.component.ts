@@ -99,10 +99,10 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
-  // public displayRightPanel: Subject<boolean> | null = null;
   public displayResultPanel = false;
   public displayQueryType = false;
   public displayContext = false;
+  public categories: Array<string> = Array.from<string>({ length: 0 });
 
   /** private */
   private endpoint = '';
@@ -248,6 +248,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   }
 
   public makeFrequency(): void {
+    this.categories = this.queryRequestSevice.queryRequest.frequencyQueryRequest?.categories!;
     this.titleResult = 'MENU.FREQUENCY';
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,

@@ -131,7 +131,14 @@ export class LoadResultsService {
         qr.sortQueryRequest = fieldRequest.quickSort;
       }
       /** */
-      this.socketService.sendMessage(qr);
+      if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
+        qr.frequencyQueryRequest?.categories.forEach(cat => {
+          qr.frequencyQueryRequest!.category = cat;
+          this.socketService.sendMessage(qr);
+        });
+      } else {
+        this.socketService.sendMessage(qr);
+      }
     }
   }
 

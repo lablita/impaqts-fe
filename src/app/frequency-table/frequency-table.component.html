@@ -1,16 +1,12 @@
-<div *ngIf="visible">
-  <div class="flex justify-content-center">
-    <h3><b>{{'MENU.FREQUENCY' | translate}}</b></h3>
-  </div>
-  <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
-    class="flex align-items-center">
-  </p-progressSpinner>
-  <div style="width: 250px;" *ngIf="lines.length > 0 && !loading">
-    <h3 *ngIf="totalResults">Query <span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult :
-        ''}}</span>&nbsp;<b>{{totalResults}}</b>
-    </h3>
-  </div>
+<div *ngIf="first" class="flex justify-content-center">
+  <h3><b>{{'MENU.FREQUENCY' | translate}}</b></h3>
 </div>
+<div *ngIf="!first" class="flex justify-content-center">
+  <h3><b>&nbsp;</b></h3>
+</div>
+<p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
+  class="flex align-items-center">
+</p-progressSpinner>
 <p-table *ngIf="visible" [value]="lines" [lazy]="true" (onLazyLoad)="loadFrequencies($event)" [paginator]="true"
   [rows]="initialPagination" [rowsPerPageOptions]="paginations" [totalRecords]="totalItems" [customSort]="true"
   currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
@@ -19,7 +15,7 @@
     <tr>
       <th>
       </th>
-      <th *ngIf="!multilevel" class="text-right">doc.sito</th>
+      <th *ngIf="!multilevel" class="text-right" pSortableColumn="0">{{category}}</th>
       <th class="text-right" *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
         <p-sortIcon [field]="col"></p-sortIcon>
       </th>
@@ -31,7 +27,8 @@
     <tr *ngIf="line">
       <td> P | N</td>
       <td *ngIf="multilevel" class="text-right">{{line.word[0]}}</td>
-      <td *ngIf="!multilevel" class="text-right"><a href="{{line.word[0]}}">{{line.word[0]}}</a></td>
+      <td *ngIf="!multilevel" class="text-right"><a href="http://{{line.word[0]}}" target="_blank">{{line.word[0]}}</a>
+      </td>
       <td *ngIf="multilevel" class="text-right">{{line.word[1]}}</td>
       <td *ngIf="multilevel" class="text-right">{{line.word[2]}}</td>
       <td *ngIf="multilevel" class="text-right">{{line.word[3]}}</td>

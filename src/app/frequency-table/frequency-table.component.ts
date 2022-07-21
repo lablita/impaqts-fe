@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FREQ } from '../common/frequency-constants';
+import { FREQ, REL } from '../common/frequency-constants';
 import { ASC, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
@@ -29,6 +29,8 @@ export class FrequencyTableComponent implements OnInit {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
   @Input() public visible = false;
+  @Input() public category = '';
+  @Input() public first = false;
 
   public loading = false;
   public fieldRequest: FieldRequest | null = null;
@@ -42,6 +44,7 @@ export class FrequencyTableComponent implements OnInit {
   public sortField = '';
   public multilevel = false;
   public maxRel = 0;
+  // public textTypeFirstCol: Array<string> = Array.from<string>({ length: 0 });
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -50,7 +53,7 @@ export class FrequencyTableComponent implements OnInit {
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;
-      if (socketResponse && socketResponse.frequencies.length > 0 && socketResponse.frequencies[0].items.length > 0) {
+      if (socketResponse && socketResponse.frequencies.length > 0 && socketResponse.frequencies[0].items.length > 0 && this.category === socketResponse.frequencies[0].head) {
         this.totalResults = socketResponse.totalResults;
         this.frequencies = socketResponse.frequencies;
         this.lines = this.frequencies[0].items;
@@ -61,6 +64,7 @@ export class FrequencyTableComponent implements OnInit {
 
         this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
         this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
+        // this.textTypeFirstCol = this.queryRequestService.queryRequest.frequencyQueryRequest?.categories!;
       }
     });
     this.emitterService.makeFrequency.subscribe(fieldRequest => {
@@ -80,7 +84,10 @@ export class FrequencyTableComponent implements OnInit {
       this.loading = true;
       if (event.sortField === '' || event.sortField === 'PAGE.FREQUENCY.FREQUENCY') {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = FREQ;
-      } else {
+      } else if (event.sortField === 'PAGE.FREQUENCY.REL') {
+        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = REL;
+      }
+      else {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = '' + this.colHeader.indexOf(event.sortField);
       }
       this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;

@@ -16,3 +16,4 @@ export const WORD = 'word';
 export const NODE = 'node';
 
 export const FREQ = 'freq';
+export const REL = 'rel';

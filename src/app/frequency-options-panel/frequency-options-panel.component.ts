@@ -150,7 +150,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     res.frequencyTypeSort = DESC;
     if (isSimpleFreq) {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimit;
-      res.includeCategories = freqOptionsQueryRequest.includeCat;
+      res.includeCategoriesWithNoHits = freqOptionsQueryRequest.includeCat;
       res.categories = freqOptionsQueryRequest.categories;
     } else {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimitMulti;
