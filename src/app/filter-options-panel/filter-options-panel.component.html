@@ -38,21 +38,21 @@
     <div class="flex justify-content-center formgroup-inline">
       <div class="field">
         <label for="rangeFrom" class="mr-2">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.FROM" | translate}}</label>
-        <input id="rangeFrom" type="number" pInputText style="width: 50px;" [(ngModel)]="filterOptionsQueryRequest.from"
-          class="mr-3">
+        <input id="rangeFrom" type="number" pInputText style="width: 50px;"
+          [(ngModel)]="FilterOptionsQueryRequestDTO.from" class="mr-3">
       </div>
       <div class="field ml-2">
         <label for="rangeTo" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
-        <input id="rangeTo" type="number" pInputText style="width: 50px;" [(ngModel)]="filterOptionsQueryRequest.to">
+        <input id="rangeTo" type="number" pInputText style="width: 50px;" [(ngModel)]="FilterOptionsQueryRequestDTO.to">
       </div>
       <div class="field-checkbox ml-2 align-self-center">
         <p-checkbox name="nonWords" [binary]="true" [label]="'PAGE.CONCORDANCE.FILTER_OPTIONS.KWIC' | translate"
-          [(ngModel)]="filterOptionsQueryRequest.kwic">
+          [(ngModel)]="FilterOptionsQueryRequestDTO.kwic">
         </p-checkbox>
       </div>
     </div>
 
-    <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest" [panel]="true">
+    <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequestDTO" [panel]="true">
     </app-context-concordance>
 
     <span class="flex justify-content-center mt-3">

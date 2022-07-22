@@ -7,6 +7,7 @@ import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
@@ -130,7 +131,18 @@ export class LoadResultsService {
         qr.end = qr.end > 0 ? qr.end : 10;
         qr.sortQueryRequest = fieldRequest.quickSort;
       }
-      /** */
+      /**context */
+      if (fieldRequest.contextConcordance?.lemma) {
+        const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
+          fieldRequest.contextConcordance?.window.key,
+          fieldRequest.contextConcordance?.token,
+          fieldRequest.contextConcordance?.lemma,
+          fieldRequest.contextConcordance?.item.key
+        );
+        qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
+
+      }
+      /**frequency */
       if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
         qr.frequencyQueryRequest?.categories.forEach(cat => {
           qr.frequencyQueryRequest!.category = cat;

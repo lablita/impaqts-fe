@@ -1,15 +1,15 @@
 import { POSITIVE } from "../common/filter-constants";
 import { FIRST } from "../common/frequency-constants";
-import { ContextConcordanceQueryRequest } from "./context-concordance-query-request";
+import { ContextConcordanceQueryRequestDTO } from "./context-concordance-query-request-dto";
 import { KeyValueItem } from "./key-value-item";
 
-export class FilterOptionsQueryRequest {
+export class FilterOptionsQueryRequestDTO {
   filter: KeyValueItem;
   token: KeyValueItem;
   from: number;
   to: number;
   kwic: boolean;
-  contextConcordance?: ContextConcordanceQueryRequest;
+  contextConcordance?: ContextConcordanceQueryRequestDTO;
 
   constructor(
     filter: KeyValueItem,
@@ -17,7 +17,7 @@ export class FilterOptionsQueryRequest {
     from: number,
     to: number,
     kwic: boolean,
-    contextConcordance?: ContextConcordanceQueryRequest
+    contextConcordance?: ContextConcordanceQueryRequestDTO
   ) {
     this.filter = filter;
     this.token = token;
@@ -27,12 +27,12 @@ export class FilterOptionsQueryRequest {
     this.contextConcordance = contextConcordance;
   }
 
-  public static getInstance(): FilterOptionsQueryRequest {
-    return new FilterOptionsQueryRequest(new KeyValueItem('', ''), new KeyValueItem('', ''), 0, 0, false);
+  public static getInstance(): FilterOptionsQueryRequestDTO {
+    return new FilterOptionsQueryRequestDTO(new KeyValueItem('', ''), new KeyValueItem('', ''), 0, 0, false);
   }
 }
 
-export const DEFAULT_FILTER_OPTIONS_QUERY_REQUEST = new FilterOptionsQueryRequest(
+export const DEFAULT_FILTER_OPTIONS_QUERY_REQUEST = new FilterOptionsQueryRequestDTO(
   new KeyValueItem(POSITIVE, POSITIVE),
   new KeyValueItem(FIRST, FIRST),
   -5,

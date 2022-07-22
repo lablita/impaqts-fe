@@ -10,7 +10,7 @@ import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
+import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
@@ -42,7 +42,7 @@ export class ConcordanceResult {
 })
 export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
-  public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
+  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
 
   /** public */
   public fieldRequest: FieldRequest | null = null;
@@ -116,7 +116,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
     public readonly displayPanelService: DisplayPanelService,
-    private readonly queryRequestSevice: QueryRequestService,
+    public readonly queryRequestSevice: QueryRequestService,
   ) { }
 
   ngOnInit(): void {
@@ -141,10 +141,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public clickTextType(): void {
     this.textTypeStatus = true;
     this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
-  }
-
-  public clickClearAll(): void {
-    return;
   }
 
   public dropdownCorpus(): void {
@@ -220,6 +216,8 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.matchCase,
       this.selectedQueryType,
       this.defaultAttributeCQL);
+    //concordance Context
+    this.fieldRequest.contextConcordance = this.contextConcordanceQueryRequestDTO;
     if (sortQueryRequest && !!sortQueryRequest.sortKey) {
       typeSearch = ['Sort', sortQueryRequest.sortKey!];
     } else if (this.queryRequestSevice.queryRequest.sortQueryRequest
@@ -277,6 +275,10 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     return this.displayPanelService.metadataPanelSubject;
   }
 
+  public clickClearAll(): void {
+    this.contextConcordanceQueryRequestDTO.lemma = '';
+  }
+
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
@@ -288,7 +290,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.hideQueryTypeAndContext();
 
     this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
-      next: res => this.selectCorpus = res
+      next: (res: any) => this.selectCorpus = res
     });
 
     this.queryTypes = [

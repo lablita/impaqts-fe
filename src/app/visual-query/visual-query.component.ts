@@ -116,7 +116,7 @@ export class VisualQueryComponent implements OnInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe(res => this.selectCorpus = res);
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
   }
 
   public addTokenQuery(): void {
@@ -286,8 +286,8 @@ export class VisualQueryComponent implements OnInit {
 
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext,
-      kwicline.rightContext + kwicline.rightContext);
+    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
+      KWICline.stripTags(kwicline.rightContext, false));
   }
 
   private closeWebSocket(): void {

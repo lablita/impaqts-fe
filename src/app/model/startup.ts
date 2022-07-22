@@ -1,5 +1,5 @@
 import { CollocationOptionsQueryRequestDTO } from './collocation-options-query-request-dto';
-import { FilterOptionsQueryRequest } from './filter-options-query-request-dto';
+import { FilterOptionsQueryRequestDTO } from './filter-options-query-request-dto';
 import { FreqOptionsQueryRequestDTO } from './freq-options-query-request-dto';
 import { KeyValueItem } from './key-value-item';
 import { SortOptionsQueryRequestDTO } from './sort-options-query-request-dto';
@@ -13,7 +13,7 @@ export class Startup {
   sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
   freqOptionsQueryRequest: FreqOptionsQueryRequestDTO;
   collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
-  filterOptionsQueryRequest: FilterOptionsQueryRequest;
+  FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO;
 
   constructor(
     corpusList: KeyValueItem[],
@@ -22,7 +22,7 @@ export class Startup {
     sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
     freqOptionsQueryRequest: FreqOptionsQueryRequestDTO,
     collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO,
-    filterOptionsQueryRequest: FilterOptionsQueryRequest
+    FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO
   ) {
     this.corpusList = corpusList;
     this.viewOptionsQueryRequest = viewOptionsQueryRequest;
@@ -30,6 +30,6 @@ export class Startup {
     this.sortOptionsQueryRequest = sortOptionsQueryRequest;
     this.freqOptionsQueryRequest = freqOptionsQueryRequest;
     this.collocationOptionsQueryRequest = collocationOptionsQueryRequest;
-    this.filterOptionsQueryRequest = filterOptionsQueryRequest;
+    this.FilterOptionsQueryRequestDTO = FilterOptionsQueryRequestDTO;
   }
 }

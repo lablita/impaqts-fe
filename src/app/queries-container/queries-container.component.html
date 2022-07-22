@@ -110,7 +110,7 @@
       </div>
 
       <div class="mt-3" *ngIf="displayContext">
-        <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequest">
+        <app-context-concordance [contextConcordanceQueryRequest]="contextConcordanceQueryRequestDTO">
         </app-context-concordance>
         <div class="flex justify-content-center mt-3">
           <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
@@ -128,9 +128,8 @@
           [paginations]="paginations">
         </app-collocation-table>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
-          [paginations]="paginations">
+          [paginations]="paginations" [withContextConcordance]="queryRequestSevice.withContextConcordance()">
         </app-concordance-table>
-        <!-- TODO for loop categories -->
         <app-frequency-table *ngFor="let category of categories, let i=index" [visible]="titleResult==='MENU.FREQUENCY'"
           [initialPagination]="initialPagination" [paginations]="paginations" [category]="category" [first]="i==0">
         </app-frequency-table>

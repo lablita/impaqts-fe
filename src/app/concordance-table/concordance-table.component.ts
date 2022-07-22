@@ -26,6 +26,7 @@ export class ConcordanceTableComponent implements OnInit {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
   @Input() public visible = false;
+  @Input() public withContextConcordance = false;
 
   public loading = false;
   public totalResults = 0;
@@ -35,6 +36,7 @@ export class ConcordanceTableComponent implements OnInit {
   public displayModal = false;
   public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
   public typeSearch: string[] = [];
+  public stripTags = KWICline.stripTags;
 
   public fieldRequest: FieldRequest | null = null;
 
@@ -99,7 +101,8 @@ export class ConcordanceTableComponent implements OnInit {
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
     this.resultContext = new ResultContext(kwicline.kwic,
-      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+      KWICline.stripTags(kwicline.leftContext, this.withContextConcordance),
+      KWICline.stripTags(kwicline.rightContext, this.withContextConcordance));
   }
 
 }

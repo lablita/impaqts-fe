@@ -19,4 +19,12 @@ export class QueryRequestService {
   public isOptionSet(): boolean {
     return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || !!this.queryRequest.frequencyQueryRequest;
   }
+
+  public resetContextConcordance(): void {
+    this.queryRequest.contextConcordanceQueryRequest = null;
+  }
+
+  public withContextConcordance(): boolean {
+    return !!this.queryRequest.contextConcordanceQueryRequest;
+  }
 }

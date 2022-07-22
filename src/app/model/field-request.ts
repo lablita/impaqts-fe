@@ -1,3 +1,4 @@
+import { ContextConcordanceQueryRequestDTO } from "./context-concordance-query-request-dto";
 import { KeyValueItem } from "./key-value-item";
 import { SortQueryRequest } from "./sort-query-request";
 
@@ -13,6 +14,7 @@ export class FieldRequest {
   matchCase = false;
   selectedQueryType: KeyValueItem | null = null;
   defaultAttributeCQL: KeyValueItem | null = null;
+  contextConcordance: ContextConcordanceQueryRequestDTO | null = null;
   quickSort?: SortQueryRequest | null = null;
 
   constructor() { }
