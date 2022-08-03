@@ -37,7 +37,7 @@ export class RightComponent implements OnInit {
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
-    private readonly queryRequestService: QueryRequestService,
+    private queryRequestService: QueryRequestService,
   ) { }
 
   ngOnInit(): void {

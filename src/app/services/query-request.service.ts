@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { QueryRequest } from '../model/query-request';
 
 @Injectable({
@@ -25,6 +26,11 @@ export class QueryRequestService {
   }
 
   public withContextConcordance(): boolean {
-    return !!this.queryRequest.contextConcordanceQueryRequest;
+    // return true;
+    return !!this.queryRequest ? !!this.queryRequest.contextConcordanceQueryRequest : false;
+  }
+
+  public setContextCOncordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {
+    this.queryRequest.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
   }
 }

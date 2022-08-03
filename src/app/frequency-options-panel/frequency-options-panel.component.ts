@@ -82,7 +82,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {

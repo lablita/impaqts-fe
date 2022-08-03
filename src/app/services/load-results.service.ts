@@ -51,7 +51,7 @@ export class LoadResultsService {
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
-    private readonly queryRequestSevice: QueryRequestService,
+    private queryRequestService: QueryRequestService,
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService
@@ -68,7 +68,7 @@ export class LoadResultsService {
   public loadResults(fieldRequest: FieldRequest, event?: LazyLoadEvent): void {
     this.setMetadataQuery();
     if (!!fieldRequest.selectedCorpus) {
-      const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
+      const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
       if (!event) {
         qr.start = 0;
         qr.end = 10;
@@ -140,8 +140,10 @@ export class LoadResultsService {
           fieldRequest.contextConcordance?.item.key
         );
         qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
-
+        this.queryRequestService.setContextCOncordance(qr.contextConcordanceQueryRequest);
+        // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
       }
+      console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
       /**frequency */
       if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
         qr.frequencyQueryRequest?.categories.forEach(cat => {
@@ -155,7 +157,7 @@ export class LoadResultsService {
   }
 
   public getCollocationSortingParams(): CollocationSortingParams {
-    const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestSevice.queryRequest));
+    const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
     /** return collocation sorting params */
     const collocationSortingParams = new CollocationSortingParams();
     if (qr.collocationQueryRequest?.showFunc && qr.collocationQueryRequest?.showFunc?.length > 0) {
@@ -163,8 +165,8 @@ export class LoadResultsService {
       qr.collocationQueryRequest.showFunc.forEach(f => colHeader.push(this.colHeaderList.filter(h => h.key === f)[0].value));
       collocationSortingParams.colHeader = colHeader;
     }
-    const sortBy = this.queryRequestSevice.queryRequest.collocationQueryRequest?.sortBy
-      ? this.queryRequestSevice.queryRequest.collocationQueryRequest?.sortBy : 'm';
+    const sortBy = this.queryRequestService.queryRequest.collocationQueryRequest?.sortBy
+      ? this.queryRequestService.queryRequest.collocationQueryRequest?.sortBy : 'm';
     collocationSortingParams.headerSortBy = this.colHeaderList.filter(h => h.key === sortBy)[0].value;
     return collocationSortingParams;
   }

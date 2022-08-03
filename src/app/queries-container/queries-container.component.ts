@@ -116,7 +116,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
     public readonly displayPanelService: DisplayPanelService,
-    public readonly queryRequestSevice: QueryRequestService,
+    public queryRequestService: QueryRequestService,
   ) { }
 
   ngOnInit(): void {
@@ -147,7 +147,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.titleResult = '';
     this.clickTextType();
     this.displayPanelService.reset();
-    this.queryRequestSevice.resetOptionsRequest();
+    this.queryRequestService.resetOptionsRequest();
     if (this.selectedCorpus) {
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
@@ -220,10 +220,10 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.fieldRequest.contextConcordance = this.contextConcordanceQueryRequestDTO;
     if (sortQueryRequest && !!sortQueryRequest.sortKey) {
       typeSearch = ['Sort', sortQueryRequest.sortKey!];
-    } else if (this.queryRequestSevice.queryRequest.sortQueryRequest
-      && this.queryRequestSevice.queryRequest.sortQueryRequest !== undefined) {
-      typeSearch = ['Sort', !!this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey
-        ? this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+    } else if (this.queryRequestService.queryRequest.sortQueryRequest
+      && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
+      typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
+        ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
     }
     this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
   }
@@ -246,7 +246,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   }
 
   public makeFrequency(): void {
-    this.categories = this.queryRequestSevice.queryRequest.frequencyQueryRequest?.categories!;
+    this.categories = this.queryRequestService.queryRequest.frequencyQueryRequest?.categories!;
     this.titleResult = 'MENU.FREQUENCY';
     this.fieldRequest = FieldRequest.build(
       this.selectedCorpus,

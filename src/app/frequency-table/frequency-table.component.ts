@@ -49,7 +49,7 @@ export class FrequencyTableComponent implements OnInit {
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    private readonly queryRequestService: QueryRequestService
+    private queryRequestService: QueryRequestService
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;

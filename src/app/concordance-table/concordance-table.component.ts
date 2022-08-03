@@ -7,6 +7,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { ResultContext } from '../model/result-context';
 import { LoadResultsService } from '../services/load-results.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
 const SORT_LABELS = [
@@ -26,7 +27,6 @@ export class ConcordanceTableComponent implements OnInit {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
   @Input() public visible = false;
-  @Input() public withContextConcordance = false;
 
   public loading = false;
   public totalResults = 0;
@@ -43,7 +43,8 @@ export class ConcordanceTableComponent implements OnInit {
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
-    private readonly loadResultService: LoadResultsService
+    private readonly loadResultService: LoadResultsService,
+    public queryRequestService: QueryRequestService
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;
@@ -101,8 +102,8 @@ export class ConcordanceTableComponent implements OnInit {
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
     this.resultContext = new ResultContext(kwicline.kwic,
-      KWICline.stripTags(kwicline.leftContext, this.withContextConcordance),
-      KWICline.stripTags(kwicline.rightContext, this.withContextConcordance));
+      KWICline.stripTags(kwicline.leftContext, this.queryRequestService.withContextConcordance()),
+      KWICline.stripTags(kwicline.rightContext, this.queryRequestService.withContextConcordance()));
   }
 
 }

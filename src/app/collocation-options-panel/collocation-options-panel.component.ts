@@ -47,7 +47,7 @@ export class CollocationOptionsPanelComponent {
   public optionList: KeyValueItem[] = OPTIOIN_LIST;
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private queryRequestService: QueryRequestService
   ) {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
     this.collocationOptionsQueryRequest = collOptReq ?

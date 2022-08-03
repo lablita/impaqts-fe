@@ -128,7 +128,7 @@
           [paginations]="paginations">
         </app-collocation-table>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
-          [paginations]="paginations" [withContextConcordance]="queryRequestSevice.withContextConcordance()">
+          [paginations]="paginations">
         </app-concordance-table>
         <app-frequency-table *ngFor="let category of categories, let i=index" [visible]="titleResult==='MENU.FREQUENCY'"
           [initialPagination]="initialPagination" [paginations]="paginations" [category]="category" [first]="i==0">

@@ -68,7 +68,7 @@ export class SortOptionsPanelComponent implements OnInit {
   public isSimpleSort = true;
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
