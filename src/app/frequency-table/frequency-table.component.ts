@@ -53,7 +53,11 @@ export class FrequencyTableComponent implements OnInit {
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;
-      if (socketResponse && socketResponse.frequencies.length > 0 && socketResponse.frequencies[0].items.length > 0 && this.category === socketResponse.frequencies[0].head) {
+      if (socketResponse && socketResponse.frequencies.length > 0
+        && socketResponse.frequencies[0].items.length > 0
+        && ((this.queryRequestService.queryRequest && this.queryRequestService.queryRequest.frequencyQueryRequest
+          && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
+          ? this.category === socketResponse.frequencies[0].head : true)) {
         this.totalResults = socketResponse.totalResults;
         this.frequencies = socketResponse.frequencies;
         this.lines = this.frequencies[0].items;
