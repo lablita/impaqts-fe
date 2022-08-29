@@ -130,8 +130,11 @@
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
           [paginations]="paginations">
         </app-concordance-table>
-        <app-frequency-table *ngFor="let category of categories, let i=index" [visible]="titleResult==='MENU.FREQUENCY'"
+        <!-- <app-frequency-table *ngFor="let category of categories, let i=index" [visible]="titleResult==='MENU.FREQUENCY'"
           [initialPagination]="initialPagination" [paginations]="paginations" [category]="category" [first]="i==0">
+        </app-frequency-table> -->
+        <app-frequency-table [visible]="titleResult==='MENU.FREQUENCY'" [initialPagination]="initialPagination"
+          [paginations]="paginations">
         </app-frequency-table>
       </p-card>
     </div>

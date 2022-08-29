@@ -43,13 +43,12 @@ export class FrequencyTableComponent implements OnInit {
   public colHeader: Array<string> = Array.from<string>({ length: 0 });
   public sortField = '';
   public multilevel = false;
-  public maxRel = 0;
   // public textTypeFirstCol: Array<string> = Array.from<string>({ length: 0 });
 
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    private queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService
   ) {
     this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
       this.loading = false;
@@ -64,7 +63,6 @@ export class FrequencyTableComponent implements OnInit {
         this.totalItems = this.frequencies[0].total;
         this.totalFrequency = this.frequencies[0].totalFreq;
         this.noResultFound = socketResponse.noResultFound;
-        this.maxRel = Math.max(...this.lines.map(l => l.rel));
 
         this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
         this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
@@ -72,9 +70,12 @@ export class FrequencyTableComponent implements OnInit {
       }
     });
     this.emitterService.makeFrequency.subscribe(fieldRequest => {
-      this.loading = true;
-      this.fieldRequest = fieldRequest;
-      this.loadResultService.loadResults(fieldRequest);
+      // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
+      if (fieldRequest && fieldRequest.selectedCorpus) {
+        this.loading = true;
+        this.fieldRequest = fieldRequest;
+        this.loadResultService.loadResults(fieldRequest);
+      }
     });
   }
 

@@ -35,12 +35,12 @@
       <td class="text-right">{{line.freq}}</td>
       <td *ngIf="!multilevel" class="text-right">{{line.rel}}</td>
       <td>
-        <p-progressBar *ngIf="multilevel" [value]="(line.fBar / 301) * 100" [showValue]="false" tooltipPosition="bottom"
-          pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}}">
-        </p-progressBar>
-        <p-progressBar *ngIf="!multilevel" [value]="(line.rel / maxRel) * 100" [showValue]="false"
-          tooltipPosition="bottom" fitContent="true"
-          pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}}</p> {{'PAGE.FREQUENCY.REL' | translate}}: {{line.rel}}">
+        <p-progressBar *ngIf="multilevel" [value]="(line.freq / totalFrequency) * 100" [showValue]="false"
+          tooltipPosition="bottom" pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}}">
+        </p-progressBar>{{(line.freq / totalFrequency) * 100}}
+        <p-progressBar *ngIf="!multilevel" [value]="(line.freq / totalFrequency) * 100" [showValue]="false"
+          tooltipPosition="bottom"
+          pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}} {{'PAGE.FREQUENCY.REL' | translate}}: {{line.rel}}">
         </p-progressBar>
       </td>
     </tr>
