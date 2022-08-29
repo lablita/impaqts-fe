@@ -275,8 +275,8 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     return this.displayPanelService.metadataPanelSubject;
   }
 
-  public clickClearAll(): void {
-    this.contextConcordanceQueryRequestDTO.lemma = '';
+  public clearAll(): void {
+    this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   }
 
   private init(): void {
