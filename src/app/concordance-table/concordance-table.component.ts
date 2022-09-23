@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
@@ -24,7 +24,7 @@ const SORT_LABELS = [
   templateUrl: './concordance-table.component.html',
   styleUrls: ['./concordance-table.component.scss']
 })
-export class ConcordanceTableComponent implements OnInit {
+export class ConcordanceTableComponent implements OnInit, AfterViewInit {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
@@ -67,8 +67,19 @@ export class ConcordanceTableComponent implements OnInit {
         this.noResultFound = queryResponse.currentSize < 1;
         this.descriptions = queryResponse.descResponses;
         this.queryWithContext = queryResponse.descResponses && queryResponse.descResponses.length > 0;
+      } else {
+        this.totalResults = 0;
+        this.kwicLines = [];
+        this.noResultFound = true;
+        this.descriptions = [];
       }
     });
+  }
+
+  ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
     this.emitterService.makeConcordance.subscribe(res => {
       this.loading = true;
       this.fieldRequest = res.fieldRequest;
@@ -78,9 +89,6 @@ export class ConcordanceTableComponent implements OnInit {
       this.sortOptions = res.sortOptions;
       this.loadResultService.loadResults(res.fieldRequest);
     });
-  }
-
-  ngOnInit(): void {
   }
 
   public loadConcordance(event: any): void {
