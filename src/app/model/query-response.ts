@@ -7,7 +7,7 @@ export class QueryResponse {
   kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
   collocations: Array<CollocationItem> = Array.from<CollocationItem>({ length: 0 });
   frequencies: Array<FrequencyItem> = Array.from<FrequencyItem>({ length: 0 });
-  descResponse = new DescResponse();
+  descResponses: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
   inProgress = false;
   currentSize = 0;
 }

@@ -5,9 +5,19 @@
   <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
     class="flex align-items-center">
   </p-progressSpinner>
-  <div style="width: 250px;" *ngIf="kwicLines.length > 0">
-    <h3 *ngIf="totalResults && !loading">{{typeSearch.length > 1 ? typeSearch[0] + " " + typeSearch[1] : typeSearch[0]}}
-      <span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult : ''}}</span>&nbsp;<b>{{totalResults}}</b>
+  <div *ngIf="kwicLines.length > 0">
+    <h3 *ngIf="totalResults && !loading">{{sortOptions.length > 1 ? sortOptions[0] + " " + sortOptions[1] :
+      sortOptions[0]}}
+      <ng-container *ngIf="queryWithContext; else queryNoContext">
+        <span style="color:red; text-decoration: underline;" (click)="makeConcordanceNoContext()">{{fieldRequest ?
+          fieldRequest.simpleResult :
+          ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b>
+      </ng-container>
+      <ng-template #queryNoContext><span style="color:red;">{{fieldRequest ? fieldRequest.simpleResult :
+          ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b></ng-template>
+      <span *ngFor="let description of descriptions">
+        > <span style="color:red;">{{description.niceArg}}</span> &nbsp;<b>{{description.size}}</b>
+      </span>
     </h3>
   </div>
 </div>

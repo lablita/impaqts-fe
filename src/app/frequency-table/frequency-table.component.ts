@@ -50,19 +50,19 @@ export class FrequencyTableComponent implements OnInit {
     private readonly loadResultService: LoadResultsService,
     private readonly queryRequestService: QueryRequestService
   ) {
-    this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
+    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
-      if (socketResponse && socketResponse.frequencies.length > 0
-        && socketResponse.frequencies[0].items.length > 0
+      if (queryResponse && queryResponse.frequencies.length > 0
+        && queryResponse.frequencies[0].items.length > 0
         && ((this.queryRequestService.queryRequest && this.queryRequestService.queryRequest.frequencyQueryRequest
           && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
-          ? this.category === socketResponse.frequencies[0].head : true)) {
-        this.totalResults = socketResponse.totalResults;
-        this.frequencies = socketResponse.frequencies;
+          ? this.category === queryResponse.frequencies[0].head : true)) {
+        this.totalResults = queryResponse.currentSize;
+        this.frequencies = queryResponse.frequencies;
         this.lines = this.frequencies[0].items;
         this.totalItems = this.frequencies[0].total;
         this.totalFrequency = this.frequencies[0].totalFreq;
-        this.noResultFound = socketResponse.noResultFound;
+        this.noResultFound = queryResponse.currentSize < 1;
 
         this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
         this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;

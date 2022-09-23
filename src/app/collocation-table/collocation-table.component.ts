@@ -29,12 +29,12 @@ export class CollocationTableComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService
   ) {
-    this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
+    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
-      if (socketResponse && socketResponse.collocations.length > 0) {
-        this.totalResults = socketResponse.totalResults;
-        this.collocations = socketResponse.collocations;
-        this.noResultFound = socketResponse.noResultFound;
+      if (queryResponse && queryResponse.collocations.length > 0) {
+        this.totalResults = queryResponse.currentSize;
+        this.collocations = queryResponse.collocations;
+        this.noResultFound = queryResponse.currentSize < 1;
       }
     });
     this.emitterService.makeCollocation.subscribe(fieldRequest => {

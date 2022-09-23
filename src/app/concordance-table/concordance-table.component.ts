@@ -1,11 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
+import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { ResultContext } from '../model/result-context';
+import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
@@ -27,18 +29,23 @@ export class ConcordanceTableComponent implements OnInit {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
   @Input() public visible = false;
+  @Output() public clearContextFields = new EventEmitter<boolean>();
 
   public loading = false;
   public totalResults = 0;
+  public firstItemTotalResults = 0;
   public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
-  public typeSearch: string[] = [];
+  public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
 
-  public fieldRequest: FieldRequest | null = null;
+  public descriptions: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
+
+  public fieldRequest: FieldRequest = new FieldRequest();
+  public queryWithContext = false;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -46,21 +53,29 @@ export class ConcordanceTableComponent implements OnInit {
     private readonly loadResultService: LoadResultsService,
     public queryRequestService: QueryRequestService
   ) {
-    this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
+    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
-      if (socketResponse && socketResponse.kwicLines.length > 0) {
-        this.totalResults = socketResponse.totalResults;
-        this.kwicLines = socketResponse.kwicLines;
-        this.noResultFound = socketResponse.noResultFound;
+      if (queryResponse && queryResponse.kwicLines.length > 0) {
+        this.firstItemTotalResults = queryResponse.currentSize;
+        let tr = queryResponse.currentSize;
+        if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
+          // ultimo elemento delle descResponses ha il totale visualizzato
+          tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
+        }
+        this.totalResults = tr;
+        this.kwicLines = queryResponse.kwicLines;
+        this.noResultFound = queryResponse.currentSize < 1;
+        this.descriptions = queryResponse.descResponses;
+        this.queryWithContext = queryResponse.descResponses && queryResponse.descResponses.length > 0;
       }
     });
     this.emitterService.makeConcordance.subscribe(res => {
       this.loading = true;
       this.fieldRequest = res.fieldRequest;
-      if (res.typeSearch.length > 1) {
-        res.typeSearch[1] = SORT_LABELS.find(sl => sl.key === res.typeSearch[1])?.value!;
+      if (res.sortOptions.length > 1) {
+        res.sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.sortOptions[1])?.value!;
       }
-      this.typeSearch = res.typeSearch;
+      this.sortOptions = res.sortOptions;
       this.loadResultService.loadResults(res.fieldRequest);
     });
   }
@@ -73,6 +88,13 @@ export class ConcordanceTableComponent implements OnInit {
       this.loading = true;
       this.loadResultService.loadResults(this.fieldRequest, event);
     }
+  }
+
+  public makeConcordanceNoContext(): void {
+    // remove context from fieldRequest
+    this.fieldRequest.contextConcordance = null;
+    this.clearContextFields.next(true);
+    this.emitterService.makeConcordance.next(new ConcordanceRequest(this.fieldRequest, this.sortOptions));
   }
 
   public showVideoDlg(rowIndex: number): void {

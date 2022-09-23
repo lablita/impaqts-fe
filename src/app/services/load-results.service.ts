@@ -16,7 +16,6 @@ import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
-import { SocketResponse } from '../model/socket-response';
 import { TextTypesRequest } from '../model/text-types-request';
 import { DisplayPanelService } from './display-panel.service';
 import { MetadataQueryService } from './metadata-query.service';
@@ -36,6 +35,7 @@ export class LoadResultsService {
 
   /** private */
   private metadataQuery: QueryToken | null = null;
+
   private readonly colHeaderList: KeyValueItem[] = [
     new KeyValueItem('f', 'PAGE.COLLOCATION.CONC_COUNT'),
     new KeyValueItem('F', 'PAGE.COLLOCATION.CAND_COUNT'),
@@ -47,7 +47,8 @@ export class LoadResultsService {
     new KeyValueItem('d', 'PAGE.COLLOCATION.LOG_DICE'),
     new KeyValueItem('p', 'PAGE.COLLOCATION.MI_LOG_F')
   ];
-  private readonly socketResponse: Observable<SocketResponse> | null = null;
+
+  private readonly queryResponse$: Observable<QueryResponse> | null = null;
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
@@ -60,7 +61,7 @@ export class LoadResultsService {
       this.socketService.connect();
       const socketServiceSubject = this.socketService.getSocketSubject();
       if (socketServiceSubject) {
-        this.socketResponse = this.initWebSocket(socketServiceSubject);
+        this.queryResponse$ = this.initWebSocket(socketServiceSubject);
       }
     }
   }
@@ -132,16 +133,22 @@ export class LoadResultsService {
         qr.sortQueryRequest = fieldRequest.quickSort;
       }
       /**context */
-      if (fieldRequest.contextConcordance?.lemma) {
-        const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
-          fieldRequest.contextConcordance?.window.key,
-          fieldRequest.contextConcordance?.token,
-          fieldRequest.contextConcordance?.lemma,
-          fieldRequest.contextConcordance?.item.key
-        );
-        qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
-        this.queryRequestService.setContextCOncordance(qr.contextConcordanceQueryRequest);
-        // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
+      if (fieldRequest.contextConcordance) {
+        if (fieldRequest.contextConcordance?.lemma) {
+          const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
+            fieldRequest.contextConcordance?.window.key,
+            fieldRequest.contextConcordance?.token,
+            fieldRequest.contextConcordance?.lemma,
+            fieldRequest.contextConcordance?.item.key
+          );
+          qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
+          this.queryRequestService.setContextCOncordance(qr.contextConcordanceQueryRequest);
+          // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
+        }
+      } else {
+        // remove context query param if present in previous queries
+        qr.contextConcordanceQueryRequest = null;
+        this.queryRequestService.queryRequest.contextConcordanceQueryRequest = null;
       }
       console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
       /**frequency */
@@ -171,9 +178,9 @@ export class LoadResultsService {
     return collocationSortingParams;
   }
 
-  public getWebSocketResponse(): Observable<SocketResponse | null> {
-    if (this.socketResponse) {
-      return this.socketResponse;
+  public getQueryResponse$(): Observable<QueryResponse | null> {
+    if (this.queryResponse$) {
+      return this.queryResponse$;
     };
     return of(null);
   }
@@ -248,56 +255,29 @@ export class LoadResultsService {
     return tag;
   }
 
-  private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<SocketResponse> {
-    let socketResponse: SocketResponse | null = null;
+  private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse> {
+    let queryResponse: QueryResponse | null = null;
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
       tap(resp => console.log(resp)),
       map(resp => {
+        let corpusSelected = true;
         const qr = resp as QueryResponse;
         if (qr.kwicLines && qr.kwicLines.length > 0) {
-          socketResponse = new SocketResponse(
-            (resp as QueryResponse).kwicLines,
-            [],
-            [],
-            true,
-            false,
-            qr.currentSize);
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
         } else if (qr.collocations && qr.collocations.length > 0) {
-          socketResponse = new SocketResponse(
-            [],
-            (resp as QueryResponse).collocations,
-            [],
-            true,
-            false,
-            qr.currentSize);
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
         } else if (qr.frequencies && qr.frequencies.length > 0) {
-          const a = (resp as QueryResponse).frequencies;
-          socketResponse = new SocketResponse(
-            [],
-            [],
-            (resp as QueryResponse).frequencies,
-            true,
-            false,
-            qr.currentSize);
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
         } else {
-          socketResponse = new SocketResponse(
-            [],
-            [],
-            [],
-            false,
-            true,
-            0);
+          corpusSelected = false;
         }
-        if (socketResponse) {
-          // this.displayPanelService.labelOptionsDisabled = !socketResponse.resultView;
+        if (qr) {
+          // this.displayPanelService.labelOptionsDisabled = !queryResponse.resultView;
           this.displayPanelService.activeOptionsButton();
-          this.menuEmitterService.corpusSelected = socketResponse.resultView;
+          this.menuEmitterService.corpusSelected = corpusSelected;
         };
-        return socketResponse;
+        return qr;
       }),
       catchError(err => { throw err; }),
       tap({

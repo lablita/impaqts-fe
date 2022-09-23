@@ -25,13 +25,13 @@ import { SocketService } from '../services/socket.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
-export class ConcordanceResult {
+export class ConcordanceRequest {
   fieldRequest: FieldRequest = new FieldRequest();
-  typeSearch: string[] = [];
+  sortOptions: string[] = [];
 
   constructor(fieldRequest: FieldRequest, typeSearch: string[]) {
     this.fieldRequest = fieldRequest;
-    this.typeSearch = typeSearch;
+    this.sortOptions = typeSearch;
   }
 }
 
@@ -136,6 +136,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public clickContext(): void {
     this.displayContext = !this.displayContext;
+    this.clearContextFields();
   }
 
   public clickTextType(): void {
@@ -225,7 +226,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
         ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
     }
-    this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
+    this.emitterService.makeConcordance.next(new ConcordanceRequest(this.fieldRequest, typeSearch));
   }
 
   public makeCollocations(): void {
@@ -275,7 +276,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     return this.displayPanelService.metadataPanelSubject;
   }
 
-  public clearAll(): void {
+  public clearContextFields(): void {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   }
 
