@@ -22,7 +22,7 @@ import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
-import { EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 export class ConcordanceRequest {
@@ -226,7 +226,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
         ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
     }
-    this.emitterService.makeConcordance.next(new ConcordanceRequest(this.fieldRequest, typeSearch));
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequest, typeSearch)], 0));
   }
 
   public makeCollocations(): void {
@@ -278,6 +278,10 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public clearContextFields(): void {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  }
+
+  public setTitleResult(title: any): void{
+    this.titleResult = title;
   }
 
   private init(): void {

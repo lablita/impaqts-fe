@@ -134,7 +134,7 @@
           [initialPagination]="initialPagination" [paginations]="paginations" [category]="category" [first]="i==0">
         </app-frequency-table> -->
         <app-frequency-table [visible]="titleResult==='MENU.FREQUENCY'" [initialPagination]="initialPagination"
-          [paginations]="paginations">
+          [paginations]="paginations" [corpus]="selectedCorpus" (titleResult)="setTitleResult($event)">
         </app-frequency-table>
       </p-card>
     </div>

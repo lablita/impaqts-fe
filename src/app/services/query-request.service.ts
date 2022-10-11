@@ -30,7 +30,7 @@ export class QueryRequestService {
     return !!this.queryRequest ? !!this.queryRequest.contextConcordanceQueryRequest : false;
   }
 
-  public setContextCOncordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {
+  public setContextConcordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {
     this.queryRequest.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
   }
 }

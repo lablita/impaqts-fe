@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
 import { DescResponse } from '../model/desc-response';
@@ -10,7 +11,7 @@ import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
-import { EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -43,8 +44,7 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
   public stripTags = KWICline.stripTags;
 
   public descriptions: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
-
-  public fieldRequest: FieldRequest = new FieldRequest();
+  public fieldRequests: Array<FieldRequest> = Array.from<FieldRequest>({ length: 0 });
   public queryWithContext = false;
 
   constructor(
@@ -81,28 +81,31 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.emitterService.makeConcordance.subscribe(res => {
+      this.fieldRequests = [];
       this.loading = true;
-      this.fieldRequest = res.fieldRequest;
-      if (res.sortOptions.length > 1) {
-        res.sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.sortOptions[1])?.value!;
+      //this.fieldRequests.push(this.fieldRequest);
+      res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
+      //this.fieldRequest = res.concordances[res.pos].fieldRequest;
+      if (res.concordances[res.pos].sortOptions.length > 1) {
+        res.concordances[res.pos].sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1])?.value!;
       }
-      this.sortOptions = res.sortOptions;
-      this.loadResultService.loadResults(res.fieldRequest);
+      this.sortOptions = res.concordances[res.pos].sortOptions;
+      this.loadResultService.loadResults(this.fieldRequests);
     });
   }
 
   public loadConcordance(event: any): void {
-    if (this.fieldRequest) {
+    if (this.fieldRequests) {
       this.loading = true;
-      this.loadResultService.loadResults(this.fieldRequest, event);
+      this.loadResultService.loadResults(this.fieldRequests, event);
     }
   }
 
   public makeConcordanceNoContext(): void {
     // remove context from fieldRequest
-    this.fieldRequest.contextConcordance = null;
+    this.fieldRequests[this.fieldRequests.length - 1].contextConcordance = null;
     this.clearContextFields.next(true);
-    this.emitterService.makeConcordance.next(new ConcordanceRequest(this.fieldRequest, this.sortOptions));
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequests[this.fieldRequests.length - 1], this.sortOptions)], 0));
   }
 
   public showVideoDlg(rowIndex: number): void {
@@ -127,6 +130,17 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
     }
 
     this.displayModal = true;
+  }
+
+  public clickConc(event: any): void {
+    let typeSearch = ['Query'];
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad([],0);
+    const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
+    this.fieldRequests = this.fieldRequests.slice(0,index+1);
+    this.fieldRequests.forEach(fr => {
+      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch)); 
+    });
+    this.emitterService.makeConcordance.next(concordanceRequestPayload);
   }
 
   public showDialog(kwicline: KWICline): void {

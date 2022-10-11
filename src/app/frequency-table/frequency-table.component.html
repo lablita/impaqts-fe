@@ -25,7 +25,7 @@
   </ng-template>
   <ng-template pTemplate="body" let-line>
     <tr *ngIf="line">
-      <td> P | N</td>
+      <td> <a (click)="clickPositive(line)">P</a> | <a href="">N</a></td>
       <td *ngIf="multilevel" class="text-right">{{line.word[0]}}</td>
       <td *ngIf="!multilevel" class="text-right"><a href="http://{{line.word[0]}}" target="_blank">{{line.word[0]}}</a>
       </td>

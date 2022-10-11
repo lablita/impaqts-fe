@@ -1,12 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FREQ, REL } from '../common/frequency-constants';
+import { WORD } from '../common/query-constants';
 import { ASC, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyResultLine } from '../model/frequency-result-line';
+import { KeyValueItem } from '../model/key-value-item';
+import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
-import { EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 
 const COL_HEADER_MULTILEVEL = [
   'PAGE.FREQUENCY.WORD',
@@ -31,7 +34,10 @@ export class FrequencyTableComponent implements OnInit {
   @Input() public visible = false;
   @Input() public category = '';
   @Input() public first = false;
-
+  @Input() public corpus: KeyValueItem | null = null;
+  //@Input() public fieldRequest: FieldRequest | null = null;
+  @Output() public titleResult = new EventEmitter<string>();
+  
   public loading = false;
   public fieldRequest: FieldRequest | null = null;
   public totalResults = 0;
@@ -74,7 +80,7 @@ export class FrequencyTableComponent implements OnInit {
       if (fieldRequest && fieldRequest.selectedCorpus) {
         this.loading = true;
         this.fieldRequest = fieldRequest;
-        this.loadResultService.loadResults(fieldRequest);
+        this.loadResultService.loadResults([fieldRequest]);
       }
     });
   }
@@ -96,8 +102,26 @@ export class FrequencyTableComponent implements OnInit {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = '' + this.colHeader.indexOf(event.sortField);
       }
       this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;
-      this.loadResultService.loadResults(this.fieldRequest, event);
+      this.loadResultService.loadResults([this.fieldRequest], event);
     }
+  }
+
+  public clickPositive(event: any): void {
+    let typeSearch = ['Query'];
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [],0);
+    event.word.forEach((w: string, i: number) => {
+      const fieldRequest: FieldRequest = new FieldRequest();
+      fieldRequest.matchCase = true;
+      fieldRequest.word = w;
+      fieldRequest.selectedQueryType = new KeyValueItem(WORD, WORD);
+      fieldRequest.selectedCorpus = this.corpus;
+      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch)); 
+      concordanceRequestPayload.pos = i + 1; 
+    });
+
+    this.queryRequestService.queryRequest.frequencyQueryRequest = null;
+    this.emitterService.makeConcordance.next(concordanceRequestPayload);
+    this.titleResult.emit('MENU.CONCORDANCE');
   }
 
 }

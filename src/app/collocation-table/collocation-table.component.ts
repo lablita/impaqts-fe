@@ -40,7 +40,7 @@ export class CollocationTableComponent implements OnInit {
     this.emitterService.makeCollocation.subscribe(fieldRequest => {
       this.loading = true;
       this.fieldRequest = fieldRequest;
-      this.loadResultService.loadResults(fieldRequest);
+      this.loadResultService.loadResults([fieldRequest]);
     });
   }
 
@@ -53,7 +53,7 @@ export class CollocationTableComponent implements OnInit {
       const collocationSortingParams = this.loadResultService.getCollocationSortingParams();
       this.colHeader = collocationSortingParams.colHeader;
       this.sortField = collocationSortingParams.headerSortBy;
-      this.loadResultService.loadResults(this.fieldRequest, event);
+      this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }
 
