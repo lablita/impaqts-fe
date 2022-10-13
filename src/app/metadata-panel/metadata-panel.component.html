@@ -14,7 +14,7 @@
         <div *ngFor="let metadatum of metadataQueryService.metadata, let i = index" class="field grid mb-2">
           <!-- FreeText-->
           <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-1">{{metadatum.name |
-              translate}}</label>
+            translate}}</label>
           <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">
             <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
           </div>
@@ -32,7 +32,7 @@
         </div>
       </p-scrollPanel>
       <span class="flex justify-content-center">
-        <button pButton type=" button" icon="pi" label="{{'PAGE.CLEAR' | translate}}" [disabled]="loading"
+        <button pButton type=" button" label="{{'PAGE.CLEAR' | translate}}" [disabled]="loading"
           (click)="resetMetadata()"></button>
       </span>
     </div>

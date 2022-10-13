@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { WORD } from '../common/query-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
 import { DescResponse } from '../model/desc-response';
@@ -134,11 +134,11 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
 
   public clickConc(event: any): void {
     let typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayLoad([],0);
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad([], 0);
     const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
-    this.fieldRequests = this.fieldRequests.slice(0,index+1);
+    this.fieldRequests = this.fieldRequests.slice(0, index + 1);
     this.fieldRequests.forEach(fr => {
-      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch)); 
+      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch));
     });
     this.emitterService.makeConcordance.next(concordanceRequestPayload);
   }
@@ -150,4 +150,20 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
       KWICline.stripTags(kwicline.rightContext, this.queryRequestService.withContextConcordance()));
   }
 
+  public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
+    switch (fieldRequest.selectedQueryType?.key) {
+      case WORD:
+        return fieldRequest.word;
+      case LEMMA:
+        return fieldRequest.lemma;
+      case PHRASE:
+        return fieldRequest.phrase;
+      case CHARACTER:
+        return fieldRequest.character;
+      case CQL:
+        return fieldRequest.cql;
+      default: // SIMPLE
+        return fieldRequest.simple;
+    }
+  }
 }

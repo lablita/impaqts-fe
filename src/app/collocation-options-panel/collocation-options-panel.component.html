@@ -34,16 +34,16 @@
     </div>
 
     <div class="field grid">
-      <label for="minCorpus"
-        class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" | translate}}</label>
+      <label for="minCorpus" class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_C" |
+        translate}}</label>
       <div class="col-12 md:col-5">
         <input id="minCorpus" type="number" pInputText style="width: 50px;"
           [(ngModel)]="collocationOptionsQueryRequest.minFreqCorpus" class="mr-3">
       </div>
     </div>
     <div class="field grid">
-      <label for="minRange"
-        class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" | translate}}</label>
+      <label for="minRange" class="col-12 md:col-5">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MIN_FREQ_R" |
+        translate}}</label>
       <div class="col-12 md:col-5">
         <input id="minRange" type="number" pInputText style="width: 50px;"
           [(ngModel)]="collocationOptionsQueryRequest.minFreqRange" class="mr-3">
@@ -51,8 +51,8 @@
     </div>
 
     <div class="field grid">
-      <label for="show"
-        class="col-12 md:col-2 mr-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" | translate}}</label>
+      <label for="show" class="col-12 md:col-2 mr-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SHOW" |
+        translate}}</label>
       <div class="col-12 md:col-3">
         <p-listbox id="show" [options]="optionList" [multiple]="true"
           [(ngModel)]="collocationOptionsQueryRequest.showFunc" optionLabel="value" optionValue="key">
@@ -61,8 +61,8 @@
           </ng-template>
         </p-listbox>
       </div>
-      <label for="sort"
-        class="col-12 md:col-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" | translate}}</label>
+      <label for="sort" class="col-12 md:col-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" |
+        translate}}</label>
       <div class="col-12 md:col-3">
         <p-listbox id="sort" [options]="optionList" [(ngModel)]="collocationOptionsQueryRequest.sortBy"
           optionLabel="value" optionValue="key">
@@ -74,8 +74,7 @@
     </div>
 
     <span class="flex justify-content-center mt-3">
-      <button pButton type="button" icon="pi"
-        label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MAKE_COLLOCATION' | translate}}"
+      <button pButton type="button" label="{{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.MAKE_COLLOCATION' | translate}}"
         (click)="loadCollocationsOption()" class="mr-5 mt-6"></button>
     </span>
   </p-card>

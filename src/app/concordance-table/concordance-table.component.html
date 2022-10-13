@@ -2,22 +2,27 @@
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
-  <!-- <p-progressSpinner *ngIf="loading" [style]="{width: '50px', height: '50px'}" animationDuration=".5s"
-    class="flex align-items-center">
-  </p-progressSpinner> -->
   <div *ngIf="kwicLines.length > 0">
     <h3 *ngIf="totalResults && !loading">{{sortOptions.length > 1 ? sortOptions[0] + " " + sortOptions[1] :
       sortOptions[0]}}
       <ng-container *ngIf="queryWithContext; else queryNoContext">
         <span *ngFor="let fr of fieldRequests" style="color:red; text-decoration: underline;"
-          (click)="makeConcordanceNoContext()">{{fr ?
-          fr.simpleResult :
+          (click)="makeConcordanceNoContext()">{{fr ? fr.simpleResult :
           ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b>
       </ng-container>
-      <ng-template #queryNoContext><span *ngFor="let fr of fieldRequests; let i = index"> <span style="color:red;"><a
-              (click)="clickConc(fr)">{{fr ? fr.word :
-              ''}}</a></span>&nbsp;<b>{{firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}}
-          </b></span></ng-template>
+
+
+
+
+      <ng-template #queryNoContext>
+        <span *ngFor="let fr of fieldRequests; let i = index">
+          <span style="color:red;">
+            <a (click)="clickConc(fr)" *ngIf="i<(fieldRequests.length-1)">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
+            <a *ngIf="i===fieldRequests.length-1">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
+          </span>&nbsp;
+          <b>{{firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
+        </span>
+      </ng-template>
       <span *ngFor="let description of descriptions">
         > <span style="color:red;">{{description.niceArg}}</span> &nbsp;<b>{{description.size}}</b>
       </span>

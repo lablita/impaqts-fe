@@ -6,11 +6,11 @@
 
     <div class="grid ml-4 mb-3">
       <div class="col-6 flex justify-content-center">
-        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE_TAGS' | translate}}"
+        <button pButton style="width: 100px;" type="button" label="{{'MENU.NODE_TAGS' | translate}}"
           (click)="clickNodeTags()" class="mr-5"></button>
       </div>
       <div class="col-6 flex justify-content-center">
-        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE_FORMS' | translate}}"
+        <button pButton style="width: 100px;" type="button" label="{{'MENU.NODE_FORMS' | translate}}"
           (click)="clickNodeForms()" class="mr-5"></button>
       </div>
     </div>
@@ -56,10 +56,9 @@
         </div>
 
         <span class="flex justify-content-center">
-          <button pButton type="button" icon="pi"
-            label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}" (click)="makeMultilevelFreq()"
-            class="mr-5"></button>
-          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}"
+            (click)="makeMultilevelFreq()" class="mr-5"></button>
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"
             (click)="removeFrequencyOption()" class="mr-5"></button>
         </span>
 
@@ -84,10 +83,10 @@
         </div>
 
         <span class="flex justify-content-center">
-          <button pButton type="button" icon="pi" [disabled]="freqOptionsQueryRequest.categories.length<1"
+          <button pButton type="button" [disabled]="freqOptionsQueryRequest.categories.length<1"
             label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}" (click)="makeFreq()"
             class="mr-5"></button>
-          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"
             (click)="removeFrequencyOption()" class="mr-5"></button>
         </span>
       </p-accordionTab>

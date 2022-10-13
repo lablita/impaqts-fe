@@ -5,19 +5,19 @@
     </div>
     <div class="grid ml-4 mb-3">
       <div class="col-12 md:col-3">
-        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.LEFT' | translate}}"
-          (click)="clickLeft()" class="mr-5"></button>
+        <button pButton style="width: 100px;" type="button" label="{{'MENU.LEFT' | translate}}" (click)="clickLeft()"
+          class="mr-5"></button>
       </div>
       <div class="col-12 md:col-3">
-        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.RIGHT' | translate}}"
-          (click)="clickRight()" class="mr-5"></button>
+        <button pButton style="width: 100px;" type="button" label="{{'MENU.RIGHT' | translate}}" (click)="clickRight()"
+          class="mr-5"></button>
       </div>
       <div class="col-12 md:col-3">
-        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.NODE' | translate}}"
-          (click)="clickNode()" class="mr-5"></button>
+        <button pButton style="width: 100px;" type="button" label="{{'MENU.NODE' | translate}}" (click)="clickNode()"
+          class="mr-5"></button>
       </div>
       <div class="col-12 md:col-3">
-        <button pButton style="width: 100px;" type="button" icon="pi" label="{{'MENU.SHUFFLE' | translate}}"
+        <button pButton style="width: 100px;" type="button" label="{{'MENU.SHUFFLE' | translate}}"
           (click)="clickShuffle()" class="mr-5"></button>
       </div>
     </div>
@@ -46,7 +46,7 @@
 
         <div class="field ml-2">
           <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.SORT_OPTIONS.NUM_TOKEN" |
-          translate}}</label>
+            translate}}</label>
           <input *ngIf="sortOptionsQueryRequest" id="numToken" type="number" pInputText style="width: 50px;"
             [(ngModel)]="sortOptionsQueryRequest.numberTokens">
         </div>
@@ -66,10 +66,9 @@
         </div>
 
         <span class="flex justify-content-center">
-          <button pButton type="button" icon="pi"
-            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}" (click)="makeSort()"
-            class="mr-5"></button>
-          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.CLEAR_SORT_OPT' | translate}}"
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
+            (click)="makeSort()" class="mr-5"></button>
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.CLEAR_SORT_OPT' | translate}}"
             (click)="deafultValues()" class="mr-5"></button>
         </span>
       </p-accordionTab>
@@ -111,10 +110,9 @@
         </div>
 
         <span class="flex justify-content-center">
-          <button pButton type="button" icon="pi"
-            label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}" (click)="makeMultilevelSort()"
-            class="mr-5"></button>
-          <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.CLEAR_SORT_OPT' | translate}}"
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.SORT_CONCORDANCE' | translate}}"
+            (click)="makeMultilevelSort()" class="mr-5"></button>
+          <button pButton type="button" label="{{'PAGE.CONCORDANCE.SORT_OPTIONS.CLEAR_SORT_OPT' | translate}}"
             (click)="deafultValues()" class="mr-5"></button>
         </span>
       </p-accordionTab>
