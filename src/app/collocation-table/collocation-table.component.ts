@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
@@ -10,7 +10,7 @@ import { EmitterService } from '../utils/emitter.service';
   templateUrl: './collocation-table.component.html',
   styleUrls: ['./collocation-table.component.scss']
 })
-export class CollocationTableComponent implements OnInit {
+export class CollocationTableComponent implements OnInit, AfterViewInit {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
@@ -37,14 +37,17 @@ export class CollocationTableComponent implements OnInit {
         this.noResultFound = queryResponse.currentSize < 1;
       }
     });
+  }
+
+  ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
     this.emitterService.makeCollocation.subscribe(fieldRequest => {
       this.loading = true;
       this.fieldRequest = fieldRequest;
       this.loadResultService.loadResults([fieldRequest]);
     });
-  }
-
-  ngOnInit(): void {
   }
 
   public loadCollocations(event: any): void {

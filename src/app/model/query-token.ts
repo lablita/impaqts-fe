@@ -6,23 +6,23 @@ export class QueryToken extends QueryElement {
   minRepetitions = 1;
   maxRepetitions = 1;
 
-  addTag(andTag: Array<QueryTag>, struct: string): void {
+  addOrTag(orTags: Array<QueryTag>, struct: string): void {
     const tag = new QueryTag(struct);
-    andTag.push(tag);
+    orTags.push(tag);
   }
 
-  remove(tag: QueryTag, andTag: Array<QueryTag>): void {
-    andTag.splice(andTag.indexOf(tag), 1);
-    if (andTag.length === 0) {
-      this.tags.splice(this.tags.indexOf(andTag), 1);
+  remove(tag: QueryTag, orTags: Array<QueryTag>): void {
+    orTags.splice(orTags.indexOf(tag), 1);
+    if (orTags.length === 0) {
+      this.tags.splice(this.tags.indexOf(orTags), 1);
     }
   }
 
   addAndTag(struct: string): void {
     const tag = new QueryTag(struct);
-    const andTag: Array<QueryTag> = [];
-    andTag.push(tag);
-    this.tags.push(andTag);
+    const orTags: Array<QueryTag> = [];
+    orTags.push(tag);
+    this.tags.push(orTags);
   }
 }
 

@@ -1,6 +1,6 @@
 import { CollocationOptionsQueryRequestDTO } from './collocation-options-query-request-dto';
 import { FilterOptionsQueryRequestDTO } from './filter-options-query-request-dto';
-import { FreqOptionsQueryRequestDTO } from './freq-options-query-request-dto';
+import { FreqOptions } from './freq-options';
 import { KeyValueItem } from './key-value-item';
 import { SortOptionsQueryRequestDTO } from './sort-options-query-request-dto';
 import { ViewOptionsQueryRequest } from './view-options-query-request';
@@ -11,7 +11,7 @@ export class Startup {
   viewOptionsQueryRequest: ViewOptionsQueryRequest;
   wordListOptionsQueryRequest: WordListOptionsQueryRequest;
   sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
-  freqOptionsQueryRequest: FreqOptionsQueryRequestDTO;
+  freqOptionsQueryRequest: FreqOptions;
   collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
   FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO;
 
@@ -20,7 +20,7 @@ export class Startup {
     viewOptionsQueryRequest: ViewOptionsQueryRequest,
     wordListOptionsQueryRequest: WordListOptionsQueryRequest,
     sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
-    freqOptionsQueryRequest: FreqOptionsQueryRequestDTO,
+    freqOptionsQueryRequest: FreqOptions,
     collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO,
     FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO
   ) {

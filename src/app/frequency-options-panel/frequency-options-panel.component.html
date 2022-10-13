@@ -19,8 +19,8 @@
       <p-accordionTab header="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}"
         [selected]="!isSimpleFreq">
         <div class="field ml-2">
-          <label for="numToken" style="width: 145px;"
-            class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
+          <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" |
+            translate}}</label>
           <input id="numToken" type="number" pInputText style="width: 50px;"
             [(ngModel)]="freqOptionsQueryRequest.freqLimitMulti">
         </div>
@@ -68,8 +68,8 @@
         [selected]="isSimpleFreq">
         <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
         <div class="field ml-2">
-          <label for="numToken" style="width: 145px;"
-            class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" | translate}}</label>
+          <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" |
+            translate}}</label>
           <input id="numToken" type="number" pInputText style="width: 50px;"
             [(ngModel)]="freqOptionsQueryRequest.freqLimit">
         </div>
@@ -84,7 +84,7 @@
         </div>
 
         <span class="flex justify-content-center">
-          <button pButton type="button" icon="pi"
+          <button pButton type="button" icon="pi" [disabled]="freqOptionsQueryRequest.categories.length<1"
             label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}" (click)="makeFreq()"
             class="mr-5"></button>
           <button pButton type="button" icon="pi" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"

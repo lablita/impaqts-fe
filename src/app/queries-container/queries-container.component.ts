@@ -280,7 +280,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   }
 
-  public setTitleResult(title: any): void{
+  public setTitleResult(title: any): void {
     this.titleResult = title;
   }
 
@@ -289,6 +289,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+      this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
     }
 
     this.displayQueryType = false;

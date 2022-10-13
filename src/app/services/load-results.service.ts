@@ -3,7 +3,7 @@ import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -69,7 +69,7 @@ export class LoadResultsService {
   public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent): void {
     this.setMetadataQuery();
     if (!!fieldRequests && fieldRequests.length > 0) {
-      const fieldRequest = fieldRequests[fieldRequests.length -1]
+      const fieldRequest = fieldRequests[fieldRequests.length - 1]
       if (!!fieldRequest.selectedCorpus) {
         const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
         if (!event) {
@@ -115,15 +115,28 @@ export class LoadResultsService {
             break;
           default: //SIMPLE
             fieldRequest.simpleResult = fieldRequest.simple;
-            queryTags.push(this.tagBuilder('word', fieldRequest.simple));
-            queryTags.push(this.tagBuilder('lemma', fieldRequest.simple));
         }
         qr.queryPattern = new QueryPattern();
         qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
-        const simpleQueryToken = new QueryToken(TOKEN);
-        simpleQueryToken.tags[0] = queryTags;
-
-        qr.queryPattern.tokPattern.push(simpleQueryToken);
+        if (fieldRequest.selectedQueryType?.key === SIMPLE) {
+          fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
+            const token = new QueryToken();
+            token.tags.push([]);
+            const tagWord = new QueryTag(TOKEN);
+            tagWord.name = 'lemma';
+            tagWord.value = simpleResultToken;
+            const tagLemma = new QueryTag(TOKEN);
+            tagLemma.name = 'word';
+            tagLemma.value = simpleResultToken;
+            token.tags[0].push(tagWord);
+            token.tags[0].push(tagLemma);
+            qr.queryPattern.tokPattern.push(token);
+          })
+        } else {
+          const simpleQueryToken = new QueryToken(TOKEN);
+          simpleQueryToken.tags[0] = queryTags;
+          qr.queryPattern.tokPattern.push(simpleQueryToken);
+        }
         if (this.metadataQuery) {
           qr.queryPattern.structPattern = this.metadataQuery;
         }
@@ -270,7 +283,7 @@ export class LoadResultsService {
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
         } else if (qr.collocations && qr.collocations.length > 0) {
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
-        } else if (qr.frequencies && qr.frequencies.length > 0) {
+        } else if (qr.frequency) {
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
         } else {
           corpusSelected = false;

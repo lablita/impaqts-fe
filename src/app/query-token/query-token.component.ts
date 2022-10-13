@@ -32,9 +32,9 @@ export class QueryTokenComponent {
 
   public repeat = false;
 
-  public addTag(andTag: Array<QueryTag>): void {
+  public addTag(orTags: Array<QueryTag>): void {
     if (this.token) {
-      this.token.addTag(andTag, this.metadata ? STRUCT_DOC : TOKEN);
+      this.token.addOrTag(orTags, this.metadata ? STRUCT_DOC : TOKEN);
     }
   }
 

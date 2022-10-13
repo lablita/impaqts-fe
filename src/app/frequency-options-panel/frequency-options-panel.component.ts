@@ -3,7 +3,7 @@ import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../c
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { FIRST, FOURTH, NODE_CONTEXT, SECOND, THIRD } from '../common/sort-constants';
 import { DESC } from '../model/constants';
-import { FreqOptionsQueryRequestDTO } from '../model/freq-options-query-request-dto';
+import { FreqOptions } from '../model/freq-options';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
@@ -67,7 +67,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public concordanceFrequency = new EventEmitter<FrequencyQueryRequest>();
 
-  public freqOptionsQueryRequest: FreqOptionsQueryRequestDTO = FreqOptionsQueryRequestDTO.build();
+  public freqOptionsQueryRequest: FreqOptions = FreqOptions.build();
 
   public attributeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
@@ -144,7 +144,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     }
   }
 
-  private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptionsQueryRequestDTO, isSimpleFreq: boolean): FrequencyQueryRequest {
+  private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptions, isSimpleFreq: boolean): FrequencyQueryRequest {
     const res = new FrequencyQueryRequest();
     res.frequencyColSort = FREQ;
     res.frequencyTypeSort = DESC;

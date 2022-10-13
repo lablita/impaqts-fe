@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FREQ, REL } from '../common/frequency-constants';
 import { WORD } from '../common/query-constants';
 import { ASC, DESC } from '../model/constants';
@@ -28,23 +28,22 @@ const COL_HEADER_TEXTTYPE = [
   templateUrl: './frequency-table.component.html',
   styleUrls: ['./frequency-table.component.scss']
 })
-export class FrequencyTableComponent implements OnInit {
-  @Input() public initialPagination = 10;
-  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
+export class FrequencyTableComponent implements OnInit, AfterViewInit {
   @Input() public visible = false;
   @Input() public category = '';
   @Input() public first = false;
   @Input() public corpus: KeyValueItem | null = null;
   //@Input() public fieldRequest: FieldRequest | null = null;
   @Output() public titleResult = new EventEmitter<string>();
-  
+
+  public paginations: number[] = [10, 25, 50];
   public loading = false;
   public fieldRequest: FieldRequest | null = null;
   public totalResults = 0;
   public totalFrequency = 0;
   public totalItems = 0;
   public noResultFound = true;
-  public frequencies: Array<FrequencyItem> = Array.from<FrequencyItem>({ length: 0 });
+  public frequency: FrequencyItem = new FrequencyItem();
   public lines: Array<FrequencyResultLine> = Array.from<FrequencyResultLine>({ length: 0 });
   public colHeader: Array<string> = Array.from<string>({ length: 0 });
   public sortField = '';
@@ -57,24 +56,31 @@ export class FrequencyTableComponent implements OnInit {
     private readonly queryRequestService: QueryRequestService
   ) {
     this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      this.loading = false;
-      if (queryResponse && queryResponse.frequencies.length > 0
-        && queryResponse.frequencies[0].items.length > 0
-        && ((this.queryRequestService.queryRequest && this.queryRequestService.queryRequest.frequencyQueryRequest
-          && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
-          ? this.category === queryResponse.frequencies[0].head : true)) {
+      if (queryResponse && queryResponse.frequency && ((this.queryRequestService.queryRequest
+        && this.queryRequestService.queryRequest.frequencyQueryRequest
+        && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
+        ? this.category === queryResponse.frequency.head : true)) {
+        this.loading = false;
         this.totalResults = queryResponse.currentSize;
-        this.frequencies = queryResponse.frequencies;
-        this.lines = this.frequencies[0].items;
-        this.totalItems = this.frequencies[0].total;
-        this.totalFrequency = this.frequencies[0].totalFreq;
-        this.noResultFound = queryResponse.currentSize < 1;
+        this.frequency = queryResponse.frequency;
+        this.lines = this.frequency.items;
+        this.totalItems = this.frequency.total;
+        this.totalFrequency = this.frequency.totalFreq;
+        this.noResultFound = this.totalItems < 1;
 
         this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
         this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
         // this.textTypeFirstCol = this.queryRequestService.queryRequest.frequencyQueryRequest?.categories!;
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
+    this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
+  }
+
+  ngAfterViewInit(): void {
     this.emitterService.makeFrequency.subscribe(fieldRequest => {
       // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
       if (fieldRequest && fieldRequest.selectedCorpus) {
@@ -83,11 +89,6 @@ export class FrequencyTableComponent implements OnInit {
         this.loadResultService.loadResults([fieldRequest]);
       }
     });
-  }
-
-  ngOnInit(): void {
-    this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
-    this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
   }
 
   public loadFrequencies(event: any): void {
@@ -108,15 +109,15 @@ export class FrequencyTableComponent implements OnInit {
 
   public clickPositive(event: any): void {
     let typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [],0);
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
     event.word.forEach((w: string, i: number) => {
       const fieldRequest: FieldRequest = new FieldRequest();
       fieldRequest.matchCase = true;
       fieldRequest.word = w;
       fieldRequest.selectedQueryType = new KeyValueItem(WORD, WORD);
       fieldRequest.selectedCorpus = this.corpus;
-      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch)); 
-      concordanceRequestPayload.pos = i + 1; 
+      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
+      concordanceRequestPayload.pos = i + 1;
     });
 
     this.queryRequestService.queryRequest.frequencyQueryRequest = null;
