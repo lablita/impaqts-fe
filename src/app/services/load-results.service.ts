@@ -148,8 +148,7 @@ export class LoadResultsService {
           qr.sortQueryRequest = fieldRequest.quickSort;
         }
         /**context */
-        if (fieldRequest.contextConcordance) {
-          if (fieldRequest.contextConcordance?.lemma) {
+        if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
             const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
               fieldRequest.contextConcordance?.window.key,
               fieldRequest.contextConcordance?.token,
@@ -159,7 +158,6 @@ export class LoadResultsService {
             qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
             this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
             // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
-          }
         } else {
           // remove context query param if present in previous queries
           qr.contextConcordanceQueryRequest = null;
