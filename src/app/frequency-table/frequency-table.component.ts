@@ -42,6 +42,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   public totalResults = 0;
   public totalFrequency = 0;
   public totalItems = 0;
+  public maxFreq = 0;
+  public maxRel = 0;
   public noResultFound = true;
   public frequency: FrequencyItem = new FrequencyItem();
   public lines: Array<FrequencyResultLine> = Array.from<FrequencyResultLine>({ length: 0 });
@@ -66,6 +68,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
         this.lines = this.frequency.items;
         this.totalItems = this.frequency.total;
         this.totalFrequency = this.frequency.totalFreq;
+        this.maxFreq = this.frequency.maxFreq;
+        this.maxRel = this.frequency.maxRel;
         this.noResultFound = this.totalItems < 1;
 
         this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
