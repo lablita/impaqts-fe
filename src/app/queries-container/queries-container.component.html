@@ -92,21 +92,6 @@
           <div class="col-12 md:col-5">
             <input id="cql" type="text" pInputText [(ngModel)]="cql" class="width-80">
           </div>
-          <div class="col-12 md:col-5 grid">
-            <label class="col-12 md:col-3 align-self-center">{{"PAGE.CONCORDANCE.DEFAULT_ATTRIBUTE" |
-              translate}}</label>
-            <div class="col-12 md:col-5 align-self-center">
-              <p-dropdown [options]="defaultAttributeCQLList" [(ngModel)]="defaultAttributeCQL"
-                [style]="{'width':'12rem'}" [showClear]="true">
-                <ng-template let-option pTemplate="item">
-                  {{'PAGE.CONCORDANCE.' + option.value | translate}}
-                </ng-template>
-                <ng-template pTemplate="selectedItem" let-item>
-                  {{'PAGE.CONCORDANCE.' + item.value | translate}}
-                </ng-template>
-              </p-dropdown>
-            </div>
-          </div>
         </div>
       </div>
 

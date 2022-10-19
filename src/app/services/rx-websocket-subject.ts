@@ -1,4 +1,4 @@
-import { interval, Observable, Observer, Subject } from 'rxjs';
+import { interval, Observable, Observer, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, share, takeWhile } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 
@@ -11,6 +11,8 @@ export class RxWebsocketSubject extends Subject<any> {
   private readonly wsSubjectConfig: WebSocketSubjectConfig<any>;
   private socket: WebSocketSubject<any> | null = null;
   private connectionObserver: Observer<any> | null = null;
+
+  private reconnectionSubscription: Subscription | null = null;
 
   /// by default, when a message is received from the server, we are trying to decode it as JSON
   /// we can override it in the constructor
@@ -94,12 +96,15 @@ export class RxWebsocketSubject extends Subject<any> {
 
   /// WebSocket Reconnect handling
   reconnect(): void {
+    if (this.reconnectionSubscription) {
+      this.reconnectionSubscription.unsubscribe();
+    }
     this.reconnectionObservable = interval(this.reconnectInterval).pipe(
       takeWhile((v, index) => {
         console.log(`WS Reconnection Attempt: ${index}`);
         return index < this.reconnectAttempts && !this.socket;
       }));
-    this.reconnectionObservable.subscribe(
+    this.reconnectionSubscription = this.reconnectionObservable.subscribe(
       {
         next: () => {
           setTimeout(() => this.connect(), 300);

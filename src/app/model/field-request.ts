@@ -13,7 +13,6 @@ export class FieldRequest {
   cql = '';
   matchCase = false;
   selectedQueryType: KeyValueItem | null = null;
-  defaultAttributeCQL: KeyValueItem | null = null;
   contextConcordance: ContextConcordanceQueryRequestDTO | null = null;
   quickSort?: SortQueryRequest | null = null;
 
@@ -21,7 +20,7 @@ export class FieldRequest {
 
   public static build(selectedCorpus: KeyValueItem | null, simpleResult: string, simple: string, lemma: string,
     phrase: string, word: string, character: string, cql: string, matchCase: boolean,
-    selectedQueryType: KeyValueItem | null, defaultAttributeCQL: KeyValueItem | null): FieldRequest {
+    selectedQueryType: KeyValueItem | null): FieldRequest {
     const fieldRequest = new FieldRequest();
     fieldRequest.selectedCorpus = selectedCorpus;
     fieldRequest.simpleResult = simpleResult;
@@ -33,7 +32,6 @@ export class FieldRequest {
     fieldRequest.cql = cql;
     fieldRequest.matchCase = matchCase;
     fieldRequest.selectedQueryType = selectedQueryType;
-    fieldRequest.defaultAttributeCQL = defaultAttributeCQL;
     return fieldRequest;
   }
 }

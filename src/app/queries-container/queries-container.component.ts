@@ -75,14 +75,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public collocationOptionsLabel = '';
   public filterOptionsLabel = '';
   public matchCase = false;
-  public defaultAttributeCQL: KeyValueItem | null = null;
-  public defaultAttributeCQLList: KeyValueItem[] = [
-    new KeyValueItem('WORD', 'WORD'),
-    new KeyValueItem('TAG', 'TAG'),
-    new KeyValueItem('LEMMA', 'LEMMA'),
-    new KeyValueItem('WORD_LC', 'WORD_LC'),
-    new KeyValueItem('LEMMA_LC', 'LEMMA_LC')
-  ];
   public totalResults = 0;
   public metadataAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public textTypesAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
@@ -218,8 +210,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.character,
       this.cql,
       this.matchCase,
-      this.selectedQueryType,
-      this.defaultAttributeCQL);
+      this.selectedQueryType);
     //concordance Context
     this.fieldRequest.contextConcordance = this.contextConcordanceQueryRequestDTO;
     if (sortQueryRequest && !!sortQueryRequest.sortKey) {
@@ -244,8 +235,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.character,
       this.cql,
       this.matchCase,
-      this.selectedQueryType,
-      this.defaultAttributeCQL);
+      this.selectedQueryType);
     this.emitterService.makeCollocation.next(this.fieldRequest);
   }
 
@@ -262,8 +252,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.character,
       this.cql,
       this.matchCase,
-      this.selectedQueryType,
-      this.defaultAttributeCQL);
+      this.selectedQueryType);
     this.emitterService.makeFrequency.next(this.fieldRequest);
   }
 

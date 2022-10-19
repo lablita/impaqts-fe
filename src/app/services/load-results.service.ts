@@ -110,7 +110,6 @@ export class LoadResultsService {
           case CQL:
             fieldRequest.simpleResult = fieldRequest.cql;
             tag = this.tagBuilder('cql', fieldRequest.cql);
-            tag.defaultAttributeCQL = fieldRequest.defaultAttributeCQL?.key ? fieldRequest.defaultAttributeCQL?.key : '';
             queryTags.push(this.tagBuilder('cql', fieldRequest.cql));
             break;
           default: //SIMPLE
@@ -149,15 +148,15 @@ export class LoadResultsService {
         }
         /**context */
         if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
-            const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
-              fieldRequest.contextConcordance?.window.key,
-              fieldRequest.contextConcordance?.token,
-              fieldRequest.contextConcordance?.lemma,
-              fieldRequest.contextConcordance?.item.key
-            );
-            qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
-            this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
-            // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
+          const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
+            fieldRequest.contextConcordance?.window.key,
+            fieldRequest.contextConcordance?.token,
+            fieldRequest.contextConcordance?.lemma,
+            fieldRequest.contextConcordance?.item.key
+          );
+          qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
+          this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
+          // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
         } else {
           // remove context query param if present in previous queries
           qr.contextConcordanceQueryRequest = null;
