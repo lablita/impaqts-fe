@@ -146,7 +146,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   private frequencyQueryRequestBuild(freqOptionsQueryRequest: FreqOptions, isSimpleFreq: boolean): FrequencyQueryRequest {
     const res = new FrequencyQueryRequest();
-    res.frequencyColSort = FREQ;
+    res.frequencyColSort = null;
+    res.frequencyType = FREQ;
     res.frequencyTypeSort = DESC;
     if (isSimpleFreq) {
       res.frequencyLimit = freqOptionsQueryRequest.freqLimit;

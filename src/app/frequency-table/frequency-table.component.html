@@ -16,8 +16,9 @@
       <th>
       </th>
       <th *ngIf="!multilevel" class="text-right" pSortableColumn="0">{{category}}</th>
-      <th class="text-right" *ngFor="let col of colHeaders" [pSortableColumn]="col">{{col | translate}}
-        <p-sortIcon [field]="col"></p-sortIcon>
+      <th class="text-right" *ngFor="let col of colHeaders; let idx = index" [pSortableColumn]="col+'-'+idx">{{col |
+        translate}}
+        <p-sortIcon [field]="col+'-'+idx"></p-sortIcon>
       </th>
       <th class="text-right">{{'PAGE.FREQUENCY.ITEMS' | translate}}: {{totalItems}} -
         {{'PAGE.FREQUENCY.TOTAL_FREQ' | translate}}: {{totalFrequency}}</th>
@@ -42,10 +43,6 @@
           tooltipPosition="bottom" pTooltip="{{'PAGE.FREQUENCY.FREQUENCY' | translate}}: {{line.freq}}">
         </p-progressBar>
         <span class="flex mt-1"></span>
-        <!-- <p-progressBar *ngIf="!multilevel" [value]="(line.rel / maxRel) * 100" [showValue]="false"
-          tooltipPosition="bottom" [style]="{'height': '10px', 'background-color' : 'red'}"
-          pTooltip="{{'PAGE.FREQUENCY.REL' | translate}}: {{line.rel}}">
-        </p-progressBar> -->
         <p-progressBar *ngIf="!multilevel" [value]="(line.rel / maxRel) * 100" [showValue]="false"
           tooltipPosition="bottom" [style]="{'height': '10px'}"
           pTooltip="{{'PAGE.FREQUENCY.REL' | translate}}: {{line.rel}}">

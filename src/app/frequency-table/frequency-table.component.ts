@@ -94,13 +94,14 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   public loadFrequencies(event: any): void {
     if (this.fieldRequest && this.queryRequestService.queryRequest.frequencyQueryRequest) {
       this.loading = true;
-      if (event.sortField === '' || event.sortField === 'PAGE.FREQUENCY.FREQUENCY') {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = FREQ;
-      } else if (event.sortField === 'PAGE.FREQUENCY.REL') {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = REL;
-      }
-      else {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = '' + this.colHeaders.indexOf(event.sortField);
+      if (event.sortField === '' || event.sortField.indexOf('PAGE.FREQUENCY.FREQUENCY') >= 0) {
+        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = FREQ;
+      } else if (event.sortField.indexOf('PAGE.FREQUENCY.REL') >= 0) {
+        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = REL;
+      } else if (event.sortField) {
+        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = null;
+        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort =
+          (event.sortField as string).substring((event.sortField as string).lastIndexOf('-') + 1);
       }
       this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;
       this.loadResultService.loadResults([this.fieldRequest], event);
@@ -132,6 +133,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
       const multilevelColHeaders = frequencyQueryRequest.multilevelFrequency.map(mlfreq => mlfreq.attribute ? mlfreq.attribute : '');
       multilevelColHeaders.push('PAGE.FREQUENCY.FREQUENCY');
       this.colHeaders = this.multilevel ? multilevelColHeaders : COL_HEADER_TEXTTYPE;
+      this.sortField = 'PAGE.FREQUENCY.FREQUENCY-' + (this.colHeaders.length - 1);
     }
   }
 
