@@ -203,7 +203,9 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   }
 
   public makeConcordances(sortQueryRequest?: SortQueryRequest): void {
-    this.queryRequestService.resetOptionsRequest();
+    if (!sortQueryRequest) {
+      this.queryRequestService.resetOptionsRequest();
+    }
     let typeSearch = ['Query'];
     this.titleResult = 'MENU.CONCORDANCE';
     this.fieldRequest = FieldRequest.build(
