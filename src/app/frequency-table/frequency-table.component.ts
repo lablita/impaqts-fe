@@ -47,7 +47,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   public noResultFound = true;
   public frequency: FrequencyItem = new FrequencyItem();
   public lines: Array<FrequencyResultLine> = Array.from<FrequencyResultLine>({ length: 0 });
-  public colHeader: Array<string> = Array.from<string>({ length: 0 });
+  public colHeaders: Array<string> = Array.from<string>({ length: 0 });
   public sortField = '';
   public multilevel = false;
   // public textTypeFirstCol: Array<string> = Array.from<string>({ length: 0 });
@@ -71,17 +71,13 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
         this.maxFreq = this.frequency.maxFreq;
         this.maxRel = this.frequency.maxRel;
         this.noResultFound = this.totalItems < 1;
-
-        this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
-        this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
-        // this.textTypeFirstCol = this.queryRequestService.queryRequest.frequencyQueryRequest?.categories!;
+        this.setColumnHeaders();
       }
     });
   }
 
   ngOnInit(): void {
-    this.multilevel = this.queryRequestService.queryRequest.frequencyQueryRequest?.multilevelFrequency.length! > 0;
-    this.colHeader = this.multilevel ? COL_HEADER_MULTILEVEL : COL_HEADER_TEXTTYPE;
+    this.setColumnHeaders();
   }
 
   ngAfterViewInit(): void {
@@ -104,7 +100,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = REL;
       }
       else {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = '' + this.colHeader.indexOf(event.sortField);
+        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort = '' + this.colHeaders.indexOf(event.sortField);
       }
       this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;
       this.loadResultService.loadResults([this.fieldRequest], event);
@@ -112,7 +108,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   }
 
   public clickPositive(event: any): void {
-    let typeSearch = ['Query'];
+    const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
     event.word.forEach((w: string, i: number) => {
       const fieldRequest: FieldRequest = new FieldRequest();
@@ -127,6 +123,16 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
     this.queryRequestService.queryRequest.frequencyQueryRequest = null;
     this.emitterService.makeConcordance.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
+  }
+
+  private setColumnHeaders(): void {
+    const frequencyQueryRequest = this.queryRequestService.queryRequest.frequencyQueryRequest;
+    if (frequencyQueryRequest) {
+      this.multilevel = frequencyQueryRequest.multilevelFrequency.length > 0;
+      const multilevelColHeaders = frequencyQueryRequest.multilevelFrequency.map(mlfreq => mlfreq.attribute ? mlfreq.attribute : '');
+      multilevelColHeaders.push('PAGE.FREQUENCY.FREQUENCY');
+      this.colHeaders = this.multilevel ? multilevelColHeaders : COL_HEADER_TEXTTYPE;
+    }
   }
 
 }
