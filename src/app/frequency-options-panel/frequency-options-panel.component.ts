@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6 } from '../common/frequency-constants';
+import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, TAG, WORD } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { FIRST, FOURTH, NODE_CONTEXT, SECOND, THIRD } from '../common/sort-constants';
 import { DESC } from '../model/constants';
@@ -106,12 +106,12 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickNodeTags(): void {
-    return;
+    this.callConcordanceFrequency(TAG);
   }
 
   public clickNodeForms(): void {
-    return;
-  }
+    this.callConcordanceFrequency(WORD);
+    }
 
   public removeFrequencyOption(): void {
     this.queryRequestService.resetOptionsRequest();
@@ -169,5 +169,21 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   private getFrequencyOption(): FrequencyQueryRequest {
     return this.queryRequestService.queryRequest.frequencyQueryRequest!;
   }
+
+  private callConcordanceFrequency(attribute: string): void {
+    const res = new FrequencyQueryRequest()
+      res.frequencyColSort = null;
+      res.frequencyType = FREQ;
+      res.frequencyTypeSort = DESC;
+      res.frequencyLimit = 0;
+      const freqOpt = new FrequencyOption();
+      freqOpt.attribute = attribute;
+      freqOpt.ignoreCase = false;
+      freqOpt.position = NODE_CONTEXT;
+      res.multilevelFrequency.push(freqOpt);
+      this.queryRequestService.queryRequest.frequencyQueryRequest = res;
+      this.concordanceFrequency.emit(res);
+  }
+
 
 }

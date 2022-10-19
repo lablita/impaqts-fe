@@ -11,14 +11,6 @@ import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 
-const COL_HEADER_MULTILEVEL = [
-  'PAGE.FREQUENCY.WORD',
-  'PAGE.FREQUENCY.LEMMA',
-  'PAGE.FREQUENCY.TAG',
-  'PAGE.FREQUENCY.WORD_LAST',
-  'PAGE.FREQUENCY.FREQUENCY'
-];
-
 const COL_HEADER_TEXTTYPE = [
   'PAGE.FREQUENCY.FREQUENCY',
   'PAGE.FREQUENCY.REL',
@@ -33,7 +25,6 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   @Input() public category = '';
   @Input() public first = false;
   @Input() public corpus: KeyValueItem | null = null;
-  //@Input() public fieldRequest: FieldRequest | null = null;
   @Output() public titleResult = new EventEmitter<string>();
 
   public paginations: number[] = [10, 25, 50];
@@ -50,8 +41,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   public colHeaders: Array<string> = Array.from<string>({ length: 0 });
   public sortField = '';
   public multilevel = false;
-  // public textTypeFirstCol: Array<string> = Array.from<string>({ length: 0 });
-
+  
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
