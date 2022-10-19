@@ -10,7 +10,7 @@
 <p-table *ngIf="visible" [value]="lines" [lazy]="true" (onLazyLoad)="loadFrequencies($event)" [paginator]="true"
   [rows]="10" [rowsPerPageOptions]="paginations" [totalRecords]="totalItems" [customSort]="true"
   currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-  [sortField]="sortField" [sortOrder]="-1">
+  [sortField]="sortField" [sortOrder]="-1" [autoLayout]="true">
   <ng-template pTemplate="header">
     <tr>
       <th>
