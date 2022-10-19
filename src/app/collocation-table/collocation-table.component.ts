@@ -30,6 +30,7 @@ export class CollocationTableComponent implements OnInit, AfterViewInit {
     private readonly loadResultService: LoadResultsService
   ) {
     this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+      this.setColumnHeaders();
       this.loading = false;
       if (queryResponse && queryResponse.collocations.length > 0) {
         this.totalResults = queryResponse.currentSize;
@@ -53,11 +54,16 @@ export class CollocationTableComponent implements OnInit, AfterViewInit {
   public loadCollocations(event: any): void {
     if (this.fieldRequest) {
       this.loading = true;
-      const collocationSortingParams = this.loadResultService.getCollocationSortingParams();
-      this.colHeader = collocationSortingParams.colHeader;
-      this.sortField = collocationSortingParams.headerSortBy;
+      this.setColumnHeaders();
       this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }
+
+  private setColumnHeaders(): void {
+    const collocationSortingParams = this.loadResultService.getCollocationSortingParams();
+    this.colHeader = collocationSortingParams.colHeader;
+    this.sortField = collocationSortingParams.headerSortBy;
+  }
+
 
 }

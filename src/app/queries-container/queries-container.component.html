@@ -124,11 +124,9 @@
     </p-card>
     <div class="flex mt-3" *ngIf="!!this.titleResult">
       <p-card class="w-12">
-        <ng-container *ngIf="titleResult==='MENU.COLLOCATIONS' && !((displayMetadataPanel() | async) ||
-        (displayOptionsPanel() | async)) && !!selectedCorpus">
-          <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !((displayMetadataPanel() | async) ||
-        (displayOptionsPanel() | async)) && !!selectedCorpus" [initialPagination]="initialPagination"
-            [paginations]="paginations">
+        <ng-container *ngIf="titleResult==='MENU.COLLOCATIONS' && !!selectedCorpus">
+          <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !!selectedCorpus"
+            [initialPagination]="initialPagination" [paginations]="paginations">
           </app-collocation-table>
         </ng-container>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
