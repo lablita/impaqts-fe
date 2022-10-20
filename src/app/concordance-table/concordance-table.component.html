@@ -35,8 +35,9 @@
 </div>
 <p-table [ngClass]="{'hidden': (!visible || noResultFound) && !loading}" [value]="kwicLines" [lazy]="true"
   [loading]="loading" (onLazyLoad)="loadConcordance($event)" [paginator]="true" styleClass="p-datatable-striped"
-  [rows]="initialPagination" [totalRecords]="totalResults" currentPageReportTemplate="'page: {currentPage} of {totalPages}'" 
-  [showCurrentPageReport]="true" [rowsPerPageOptions]="paginations" [autoLayout]="true">
+  [rows]="initialPagination" [totalRecords]="totalResults"
+  currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="paginations" [autoLayout]="true">
   <ng-template pTemplate="header">
     <tr>
       <th style="width: 80px;"></th>
@@ -51,14 +52,12 @@
         <button [disabled]="loading" pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
           (click)="showVideoDlg(rowIndex)"></button>
       </td>
-      <td class="p-text-right"
-        [innerHTML]="stripTags(kwicLine.leftContext, queryRequestService.withContextConcordance())"></td>
+      <td class="p-text-right" [innerHTML]="stripTags(kwicLine.leftContext, withContextConcordance())"></td>
       <td class="p-text-center">
         <p-button [disabled]="loading" label="{{kwicLine.kwic}}" styleClass="p-button-link"
           (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
       </td>
-      <td class="p-text-left"
-        [innerHTML]="stripTags(kwicLine.rightContext, queryRequestService.withContextConcordance())"></td>
+      <td class="p-text-left" [innerHTML]="stripTags(kwicLine.rightContext, withContextConcordance())"></td>
     </tr>
   </ng-template>
 </p-table>

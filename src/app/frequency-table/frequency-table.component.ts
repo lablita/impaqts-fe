@@ -8,6 +8,7 @@ import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyResultLine } from '../model/frequency-result-line';
 import { KeyValueItem } from '../model/key-value-item';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
@@ -48,26 +49,33 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly errorMessagesService: ErrorMessagesService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      if (queryResponse && queryResponse.frequency && ((this.queryRequestService.queryRequest
-        && this.queryRequestService.queryRequest.frequencyQueryRequest
-        && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
-        ? this.category === queryResponse.frequency.head : true)) {
+      if (queryResponse) {
         this.loading = false;
-        this.totalResults = queryResponse.currentSize;
-        this.frequency = queryResponse.frequency;
-        this.lines = this.frequency.items;
-        this.totalItems = this.frequency.total;
-        this.totalFrequency = this.frequency.totalFreq;
-        this.maxFreq = this.frequency.maxFreq;
-        this.maxRel = this.frequency.maxRel;
-        this.noResultFound = this.totalItems < 1;
-        this.setColumnHeaders();
+        if (queryResponse.error) {
+          const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
+          this.errorMessagesService.sendError(errorMessage);
+        } else if (queryResponse.frequency && ((this.queryRequestService.queryRequest
+          && this.queryRequestService.queryRequest.frequencyQueryRequest
+          && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
+          ? this.category === queryResponse.frequency.head : true)) {
+          this.totalResults = queryResponse.currentSize;
+          this.frequency = queryResponse.frequency;
+          this.lines = this.frequency.items;
+          this.totalItems = this.frequency.total;
+          this.totalFrequency = this.frequency.totalFreq;
+          this.maxFreq = this.frequency.maxFreq;
+          this.maxRel = this.frequency.maxRel;
+          this.noResultFound = this.totalItems < 1;
+          this.setColumnHeaders();
+        }
       }
     });
   }
+
 
   ngOnInit(): void {
     this.setColumnHeaders();

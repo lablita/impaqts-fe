@@ -3,6 +3,7 @@ import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
+import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { EmitterService } from '../utils/emitter.service';
 
@@ -30,15 +31,23 @@ export class CollocationTableComponent implements OnInit, AfterViewInit, OnDestr
 
   constructor(
     private readonly emitterService: EmitterService,
-    private readonly loadResultService: LoadResultsService
+    private readonly loadResultService: LoadResultsService,
+    private readonly errorMessagesService: ErrorMessagesService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      this.setColumnHeaders();
-      this.loading = false;
-      if (queryResponse && queryResponse.collocations.length > 0) {
-        this.totalResults = queryResponse.currentSize;
-        this.collocations = queryResponse.collocations;
-        this.noResultFound = queryResponse.currentSize < 1;
+      if (queryResponse) {
+        this.loading = false;
+        if (queryResponse.error) {
+          const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
+          this.errorMessagesService.sendError(errorMessage);
+        } else {
+          this.setColumnHeaders();
+          if (queryResponse && queryResponse.collocations.length > 0) {
+            this.totalResults = queryResponse.currentSize;
+            this.collocations = queryResponse.collocations;
+            this.noResultFound = queryResponse.currentSize < 1;
+          }
+        }
       }
     });
   }

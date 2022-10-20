@@ -280,7 +280,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
-   
+
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));

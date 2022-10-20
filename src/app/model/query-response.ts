@@ -10,4 +10,6 @@ export class QueryResponse {
   descResponses: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
   inProgress = false;
   currentSize = 0;
+  error = false;
+  errorMessage = '';
 }

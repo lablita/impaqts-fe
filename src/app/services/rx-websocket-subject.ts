@@ -1,6 +1,8 @@
+import { Message } from 'primeng/api';
 import { interval, Observable, Observer, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, share, takeWhile } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
+import { ErrorMessagesService } from './error-messages.service';
 
 /// we inherit from the ordinary Subject
 export class RxWebsocketSubject extends Subject<any> {
@@ -30,8 +32,9 @@ export class RxWebsocketSubject extends Subject<any> {
 
   constructor(
     private readonly url: string,
+    private readonly errorMessagesService: ErrorMessagesService,
     private readonly reconnectInterval: number = 5000,  /// pause between connections
-    private readonly reconnectAttempts: number = 10,  /// number of connection attempts
+    private readonly reconnectAttempts: number = 10,  /// number of connection attempts,
     private readonly resultSelector?: (e: MessageEvent) => any,
     private readonly serializer?: (data: any) => string,
   ) {
@@ -119,6 +122,12 @@ export class RxWebsocketSubject extends Subject<any> {
             if (this.connectionObserver) {
               this.connectionObserver.complete();
             }
+            const noConnectionWithBEErrorMessage = {} as Message;
+            noConnectionWithBEErrorMessage.severity = 'error';
+            noConnectionWithBEErrorMessage.detail = 'Nessuna connessione con il server';
+            noConnectionWithBEErrorMessage.summary = 'Errore';
+            noConnectionWithBEErrorMessage.sticky = true;
+            this.errorMessagesService.sendError(noConnectionWithBEErrorMessage);
           }
         }
       });

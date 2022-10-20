@@ -10,6 +10,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
@@ -54,27 +55,33 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestr
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    public queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly errorMessagesService: ErrorMessagesService,
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      this.loading = false;
-      if (queryResponse && queryResponse.kwicLines.length > 0) {
-        this.firstItemTotalResults = queryResponse.currentSize;
-        let tr = queryResponse.currentSize;
-        if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
-          // ultimo elemento delle descResponses ha il totale visualizzato
-          tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
+      if (queryResponse) {
+        this.loading = false;
+        if (queryResponse.error) {
+          const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
+          this.errorMessagesService.sendError(errorMessage);
+        } else if (queryResponse.kwicLines.length > 0) {
+          this.firstItemTotalResults = queryResponse.currentSize;
+          let tr = queryResponse.currentSize;
+          if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
+            // ultimo elemento delle descResponses ha il totale visualizzato
+            tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
+          }
+          this.totalResults = tr;
+          this.kwicLines = queryResponse.kwicLines;
+          this.noResultFound = queryResponse.currentSize < 1;
+          this.descriptions = queryResponse.descResponses;
+          this.queryWithContext = queryResponse.descResponses && queryResponse.descResponses.length > 0;
+        } else {
+          this.totalResults = 0;
+          this.kwicLines = [];
+          this.noResultFound = true;
+          this.descriptions = [];
         }
-        this.totalResults = tr;
-        this.kwicLines = queryResponse.kwicLines;
-        this.noResultFound = queryResponse.currentSize < 1;
-        this.descriptions = queryResponse.descResponses;
-        this.queryWithContext = queryResponse.descResponses && queryResponse.descResponses.length > 0;
-      } else {
-        this.totalResults = 0;
-        this.kwicLines = [];
-        this.noResultFound = true;
-        this.descriptions = [];
       }
     });
   }
@@ -182,5 +189,9 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestr
       default: // SIMPLE
         return fieldRequest.simple;
     }
+  }
+
+  public withContextConcordance(): boolean {
+    return this.queryRequestService.withContextConcordance();
   }
 }

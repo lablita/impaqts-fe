@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { LazyLoadEvent, MessageService, TreeNode } from 'primeng/api';
+import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
-import { catchError, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
@@ -52,14 +52,12 @@ export class LoadResultsService {
 
   private readonly queryResponse$: Observable<QueryResponse | null> | null = null;
 
-
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
     private queryRequestService: QueryRequestService,
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService,
-    private readonly messageService: MessageService,
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -278,21 +276,16 @@ export class LoadResultsService {
       //tap(resp => console.log(resp)),
       map(resp => {
         if (resp && JSON.stringify(resp).indexOf(`"${this.ERROR_PREFIX}`) === 0) {
-          return null;
-        } else {
+          resp = new QueryResponse();
+          resp.error = true;
           return resp;
-        }
-      }),
-      distinctUntilChanged(),
-      tap(resp => {
-        if (!resp) {
-          this.showError(resp);
         } else {
-          this.handleQueryResponse(resp);
+          return this.handleQueryResponse(resp);
         }
       }),
       catchError(err => { throw err; }),
       tap({
+        next: val => console.log(val),
         error: err => console.error(err),
         complete: () => console.log('IMPAQTS WS disconnected')
       })
@@ -316,8 +309,5 @@ export class LoadResultsService {
     return qr;
   }
 
-  private showError(resp: any): void {
-    this.messageService.add({ severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' })
-  }
 
 }
