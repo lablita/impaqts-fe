@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
 import { LoadResultsService } from '../services/load-results.service';
@@ -10,7 +11,7 @@ import { EmitterService } from '../utils/emitter.service';
   templateUrl: './collocation-table.component.html',
   styleUrls: ['./collocation-table.component.scss']
 })
-export class CollocationTableComponent implements OnInit, AfterViewInit {
+export class CollocationTableComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
@@ -25,11 +26,13 @@ export class CollocationTableComponent implements OnInit, AfterViewInit {
   public noResultFound = true;
   public faSortAmountDown = faSortAmountDown;
 
+  private queryResponseSubscription: Subscription;
+
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService
   ) {
-    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+    this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.setColumnHeaders();
       this.loading = false;
       if (queryResponse && queryResponse.collocations.length > 0) {
@@ -50,6 +53,22 @@ export class CollocationTableComponent implements OnInit, AfterViewInit {
       this.loadResultService.loadResults([fieldRequest]);
     });
   }
+
+  ngOnDestroy(): void {
+    if (this.queryResponseSubscription) {
+      this.queryResponseSubscription.unsubscribe();
+    }
+  }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.visible.currentValue === false) {
+      if (this.queryResponseSubscription) {
+        this.queryResponseSubscription.unsubscribe();
+      }
+    }
+  }
+
 
   public loadCollocations(event: any): void {
     if (this.fieldRequest) {

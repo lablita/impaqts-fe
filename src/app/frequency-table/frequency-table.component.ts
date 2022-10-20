@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FREQ, REL } from '../common/frequency-constants';
 import { WORD } from '../common/query-constants';
 import { ASC, DESC } from '../model/constants';
@@ -20,7 +21,7 @@ const COL_HEADER_TEXTTYPE = [
   templateUrl: './frequency-table.component.html',
   styleUrls: ['./frequency-table.component.scss']
 })
-export class FrequencyTableComponent implements OnInit, AfterViewInit {
+export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() public visible = false;
   @Input() public category = '';
   @Input() public first = false;
@@ -41,13 +42,15 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
   public colHeaders: Array<string> = Array.from<string>({ length: 0 });
   public sortField = '';
   public multilevel = false;
-  
+
+  private queryResponseSubscription: Subscription;
+
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
     private readonly queryRequestService: QueryRequestService
   ) {
-    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+    this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       if (queryResponse && queryResponse.frequency && ((this.queryRequestService.queryRequest
         && this.queryRequestService.queryRequest.frequencyQueryRequest
         && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
@@ -79,6 +82,20 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit {
         this.loadResultService.loadResults([fieldRequest]);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.queryResponseSubscription) {
+      this.queryResponseSubscription.unsubscribe();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.visible.currentValue === false) {
+      if (this.queryResponseSubscription) {
+        this.queryResponseSubscription.unsubscribe();
+      }
+    }
   }
 
   public loadFrequencies(event: any): void {
