@@ -2,15 +2,18 @@
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
+
+
   <div *ngIf="kwicLines.length > 0">
     <h3 *ngIf="totalResults && !loading">{{sortOptions.length > 1 ? sortOptions[0] + " " + sortOptions[1] :
       sortOptions[0]}}
       <ng-container *ngIf="queryWithContext; else queryNoContext">
-        <span *ngFor="let fr of fieldRequests" style="color:red; text-decoration: underline;"
-          (click)="makeConcordanceNoContext()">{{fr ? fr.simpleResult :
-          ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b>
+        <span (click)="makeConcordanceFromBreadcrumbs()">
+          <span *ngFor="let fr of fieldRequests" style="color:red; text-decoration: underline; cursor: pointer;">
+            {{fr ? fr.simpleResult : ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b>
+        </span>
       </ng-container>
-
+      
       <ng-template #queryNoContext>
         <span *ngFor="let fr of fieldRequests; let i = index">
           <span style="color:red;">
@@ -20,8 +23,11 @@
           <b>{{firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
         </span>
       </ng-template>
-      <span *ngFor="let description of descriptions">
-        > <span style="color:red;">{{description.niceArg}}</span> &nbsp;<b>{{description.size}}</b>
+      <span *ngFor="let description of descriptions, let idx = index">
+        > 
+        <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;" (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
+        <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>
+        &nbsp;<b>{{description.size}}</b>
       </span>
     </h3>
   </div>
