@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LazyLoadEvent, TreeNode } from 'primeng/api';
+import { LazyLoadEvent, MessageService, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
@@ -58,7 +58,8 @@ export class LoadResultsService {
     private queryRequestService: QueryRequestService,
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
-    private readonly displayPanelService: DisplayPanelService
+    private readonly displayPanelService: DisplayPanelService,
+    private readonly messageService: MessageService,
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -279,11 +280,17 @@ export class LoadResultsService {
         if (resp && JSON.stringify(resp).indexOf(`"${this.ERROR_PREFIX}`) === 0) {
           return null;
         } else {
-          return this.handleQueryResponse(resp);
+          return resp;
         }
       }),
       distinctUntilChanged(),
-      tap(resp => console.log('After distinct ', resp)),
+      tap(resp => {
+        if (!resp) {
+          this.showError(resp);
+        } else {
+          this.handleQueryResponse(resp);
+        }
+      }),
       catchError(err => { throw err; }),
       tap({
         error: err => console.error(err),
@@ -307,6 +314,10 @@ export class LoadResultsService {
     this.displayPanelService.activeOptionsButton();
     this.menuEmitterService.corpusSelected = corpusSelected;
     return qr;
+  }
+
+  private showError(resp: any): void {
+    this.messageService.add({ severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' })
   }
 
 }
