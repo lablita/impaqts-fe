@@ -280,8 +280,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
-    this.selectedCorpus = !!localStorage.getItem('selectedCorpus') ? JSON.parse(localStorage.getItem('selectedCorpus')!) : null;
-    this.simple = localStorage.getItem('simpleQuery')!;
+   
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
@@ -305,6 +304,11 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     ];
 
     this.selectedQueryType = this.queryTypes[0];
+    if (!!localStorage.getItem('selectedCorpus')) {
+      this.selectedCorpus = JSON.parse(localStorage.getItem('selectedCorpus')!);
+      this.simple = localStorage.getItem('simpleQuery')!;
+      this.dropdownCorpus();
+    }
   }
 
   private closeWebSocket(): void {
