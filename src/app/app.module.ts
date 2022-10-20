@@ -10,6 +10,7 @@ import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -121,6 +122,7 @@ registerLocaleData(localeIt);
       multi: true,
     },
     { provide: LOCALE_ID, useValue: 'it-IT' },
+    MessageService
   ],
   bootstrap: [AppComponent]
 })
