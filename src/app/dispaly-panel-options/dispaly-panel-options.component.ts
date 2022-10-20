@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
   COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
@@ -14,7 +14,7 @@ import { DisplayPanelService } from '../services/display-panel.service';
   templateUrl: './dispaly-panel-options.component.html',
   styleUrls: ['./dispaly-panel-options.component.scss']
 })
-export class DispalyPanelOptionsComponent implements OnInit {
+export class DispalyPanelOptionsComponent {
 
   @Input() isVisualQuery = false;
   @Input() selectedCorpus: KeyValueItem | null = null;
@@ -36,9 +36,6 @@ export class DispalyPanelOptionsComponent implements OnInit {
   constructor(
     public displayPanelService: DisplayPanelService
   ) { }
-
-  ngOnInit(): void {
-  }
 
   public loadColl(): void {
     this.loadCollocations.emit(true);

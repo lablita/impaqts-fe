@@ -153,7 +153,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
           this.socketService.setServerHost(this.endpoint);
           corpora.metadata.sort((a, b) => a.position - b.position);
           corpora.metadata.filter(md => !md.child).forEach(md => {
-            //Attributes in View Options
+            // Attributes in View Options
             if (!md.documentMetadatum) {
               this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
             } else {
@@ -213,7 +213,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.cql,
       this.matchCase,
       this.selectedQueryType);
-    //concordance Context
+    // concordance Context
     this.fieldRequest.contextConcordance = this.contextConcordanceQueryRequestDTO;
     if (sortQueryRequest && !!sortQueryRequest.sortKey) {
       typeSearch = ['Sort', sortQueryRequest.sortKey!];

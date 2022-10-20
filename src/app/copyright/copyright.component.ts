@@ -18,7 +18,6 @@ export class CopyrightComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.displayPanelService.panelSelectedSubject.next(COPYRIGHT_ROUTE);
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.copyright = (JSON.parse(inst) as Installation).copyright;

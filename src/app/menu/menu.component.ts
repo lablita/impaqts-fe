@@ -46,7 +46,7 @@ export class MenuComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly displayPanelService: DisplayPanelService,
     private readonly authService: AuthService,
-    private queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {

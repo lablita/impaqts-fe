@@ -38,7 +38,6 @@ import { QueryTokenComponent } from './query-token/query-token.component';
 import { RightComponent } from './right/right.component';
 import { AppInitializerService } from './services/app-initializer.service';
 import { SortOptionsPanelComponent } from './sort-options-panel/sort-options-panel.component';
-import { TestPaginationComponent } from './test-pagination/test-pagination.component';
 import { TopComponent } from './top/top.component';
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
@@ -76,7 +75,6 @@ registerLocaleData(localeIt);
     DispalyPanelOptionsComponent,
     ConcordanceTableComponent,
     CollocationTableComponent,
-    TestPaginationComponent,
     FrequencyTableComponent
   ],
   imports: [

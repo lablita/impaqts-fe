@@ -17,7 +17,6 @@ export class CreditsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.displayPanelService.panelSelectedSubject.next(CREDITS);
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.credits = (JSON.parse(inst) as Installation).credits;

@@ -8,7 +8,6 @@ import { CreditsComponent } from './credits/credits.component';
 import { EMMACorpGuard } from './guards/emmacorp.guard';
 import { MainComponent } from './main/main.component';
 import { QueriesContainerComponent } from './queries-container/queries-container.component';
-import { TestPaginationComponent } from './test-pagination/test-pagination.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 
 
@@ -57,15 +56,6 @@ const routes: Routes = [
         component: VisualQueryComponent,
         canActivate: [EMMACorpGuard]
       },
-      // {
-      //   path: FREQUENCY,
-      //   component: FrequencyComponent,
-      //   canActivate: [EMMACorpGuard]
-      // },
-      {
-        path: 'test',
-        component: TestPaginationComponent
-      }
     ]
   },
   { path: '**', redirectTo: '' }

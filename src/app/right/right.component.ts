@@ -31,13 +31,11 @@ export class RightComponent implements OnInit {
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
 
-  private titleOption: string | null = null;
-
   constructor(
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
-    private queryRequestService: QueryRequestService,
+    private readonly queryRequestService: QueryRequestService,
   ) { }
 
   ngOnInit(): void {

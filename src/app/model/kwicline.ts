@@ -10,7 +10,7 @@ export class KWICline {
       for (let i = 0; i < context.length; i += 2) {
         if (withContextConcordance) {
           if (context[i + 1] === 'coll') {
-            ret += '<span class="text-red">' + context[i] + '</span>';
+            ret += `<span class="text-red">${context[i]}</span>`;
           } else {
             ret += context[i];
           }

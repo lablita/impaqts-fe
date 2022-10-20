@@ -9,8 +9,6 @@ export class QueryRequestService {
 
   public queryRequest = new QueryRequest();
 
-  constructor() { }
-
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
@@ -26,7 +24,6 @@ export class QueryRequestService {
   }
 
   public withContextConcordance(): boolean {
-    // return true;
     return !!this.queryRequest ? !!this.queryRequest.contextConcordanceQueryRequest : false;
   }
 

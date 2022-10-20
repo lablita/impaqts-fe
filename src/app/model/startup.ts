@@ -13,7 +13,7 @@ export class Startup {
   sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
   freqOptionsQueryRequest: FreqOptions;
   collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
-  FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO;
+  filterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO;
 
   constructor(
     corpusList: KeyValueItem[],
@@ -22,7 +22,7 @@ export class Startup {
     sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
     freqOptionsQueryRequest: FreqOptions,
     collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO,
-    FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO
+    filterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO
   ) {
     this.corpusList = corpusList;
     this.viewOptionsQueryRequest = viewOptionsQueryRequest;
@@ -30,6 +30,6 @@ export class Startup {
     this.sortOptionsQueryRequest = sortOptionsQueryRequest;
     this.freqOptionsQueryRequest = freqOptionsQueryRequest;
     this.collocationOptionsQueryRequest = collocationOptionsQueryRequest;
-    this.FilterOptionsQueryRequestDTO = FilterOptionsQueryRequestDTO;
+    this.filterOptionsQueryRequestDTO = filterOptionsQueryRequestDTO;
   }
 }

@@ -13,6 +13,8 @@ import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 
+const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
+
 const COL_HEADER_TEXTTYPE = [
   'PAGE.FREQUENCY.FREQUENCY',
   'PAGE.FREQUENCY.REL',
@@ -44,7 +46,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public sortField = '';
   public multilevel = false;
 
-  private queryResponseSubscription: Subscription;
+  private readonly queryResponseSubscription: Subscription;
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -109,7 +111,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public loadFrequencies(event: any): void {
     if (this.fieldRequest && this.queryRequestService.queryRequest.frequencyQueryRequest) {
       this.loading = true;
-      if (event.sortField === '' || event.sortField.indexOf('PAGE.FREQUENCY.FREQUENCY') >= 0) {
+      if (event.sortField === '' || event.sortField.indexOf(PAGE_FREQUENCY_FREQUENCY) >= 0) {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = FREQ;
       } else if (event.sortField.indexOf('PAGE.FREQUENCY.REL') >= 0) {
         this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = REL;
@@ -146,9 +148,9 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     if (frequencyQueryRequest) {
       this.multilevel = frequencyQueryRequest.multilevelFrequency.length > 0;
       const multilevelColHeaders = frequencyQueryRequest.multilevelFrequency.map(mlfreq => mlfreq.attribute ? mlfreq.attribute : '');
-      multilevelColHeaders.push('PAGE.FREQUENCY.FREQUENCY');
+      multilevelColHeaders.push(PAGE_FREQUENCY_FREQUENCY);
       this.colHeaders = this.multilevel ? multilevelColHeaders : COL_HEADER_TEXTTYPE;
-      this.sortField = 'PAGE.FREQUENCY.FREQUENCY-' + (this.colHeaders.length - 1);
+      this.sortField = `${PAGE_FREQUENCY_FREQUENCY}-` + (this.colHeaders.length - 1);
     }
   }
 

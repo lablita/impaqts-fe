@@ -82,7 +82,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
 
   constructor(
-    private queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
@@ -111,7 +111,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   public clickNodeForms(): void {
     this.callConcordanceFrequency(WORD);
-    }
+  }
 
   public removeFrequencyOption(): void {
     this.queryRequestService.resetOptionsRequest();
@@ -172,17 +172,17 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   private callConcordanceFrequency(attribute: string): void {
     const res = new FrequencyQueryRequest()
-      res.frequencyColSort = null;
-      res.frequencyType = FREQ;
-      res.frequencyTypeSort = DESC;
-      res.frequencyLimit = 0;
-      const freqOpt = new FrequencyOption();
-      freqOpt.attribute = attribute;
-      freqOpt.ignoreCase = false;
-      freqOpt.position = NODE_CONTEXT;
-      res.multilevelFrequency.push(freqOpt);
-      this.queryRequestService.queryRequest.frequencyQueryRequest = res;
-      this.concordanceFrequency.emit(res);
+    res.frequencyColSort = null;
+    res.frequencyType = FREQ;
+    res.frequencyTypeSort = DESC;
+    res.frequencyLimit = 0;
+    const freqOpt = new FrequencyOption();
+    freqOpt.attribute = attribute;
+    freqOpt.ignoreCase = false;
+    freqOpt.position = NODE_CONTEXT;
+    res.multilevelFrequency.push(freqOpt);
+    this.queryRequestService.queryRequest.frequencyQueryRequest = res;
+    this.concordanceFrequency.emit(res);
   }
 
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { CollocationItem } from '../model/collocation-item';
@@ -12,7 +12,7 @@ import { EmitterService } from '../utils/emitter.service';
   templateUrl: './collocation-table.component.html',
   styleUrls: ['./collocation-table.component.scss']
 })
-export class CollocationTableComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
@@ -27,7 +27,7 @@ export class CollocationTableComponent implements OnInit, AfterViewInit, OnDestr
   public noResultFound = true;
   public faSortAmountDown = faSortAmountDown;
 
-  private queryResponseSubscription: Subscription;
+  private readonly queryResponseSubscription: Subscription;
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -42,7 +42,7 @@ export class CollocationTableComponent implements OnInit, AfterViewInit, OnDestr
           this.errorMessagesService.sendError(errorMessage);
         } else {
           this.setColumnHeaders();
-          if (queryResponse && queryResponse.collocations.length > 0) {
+          if (queryResponse.collocations.length > 0) {
             this.totalResults = queryResponse.currentSize;
             this.collocations = queryResponse.collocations;
             this.noResultFound = queryResponse.currentSize < 1;
@@ -50,9 +50,6 @@ export class CollocationTableComponent implements OnInit, AfterViewInit, OnDestr
         }
       }
     });
-  }
-
-  ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {

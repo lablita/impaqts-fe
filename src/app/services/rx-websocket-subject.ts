@@ -16,8 +16,6 @@ export class RxWebsocketSubject extends Subject<any> {
 
   private reconnectionSubscription: Subscription | null = null;
 
-  private readonly rand = Math.random();
-
   /// by default, when a message is received from the server, we are trying to decode it as JSON
   /// we can override it in the constructor
   defaultResultSelector = (e: MessageEvent) => {

@@ -54,7 +54,7 @@ export class LoadResultsService {
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
-    private queryRequestService: QueryRequestService,
+    private readonly queryRequestService: QueryRequestService,
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService,
@@ -111,7 +111,6 @@ export class LoadResultsService {
             break;
           case CQL:
             fieldRequest.simpleResult = fieldRequest.cql;
-            tag = this.tagBuilder('cql', fieldRequest.cql);
             queryTags.push(this.tagBuilder('cql', fieldRequest.cql));
             break;
           default: //SIMPLE
@@ -158,7 +157,6 @@ export class LoadResultsService {
           );
           qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
           this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
-          // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
         } else {
           // remove context query param if present in previous queries
           qr.contextConcordanceQueryRequest = null;
@@ -196,7 +194,7 @@ export class LoadResultsService {
   public getQueryResponse$(): Observable<QueryResponse | null> {
     if (this.queryResponse$) {
       return this.queryResponse$;
-    };
+    }
     return of(null);
   }
 

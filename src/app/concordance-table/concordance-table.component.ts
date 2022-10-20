@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
@@ -27,10 +27,10 @@ const SORT_LABELS = [
   templateUrl: './concordance-table.component.html',
   styleUrls: ['./concordance-table.component.scss']
 })
-export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
-  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
+  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
   @Input() public visible = false;
   @Output() public clearContextFields = new EventEmitter<boolean>();
 
@@ -49,7 +49,7 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestr
   public fieldRequests: Array<FieldRequest> = Array.from<FieldRequest>({ length: 0 });
   public queryWithContext = false;
 
-  private queryResponseSubscription: Subscription;
+  private readonly queryResponseSubscription: Subscription;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -86,16 +86,11 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestr
     });
   }
 
-  ngOnInit(): void {
-  }
-
   ngAfterViewInit(): void {
     this.emitterService.makeConcordance.subscribe(res => {
       this.fieldRequests = [];
       this.loading = true;
-      //this.fieldRequests.push(this.fieldRequest);
       res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
-      //this.fieldRequest = res.concordances[res.pos].fieldRequest;
       if (res.concordances[res.pos].sortOptions.length > 1) {
         res.concordances[res.pos].sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1])?.value!;
       }
@@ -157,7 +152,7 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   public clickConc(event: any): void {
-    let typeSearch = ['Query'];
+    const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayLoad([], 0);
     const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
     this.fieldRequests = this.fieldRequests.slice(0, index + 1);

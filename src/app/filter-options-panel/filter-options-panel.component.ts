@@ -20,7 +20,7 @@ export class FilterOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO | null = ContextConcordanceQueryRequestDTO.getInstance();
-  public FilterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO = FilterOptionsQueryRequestDTO.getInstance();
+  public filterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO = FilterOptionsQueryRequestDTO.getInstance();
 
   public displayPanelMetadata = false;
   public filters: Array<KeyValueItem> = [];
@@ -34,7 +34,7 @@ export class FilterOptionsPanelComponent implements OnInit {
 
   ngOnInit(): void {
     const foqr = localStorage.getItem(FILTER_OPTIONS_QUERY_REQUEST)
-    this.FilterOptionsQueryRequestDTO = foqr ? JSON.parse(foqr) : DEFAULT_FILTER_OPTIONS_QUERY_REQUEST;
+    this.filterOptionsQueryRequestDTO = foqr ? JSON.parse(foqr) : DEFAULT_FILTER_OPTIONS_QUERY_REQUEST;
 
     this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.POSITIVE').subscribe({
       next: res => {
@@ -62,8 +62,8 @@ export class FilterOptionsPanelComponent implements OnInit {
 
   public clickMakeFilter(): void {
     if (this.contextConcordanceQueryRequestDTO) {
-      this.FilterOptionsQueryRequestDTO.contextConcordance = this.contextConcordanceQueryRequestDTO;
-      localStorage.setItem(FILTER_OPTIONS_QUERY_REQUEST, JSON.stringify(this.FilterOptionsQueryRequestDTO));
+      this.filterOptionsQueryRequestDTO.contextConcordance = this.contextConcordanceQueryRequestDTO;
+      localStorage.setItem(FILTER_OPTIONS_QUERY_REQUEST, JSON.stringify(this.filterOptionsQueryRequestDTO));
     }
   }
 
