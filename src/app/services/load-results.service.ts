@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
@@ -36,6 +36,8 @@ export class LoadResultsService {
   /** private */
   private metadataQuery: QueryToken | null = null;
 
+  private readonly ERROR_PREFIX = 'ERROR';
+
   private readonly colHeaderList: KeyValueItem[] = [
     new KeyValueItem('f', 'PAGE.COLLOCATION.CONC_COUNT'),
     new KeyValueItem('F', 'PAGE.COLLOCATION.CAND_COUNT'),
@@ -48,7 +50,8 @@ export class LoadResultsService {
     new KeyValueItem('p', 'PAGE.COLLOCATION.MI_LOG_F')
   ];
 
-  private readonly queryResponse$: Observable<QueryResponse> | null = null;
+  private readonly queryResponse$: Observable<QueryResponse | null> | null = null;
+
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
@@ -268,36 +271,42 @@ export class LoadResultsService {
     return tag;
   }
 
-  private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse> {
-    let queryResponse: QueryResponse | null = null;
+  private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
-      tap(resp => console.log(resp)),
+      //tap(resp => console.log(resp)),
       map(resp => {
-        let corpusSelected = true;
-        const qr = resp as QueryResponse;
-        if (qr.kwicLines && qr.kwicLines.length > 0) {
-          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
-        } else if (qr.collocations && qr.collocations.length > 0) {
-          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
-        } else if (qr.frequency) {
-          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
+        if (resp && JSON.stringify(resp).indexOf(`"${this.ERROR_PREFIX}`) === 0) {
+          return null;
         } else {
-          corpusSelected = false;
+          return this.handleQueryResponse(resp);
         }
-        if (qr) {
-          // this.displayPanelService.labelOptionsDisabled = !queryResponse.resultView;
-          this.displayPanelService.activeOptionsButton();
-          this.menuEmitterService.corpusSelected = corpusSelected;
-        };
-        return qr;
       }),
+      distinctUntilChanged(),
+      tap(resp => console.log('After distinct ', resp)),
       catchError(err => { throw err; }),
       tap({
         error: err => console.error(err),
         complete: () => console.log('IMPAQTS WS disconnected')
       })
     );
+  }
+
+  private handleQueryResponse(resp: any): QueryResponse {
+    let corpusSelected = true;
+    const qr = resp as QueryResponse;
+    if (qr.kwicLines && qr.kwicLines.length > 0) {
+      this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
+    } else if (qr.collocations && qr.collocations.length > 0) {
+      this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
+    } else if (qr.frequency) {
+      this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
+    } else {
+      corpusSelected = false;
+    }
+    this.displayPanelService.activeOptionsButton();
+    this.menuEmitterService.corpusSelected = corpusSelected;
+    return qr;
   }
 
 }

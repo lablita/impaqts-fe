@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
@@ -25,7 +26,7 @@ const SORT_LABELS = [
   templateUrl: './concordance-table.component.html',
   styleUrls: ['./concordance-table.component.scss']
 })
-export class ConcordanceTableComponent implements OnInit, AfterViewInit {
+export class ConcordanceTableComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
@@ -47,13 +48,15 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
   public fieldRequests: Array<FieldRequest> = Array.from<FieldRequest>({ length: 0 });
   public queryWithContext = false;
 
+  private queryResponseSubscription: Subscription;
+
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
     public queryRequestService: QueryRequestService
   ) {
-    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+    this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
       if (queryResponse && queryResponse.kwicLines.length > 0) {
         this.firstItemTotalResults = queryResponse.currentSize;
@@ -92,6 +95,20 @@ export class ConcordanceTableComponent implements OnInit, AfterViewInit {
       this.sortOptions = res.concordances[res.pos].sortOptions;
       this.loadResultService.loadResults(this.fieldRequests);
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.queryResponseSubscription) {
+      this.queryResponseSubscription.unsubscribe();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.visible.currentValue === false) {
+      if (this.queryResponseSubscription) {
+        this.queryResponseSubscription.unsubscribe();
+      }
+    }
   }
 
   public loadConcordance(event: any): void {
