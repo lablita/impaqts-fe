@@ -1,24 +1,19 @@
-import { KeyValueItem } from './key-value-item';
 
 export class ContextConcordanceQueryRequest {
-  window: KeyValueItem;
-  token: KeyValueItem;
+  window: string;
+  token: number;
   lemma: string;
-  item: KeyValueItem;
+  item: string;
 
   constructor(
-    window: KeyValueItem,
-    token: KeyValueItem,
+    window: string,
+    token: number,
     lemma: string,
-    item: KeyValueItem,
+    item: string,
   ) {
     this.window = window;
     this.token = token;
     this.lemma = lemma;
     this.item = item;
-  }
-
-  public static getInstance(): ContextConcordanceQueryRequest {
-    return new ContextConcordanceQueryRequest(new KeyValueItem('', ''), new KeyValueItem('', ''), '', new KeyValueItem('', ''));
   }
 }

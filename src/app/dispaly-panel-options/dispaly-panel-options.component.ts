@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import {
   COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../common/routes-constants';
+import { FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { SortQueryRequest } from '../model/sort-query-request';
@@ -21,7 +22,8 @@ export class DispalyPanelOptionsComponent implements OnInit {
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
   @Output() public loadCollocations = new EventEmitter<boolean>();
-  @Output() public quickSort = new EventEmitter<SortQueryRequest>();
+  @Output() public sort = new EventEmitter<SortQueryRequest>();
+  @Output() public frequency = new EventEmitter<FrequencyQueryRequest>();
 
   public VIEW_OPTIONS = VIEW_OPTIONS;
   public WORD_LIST = WORD_LIST;
@@ -42,8 +44,12 @@ export class DispalyPanelOptionsComponent implements OnInit {
     this.loadCollocations.emit(true);
   }
 
-  public quickSortCallback(sortQueryRequest: SortQueryRequest): void {
-    this.quickSort.emit(sortQueryRequest);
+  public sortCallback(sortQueryRequest: SortQueryRequest): void {
+    this.sort.emit(sortQueryRequest);
+  }
+
+  public frequencyCallback(frequencyQueryRequest: FrequencyQueryRequest): void {
+    this.frequency.emit(frequencyQueryRequest);
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {

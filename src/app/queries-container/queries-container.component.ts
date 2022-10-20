@@ -10,7 +10,7 @@ import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
+import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
@@ -22,16 +22,16 @@ import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
-import { EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
-export class ConcordanceResult {
+export class ConcordanceRequest {
   fieldRequest: FieldRequest = new FieldRequest();
-  typeSearch: string[] = [];
+  sortOptions: string[] = [];
 
   constructor(fieldRequest: FieldRequest, typeSearch: string[]) {
     this.fieldRequest = fieldRequest;
-    this.typeSearch = typeSearch;
+    this.sortOptions = typeSearch;
   }
 }
 
@@ -42,7 +42,7 @@ export class ConcordanceResult {
 })
 export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
-  public contextConcordanceQueryRequest: ContextConcordanceQueryRequest = ContextConcordanceQueryRequest.getInstance();
+  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
 
   /** public */
   public fieldRequest: FieldRequest | null = null;
@@ -75,14 +75,6 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public collocationOptionsLabel = '';
   public filterOptionsLabel = '';
   public matchCase = false;
-  public defaultAttributeCQL: KeyValueItem | null = null;
-  public defaultAttributeCQLList: KeyValueItem[] = [
-    new KeyValueItem('WORD', 'WORD'),
-    new KeyValueItem('TAG', 'TAG'),
-    new KeyValueItem('LEMMA', 'LEMMA'),
-    new KeyValueItem('WORD_LC', 'WORD_LC'),
-    new KeyValueItem('LEMMA_LC', 'LEMMA_LC')
-  ];
   public totalResults = 0;
   public metadataAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public textTypesAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
@@ -99,10 +91,10 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
-  // public displayRightPanel: Subject<boolean> | null = null;
   public displayResultPanel = false;
   public displayQueryType = false;
   public displayContext = false;
+  public categories: Array<string> = Array.from<string>({ length: 0 });
 
   /** private */
   private endpoint = '';
@@ -116,10 +108,11 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     private readonly socketService: SocketService,
     private readonly metadataQueryService: MetadataQueryService,
     public readonly displayPanelService: DisplayPanelService,
-    private readonly queryRequestSevice: QueryRequestService,
+    public queryRequestService: QueryRequestService,
   ) { }
 
   ngOnInit(): void {
+    this.displayPanelService.reset();
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
@@ -135,6 +128,7 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
 
   public clickContext(): void {
     this.displayContext = !this.displayContext;
+    this.clearContextFields();
   }
 
   public clickTextType(): void {
@@ -142,15 +136,11 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
   }
 
-  public clickClearAll(): void {
-    return;
-  }
-
   public dropdownCorpus(): void {
     this.titleResult = '';
     this.clickTextType();
     this.displayPanelService.reset();
-    this.queryRequestSevice.resetOptionsRequest();
+    this.queryRequestService.resetOptionsRequest();
     if (this.selectedCorpus) {
       this.emitterService.spinnerMetadata.emit(true);
       this.metadataAttributes = [];
@@ -205,6 +195,9 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
   }
 
   public makeConcordances(sortQueryRequest?: SortQueryRequest): void {
+    if (!sortQueryRequest) {
+      this.queryRequestService.resetOptionsRequest();
+    }
     let typeSearch = ['Query'];
     this.titleResult = 'MENU.CONCORDANCE';
     this.fieldRequest = FieldRequest.build(
@@ -217,16 +210,17 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.character,
       this.cql,
       this.matchCase,
-      this.selectedQueryType,
-      this.defaultAttributeCQL);
+      this.selectedQueryType);
+    //concordance Context
+    this.fieldRequest.contextConcordance = this.contextConcordanceQueryRequestDTO;
     if (sortQueryRequest && !!sortQueryRequest.sortKey) {
       typeSearch = ['Sort', sortQueryRequest.sortKey!];
-    } else if (this.queryRequestSevice.queryRequest.sortQueryRequest
-      && this.queryRequestSevice.queryRequest.sortQueryRequest !== undefined) {
-      typeSearch = ['Sort', !!this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey
-        ? this.queryRequestSevice.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+    } else if (this.queryRequestService.queryRequest.sortQueryRequest
+      && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
+      typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
+        ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
     }
-    this.emitterService.makeConcordance.next(new ConcordanceResult(this.fieldRequest, typeSearch));
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequest, typeSearch)], 0));
   }
 
   public makeCollocations(): void {
@@ -241,9 +235,25 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
       this.character,
       this.cql,
       this.matchCase,
-      this.selectedQueryType,
-      this.defaultAttributeCQL);
+      this.selectedQueryType);
     this.emitterService.makeCollocation.next(this.fieldRequest);
+  }
+
+  public makeFrequency(): void {
+    this.categories = this.queryRequestService.queryRequest.frequencyQueryRequest?.categories!;
+    this.titleResult = 'MENU.FREQUENCY';
+    this.fieldRequest = FieldRequest.build(
+      this.selectedCorpus,
+      this.simpleResult,
+      this.simple,
+      this.lemma,
+      this.phrase,
+      this.word,
+      this.character,
+      this.cql,
+      this.matchCase,
+      this.selectedQueryType);
+    this.emitterService.makeFrequency.next(this.fieldRequest);
   }
 
   public updateVisibilityFlags(): void {
@@ -258,18 +268,27 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     return this.displayPanelService.metadataPanelSubject;
   }
 
+  public clearContextFields(): void {
+    this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  }
+
+  public setTitleResult(title: any): void {
+    this.titleResult = title;
+  }
+
   private init(): void {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+      this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
     }
 
     this.displayQueryType = false;
     this.hideQueryTypeAndContext();
 
     this.translateService.stream(SELECT_CORPUS_LABEL).subscribe({
-      next: res => this.selectCorpus = res
+      next: (res: any) => this.selectCorpus = res
     });
 
     this.queryTypes = [

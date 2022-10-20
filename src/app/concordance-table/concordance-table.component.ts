@@ -1,13 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { SHUFFLE } from '../model/constants';
+import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { ResultContext } from '../model/result-context';
+import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { LoadResultsService } from '../services/load-results.service';
-import { EmitterService } from '../utils/emitter.service';
+import { QueryRequestService } from '../services/query-request.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -21,55 +25,87 @@ const SORT_LABELS = [
   templateUrl: './concordance-table.component.html',
   styleUrls: ['./concordance-table.component.scss']
 })
-export class ConcordanceTableComponent implements OnInit {
+export class ConcordanceTableComponent implements OnInit, AfterViewInit {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });;
   @Input() public visible = false;
+  @Output() public clearContextFields = new EventEmitter<boolean>();
 
   public loading = false;
   public totalResults = 0;
+  public firstItemTotalResults = 0;
   public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
-  public typeSearch: string[] = [];
+  public sortOptions: string[] = [];
+  public stripTags = KWICline.stripTags;
 
-  public fieldRequest: FieldRequest | null = null;
+  public descriptions: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
+  public fieldRequests: Array<FieldRequest> = Array.from<FieldRequest>({ length: 0 });
+  public queryWithContext = false;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
-    private readonly loadResultService: LoadResultsService
+    private readonly loadResultService: LoadResultsService,
+    public queryRequestService: QueryRequestService
   ) {
-    this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
+    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
-      if (socketResponse) {
-        this.totalResults = socketResponse.totalResults;
-        this.kwicLines = socketResponse.kwicLines;
-        this.noResultFound = socketResponse.noResultFound;
+      if (queryResponse && queryResponse.kwicLines.length > 0) {
+        this.firstItemTotalResults = queryResponse.currentSize;
+        let tr = queryResponse.currentSize;
+        if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
+          // ultimo elemento delle descResponses ha il totale visualizzato
+          tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
+        }
+        this.totalResults = tr;
+        this.kwicLines = queryResponse.kwicLines;
+        this.noResultFound = queryResponse.currentSize < 1;
+        this.descriptions = queryResponse.descResponses;
+        this.queryWithContext = queryResponse.descResponses && queryResponse.descResponses.length > 0;
+      } else {
+        this.totalResults = 0;
+        this.kwicLines = [];
+        this.noResultFound = true;
+        this.descriptions = [];
       }
-    });
-    this.emitterService.makeConcordance.subscribe(res => {
-      this.loading = true;
-      this.fieldRequest = res.fieldRequest;
-      if (res.typeSearch.length > 1) {
-        res.typeSearch[1] = SORT_LABELS.find(sl => sl.key === res.typeSearch[1])?.value!;
-      }
-      this.typeSearch = res.typeSearch;
-      this.loadResultService.loadResults(res.fieldRequest);
     });
   }
 
   ngOnInit(): void {
   }
 
-  public loadConcordance(event: any): void {
-    if (this.fieldRequest) {
+  ngAfterViewInit(): void {
+    this.emitterService.makeConcordance.subscribe(res => {
+      this.fieldRequests = [];
       this.loading = true;
-      this.loadResultService.loadResults(this.fieldRequest, event);
+      //this.fieldRequests.push(this.fieldRequest);
+      res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
+      //this.fieldRequest = res.concordances[res.pos].fieldRequest;
+      if (res.concordances[res.pos].sortOptions.length > 1) {
+        res.concordances[res.pos].sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1])?.value!;
+      }
+      this.sortOptions = res.concordances[res.pos].sortOptions;
+      this.loadResultService.loadResults(this.fieldRequests);
+    });
+  }
+
+  public loadConcordance(event: any): void {
+    if (this.fieldRequests) {
+      this.loading = true;
+      this.loadResultService.loadResults(this.fieldRequests, event);
     }
+  }
+
+  public makeConcordanceNoContext(): void {
+    // remove context from fieldRequest
+    this.fieldRequests[this.fieldRequests.length - 1].contextConcordance = null;
+    this.clearContextFields.next(true);
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequests[this.fieldRequests.length - 1], this.sortOptions)], 0));
   }
 
   public showVideoDlg(rowIndex: number): void {
@@ -96,10 +132,38 @@ export class ConcordanceTableComponent implements OnInit {
     this.displayModal = true;
   }
 
+  public clickConc(event: any): void {
+    let typeSearch = ['Query'];
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad([], 0);
+    const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
+    this.fieldRequests = this.fieldRequests.slice(0, index + 1);
+    this.fieldRequests.forEach(fr => {
+      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch));
+    });
+    this.emitterService.makeConcordance.next(concordanceRequestPayload);
+  }
+
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
     this.resultContext = new ResultContext(kwicline.kwic,
-      kwicline.leftContext + kwicline.leftContext, kwicline.rightContext + kwicline.rightContext);
+      KWICline.stripTags(kwicline.leftContext, this.queryRequestService.withContextConcordance()),
+      KWICline.stripTags(kwicline.rightContext, this.queryRequestService.withContextConcordance()));
   }
 
+  public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
+    switch (fieldRequest.selectedQueryType?.key) {
+      case WORD:
+        return fieldRequest.word;
+      case LEMMA:
+        return fieldRequest.lemma;
+      case PHRASE:
+        return fieldRequest.phrase;
+      case CHARACTER:
+        return fieldRequest.character;
+      case CQL:
+        return fieldRequest.cql;
+      default: // SIMPLE
+        return fieldRequest.simple;
+    }
+  }
 }

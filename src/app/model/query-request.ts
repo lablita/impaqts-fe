@@ -1,4 +1,5 @@
 import { CollocationQueryRequest } from "./collocation-query-request";
+import { ContextConcordanceQueryRequest } from "./context-concordance-query-request";
 import { FrequencyQueryRequest } from "./frequency-query-request";
 import { QueryPattern } from "./query-pattern";
 import { SortQueryRequest } from "./sort-query-request";
@@ -20,4 +21,5 @@ export class QueryRequest {
   collocationQueryRequest: CollocationQueryRequest | null = null;
   sortQueryRequest: SortQueryRequest | null = null;
   frequencyQueryRequest: FrequencyQueryRequest | null = null;
+  contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
 }

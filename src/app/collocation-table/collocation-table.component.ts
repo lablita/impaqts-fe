@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
@@ -10,7 +10,7 @@ import { EmitterService } from '../utils/emitter.service';
   templateUrl: './collocation-table.component.html',
   styleUrls: ['./collocation-table.component.scss']
 })
-export class CollocationTableComponent implements OnInit {
+export class CollocationTableComponent implements OnInit, AfterViewInit {
 
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
@@ -29,32 +29,41 @@ export class CollocationTableComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService
   ) {
-    this.loadResultService.getWebSocketResponse().subscribe(socketResponse => {
+    this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+      this.setColumnHeaders();
       this.loading = false;
-      if (socketResponse) {
-        this.totalResults = socketResponse.totalResults;
-        this.collocations = socketResponse.collocations;
-        this.noResultFound = socketResponse.noResultFound;
+      if (queryResponse && queryResponse.collocations.length > 0) {
+        this.totalResults = queryResponse.currentSize;
+        this.collocations = queryResponse.collocations;
+        this.noResultFound = queryResponse.currentSize < 1;
       }
-    });
-    this.emitterService.makeCollocation.subscribe(fieldRequest => {
-      this.loading = true;
-      this.fieldRequest = fieldRequest;
-      this.loadResultService.loadResults(fieldRequest);
     });
   }
 
   ngOnInit(): void {
   }
 
+  ngAfterViewInit(): void {
+    this.emitterService.makeCollocation.subscribe(fieldRequest => {
+      this.loading = true;
+      this.fieldRequest = fieldRequest;
+      this.loadResultService.loadResults([fieldRequest]);
+    });
+  }
+
   public loadCollocations(event: any): void {
     if (this.fieldRequest) {
       this.loading = true;
-      const collocationSortingParams = this.loadResultService.getCollocationSortingParams(this.fieldRequest, event);
-      this.colHeader = collocationSortingParams.colHeader;
-      this.sortField = collocationSortingParams.headerSortBy;
-      this.loadResultService.loadResults(this.fieldRequest, event);
+      this.setColumnHeaders();
+      this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }
+
+  private setColumnHeaders(): void {
+    const collocationSortingParams = this.loadResultService.getCollocationSortingParams();
+    this.colHeader = collocationSortingParams.colHeader;
+    this.sortField = collocationSortingParams.headerSortBy;
+  }
+
 
 }
