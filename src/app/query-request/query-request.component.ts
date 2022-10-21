@@ -147,7 +147,7 @@ export class QueryRequestComponent implements OnInit {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  this.displayPanelService.labelMetadataSubject.next(!!selectedCorpus && !!this.textTypeStatus);
+                  this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
                   this.emitterService.spinnerMetadata.emit(false);
