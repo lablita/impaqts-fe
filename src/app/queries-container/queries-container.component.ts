@@ -114,8 +114,4 @@ export class QueriesContainerComponent implements OnInit {
     this.selectedCorpus = selectedCorpus;
   }
 
-  public clearContextFields(): void {
-    // TODO: delete context in contextConcordanceQueryRequestDTO
-  }
-
 }

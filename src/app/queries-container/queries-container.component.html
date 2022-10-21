@@ -17,9 +17,10 @@
         </ng-container>
         <ng-container *ngIf="titleResult==='MENU.CONCORDANCE' && !!selectedCorpus">
           <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
-            [paginations]="paginations" (clearContextFields)="clearContextFields()">
+            [paginations]="paginations">
           </app-concordance-table>
         </ng-container>
+
         <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
           <app-frequency-table *ngFor="let category of categories, let i=index"
             [visible]="titleResult==='MENU.FREQUENCY' && categories && categories.length>0" [category]="category"

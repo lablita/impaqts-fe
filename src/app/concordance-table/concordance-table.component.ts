@@ -32,7 +32,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
   @Input() public visible = false;
-  @Output() public clearContextFields = new EventEmitter<boolean>();
+  @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
 
   public loading = false;
   public totalResults = 0;
@@ -120,11 +120,21 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
-  public makeConcordanceNoContext(): void {
-    // remove context from fieldRequest
-    this.fieldRequests[this.fieldRequests.length - 1].contextConcordance = null;
-    this.clearContextFields.next(true);
-    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequests[this.fieldRequests.length - 1], this.sortOptions)], 0));
+  public makeConcordanceFromBreadcrumbs(idx?: number): void {
+    if ((idx !== undefined && idx >= 0)) {
+      this.queryRequestService.getContextConcordanceQueryRequestDTO().lemma =
+        this.queryRequestService.getContextConcordanceQueryRequestDTO().lemma.split(' ').slice(0, idx + 1).join(' ');
+    } else {
+      this.queryRequestService.clearContextConcordanceQueryRequestDTO();
+    }
+    this.queryRequestService.resetOptionsRequest();
+    const typeSearch = ['Query'];
+    // concordance Context
+    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (fieldRequest) {
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+    }
   }
 
   public showVideoDlg(rowIndex: number): void {
