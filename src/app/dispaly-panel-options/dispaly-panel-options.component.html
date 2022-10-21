@@ -17,11 +17,11 @@
   </app-word-list-options-panel>
   <app-sort-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === SORT"
     [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceSort)="sortCallback($event)">
+    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceSort)="sortConcordances($event)">
   </app-sort-options-panel>
   <app-frequency-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === FREQUENCY"
     [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceFrequency)="frequencyCallback($event)">
+    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceFrequency)="loadFrequencies($event)">
   </app-frequency-options-panel>
   <app-collocation-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === COLLOCATIONS"
     [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"

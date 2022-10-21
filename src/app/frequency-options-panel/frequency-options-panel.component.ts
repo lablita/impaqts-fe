@@ -7,6 +7,7 @@ import { FreqOptions } from '../model/freq-options';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
+import { EmitterService } from '../utils/emitter.service';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 
@@ -82,7 +83,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
@@ -119,14 +121,12 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   public makeFreq(): void {
     this.isSimpleFreq = true;
-    this.setFrequencyOption(true);
-    this.concordanceFrequency.emit(this.getFrequencyOption());
+    this.doMakeFrequency(this.isSimpleFreq);
   }
 
   public makeMultilevelFreq(): void {
     this.isSimpleFreq = false;
-    this.setFrequencyOption(false);
-    this.concordanceFrequency.emit(this.getFrequencyOption());
+    this.doMakeFrequency(this.isSimpleFreq);
   }
 
   public levelCheck(event: any, i: number): void {
@@ -183,6 +183,15 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     res.multilevelFrequency.push(freqOpt);
     this.queryRequestService.queryRequest.frequencyQueryRequest = res;
     this.concordanceFrequency.emit(res);
+  }
+
+  private doMakeFrequency(isSimpleFreq: boolean): void {
+    this.setFrequencyOption(isSimpleFreq);
+    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (basicFieldRequest) {
+      this.emitterService.makeFrequency.next(basicFieldRequest);
+      this.concordanceFrequency.emit(this.getFrequencyOption());
+    }
   }
 
 

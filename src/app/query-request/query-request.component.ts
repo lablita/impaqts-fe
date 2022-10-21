@@ -1,13 +1,13 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { EventEmitter } from 'stream';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { INSTALLATION } from '../model/constants';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
@@ -20,6 +20,8 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
+const DEFAULT_SELECTED_QUERY_TYPE = new KeyValueItem(SIMPLE, SIMPLE);
+
 @Component({
   selector: 'app-query-request',
   templateUrl: './query-request.component.html',
@@ -27,17 +29,14 @@ import { MetadataUtilService } from '../utils/metadata-util.service';
 })
 export class QueryRequestComponent implements OnInit {
 
-  @Output() visibiltyChange = new EventEmitter();
+  @Output() titleResultChange = new EventEmitter<string>();
+  @Output() selectedCorpusChange = new EventEmitter<KeyValueItem>();
+  @Output() metadataAttributesChange = new EventEmitter<Array<KeyValueItem>>();
+  @Output() textTypesAttributesChange = new EventEmitter<Array<KeyValueItem>>();
 
   public corpusList: KeyValueItem[] = [];
-  public selectedCorpus: KeyValueItem | null = null;
   public selectCorpus = SELECT_CORPUS_LABEL;
-  public simple = '';
-  public phrase = '';
-  public word = '';
-  public character = '';
-  public cql = '';
-  public matchCase = false;
+
   public selectedQueryType: KeyValueItem | null = null;
   public displayContext = false;
   public displayQueryType = false;
@@ -48,14 +47,24 @@ export class QueryRequestComponent implements OnInit {
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
-  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
 
-  private simpleResult = '';
+  public queryRequestForm = new FormGroup({
+    selectedCorpus: new FormControl(null),
+    selectedQueryType: new FormControl(DEFAULT_SELECTED_QUERY_TYPE),
+    lemma: new FormControl(''),
+    simple: new FormControl(''),
+    phrase: new FormControl(''),
+    word: new FormControl(''),
+    character: new FormControl(''),
+    cql: new FormControl(''),
+    matchCase: new FormControl(false)
+  });
+
+
   private holdSelectedCorpusStr = '';
   private installation?: Installation;
   private endedMetadataProcess = false;
   private textTypeStatus = false;
-  private fieldRequest: FieldRequest | null = null;
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
@@ -68,19 +77,51 @@ export class QueryRequestComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.hideQueryTypeAndContext();
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.installation = JSON.parse(inst) as Installation;
+      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+      this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
+    }
+    this.queryTypes = [
+      DEFAULT_SELECTED_QUERY_TYPE,
+      new KeyValueItem(LEMMA, LEMMA),
+      new KeyValueItem(WORD, WORD),
+      new KeyValueItem(PHRASE, PHRASE),
+      new KeyValueItem(CHARACTER, CHARACTER),
+      new KeyValueItem(CQL, CQL)
+    ];
+    this.selectedQueryType = this.queryTypes[0];
+    if (!!localStorage.getItem('selectedCorpus')) {
+      const lsSelectedCorpus = localStorage.getItem('selectedCorpus');
+      if (lsSelectedCorpus) {
+        this.queryRequestForm.controls.selectedCorpus.setValue(JSON.parse(lsSelectedCorpus));
+      }
+      const lsSimpleQuery = localStorage.getItem('simpleQuery');
+      if (lsSimpleQuery) {
+        this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
+      }
+      this.corpusSelect();
+    }
+    this.setBasicFieldRequest();
+    this.queryRequestForm.valueChanges.subscribe(change => {
+      this.setBasicFieldRequest();
+    });
   }
 
   public corpusSelect(): void {
-    this.titleResult = '';
+    this.titleResultChange.emit('');
     this.clickTextType();
     this.displayPanelService.reset();
     this.queryRequestService.resetOptionsRequest();
-    if (this.selectedCorpus) {
+    const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
+    if (selectedCorpus) {
+      const selectedCorpusKey = selectedCorpus.key;
       this.emitterService.spinnerMetadata.emit(true);
-      this.metadataAttributes = [];
-      this.textTypesAttributes = [];
+      const metadataAttributes: Array<KeyValueItem> = [];
+      const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
-        const selectedCorpusKey = this.selectedCorpus.key;
         if (selectedCorpusKey) {
           const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
           const endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
@@ -89,22 +130,24 @@ export class QueryRequestComponent implements OnInit {
           corpora.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options
             if (!md.documentMetadatum) {
-              this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
+              metadataAttributes.push(new KeyValueItem(md.name, md.name));
             } else {
-              this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
+              textTypesAttributes.push(new KeyValueItem(md.name, md.name));
             }
           });
         }
       }
-      if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
+      this.textTypesAttributesChange.emit(textTypesAttributes);
+      this.metadataAttributesChange.emit(metadataAttributes);
+      if (selectedCorpusKey !== this.holdSelectedCorpusStr) {
         if (this.installation) {
-          this.metadataUtilService.createMatadataTree(this.selectedCorpus.key, this.installation, false).subscribe(
+          this.metadataUtilService.createMatadataTree(selectedCorpusKey, this.installation, false).subscribe(
             {
               next: res => {
                 this.metadataQueryService.metadata = res.md;
                 this.endedMetadataProcess = res.ended;
                 if (this.endedMetadataProcess) {
-                  this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
+                  this.displayPanelService.labelMetadataSubject.next(!!selectedCorpus && !!this.textTypeStatus);
                   // ordinamento position
                   this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
                   this.emitterService.spinnerMetadata.emit(false);
@@ -112,50 +155,40 @@ export class QueryRequestComponent implements OnInit {
               }
             });
         }
-        this.holdSelectedCorpusStr = this.selectedCorpus.key;
+        this.holdSelectedCorpusStr = this.queryRequestForm.controls.selectedCorpus.value.key;
       } else {
-        this.displayPanelService.labelMetadataSubject.next(!!this.selectedCorpus && !!this.textTypeStatus);
+        this.displayPanelService.labelMetadataSubject.next(!!this.queryRequestForm.controls.selectedCorpus.value && !!this.textTypeStatus);
         this.emitterService.spinnerMetadata.emit(false);
         this.endedMetadataProcess = true;
       }
     } else {
       this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
-      this.simple = '';
+      this.queryRequestForm.controls.simple.setValue('');
       this.hideQueryTypeAndContext();
     }
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
+    this.selectedCorpusChange.emit(selectedCorpus);
   }
 
-  public makeConcordances(sortQueryRequest?: SortQueryRequest): void {
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
-    localStorage.setItem('simpleQuery', this.simple);
-    if (!sortQueryRequest) {
-      this.queryRequestService.resetOptionsRequest();
-    }
+  public makeConcordances(): void {
+    localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
+    localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
+    this.queryRequestService.resetOptionsRequest();
     let typeSearch = ['Query'];
-    this.titleResult = 'MENU.CONCORDANCE';
-    this.fieldRequest = FieldRequest.build(
-      this.selectedCorpus,
-      this.simpleResult,
-      this.simple,
-      this.lemma,
-      this.phrase,
-      this.word,
-      this.character,
-      this.cql,
-      this.matchCase,
-      this.selectedQueryType);
+    this.titleResultChange.emit('MENU.CONCORDANCE');
+
     // concordance Context
-    this.fieldRequest.contextConcordance = this.contextConcordanceQueryRequestDTO;
-    if (sortQueryRequest && !!sortQueryRequest.sortKey) {
-      typeSearch = ['Sort', sortQueryRequest.sortKey!];
-    } else if (this.queryRequestService.queryRequest.sortQueryRequest
-      && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
-      typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
-        ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (fieldRequest) {
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      if (this.queryRequestService.queryRequest.sortQueryRequest
+        && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
+        typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
+          ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      }
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }
-    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequest, typeSearch)], 0));
   }
 
   public clickQueryType(): void {
@@ -173,7 +206,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   public clearContextFields(): void {
-    this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+    this.queryRequestService.clearContextConcordanceQueryRequestDTO();
   }
 
   private closeWebSocket(): void {
@@ -183,5 +216,20 @@ export class QueryRequestComponent implements OnInit {
   private hideQueryTypeAndContext(): void {
     this.displayContext = false;
     this.displayQueryType = false;
+  }
+
+  private setBasicFieldRequest(): void {
+    const fieldRequest = FieldRequest.build(
+      this.queryRequestForm.controls.selectedCorpus.value,
+      '',
+      this.queryRequestForm.controls.simple.value,
+      this.queryRequestForm.controls.lemma.value,
+      this.queryRequestForm.controls.phrase.value,
+      this.queryRequestForm.controls.word.value,
+      this.queryRequestForm.controls.character.value,
+      this.queryRequestForm.controls.cql.value,
+      this.queryRequestForm.controls.matchCase.value,
+      this.queryRequestForm.controls.selectedQueryType.value);
+    this.queryRequestService.setBasicFieldRequest(fieldRequest);
   }
 }

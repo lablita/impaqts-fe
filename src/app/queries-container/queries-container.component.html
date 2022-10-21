@@ -1,18 +1,25 @@
 <div class="flex flex-row">
-
   <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !((displayMetadataPanel() | async) ||
   (displayOptionsPanel() | async)), 'w-6': (displayMetadataPanel() | async) ||
   (displayOptionsPanel() | async)}">
-    <div class="flex mt-3" *ngIf="!!this.titleResult">
+
+    <app-query-request (titleResultChange)="setTitleResult($event)"
+      (metadataAttributesChange)="setMetadataAttributes($event)"
+      (textTypesAttributesChange)="setTextTypesAttributes($event)" (selectedCorpusChange)="setSelectedCorpus($event)">
+    </app-query-request>
+
+    <div class="flex mt-3" *ngIf="!!titleResult">
       <p-card class="w-12">
         <ng-container *ngIf="titleResult==='MENU.COLLOCATIONS' && !!selectedCorpus">
           <app-collocation-table [visible]="titleResult==='MENU.COLLOCATIONS' && !!selectedCorpus"
             [initialPagination]="initialPagination" [paginations]="paginations">
           </app-collocation-table>
         </ng-container>
-        <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
-          [paginations]="paginations" (clearContextFields)="clearContextFields()">
-        </app-concordance-table>
+        <ng-container *ngIf="titleResult==='MENU.CONCORDANCE' && !!selectedCorpus">
+          <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
+            [paginations]="paginations" (clearContextFields)="clearContextFields()">
+          </app-concordance-table>
+        </ng-container>
         <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
           <app-frequency-table *ngFor="let category of categories, let i=index"
             [visible]="titleResult==='MENU.FREQUENCY' && categories && categories.length>0" [category]="category"
@@ -31,8 +38,8 @@
     *ngIf="((displayMetadataPanel() | async) || (displayOptionsPanel() | async)) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus.key"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="makeCollocations()" (sort)="makeConcordances($event)"
-      (frequency)="makeFrequency()">
+      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="displayCollocations()" (sort)="displayConcordances()"
+      (frequency)="displayFrequency()">
     </app-dispaly-panel-options>
   </div>
 </div>

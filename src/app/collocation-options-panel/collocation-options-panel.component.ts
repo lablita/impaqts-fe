@@ -3,6 +3,7 @@ import { CollocationOptionsQueryRequestDTO, DEFAULT_COLLOCATION_OPTIONS_QUERY_RE
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
+import { EmitterService } from '../utils/emitter.service';
 
 const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
 
@@ -47,7 +48,8 @@ export class CollocationOptionsPanelComponent {
   public optionList: KeyValueItem[] = OPTIOIN_LIST;
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly emitterService: EmitterService
   ) {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
     this.collocationOptionsQueryRequest = collOptReq ?
@@ -63,7 +65,11 @@ export class CollocationOptionsPanelComponent {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
-    this.loadCollocations.emit(true);
+    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (basicFieldRequest) {
+      this.emitterService.makeCollocation.next(basicFieldRequest);
+      this.loadCollocations.emit(true);
+    }
     this.closeSidebarEvent.emit(true);
   }
 

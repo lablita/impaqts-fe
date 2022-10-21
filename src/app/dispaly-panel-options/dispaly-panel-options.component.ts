@@ -41,11 +41,11 @@ export class DispalyPanelOptionsComponent {
     this.loadCollocations.emit(true);
   }
 
-  public sortCallback(sortQueryRequest: SortQueryRequest): void {
+  public sortConcordances(sortQueryRequest: SortQueryRequest): void {
     this.sort.emit(sortQueryRequest);
   }
 
-  public frequencyCallback(frequencyQueryRequest: FrequencyQueryRequest): void {
+  public loadFrequencies(frequencyQueryRequest: FrequencyQueryRequest): void {
     this.frequency.emit(frequencyQueryRequest);
   }
 
