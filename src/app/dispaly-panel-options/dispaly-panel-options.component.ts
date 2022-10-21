@@ -17,7 +17,7 @@ import { DisplayPanelService } from '../services/display-panel.service';
 export class DispalyPanelOptionsComponent {
 
   @Input() isVisualQuery = false;
-  @Input() selectedCorpus: KeyValueItem | null = null;
+  @Input() selectedCorpus: string | null = null;
   @Input() metadataAttributes: KeyValueItem[] = [];
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];

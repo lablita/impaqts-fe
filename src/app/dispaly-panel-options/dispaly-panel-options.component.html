@@ -1,6 +1,6 @@
 <div class="ml-3" *ngIf="displayMetadataPanel() | async">
   <div *ngIf="selectedCorpus">
-    <app-metadata-panel [corpus]="selectedCorpus?.key" (closeSidebarEvent)="closeMetadataPanel()">
+    <app-metadata-panel [corpus]="selectedCorpus" (closeSidebarEvent)="closeMetadataPanel()">
     </app-metadata-panel>
   </div>
 </div>
@@ -28,6 +28,6 @@
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (loadCollocations)="loadColl()">
   </app-collocation-options-panel>
   <app-filter-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === FILTER"
-    [corpus]="selectedCorpus.key" [metadata]="metadataTextTypes">
+    [corpus]="selectedCorpus" [metadata]="metadataTextTypes">
   </app-filter-options-panel>
 </div>
