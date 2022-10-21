@@ -3,6 +3,7 @@ import { ContextConcordanceQueryRequest } from '../model/context-concordance-que
 import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
 import { FieldRequest } from '../model/field-request';
 import { QueryRequest } from '../model/query-request';
+import { ConcordanceRequestPayload } from '../utils/emitter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ export class QueryRequestService {
   public queryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
+  // used for visual queries
+  private ConcordanceRequestPayload: ConcordanceRequestPayload | null = null;
   private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
@@ -40,7 +43,10 @@ export class QueryRequestService {
   }
 
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
-    this.basicFieldRequest = fieldRequest;
+    if (fieldRequest) {
+      this.basicFieldRequest = fieldRequest;
+      this.ConcordanceRequestPayload = null;
+    }
   }
 
   public getContextConcordanceQueryRequestDTO(): ContextConcordanceQueryRequestDTO {
@@ -49,5 +55,16 @@ export class QueryRequestService {
 
   public clearContextConcordanceQueryRequestDTO(): void {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  }
+
+  public setConcordanceRequestPayload(ConcordanceRequestPayload: ConcordanceRequestPayload): void {
+    if (ConcordanceRequestPayload) {
+      this.ConcordanceRequestPayload = ConcordanceRequestPayload;
+      this.basicFieldRequest = null;
+    }
+  }
+
+  public getConcordanceRequestPayload(): ConcordanceRequestPayload | null {
+    return this.ConcordanceRequestPayload;
   }
 }

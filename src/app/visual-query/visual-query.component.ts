@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent } from 'primeng/api';
-import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
@@ -17,14 +15,12 @@ import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
-import { QueryRequest } from '../model/query-request';
-import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
-import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -139,14 +135,14 @@ export class VisualQueryComponent implements OnInit {
     const typeSearch = ['Query'];
     const fieldRequest = new FieldRequest();
     fieldRequest.selectedCorpus = this.selectedCorpus;
-    const conconrdanceRequest: ConcordanceRequest = new ConcordanceRequest(fieldRequest, typeSearch);
+    const concordanceRequest: ConcordanceRequest = new ConcordanceRequest(fieldRequest, typeSearch);
     if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
     }
     // this.loading = true;
     // this.resultView = false;
     // this.loadConcordances();
-    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([conconrdanceRequest], 0, this.queryPattern));
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([concordanceRequest], 0, this.queryPattern));
   }
 
   public dropdownCorpus(): void {
@@ -186,12 +182,12 @@ export class VisualQueryComponent implements OnInit {
             if (this.enableAddMetadata) {
               // ordinamento position
               this.metadataTextTypes.sort((a, b) => a.position - b.position);
-             this.enableSpinner = false;
+              this.enableSpinner = false;
             }
           });
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-       this.enableSpinner = false;
+        this.enableSpinner = false;
         this.enableAddMetadata = true;
       }
     } else {
