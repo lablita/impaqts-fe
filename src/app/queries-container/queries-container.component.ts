@@ -274,6 +274,15 @@ export class QueriesContainerComponent implements OnInit, AfterViewInit {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   }
 
+  public setContextFiledsFromBreadcrumbs(idx: any): void {
+    if (idx === -1) {
+      this.clearContextFields();
+    } else {
+      this.contextConcordanceQueryRequestDTO.lemma = this.contextConcordanceQueryRequestDTO.lemma.split(' ').slice(0, idx + 1).join(' ');
+    }
+    this.makeConcordances();
+  }
+
   public setTitleResult(title: any): void {
     this.titleResult = title;
   }

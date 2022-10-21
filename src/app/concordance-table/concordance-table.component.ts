@@ -32,8 +32,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
   @Input() public visible = false;
-  @Output() public clearContextFields = new EventEmitter<boolean>();
-
+  @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
+ 
   public loading = false;
   public totalResults = 0;
   public firstItemTotalResults = 0;
@@ -120,12 +120,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
-  public makeConcordanceNoContext(): void {
-    // remove context from fieldRequest
-    this.fieldRequests[this.fieldRequests.length - 1].contextConcordance = null;
-    this.clearContextFields.next(true);
-    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(this.fieldRequests[this.fieldRequests.length - 1], this.sortOptions)], 0));
-  }
+  public makeConcordanceFromBreadcrumbs(idx?: number): void {
+    this.setContextFiledsFromBreadcrumbs.next((idx != undefined && idx >= 0) ? idx : -1 );
+   }
 
   public showVideoDlg(rowIndex: number): void {
     const youtubeVideo = rowIndex % 2 > 0;

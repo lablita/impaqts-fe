@@ -1,5 +1,4 @@
 <div class="flex flex-row">
-
   <div class="flex flex-grow-1 flex-column mt-3" [ngClass]="{'w-12': !((displayMetadataPanel() | async) ||
   (displayOptionsPanel() | async)), 'w-6': (displayMetadataPanel() | async) ||
   (displayOptionsPanel() | async)}">
@@ -103,7 +102,7 @@
             (click)="makeConcordances()" class="mr-3"
             [disabled]="displayPanelService.optionsPanelSubject | async"></button>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
-            (click)="clearContextFields()"></button>
+            (click)="setContextFiledsFromBreadcrumbs($event)"></button>
         </div>
       </div>
     </p-card>
@@ -115,7 +114,7 @@
           </app-collocation-table>
         </ng-container>
         <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
-          [paginations]="paginations" (clearContextFields)="clearContextFields()">
+          [paginations]="paginations" (setContextFiledsFromBreadcrumbs)="setContextFiledsFromBreadcrumbs($event)">
         </app-concordance-table>
         <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
           <app-frequency-table *ngFor="let category of categories, let i=index"
