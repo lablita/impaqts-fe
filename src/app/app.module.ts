@@ -43,6 +43,7 @@ import { VideoPlayerComponent } from './video-player/video-player.component';
 import { ViewOptionsPanelComponent } from './view-options-panel/view-options-panel.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
+import { QueryRequestComponent } from './query-request/query-request.component';
 
 registerLocaleData(localeIt);
 
@@ -75,7 +76,8 @@ registerLocaleData(localeIt);
     DispalyPanelOptionsComponent,
     ConcordanceTableComponent,
     CollocationTableComponent,
-    FrequencyTableComponent
+    FrequencyTableComponent,
+    QueryRequestComponent
   ],
   imports: [
     BrowserModule,

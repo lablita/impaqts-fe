@@ -3,7 +3,9 @@ import { L1, L2, L3, LEFT_CONTEXT, NODE, NODE_CONTEXT, R1, R2, R3, RIGHT_CONTEXT
 import { KeyValueItem } from '../model/key-value-item';
 import { DEFAULT_SORT_OPTIONS_QUERY_REQUEST, SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request-dto';
 import { SortQueryRequest } from '../model/sort-query-request';
+import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { QueryRequestService } from '../services/query-request.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
@@ -68,7 +70,8 @@ export class SortOptionsPanelComponent implements OnInit {
   public isSimpleSort = true;
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
@@ -95,12 +98,14 @@ export class SortOptionsPanelComponent implements OnInit {
   public makeSort(): void {
     this.isSimpleSort = true;
     this.setSortOption(true, null);
+    this.makeConcordances();
     this.concordanceSort.emit(this.getSortOption());
   }
 
   public makeMultilevelSort(): void {
     this.isSimpleSort = false;
     this.setSortOption(false, null);
+    this.makeConcordances();
     this.concordanceSort.emit(this.getSortOption());
   }
 
@@ -212,6 +217,26 @@ export class SortOptionsPanelComponent implements OnInit {
 
   private getSortOption(): SortQueryRequest {
     return this.queryRequestService.queryRequest.sortQueryRequest!;
+  }
+
+  private makeConcordances(sortQueryRequest?: SortQueryRequest): void {
+    if (!sortQueryRequest) {
+      this.queryRequestService.resetOptionsRequest();
+    }
+    let typeSearch = ['Query'];
+    // concordance Context
+    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (fieldRequest) {
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      if (sortQueryRequest && !!sortQueryRequest.sortKey) {
+        typeSearch = ['Sort', sortQueryRequest.sortKey];
+      } else if (this.queryRequestService.queryRequest.sortQueryRequest
+        && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
+        typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
+          ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      }
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+    }
   }
 
 }

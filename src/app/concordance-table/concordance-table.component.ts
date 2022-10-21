@@ -33,7 +33,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
   @Input() public visible = false;
   @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
- 
+
   public loading = false;
   public totalResults = 0;
   public firstItemTotalResults = 0;
@@ -91,7 +91,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
       this.fieldRequests = [];
       this.loading = true;
       res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
-      if (res.concordances[res.pos].sortOptions.length > 1) {
+      if (res.concordances[res.pos].sortOptions && res.concordances[res.pos].sortOptions.length > 1) {
         res.concordances[res.pos].sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1])?.value!;
       }
       this.sortOptions = res.concordances[res.pos].sortOptions;
@@ -121,8 +121,21 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public makeConcordanceFromBreadcrumbs(idx?: number): void {
-    this.setContextFiledsFromBreadcrumbs.next((idx != undefined && idx >= 0) ? idx : -1 );
-   }
+    if ((idx !== undefined && idx >= 0)) {
+      this.queryRequestService.getContextConcordanceQueryRequestDTO().lemma =
+        this.queryRequestService.getContextConcordanceQueryRequestDTO().lemma.split(' ').slice(0, idx + 1).join(' ');
+    } else {
+      this.queryRequestService.clearContextConcordanceQueryRequestDTO();
+    }
+    this.queryRequestService.resetOptionsRequest();
+    const typeSearch = ['Query'];
+    // concordance Context
+    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (fieldRequest) {
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+    }
+  }
 
   public showVideoDlg(rowIndex: number): void {
     const youtubeVideo = rowIndex % 2 > 0;
