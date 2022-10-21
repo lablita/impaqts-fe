@@ -90,12 +90,19 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     this.emitterService.makeConcordance.subscribe(res => {
       this.fieldRequests = [];
       this.loading = true;
-      res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
-      if (res.concordances[res.pos].sortOptions && res.concordances[res.pos].sortOptions.length > 1) {
-        res.concordances[res.pos].sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1])?.value!;
+      if (res.concordances.length > 0 || !!res.qp) {
+        if (!res.qp) {
+          res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
+          if (res.concordances[res.pos].sortOptions.length > 1) {
+            res.concordances[res.pos].sortOptions[1] = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1])?.value!;
+          }
+          this.sortOptions = res.concordances[res.pos].sortOptions;
+        } else {
+          this.fieldRequests = [res.concordances[0].fieldRequest];
+        }
+        this.sortOptions = res.concordances[res.pos].sortOptions;
+        this.loadResultService.loadResults(this.fieldRequests, undefined, res.qp);
       }
-      this.sortOptions = res.concordances[res.pos].sortOptions;
-      this.loadResultService.loadResults(this.fieldRequests);
     });
   }
 
@@ -133,7 +140,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
     }
   }
 
@@ -162,8 +169,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public clickConc(event: any): void {
-    const typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayLoad([], 0);
+    let typeSearch = ['Query'];
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad([], 0, null);
     const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
     this.fieldRequests = this.fieldRequests.slice(0, index + 1);
     this.fieldRequests.forEach(fr => {

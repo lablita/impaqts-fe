@@ -11,6 +11,7 @@ import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
 import { Corpus } from '../model/corpus';
+import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
@@ -20,8 +21,10 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
+import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { SocketService } from '../services/socket.service';
+import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -87,6 +90,9 @@ export class VisualQueryComponent implements OnInit {
   public displayModal = false;
   public youtubeVideo = true;
   public resultContext: ResultContext | null = null;
+  public paginations: number[] = [10, 25, 50];
+  public initialPagination = 10;
+  public titleResult: string | null = null;
 
   // FIXME: a cosa serve?
   private simple?: string;
@@ -98,25 +104,14 @@ export class VisualQueryComponent implements OnInit {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     public displayPanelService: DisplayPanelService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly emitterService: EmitterService
   ) { }
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
-  }
-
-  private init(): void {
-    this.displayPanelService.reset();
-    this.resultView = false;
-    const inst = localStorage.getItem(INSTALLATION);
-    if (inst) {
-      this.installation = JSON.parse(inst) as Installation;
-      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
-    }
-
-    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
   }
 
   public addTokenQuery(): void {
@@ -140,30 +135,18 @@ export class VisualQueryComponent implements OnInit {
   }
 
   public makeConcordance(): void {
-    this.loading = true;
-    this.resultView = false;
-    this.loadConcordances();
-  }
-
-  public loadConcordances(event?: LazyLoadEvent): void {
-    if (this.selectedCorpus && this.selectCorpus.length > 0) {
+    this.titleResult = 'MENU.CONCORDANCE';
+    const typeSearch = ['Query'];
+    const fieldRequest = new FieldRequest();
+    fieldRequest.selectedCorpus = this.selectedCorpus;
+    const conconrdanceRequest: ConcordanceRequest = new ConcordanceRequest(fieldRequest, typeSearch);
+    if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
-      const qr = new QueryRequest();
-      qr.queryPattern = this.queryPattern;
-      if (!event) {
-        qr.start = 0;
-        qr.end = 10;
-      } else {
-        if (event.first !== undefined && event.first !== null) {
-          qr.start = event.first;
-        }
-        if (event.rows !== undefined && event.rows !== null) {
-          qr.end = qr.start + event.rows;
-        }
-      }
-      qr.corpus = this.selectedCorpus.key;
-      this.socketService.sendMessage(qr);
     }
+    // this.loading = true;
+    // this.resultView = false;
+    // this.loadConcordances();
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([conconrdanceRequest], 0, this.queryPattern));
   }
 
   public dropdownCorpus(): void {
@@ -178,12 +161,12 @@ export class VisualQueryComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         const selectedCorpusKey = this.selectedCorpus.key;
         if (selectedCorpusKey) {
-          this.closeWebSocket();
+          //this.closeWebSocket();
           const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
           this.endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
           this.socketService.setServerHost(this.endpoint);
           /** Web Socket */
-          this.initWebSocket();
+          //this.initWebSocket();
           corpora.metadata.sort((a, b) => a.position - b.position);
           corpora.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options
@@ -203,12 +186,12 @@ export class VisualQueryComponent implements OnInit {
             if (this.enableAddMetadata) {
               // ordinamento position
               this.metadataTextTypes.sort((a, b) => a.position - b.position);
-              this.enableSpinner = false;
+             this.enableSpinner = false;
             }
           });
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
-        this.enableSpinner = false;
+       this.enableSpinner = false;
         this.enableAddMetadata = true;
       }
     } else {
@@ -232,33 +215,10 @@ export class VisualQueryComponent implements OnInit {
     return this.queryPattern.tokPattern.length > 0;
   }
 
-  private initWebSocket(): void {
-    this.socketService.connect();
-    const socketServiceSubject = this.socketService.getSocketSubject();
-    if (socketServiceSubject) {
-      socketServiceSubject.pipe(
-        map(resp => {
-          if (this.selectedCorpus) {
-            const qr = resp as QueryResponse;
-            if (qr.kwicLines.length > 0) {
-              this.resultView = true;
-              this.noResultFound = false;
-              this.kwicLines = (resp as QueryResponse).kwicLines;
-            } else {
-              this.noResultFound = true;
-            }
-            this.loading = false;
-            this.totalResults = qr.currentSize;
-            this.simpleResult = this.simple;
-          }
-        }),
-        catchError(err => { throw err; }),
-        tap({
-          error: err => console.error(err),
-          complete: () => console.log('IMPAQTS WS disconnected')
-        })
-      ).subscribe();
-    }
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
+      KWICline.stripTags(kwicline.rightContext, false));
   }
 
   public showVideoDlg(rowIndex: number): void {
@@ -284,14 +244,20 @@ export class VisualQueryComponent implements OnInit {
     this.displayModal = true;
   }
 
-  public showDialog(kwicline: KWICline): void {
-    // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
-      KWICline.stripTags(kwicline.rightContext, false));
-  }
-
   private closeWebSocket(): void {
     this.socketService.closeSocket();
+  }
+
+  private init(): void {
+    this.displayPanelService.reset();
+    this.resultView = false;
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.installation = JSON.parse(inst) as Installation;
+      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+    }
+
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
   }
 
 }

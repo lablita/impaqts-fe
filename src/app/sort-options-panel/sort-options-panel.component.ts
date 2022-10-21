@@ -235,7 +235,7 @@ export class SortOptionsPanelComponent implements OnInit {
         typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
           ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
     }
   }
 

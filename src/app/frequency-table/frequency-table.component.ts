@@ -127,7 +127,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   public clickPositive(event: any): void {
     const typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
+    const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0, null);
     event.word.forEach((w: string, i: number) => {
       const fieldRequest: FieldRequest = new FieldRequest();
       fieldRequest.matchCase = true;
