@@ -99,14 +99,20 @@ export class SortOptionsPanelComponent implements OnInit {
     this.isSimpleSort = true;
     this.setSortOption(true, null);
     this.makeConcordances();
-    this.concordanceSort.emit(this.getSortOption());
+    const sortOption = this.getSortOption();
+    if (sortOption) {
+      this.concordanceSort.emit(sortOption);
+    }
   }
 
   public makeMultilevelSort(): void {
     this.isSimpleSort = false;
     this.setSortOption(false, null);
     this.makeConcordances();
-    this.concordanceSort.emit(this.getSortOption());
+    const sortOption = this.getSortOption();
+    if (sortOption) {
+      this.concordanceSort.emit(sortOption);
+    }
   }
 
   public deafultValues(): void {
@@ -215,8 +221,11 @@ export class SortOptionsPanelComponent implements OnInit {
     }
   }
 
-  private getSortOption(): SortQueryRequest {
-    return this.queryRequestService.queryRequest.sortQueryRequest!;
+  private getSortOption(): SortQueryRequest | null {
+    if (this.queryRequestService.queryRequest && this.queryRequestService.queryRequest.sortQueryRequest) {
+      return this.queryRequestService.queryRequest.sortQueryRequest;
+    }
+    return null;
   }
 
   private makeConcordances(sortQueryRequest?: SortQueryRequest): void {

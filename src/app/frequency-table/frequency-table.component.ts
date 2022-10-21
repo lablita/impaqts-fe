@@ -150,7 +150,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       const multilevelColHeaders = frequencyQueryRequest.multilevelFrequency.map(mlfreq => mlfreq.attribute ? mlfreq.attribute : '');
       multilevelColHeaders.push(PAGE_FREQUENCY_FREQUENCY);
       this.colHeaders = this.multilevel ? multilevelColHeaders : COL_HEADER_TEXTTYPE;
-      this.sortField = `${PAGE_FREQUENCY_FREQUENCY}-` + (this.colHeaders.length - 1);
+      this.sortField = `${PAGE_FREQUENCY_FREQUENCY}-${(this.colHeaders.length - 1)}`;
     }
   }
 

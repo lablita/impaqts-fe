@@ -56,7 +56,9 @@ export class RightComponent implements OnInit {
           this.hideMetadataLabel = true;
           this.hideOptionsLabel = true;
         }
-        this.displayPanelService.panelSelectedSubject.next(this.titleLabel!);
+        if (this.titleLabel) {
+          this.displayPanelService.panelSelectedSubject.next(this.titleLabel);
+        }
         this.titleLabel = MENU_TO_PANEL_LABEL.find(item => item.key === this.titleLabel)?.value;
       }
     });

@@ -165,8 +165,10 @@ export class LoadResultsService {
         console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
         /**frequency */
         if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
-          qr.frequencyQueryRequest?.categories.forEach(cat => {
-            qr.frequencyQueryRequest!.category = cat;
+          qr.frequencyQueryRequest.categories.forEach(cat => {
+            if (qr.frequencyQueryRequest) {
+              qr.frequencyQueryRequest.category = cat;
+            }
             this.socketService.sendMessage(qr);
           });
         } else {

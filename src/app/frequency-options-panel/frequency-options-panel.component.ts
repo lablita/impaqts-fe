@@ -166,8 +166,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     return res;
   }
 
-  private getFrequencyOption(): FrequencyQueryRequest {
-    return this.queryRequestService.queryRequest.frequencyQueryRequest!;
+  private getFrequencyOption(): FrequencyQueryRequest | null {
+    return this.queryRequestService.queryRequest.frequencyQueryRequest;
   }
 
   private callConcordanceFrequency(attribute: string): void {
@@ -190,7 +190,10 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
       this.emitterService.makeFrequency.next(basicFieldRequest);
-      this.concordanceFrequency.emit(this.getFrequencyOption());
+      const freqencyOption = this.getFrequencyOption();
+      if (freqencyOption) {
+        this.concordanceFrequency.emit(freqencyOption);
+      }
     }
   }
 

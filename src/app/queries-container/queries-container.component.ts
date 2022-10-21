@@ -99,7 +99,10 @@ export class QueriesContainerComponent implements OnInit {
 
   public displayFrequency(): void {
     this.titleResult = 'MENU.FREQUENCY';
-    this.categories = this.queryRequestService.queryRequest.frequencyQueryRequest?.categories!;
+    if (this.queryRequestService.queryRequest.frequencyQueryRequest &&
+      this.queryRequestService.queryRequest.frequencyQueryRequest.categories) {
+      this.categories = this.queryRequestService.queryRequest.frequencyQueryRequest.categories;
+    }
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {
