@@ -20,12 +20,11 @@ export class MetadataUtilService {
   private textTypesRequest: TextTypesRequest = new TextTypesRequest();
 
   constructor(
-    private readonly queriesContainerService: QueriesContainerService
+    private readonly queriesContainerService: QueriesContainerService,
   ) { }
 
-  public createMatadataTree(corpus: string, installation: Installation, visualQueryFlag: boolean): Observable<any> {
-    let metadata = installation.corpora.filter(c => c.name === corpus)[0].
-      metadata.filter(md => md.documentMetadatum);
+  public createMatadataTree(corpusId: string, installation: Installation, visualQueryFlag: boolean): Observable<Array<Metadatum>> {
+    let metadata = installation.corpora.filter(c => c.id === +corpusId)[0].metadata.filter(md => md.documentMetadatum);
     // recuro i dati salvati nel localstorage
     const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
     this.textTypesRequest = ttqr ? JSON.parse(ttqr) : null;
@@ -42,7 +41,7 @@ export class MetadataUtilService {
         md.selection = res.selections;
       }
     });
-    /** recupero freeText da localstorage */
+    // recupero freeText da localstorage
     if (this.textTypesRequest && this.textTypesRequest.freeTexts) {
       metadata.forEach(md => {
         if (md.freeText) {
@@ -65,7 +64,7 @@ export class MetadataUtilService {
       this.res.push(new KeyValueItem(metadatum.name, ''));
       if (metadatum.retrieveValuesFromCorpus) {
         metadatum.selected = false;
-        obsArray.push(this.queriesContainerService.getMetadatumValuesWithMetadatum(installation, corpus, metadatum));
+        obsArray.push(this.queriesContainerService.getMetadatumValuesWithMetadatum(installation, corpusId, metadatum));
       }
     });
     // elimino metadata che partecipano ad alberi
@@ -74,10 +73,10 @@ export class MetadataUtilService {
     if (lenObsArray > 0) {
       return concat(...obsArray).pipe(map((res, index) => {
         metadata = this.setInnerTree((res as any).res, metadata, (res as any).metadatum.id, lenObsArray === (index + 1));
-        return { md: metadata, ended: lenObsArray === (index + 1) };
+        return metadata;
       }));
     } else {
-      return of({ md: metadata, ended: true });
+      return of(metadata);
     }
   }
 
@@ -213,7 +212,7 @@ export class MetadataUtilService {
     return null;
   }
 
-  //collego quanto recuperato dal corpus al nodo corretto
+  // collego quanto recuperato dal corpus al nodo corretto
   private linkLeafs(metadata: Metadatum[], textTypesRequest: TextTypesRequest): Metadatum[] {
     metadata.forEach(md => {
       if (md.child && md.retrieveValuesFromCorpus) {

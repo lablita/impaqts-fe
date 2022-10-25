@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, Message } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
@@ -21,7 +21,10 @@ import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { ErrorMessagesService } from '../services/error-messages.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { SocketService } from '../services/socket.service';
+import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -98,6 +101,9 @@ export class VisualQueryComponent implements OnInit {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     public displayPanelService: DisplayPanelService,
+    private readonly emitterService: EmitterService,
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly metadataQueryService: MetadataQueryService,
     private readonly sanitizer: DomSanitizer
   ) { }
 
@@ -196,16 +202,23 @@ export class VisualQueryComponent implements OnInit {
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
+        this.metadataQueryService.clearMetadata();
         this.metadataUtilService.createMatadataTree(
-          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(res => {
-            this.metadataTextTypes = res.md;
-            this.enableAddMetadata = res.ended;
-            if (this.enableAddMetadata) {
-              // ordinamento position
-              this.metadataTextTypes.sort((a, b) => a.position - b.position);
-              this.enableSpinner = false;
-            }
-          });
+          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(
+            {
+              next: metadata => this.metadataQueryService.setMetadata(metadata),
+              error: err => {
+                this.emitterService.spinnerMetadata.emit(false);
+                const metadataErrorMsg = {} as Message;
+                metadataErrorMsg.severity = 'error';
+                metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+                metadataErrorMsg.summary = 'Errore';
+                this.errorMessagesService.sendError(metadataErrorMsg);
+              },
+              complete: () => {
+                this.emitterService.spinnerMetadata.emit(false);
+              }
+            });
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
         this.enableSpinner = false;

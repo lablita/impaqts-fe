@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
@@ -13,7 +14,9 @@ import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { AppInitializerService } from '../services/app-initializer.service';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
@@ -63,7 +66,6 @@ export class QueryRequestComponent implements OnInit {
 
   private holdSelectedCorpusStr = '';
   private installation?: Installation;
-  private endedMetadataProcess = false;
   private textTypeStatus = false;
 
   constructor(
@@ -74,6 +76,8 @@ export class QueryRequestComponent implements OnInit {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly metadataQueryService: MetadataQueryService,
     private readonly menuEmitterService: MenuEmitterService,
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly appInitializerService: AppInitializerService
   ) { }
 
   ngOnInit(): void {
@@ -81,7 +85,7 @@ export class QueryRequestComponent implements OnInit {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
-      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
       this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
     }
     this.queryTypes = [
@@ -117,13 +121,13 @@ export class QueryRequestComponent implements OnInit {
     this.queryRequestService.resetOptionsRequest();
     const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
     if (selectedCorpus) {
-      const selectedCorpusKey = selectedCorpus.key;
+      const selectedCorpusId = selectedCorpus.key;
       this.emitterService.spinnerMetadata.emit(true);
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
-        if (selectedCorpusKey) {
-          const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
+        if (selectedCorpusId) {
+          const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
           const endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
           this.socketService.setServerHost(endpoint);
           corpora.metadata.sort((a, b) => a.position - b.position);
@@ -139,27 +143,16 @@ export class QueryRequestComponent implements OnInit {
       }
       this.textTypesAttributesChange.emit(textTypesAttributes);
       this.metadataAttributesChange.emit(metadataAttributes);
-      if (selectedCorpusKey !== this.holdSelectedCorpusStr) {
+      if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
-          this.metadataUtilService.createMatadataTree(selectedCorpusKey, this.installation, false).subscribe(
-            {
-              next: res => {
-                this.metadataQueryService.metadata = res.md;
-                this.endedMetadataProcess = res.ended;
-                if (this.endedMetadataProcess) {
-                  this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-                  // ordinamento position
-                  this.metadataQueryService.metadata.sort((a, b) => a.position - b.position);
-                  this.emitterService.spinnerMetadata.emit(false);
-                }
-              }
-            });
+          this.appInitializerService.loadCorpus(+selectedCorpusId).subscribe(corpus => {
+            this.setCorpus(corpus);
+          });
         }
         this.holdSelectedCorpusStr = this.queryRequestForm.controls.selectedCorpus.value.key;
       } else {
         this.displayPanelService.labelMetadataSubject.next(!!this.queryRequestForm.controls.selectedCorpus.value && !!this.textTypeStatus);
         this.emitterService.spinnerMetadata.emit(false);
-        this.endedMetadataProcess = true;
       }
     } else {
       this.closeWebSocket();
@@ -169,6 +162,37 @@ export class QueryRequestComponent implements OnInit {
     }
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
     this.selectedCorpusChange.emit(selectedCorpus);
+  }
+
+  private setCorpus(corpus: Corpus): void {
+    this.metadataQueryService.clearMetadata();
+    const installation = this.installation;
+    if (installation) {
+      installation.corpora.forEach((c, index) => {
+        if (c.id === corpus.id) {
+          installation.corpora[index] = c;
+        }
+      });
+      this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
+        {
+          next: metadata => this.metadataQueryService.setMetadata(metadata),
+          error: err => {
+            console.error(err);
+            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+            this.emitterService.spinnerMetadata.emit(false);
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          },
+          complete: () => {
+            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+            this.emitterService.spinnerMetadata.emit(false);
+          }
+        });
+    }
+
   }
 
   public makeConcordances(): void {

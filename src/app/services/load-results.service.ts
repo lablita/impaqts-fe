@@ -203,7 +203,7 @@ export class LoadResultsService {
   private setMetadataQuery(): void {
     /** Metadata */
     const textTypesRequest = new TextTypesRequest();
-    this.metadataQueryService.metadata.forEach(md => {
+    this.metadataQueryService.getMetadata().forEach(md => {
       if (!!md.selection) {
         if (md.freeText) {
           // freetxt
