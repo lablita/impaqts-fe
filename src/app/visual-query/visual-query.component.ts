@@ -167,7 +167,7 @@ export class VisualQueryComponent implements OnInit {
           qr.end = qr.start + event.rows;
         }
       }
-      qr.corpus = this.selectedCorpus.key;
+      qr.corpus = this.selectedCorpus.value;
       this.socketService.sendMessage(qr);
     }
   }

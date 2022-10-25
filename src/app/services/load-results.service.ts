@@ -140,7 +140,7 @@ export class LoadResultsService {
         if (this.metadataQuery) {
           qr.queryPattern.structPattern = this.metadataQuery;
         }
-        qr.corpus = fieldRequest.selectedCorpus.key;
+        qr.corpus = fieldRequest.selectedCorpus.value;
         /**quick sort */
         if (fieldRequest.quickSort) {
           qr.start = 0;
