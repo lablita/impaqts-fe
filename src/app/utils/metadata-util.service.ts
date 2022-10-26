@@ -23,61 +23,65 @@ export class MetadataUtilService {
     private readonly queriesContainerService: QueriesContainerService,
   ) { }
 
-  public createMatadataTree(corpusId: string, installation: Installation, visualQueryFlag: boolean): Observable<Array<Metadatum>> {
-    let metadata = installation.corpora.filter(c => c.id === +corpusId)[0].metadata.filter(md => md.documentMetadatum);
-    // recuro i dati salvati nel localstorage
-    const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
-    this.textTypesRequest = ttqr ? JSON.parse(ttqr) : null;
-    // genero albero per componente multiselect check box
-    metadata.forEach(md => {
-      if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
-        md.tree = [];
-        let filteredSelections: Array<Selection> = Array.from<Selection>({ length: 0 });
-        if (this.textTypesRequest && this.textTypesRequest.multiSelects) {
-          filteredSelections = this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name);
-        }
-        const res = this.generateTree(md, (filteredSelections[0] && filteredSelections[0].values) ? filteredSelections[0].values : []);
-        md.tree.push(res.tree);
-        md.selection = res.selections;
-      }
-    });
-    // recupero freeText da localstorage
-    if (this.textTypesRequest && this.textTypesRequest.freeTexts) {
+  public createMatadataTree(corpusId: string,
+    installation: Installation | undefined, visualQueryFlag: boolean): Observable<Array<Metadatum>> {
+    if (installation) {
+      let metadata = installation.corpora.filter(c => c.id === +corpusId)[0].metadata.filter(md => md.documentMetadatum);
+      // recuro i dati salvati nel localstorage
+      const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
+      this.textTypesRequest = ttqr ? JSON.parse(ttqr) : null;
+      // genero albero per componente multiselect check box
       metadata.forEach(md => {
-        if (md.freeText) {
-          let value = null;
-          if (this.textTypesRequest && this.textTypesRequest.freeTexts && this.textTypesRequest.freeTexts.length > 0) {
-            const ft = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name);
-            if (ft.length > 0) {
-              value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
-            }
+        if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
+          md.tree = [];
+          let filteredSelections: Array<Selection> = Array.from<Selection>({ length: 0 });
+          if (this.textTypesRequest && this.textTypesRequest.multiSelects) {
+            filteredSelections = this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name);
           }
-          if (value) {
-            md.selection = value;
-          }
+          const res = this.generateTree(md, (filteredSelections[0] && filteredSelections[0].values) ? filteredSelections[0].values : []);
+          md.tree.push(res.tree);
+          md.selection = res.selections;
         }
       });
-    }
-    // genero albero flat per componente multiselect check box e single select
-    const obsArray = Array.from<any>({ length: 0 });
-    metadata.forEach(metadatum => {
-      this.res.push(new KeyValueItem(metadatum.name, ''));
-      if (metadatum.retrieveValuesFromCorpus) {
-        metadatum.selected = false;
-        obsArray.push(this.queriesContainerService.getMetadatumValuesWithMetadatum(installation, corpusId, metadatum));
+      // recupero freeText da localstorage
+      if (this.textTypesRequest && this.textTypesRequest.freeTexts) {
+        metadata.forEach(md => {
+          if (md.freeText) {
+            let value = null;
+            if (this.textTypesRequest && this.textTypesRequest.freeTexts && this.textTypesRequest.freeTexts.length > 0) {
+              const ft = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name);
+              if (ft.length > 0) {
+                value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
+              }
+            }
+            if (value) {
+              md.selection = value;
+            }
+          }
+        });
       }
-    });
-    // elimino metadata che partecipano ad alberi
-    metadata = metadata.filter(md => !md.child);
-    const lenObsArray = obsArray.length;
-    if (lenObsArray > 0) {
-      return concat(...obsArray).pipe(map((res, index) => {
-        metadata = this.setInnerTree((res as any).res, metadata, (res as any).metadatum.id, lenObsArray === (index + 1));
-        return metadata;
-      }));
-    } else {
-      return of(metadata);
+      // genero albero flat per componente multiselect check box e single select
+      const obsArray = Array.from<any>({ length: 0 });
+      metadata.forEach(metadatum => {
+        this.res.push(new KeyValueItem(metadatum.name, ''));
+        if (metadatum.retrieveValuesFromCorpus) {
+          metadatum.selected = false;
+          obsArray.push(this.queriesContainerService.getMetadatumValuesWithMetadatum(installation, corpusId, metadatum));
+        }
+      });
+      // elimino metadata che partecipano ad alberi
+      metadata = metadata.filter(md => !md.child);
+      const lenObsArray = obsArray.length;
+      if (lenObsArray > 0) {
+        return concat(...obsArray).pipe(map((res, index) => {
+          metadata = this.setInnerTree((res as any).res, metadata, (res as any).metadatum.id, lenObsArray === (index + 1));
+          return metadata;
+        }));
+      } else {
+        return of(metadata);
+      }
     }
+    return of([]);
   }
 
   private setInnerTree(res: any, metadata: Metadatum[], metadatumId: number, pruneTree: boolean): Metadatum[] {

@@ -68,12 +68,12 @@ export class LoadResultsService {
     }
   }
 
-  public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent): void {
+  public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent, qp?: QueryPattern | null): void {
     this.setMetadataQuery();
-    if (!!fieldRequests && fieldRequests.length > 0) {
-      const fieldRequest = fieldRequests[fieldRequests.length - 1]
+    if (!!fieldRequests && fieldRequests.length > 0 || !!qp) {
+      const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
-        const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
+        const qr: QueryRequest = !!qp ? new QueryRequest() : JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
         if (!event) {
           qr.start = 0;
           qr.end = 10;
@@ -83,96 +83,103 @@ export class LoadResultsService {
             qr.end = qr.start + event.rows;
           }
           if (qr.collocationQueryRequest !== null && event.sortField !== undefined && event.sortField !== null) {
-            //collocation sorting
+            // collocation sorting
             const sortBy = this.colHeaderList.find(c => c.value === event.sortField)?.key;
             qr.collocationQueryRequest.sortBy = (sortBy !== null && sortBy !== undefined) ? sortBy : 'm';
           }
         }
-        const queryTags: QueryTag[] = [];
-        let tag: QueryTag;
-        switch (fieldRequest.selectedQueryType?.key) {
-          case WORD:
-            fieldRequest.simpleResult = fieldRequest.word;
-            tag = this.tagBuilder('word', fieldRequest.word);
-            tag.matchCase = fieldRequest.matchCase;
-            queryTags.push(tag);
-            break;
-          case LEMMA:
-            fieldRequest.simpleResult = fieldRequest.lemma;
-            queryTags.push(this.tagBuilder('lemma', fieldRequest.lemma));
-            break;
-          case PHRASE:
-            fieldRequest.simpleResult = fieldRequest.phrase;
-            queryTags.push(this.tagBuilder('phrase', fieldRequest.phrase));
-            break;
-          case CHARACTER:
-            fieldRequest.simpleResult = fieldRequest.character;
-            queryTags.push(this.tagBuilder('character', fieldRequest.character));
-            break;
-          case CQL:
-            fieldRequest.simpleResult = fieldRequest.cql;
-            queryTags.push(this.tagBuilder('cql', fieldRequest.cql));
-            break;
-          default: //SIMPLE
-            fieldRequest.simpleResult = fieldRequest.simple;
-        }
-        qr.queryPattern = new QueryPattern();
-        qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
-        if (fieldRequest.selectedQueryType?.key === SIMPLE) {
-          fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
-            const token = new QueryToken();
-            token.tags.push([]);
-            const tagWord = new QueryTag(TOKEN);
-            tagWord.name = 'lemma';
-            tagWord.value = simpleResultToken;
-            const tagLemma = new QueryTag(TOKEN);
-            tagLemma.name = 'word';
-            tagLemma.value = simpleResultToken;
-            token.tags[0].push(tagWord);
-            token.tags[0].push(tagLemma);
-            qr.queryPattern.tokPattern.push(token);
-          })
-        } else {
-          const simpleQueryToken = new QueryToken(TOKEN);
-          simpleQueryToken.tags[0] = queryTags;
-          qr.queryPattern.tokPattern.push(simpleQueryToken);
-        }
-        if (this.metadataQuery) {
-          qr.queryPattern.structPattern = this.metadataQuery;
-        }
-        qr.corpus = fieldRequest.selectedCorpus.value;
-        /**quick sort */
-        if (fieldRequest.quickSort) {
-          qr.start = 0;
-          qr.end = qr.end > 0 ? qr.end : 10;
-          qr.sortQueryRequest = fieldRequest.quickSort;
-        }
-        /**context */
-        if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
-          const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
-            fieldRequest.contextConcordance?.window.key,
-            fieldRequest.contextConcordance?.token,
-            fieldRequest.contextConcordance?.lemma,
-            fieldRequest.contextConcordance?.item.key
-          );
-          qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
-          this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
-        } else {
-          // remove context query param if present in previous queries
-          qr.contextConcordanceQueryRequest = null;
-          this.queryRequestService.queryRequest.contextConcordanceQueryRequest = null;
-        }
-        console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
-        /**frequency */
-        if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
-          qr.frequencyQueryRequest.categories.forEach(cat => {
-            if (qr.frequencyQueryRequest) {
-              qr.frequencyQueryRequest.category = cat;
-            }
-            this.socketService.sendMessage(qr);
-          });
-        } else {
+        if (!!qp) {
+          // VisualQuery
+          qr.corpus = fieldRequest.selectedCorpus.value;
+          qr.queryPattern = qp;
           this.socketService.sendMessage(qr);
+        } else {
+          const queryTags: QueryTag[] = [];
+          let tag: QueryTag;
+          switch (fieldRequest.selectedQueryType?.key) {
+            case WORD:
+              fieldRequest.simpleResult = fieldRequest.word;
+              tag = this.tagBuilder('word', fieldRequest.word);
+              tag.matchCase = fieldRequest.matchCase;
+              queryTags.push(tag);
+              break;
+            case LEMMA:
+              fieldRequest.simpleResult = fieldRequest.lemma;
+              queryTags.push(this.tagBuilder('lemma', fieldRequest.lemma));
+              break;
+            case PHRASE:
+              fieldRequest.simpleResult = fieldRequest.phrase;
+              queryTags.push(this.tagBuilder('phrase', fieldRequest.phrase));
+              break;
+            case CHARACTER:
+              fieldRequest.simpleResult = fieldRequest.character;
+              queryTags.push(this.tagBuilder('character', fieldRequest.character));
+              break;
+            case CQL:
+              fieldRequest.simpleResult = fieldRequest.cql;
+              tag = this.tagBuilder('cql', fieldRequest.cql);
+              queryTags.push(this.tagBuilder('cql', fieldRequest.cql));
+              break;
+            default: // SIMPLE
+              fieldRequest.simpleResult = fieldRequest.simple;
+          }
+          qr.queryPattern = new QueryPattern();
+          qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
+          if (fieldRequest.selectedQueryType?.key === SIMPLE) {
+            fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
+              const token = new QueryToken();
+              token.tags.push([]);
+              const tagWord = new QueryTag(TOKEN);
+              tagWord.name = 'lemma';
+              tagWord.value = simpleResultToken;
+              const tagLemma = new QueryTag(TOKEN);
+              tagLemma.name = 'word';
+              tagLemma.value = simpleResultToken;
+              token.tags[0].push(tagWord);
+              token.tags[0].push(tagLemma);
+              qr.queryPattern.tokPattern.push(token);
+            });
+          } else {
+            const simpleQueryToken = new QueryToken(TOKEN);
+            simpleQueryToken.tags[0] = queryTags;
+            qr.queryPattern.tokPattern.push(simpleQueryToken);
+          }
+          if (this.metadataQuery) {
+            qr.queryPattern.structPattern = this.metadataQuery;
+          }
+          qr.corpus = fieldRequest.selectedCorpus.value;
+          // quick sort
+          if (fieldRequest.quickSort) {
+            qr.start = 0;
+            qr.end = qr.end > 0 ? qr.end : 10;
+            qr.sortQueryRequest = fieldRequest.quickSort;
+          }
+          // context
+          if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
+            const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
+              fieldRequest.contextConcordance?.window.key,
+              fieldRequest.contextConcordance?.token,
+              fieldRequest.contextConcordance?.lemma,
+              fieldRequest.contextConcordance?.item.key
+            );
+            qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
+            this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
+            // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
+          } else {
+            // remove context query param if present in previous queries
+            qr.contextConcordanceQueryRequest = null;
+            this.queryRequestService.queryRequest.contextConcordanceQueryRequest = null;
+          }
+          console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
+          // frequency
+          if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
+            qr.frequencyQueryRequest?.categories.forEach(cat => {
+              qr.frequencyQueryRequest!.category = cat;
+              this.socketService.sendMessage(qr);
+            });
+          } else {
+            this.socketService.sendMessage(qr);
+          }
         }
       }
     }
@@ -273,7 +280,6 @@ export class LoadResultsService {
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
-      //tap(resp => console.log(resp)),
       map(resp => {
         if (resp && JSON.stringify(resp).indexOf(`"${this.ERROR_PREFIX}`) === 0) {
           resp = new QueryResponse();

@@ -56,19 +56,19 @@
           </div>
         </div>
       </div>
-      <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === LEMMA">
+      <div class="mt-3 field grid" *ngIf="queryRequestForm.value.selectedQueryType && queryRequestForm.value.selectedQueryType.key === LEMMA">
         <label class="col-12 md:col-1" for="lemma">{{"PAGE.CONCORDANCE.LEMMA" | translate}}</label>
         <div class="col-12 md:col-5">
           <input id="lemma" type="text" pInputText formControlName="lemma" class="width-80">
         </div>
       </div>
-      <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === PHRASE">
+      <div class="mt-3 field grid" *ngIf="queryRequestForm.value.selectedQueryType && queryRequestForm.value.selectedQueryType.key === PHRASE">
         <label class="col-12 md:col-1" for="phrase">{{"PAGE.CONCORDANCE.PHRASE" | translate}}</label>
         <div class="col-12 md:col-5">
           <input id="phrase" type="text" pInputText formControlName="phrase" class="width-80">
         </div>
       </div>
-      <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === WORD">
+      <div class="mt-3 field grid" *ngIf="queryRequestForm.value.selectedQueryType && queryRequestForm.value.selectedQueryType.key === WORD">
         <label class="col-12 md:col-1 " for="word">{{"PAGE.CONCORDANCE.WORD_FORM" | translate}}</label>
         <div class="col-12 md:col-5">
           <input id="word" type="text" pInputText formControlName="word" class="width-80">
@@ -78,13 +78,13 @@
           </p-checkbox>
         </div>
       </div>
-      <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === CHARACTER">
+      <div class="mt-3 field grid" *ngIf="queryRequestForm.value.selectedQueryType && queryRequestForm.value.selectedQueryType.key === CHARACTER">
         <label class="col-12 md:col-1 " for="character">{{"PAGE.CONCORDANCE.CHARACTER" | translate}}</label>
         <div class="col-12 md:col-5">
           <input id="character" type="text" pInputText formControlName="character" class="width-80">
         </div>
       </div>
-      <div class="mt-3 field grid" *ngIf="selectedQueryType && selectedQueryType.key === CQL">
+      <div class="mt-3 field grid" *ngIf="queryRequestForm.value.selectedQueryType && queryRequestForm.value.selectedQueryType.key === CQL">
         <label class="col-12 md:col-1" for="cql">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
         <div class="col-12 md:col-5">
           <input id="cql" type="text" pInputText formControlName="cql" class="width-80">

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
 import { FieldRequest } from '../model/field-request';
+import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 
 @Injectable({
@@ -12,6 +13,10 @@ export class QueryRequestService {
   public queryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
+  // used for visual queries
+  private queryPattern: QueryPattern | null = null;
+
+
   private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
@@ -40,7 +45,10 @@ export class QueryRequestService {
   }
 
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
-    this.basicFieldRequest = fieldRequest;
+    if (fieldRequest) {
+      this.basicFieldRequest = fieldRequest;
+      this.queryPattern = null;
+    }
   }
 
   public getContextConcordanceQueryRequestDTO(): ContextConcordanceQueryRequestDTO {
@@ -49,5 +57,16 @@ export class QueryRequestService {
 
   public clearContextConcordanceQueryRequestDTO(): void {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  }
+
+  public setQueryPattern(queryPattern: QueryPattern): void {
+    if (queryPattern) {
+      this.queryPattern = queryPattern;
+      this.basicFieldRequest = null;
+    }
+  }
+
+  public getQueryPattern(): QueryPattern | null {
+    return this.queryPattern;
   }
 }

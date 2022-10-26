@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent, Message } from 'primeng/api';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
@@ -11,20 +10,22 @@ import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
 import { Corpus } from '../model/corpus';
+import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
-import { QueryRequest } from '../model/query-request';
-import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
+import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { AppInitializerService } from '../services/app-initializer.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
-import { EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -57,7 +58,6 @@ export class VisualQueryComponent implements OnInit {
   public installation?: Installation;
   public corpusList: KeyValueItem[] = [];
   public selectedCorpus: KeyValueItem | null = null;
-  public holdSelectedCorpusStr?: string;
   public selectCorpus = SELECT_CORPUS_LABEL;
 
   public totalResults = 0;
@@ -90,10 +90,12 @@ export class VisualQueryComponent implements OnInit {
   public displayModal = false;
   public youtubeVideo = true;
   public resultContext: ResultContext | null = null;
+  public paginations: number[] = [10, 25, 50];
+  public initialPagination = 10;
+  public titleResult: string | null = null;
 
-  // FIXME: a cosa serve?
-  private simple?: string;
   private endpoint = '';
+  private holdSelectedCorpusId?: string;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -104,25 +106,15 @@ export class VisualQueryComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly metadataQueryService: MetadataQueryService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly queryRequestService: QueryRequestService,
+    private readonly appInitializerService: AppInitializerService
   ) { }
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
-  }
-
-  private init(): void {
-    this.displayPanelService.reset();
-    this.resultView = false;
-    const inst = localStorage.getItem(INSTALLATION);
-    if (inst) {
-      this.installation = JSON.parse(inst) as Installation;
-      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
-    }
-
-    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
   }
 
   public addTokenQuery(): void {
@@ -146,33 +138,20 @@ export class VisualQueryComponent implements OnInit {
   }
 
   public makeConcordance(): void {
-    this.loading = true;
-    this.resultView = false;
-    this.loadConcordances();
-  }
-
-  public loadConcordances(event?: LazyLoadEvent): void {
-    if (this.selectedCorpus && this.selectCorpus.length > 0) {
+    this.titleResult = 'MENU.CONCORDANCE';
+    const typeSearch = ['Query'];
+    const fieldRequest = new FieldRequest();
+    fieldRequest.selectedCorpus = this.selectedCorpus;
+    const concordanceRequest: ConcordanceRequest = new ConcordanceRequest(fieldRequest, typeSearch);
+    if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
-      const qr = new QueryRequest();
-      qr.queryPattern = this.queryPattern;
-      if (!event) {
-        qr.start = 0;
-        qr.end = 10;
-      } else {
-        if (event.first !== undefined && event.first !== null) {
-          qr.start = event.first;
-        }
-        if (event.rows !== undefined && event.rows !== null) {
-          qr.end = qr.start + event.rows;
-        }
-      }
-      qr.corpus = this.selectedCorpus.value;
-      this.socketService.sendMessage(qr);
     }
+    this.queryRequestService.setQueryPattern(this.queryPattern);
+    this.emitterService.makeConcordance.next(
+      new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
   }
 
-  public dropdownCorpus(): void {
+  public corpusSelect(): void {
     this.resultView = false;
     this.noResultFound = false;
     if (this.selectedCorpus) {
@@ -182,16 +161,13 @@ export class VisualQueryComponent implements OnInit {
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
       if (this.installation && this.installation.corpora) {
-        const selectedCorpusKey = this.selectedCorpus.key;
-        if (selectedCorpusKey) {
-          this.closeWebSocket();
-          const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
-          this.endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
+        const selectedCorpusId = this.selectedCorpus.key;
+        if (selectedCorpusId) {
+          const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
+          this.endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
           this.socketService.setServerHost(this.endpoint);
-          /** Web Socket */
-          this.initWebSocket();
-          corpora.metadata.sort((a, b) => a.position - b.position);
-          corpora.metadata.filter(md => !md.child).forEach(md => {
+          corpus.metadata.sort((a, b) => a.position - b.position);
+          corpus.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options
             if (!md.documentMetadatum) {
               this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
@@ -201,25 +177,13 @@ export class VisualQueryComponent implements OnInit {
           });
         }
       }
-      if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
-        this.metadataQueryService.clearMetadata();
-        this.metadataUtilService.createMatadataTree(
-          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(
-            {
-              next: metadata => this.metadataQueryService.setMetadata(metadata),
-              error: err => {
-                this.emitterService.spinnerMetadata.emit(false);
-                const metadataErrorMsg = {} as Message;
-                metadataErrorMsg.severity = 'error';
-                metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-                metadataErrorMsg.summary = 'Errore';
-                this.errorMessagesService.sendError(metadataErrorMsg);
-              },
-              complete: () => {
-                this.emitterService.spinnerMetadata.emit(false);
-              }
-            });
-        this.holdSelectedCorpusStr = this.selectedCorpus.key;
+      if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
+        if (this.installation) {
+          this.appInitializerService.loadCorpus(+this.selectedCorpus.key).subscribe(corpus => {
+            this.setCorpus(corpus);
+          });
+        }
+        this.holdSelectedCorpusId = this.selectedCorpus.key;
       } else {
         this.enableSpinner = false;
         this.enableAddMetadata = true;
@@ -245,33 +209,10 @@ export class VisualQueryComponent implements OnInit {
     return this.queryPattern.tokPattern.length > 0;
   }
 
-  private initWebSocket(): void {
-    this.socketService.connect();
-    const socketServiceSubject = this.socketService.getSocketSubject();
-    if (socketServiceSubject) {
-      socketServiceSubject.pipe(
-        map(resp => {
-          if (this.selectedCorpus) {
-            const qr = resp as QueryResponse;
-            if (qr.kwicLines.length > 0) {
-              this.resultView = true;
-              this.noResultFound = false;
-              this.kwicLines = (resp as QueryResponse).kwicLines;
-            } else {
-              this.noResultFound = true;
-            }
-            this.loading = false;
-            this.totalResults = qr.currentSize;
-            this.simpleResult = this.simple;
-          }
-        }),
-        catchError(err => { throw err; }),
-        tap({
-          error: err => console.error(err),
-          complete: () => console.log('IMPAQTS WS disconnected')
-        })
-      ).subscribe();
-    }
+  public showDialog(kwicline: KWICline): void {
+    // kwicline.ref to retrive info
+    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
+      KWICline.stripTags(kwicline.rightContext, false));
   }
 
   public showVideoDlg(rowIndex: number): void {
@@ -297,14 +238,45 @@ export class VisualQueryComponent implements OnInit {
     this.displayModal = true;
   }
 
-  public showDialog(kwicline: KWICline): void {
-    // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
-      KWICline.stripTags(kwicline.rightContext, false));
-  }
-
   private closeWebSocket(): void {
     this.socketService.closeSocket();
+  }
+
+  private init(): void {
+    this.displayPanelService.reset();
+    this.resultView = false;
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst) {
+      this.installation = JSON.parse(inst) as Installation;
+      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
+    }
+
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
+  }
+
+  private setCorpus(corpus: Corpus): void {
+
+    this.metadataUtilService.createMatadataTree(
+      `${corpus.id}`, this.installation, true).subscribe(
+        {
+          next: metadata => {
+            this.metadataQueryService.setMetadata(metadata);
+            this.metadataTextTypes = metadata;
+          },
+          error: err => {
+            this.enableSpinner = false;
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          },
+          complete: () => {
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          }
+        });
+
   }
 
 }

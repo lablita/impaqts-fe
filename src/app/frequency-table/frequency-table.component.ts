@@ -11,7 +11,7 @@ import { ConcordanceRequest } from '../queries-container/queries-container.compo
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
-import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 
 const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
 
@@ -127,7 +127,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   public clickPositive(event: any): void {
     const typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayLoad(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
+    const concordanceRequestPayload = new ConcordanceRequestPayload(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0, null);
     event.word.forEach((w: string, i: number) => {
       const fieldRequest: FieldRequest = new FieldRequest();
       fieldRequest.matchCase = true;

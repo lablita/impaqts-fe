@@ -87,6 +87,7 @@ export class QueriesContainerComponent implements OnInit {
 
   public setTextTypesAttributes(event: Array<KeyValueItem>): void {
     this.textTypesAttributes = event;
+
   }
 
   public displayConcordances(): void {

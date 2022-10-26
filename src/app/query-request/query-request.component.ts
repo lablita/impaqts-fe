@@ -20,7 +20,7 @@ import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
-import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 const DEFAULT_SELECTED_QUERY_TYPE = new KeyValueItem(SIMPLE, SIMPLE);
@@ -127,11 +127,11 @@ export class QueryRequestComponent implements OnInit {
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
         if (selectedCorpusId) {
-          const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
-          const endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
+          const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
+          const endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
           this.socketService.setServerHost(endpoint);
-          corpora.metadata.sort((a, b) => a.position - b.position);
-          corpora.metadata.filter(md => !md.child).forEach(md => {
+          corpus.metadata.sort((a, b) => a.position - b.position);
+          corpus.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options
             if (!md.documentMetadatum) {
               metadataAttributes.push(new KeyValueItem(md.name, md.name));
@@ -211,7 +211,7 @@ export class QueryRequestComponent implements OnInit {
         typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
           ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
     }
   }
 

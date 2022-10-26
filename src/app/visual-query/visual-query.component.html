@@ -5,7 +5,7 @@
       <div class="field flex">
         <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
         <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value"
-          [placeholder]="'Select a Corpus'" [filter]="true" [showClear]="true" (onChange)="dropdownCorpus()">
+          [placeholder]="'Select a Corpus'" [filter]="true" [showClear]="true" (onChange)="corpusSelect()">
           <ng-template pTemplate="selectedItem">
             <div *ngIf="selectedCorpus">
               <div class="label-size">{{selectedCorpus.value}}</div>
@@ -59,69 +59,10 @@
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
         </button>
       </div>
-
-      <div class="text-center mt-6" *ngIf="loading">
-        <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-      </div>
-      <div *ngIf="resultView" class="p-d-block">
-        <p-card>
-          <h3 *ngIf="totalResults">Query <span style="color:red;">{{simpleResult}}</span>&nbsp;<b>{{totalResults}}</b>
-          </h3>
-          <div class="" style="width: 150px;">
-            <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal"
-              [style]="{width: '700'}" [baseZIndex]="10000">
-              <iframe *ngIf="youtubeVideo" title="youtubeVideo" style="border: 0px;" width="600" height="450"
-                [src]="videoUrl" allowfullscreen></iframe>
-              <iframe *ngIf="!youtubeVideo" title="otherTypeVideo" [src]="videoUrl" width="600" height="450"
-                allowfullscreen></iframe>
-            </p-dialog>
-          </div>
-          <p-table [value]="kwicLines" [lazy]="true" (onLazyLoad)="loadConcordances($event)" [paginator]="true"
-            styleClass="p-datatable-striped" [rows]="10" [totalRecords]="totalResults" [loading]="loading"
-            currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
-            [rowsPerPageOptions]="[10,25,50]">
-            <ng-template pTemplate="header">
-              <tr>
-                <th style="width: 80px;" scope="col"></th>
-                <th class="p-text-center" style="width: 180px;" scope="col">Left</th>
-                <th class="p-text-center" style="width: 80px;" scope="col">Kwic</th>
-                <th class="p-text-center" style="width: 180px;" scope="col">Right</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
-              <tr>
-                <td>
-                  <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-                    (click)="showVideoDlg(rowIndex)"></button>
-                </td>
-                <td class="p-text-right">{{kwicLine.leftContext}}</td>
-                <td class="p-text-center">
-                  <p-button label="{{kwicLine.kwic}}" styleClass="p-button-link"
-                    (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
-                </td>
-                <td class="p-text-left">{{kwicLine.rightContext}}</td>
-              </tr>
-            </ng-template>
-          </p-table>
-          <p-overlayPanel #op [style]="{width: '450px'}">
-            <ng-template pTemplate>
-              <div>{{resultContext?.after}}</div>
-              <div class="text-red" style="text-align: center;">
-                {{resultContext?.keyword}}
-              </div>
-              <div>
-                {{resultContext?.before}}
-              </div>
-            </ng-template>
-          </p-overlayPanel>
-
-        </p-card>
-      </div>
-      <div *ngIf="!resultView && noResultFound && !loading" class="mt-6">
-        <p-card>
-          <h3 class="text-red">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
-        </p-card>
-      </div>
+      <ng-container *ngIf="!!selectedCorpus && titleResult">
+        <app-concordance-table [visible]="true" [initialPagination]="initialPagination" [paginations]="paginations">
+        </app-concordance-table>
+      </ng-container>
     </p-card>
   </div>
 </div>

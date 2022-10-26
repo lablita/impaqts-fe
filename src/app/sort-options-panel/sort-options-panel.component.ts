@@ -5,7 +5,7 @@ import { DEFAULT_SORT_OPTIONS_QUERY_REQUEST, SortOptionDTO, SortOptionsQueryRequ
 import { SortQueryRequest } from '../model/sort-query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { QueryRequestService } from '../services/query-request.service';
-import { ConcordanceRequestPayLoad, EmitterService } from '../utils/emitter.service';
+import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
@@ -244,7 +244,7 @@ export class SortOptionsPanelComponent implements OnInit {
         typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
           ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayLoad([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
     }
   }
 
