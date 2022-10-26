@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { Metadatum } from '../model/metadatum';
 import { MetadataQueryService } from '../services/metadata-query.service';
 
 export class SubMetadatum {
@@ -27,7 +28,7 @@ export class MetadataPanelComponent implements OnInit {
   public loading = 0;
 
   constructor(
-    public metadataQueryService: MetadataQueryService
+    private readonly metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
@@ -50,5 +51,9 @@ export class MetadataPanelComponent implements OnInit {
 
   public nodeSelect(event: any): void {
     return;
+  }
+
+  get metadata(): Array<Metadatum> {
+    return this.metadataQueryService.getMetadata();
   }
 }

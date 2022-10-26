@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
@@ -18,7 +19,10 @@ import { QueryPattern } from '../model/query-pattern';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { AppInitializerService } from '../services/app-initializer.service';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { ErrorMessagesService } from '../services/error-messages.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
@@ -54,7 +58,6 @@ export class VisualQueryComponent implements OnInit {
   public installation?: Installation;
   public corpusList: KeyValueItem[] = [];
   public selectedCorpus: KeyValueItem | null = null;
-  public holdSelectedCorpusStr?: string;
   public selectCorpus = SELECT_CORPUS_LABEL;
 
   public totalResults = 0;
@@ -91,9 +94,8 @@ export class VisualQueryComponent implements OnInit {
   public initialPagination = 10;
   public titleResult: string | null = null;
 
-  // FIXME: a cosa serve?
-  //private simple?: string;
   private endpoint = '';
+  private holdSelectedCorpusId?: string;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -101,9 +103,12 @@ export class VisualQueryComponent implements OnInit {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     public displayPanelService: DisplayPanelService,
-    private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly metadataQueryService: MetadataQueryService,
+    private readonly sanitizer: DomSanitizer,
+    private readonly queryRequestService: QueryRequestService,
+    private readonly appInitializerService: AppInitializerService
   ) { }
 
   ngOnInit(): void {
@@ -142,10 +147,11 @@ export class VisualQueryComponent implements OnInit {
       this.queryPattern.structPattern = this.metadata[0];
     }
     this.queryRequestService.setQueryPattern(this.queryPattern);
-    this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
+    this.emitterService.makeConcordance.next(
+      new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
   }
 
-  public dropdownCorpus(): void {
+  public corpusSelect(): void {
     this.resultView = false;
     this.noResultFound = false;
     if (this.selectedCorpus) {
@@ -155,16 +161,13 @@ export class VisualQueryComponent implements OnInit {
       this.metadataAttributes = [];
       this.textTypesAttributes = [];
       if (this.installation && this.installation.corpora) {
-        const selectedCorpusKey = this.selectedCorpus.key;
-        if (selectedCorpusKey) {
-          //this.closeWebSocket();
-          const corpora: Corpus = this.installation.corpora.filter(corpus => corpus.name === selectedCorpusKey)[0];
-          this.endpoint = environment.secureUrl ? WSS + corpora.endpoint : WS + corpora.endpoint;
+        const selectedCorpusId = this.selectedCorpus.key;
+        if (selectedCorpusId) {
+          const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
+          this.endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
           this.socketService.setServerHost(this.endpoint);
-          /** Web Socket */
-          //this.initWebSocket();
-          corpora.metadata.sort((a, b) => a.position - b.position);
-          corpora.metadata.filter(md => !md.child).forEach(md => {
+          corpus.metadata.sort((a, b) => a.position - b.position);
+          corpus.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options
             if (!md.documentMetadatum) {
               this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
@@ -174,18 +177,13 @@ export class VisualQueryComponent implements OnInit {
           });
         }
       }
-      if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
-        this.metadataUtilService.createMatadataTree(
-          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(res => {
-            this.metadataTextTypes = res.md;
-            this.enableAddMetadata = res.ended;
-            if (this.enableAddMetadata) {
-              // ordinamento position
-              this.metadataTextTypes.sort((a, b) => a.position - b.position);
-              this.enableSpinner = false;
-            }
+      if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
+        if (this.installation) {
+          this.appInitializerService.loadCorpus(+this.selectedCorpus.key).subscribe(corpus => {
+            this.setCorpus(corpus);
           });
-        this.holdSelectedCorpusStr = this.selectedCorpus.key;
+        }
+        this.holdSelectedCorpusId = this.selectedCorpus.key;
       } else {
         this.enableSpinner = false;
         this.enableAddMetadata = true;
@@ -250,10 +248,30 @@ export class VisualQueryComponent implements OnInit {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
-      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
+      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
     }
 
     this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
+  }
+
+  private setCorpus(corpus: Corpus): void {
+    this.metadataUtilService.createMatadataTree(
+      `${corpus.id}`, this.installation, true).subscribe(
+        {
+          next: metadata => this.metadata = metadata;
+          error: err => {
+            this.enableSpinner = false;
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          },
+          complete: () => {
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          }
+        });
   }
 
 }
