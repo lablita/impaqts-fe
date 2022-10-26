@@ -71,7 +71,7 @@ export class LoadResultsService {
   public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent, qp?: QueryPattern | null): void {
     this.setMetadataQuery();
     if (!!fieldRequests && fieldRequests.length > 0 || !!qp) {
-      const fieldRequest = fieldRequests[fieldRequests.length - 1]
+      const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
         const qr: QueryRequest = !!qp ? new QueryRequest() : JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
         if (!event) {
@@ -83,14 +83,14 @@ export class LoadResultsService {
             qr.end = qr.start + event.rows;
           }
           if (qr.collocationQueryRequest !== null && event.sortField !== undefined && event.sortField !== null) {
-            //collocation sorting
+            // collocation sorting
             const sortBy = this.colHeaderList.find(c => c.value === event.sortField)?.key;
             qr.collocationQueryRequest.sortBy = (sortBy !== null && sortBy !== undefined) ? sortBy : 'm';
           }
         }
         if (!!qp) {
-          //VisualQuery
-          qr.corpus = fieldRequest.selectedCorpus.key;
+          // VisualQuery
+          qr.corpus = fieldRequest.selectedCorpus.value;
           qr.queryPattern = qp;
           this.socketService.sendMessage(qr);
         } else {
@@ -120,7 +120,7 @@ export class LoadResultsService {
               tag = this.tagBuilder('cql', fieldRequest.cql);
               queryTags.push(this.tagBuilder('cql', fieldRequest.cql));
               break;
-            default: //SIMPLE
+            default: // SIMPLE
               fieldRequest.simpleResult = fieldRequest.simple;
           }
           qr.queryPattern = new QueryPattern();
@@ -138,7 +138,7 @@ export class LoadResultsService {
               token.tags[0].push(tagWord);
               token.tags[0].push(tagLemma);
               qr.queryPattern.tokPattern.push(token);
-            })
+            });
           } else {
             const simpleQueryToken = new QueryToken(TOKEN);
             simpleQueryToken.tags[0] = queryTags;
@@ -147,14 +147,14 @@ export class LoadResultsService {
           if (this.metadataQuery) {
             qr.queryPattern.structPattern = this.metadataQuery;
           }
-          qr.corpus = fieldRequest.selectedCorpus.key;
-          /**quick sort */
+          qr.corpus = fieldRequest.selectedCorpus.value;
+          // quick sort
           if (fieldRequest.quickSort) {
             qr.start = 0;
             qr.end = qr.end > 0 ? qr.end : 10;
             qr.sortQueryRequest = fieldRequest.quickSort;
           }
-          /**context */
+          // context
           if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
             const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
               fieldRequest.contextConcordance?.window.key,
@@ -171,7 +171,7 @@ export class LoadResultsService {
             this.queryRequestService.queryRequest.contextConcordanceQueryRequest = null;
           }
           console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
-          /**frequency */
+          // frequency
           if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
             qr.frequencyQueryRequest?.categories.forEach(cat => {
               qr.frequencyQueryRequest!.category = cat;
@@ -210,7 +210,7 @@ export class LoadResultsService {
   private setMetadataQuery(): void {
     /** Metadata */
     const textTypesRequest = new TextTypesRequest();
-    this.metadataQueryService.metadata.forEach(md => {
+    this.metadataQueryService.getMetadata().forEach(md => {
       if (!!md.selection) {
         if (md.freeText) {
           // freetxt
@@ -280,7 +280,6 @@ export class LoadResultsService {
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
-      //tap(resp => console.log(resp)),
       map(resp => {
         if (resp && JSON.stringify(resp).indexOf(`"${this.ERROR_PREFIX}`) === 0) {
           resp = new QueryResponse();

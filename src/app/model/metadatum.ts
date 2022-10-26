@@ -7,8 +7,7 @@ export class Metadatum {
   documentMetadatum = false;
   position = 0;
   subMetadata: Metadatum[] = [];
-  parentMetadata: Metadatum | null = null;
-  Metadatum: Metadatum | null = null;
+  parentMetadatum: Metadatum | null = null;
   corpus: Corpus | null = null;
   multipleChoice = false;
   retrieveValuesFromCorpus = false;

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { FIND_FAILED, INSTALLATION } from '../model/constants';
+import { Corpus } from '../model/corpus';
 import { Installation } from '../model/installation';
 import { UtilService } from '../utils/util.service';
 
@@ -30,5 +31,9 @@ export class AppInitializerService {
         return installation;
       })
       .catch(catchError(this.utils.handleErrorObservable('getInstallation', FIND_FAILED, null)));
+  }
+
+  public loadCorpus(idCorpus: number): Observable<Corpus> {
+    return this.http.get<Corpus>(`${environment.installationUrl}/corpus/${idCorpus}`);
   }
 }

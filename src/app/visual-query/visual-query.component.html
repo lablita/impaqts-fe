@@ -5,7 +5,7 @@
       <div class="field flex">
         <label class="label-size" for="state">{{"PAGE.CONCORDANCE.CORPUS" | translate}}</label>
         <p-dropdown [options]="corpusList" [(ngModel)]="selectedCorpus" optionLabel="value"
-          [placeholder]="'Select a Corpus'" [filter]="true" [showClear]="true" (onChange)="dropdownCorpus()">
+          [placeholder]="'Select a Corpus'" [filter]="true" [showClear]="true" (onChange)="corpusSelect()">
           <ng-template pTemplate="selectedItem">
             <div *ngIf="selectedCorpus">
               <div class="label-size">{{selectedCorpus.value}}</div>
@@ -60,9 +60,8 @@
         </button>
       </div>
       <ng-container *ngIf="!!selectedCorpus && titleResult">
-        <app-concordance-table [visible]="true" [initialPagination]="initialPagination"
-        [paginations]="paginations">
-      </app-concordance-table>
+        <app-concordance-table [visible]="true" [initialPagination]="initialPagination" [paginations]="paginations">
+        </app-concordance-table>
       </ng-container>
     </p-card>
   </div>

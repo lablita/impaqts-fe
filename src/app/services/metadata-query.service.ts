@@ -7,10 +7,23 @@ import { Metadatum } from '../model/metadatum';
 })
 export class MetadataQueryService {
 
-  public metadata: Metadatum[] = [];
+  private metadata: Metadatum[] = [];
 
   public reset(): void {
     this.metadata.forEach(m => this.resetMetadatum(m));
+  }
+
+  public getMetadata(): Array<Metadatum> {
+    return this.metadata;
+  }
+
+  public clearMetadata(): void {
+    this.metadata.splice(0, this.metadata.length);
+  }
+
+  public setMetadata(mds: Array<Metadatum>): void {
+    this.metadata = mds;
+    this.metadata.sort((a, b) => a.position - b.position);
   }
 
   private resetMetadatum(metadatum: Metadatum): void {
