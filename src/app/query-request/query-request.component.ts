@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
@@ -51,16 +51,16 @@ export class QueryRequestComponent implements OnInit {
   public CHARACTER = CHARACTER;
   public CQL = CQL;
 
-  public queryRequestForm = new FormGroup({
-    selectedCorpus: new FormControl(null),
-    selectedQueryType: new FormControl(DEFAULT_SELECTED_QUERY_TYPE),
-    lemma: new FormControl(''),
-    simple: new FormControl(''),
-    phrase: new FormControl(''),
-    word: new FormControl(''),
-    character: new FormControl(''),
-    cql: new FormControl(''),
-    matchCase: new FormControl(false)
+  public queryRequestForm = new UntypedFormGroup({
+    selectedCorpus: new UntypedFormControl(null),
+    selectedQueryType: new UntypedFormControl(DEFAULT_SELECTED_QUERY_TYPE),
+    lemma: new UntypedFormControl(''),
+    simple: new UntypedFormControl(''),
+    phrase: new UntypedFormControl(''),
+    word: new UntypedFormControl(''),
+    character: new UntypedFormControl(''),
+    cql: new UntypedFormControl(''),
+    matchCase: new UntypedFormControl(false)
   });
 
 
