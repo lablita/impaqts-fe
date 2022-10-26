@@ -255,6 +255,7 @@ export class VisualQueryComponent implements OnInit {
   }
 
   private setCorpus(corpus: Corpus): void {
+<<<<<<< HEAD
     const installation = this.installation;
     if (installation) {
       installation.corpora.forEach((c, index) => {
@@ -280,6 +281,25 @@ export class VisualQueryComponent implements OnInit {
             }
           });
     }
+=======
+    this.metadataUtilService.createMatadataTree(
+      `${corpus.id}`, this.installation, true).subscribe(
+        {
+          next: metadata => this.metadata = metadata;
+          error: err => {
+            this.enableSpinner = false;
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          },
+          complete: () => {
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          }
+        });
+>>>>>>> 9a62f7b875fb217572b8e3c3d55b9b0837d137aa
   }
 
 }
