@@ -1,6 +1,8 @@
-import { interval, Observable, Observer, Subject } from 'rxjs';
+import { Message } from 'primeng/api';
+import { interval, Observable, Observer, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, share, takeWhile } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
+import { ErrorMessagesService } from './error-messages.service';
 
 /// we inherit from the ordinary Subject
 export class RxWebsocketSubject extends Subject<any> {
@@ -11,6 +13,8 @@ export class RxWebsocketSubject extends Subject<any> {
   private readonly wsSubjectConfig: WebSocketSubjectConfig<any>;
   private socket: WebSocketSubject<any> | null = null;
   private connectionObserver: Observer<any> | null = null;
+
+  private reconnectionSubscription: Subscription | null = null;
 
   /// by default, when a message is received from the server, we are trying to decode it as JSON
   /// we can override it in the constructor
@@ -26,8 +30,9 @@ export class RxWebsocketSubject extends Subject<any> {
 
   constructor(
     private readonly url: string,
+    private readonly errorMessagesService: ErrorMessagesService,
     private readonly reconnectInterval: number = 5000,  /// pause between connections
-    private readonly reconnectAttempts: number = 10,  /// number of connection attempts
+    private readonly reconnectAttempts: number = 10,  /// number of connection attempts,
     private readonly resultSelector?: (e: MessageEvent) => any,
     private readonly serializer?: (data: any) => string,
   ) {
@@ -94,12 +99,15 @@ export class RxWebsocketSubject extends Subject<any> {
 
   /// WebSocket Reconnect handling
   reconnect(): void {
+    if (this.reconnectionSubscription) {
+      this.reconnectionSubscription.unsubscribe();
+    }
     this.reconnectionObservable = interval(this.reconnectInterval).pipe(
       takeWhile((v, index) => {
         console.log(`WS Reconnection Attempt: ${index}`);
         return index < this.reconnectAttempts && !this.socket;
       }));
-    this.reconnectionObservable.subscribe(
+    this.reconnectionSubscription = this.reconnectionObservable.subscribe(
       {
         next: () => {
           setTimeout(() => this.connect(), 300);
@@ -112,6 +120,12 @@ export class RxWebsocketSubject extends Subject<any> {
             if (this.connectionObserver) {
               this.connectionObserver.complete();
             }
+            const noConnectionWithBEErrorMessage = {} as Message;
+            noConnectionWithBEErrorMessage.severity = 'error';
+            noConnectionWithBEErrorMessage.detail = 'Nessuna connessione con il server';
+            noConnectionWithBEErrorMessage.summary = 'Errore';
+            noConnectionWithBEErrorMessage.sticky = true;
+            this.errorMessagesService.sendError(noConnectionWithBEErrorMessage);
           }
         }
       });

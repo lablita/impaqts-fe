@@ -10,7 +10,7 @@
     "MY_JOBS": "My jobs",
     "USER_GUIDE": "User guide",
     "ALL_WORDS": "All words",
-    "ALL_LEMMANS": "All lemmans",
+    "ALL_LEMMAS": "All lemmas",
     "SAVE": "Save",
     "AS_SUBCORPUS": "as subcorpus",
     "VIEW_OPTION": "View options",
@@ -140,16 +140,13 @@
         "NUM_TOKEN": "Number of tokens to sort",
         "IGNORE_CASE": "Ignore case",
         "BACKWARD": "Backward",
-        "SORT_CONCORDANCE": "Sort concordance",
         "MULTILEVEL_SORT": "Multilevel sort",
         "FIRST_LEVEL": "first level (Sort by ...)",
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "THIRD_LEVEL": "third level (... finally sort by)",
         "POSITION": "Position",
-        "SET_SIMPLE_SORT": "Set Simple Sort Opt.",
-        "REMOVE_SIMPLE_SORT": "Remove Simple Sort Opt.",
-        "SET_MULTILEVEL_SORT": "Set Multilevel Sort Opt.",
-        "REMOVE_MULTILEVEL_SORT": "Remove Multilevel Sort Opt."
+        "CLEAR_SORT_OPT": "Default Value",
+        "SORT_CONCORDANCE": "Sort Concordances"
       },
       "FREQ_OPTIONS": {
         "FREQ_OPTIONS": "Frequency opt.",
@@ -161,7 +158,10 @@
         "THIRD_LEVEL": "third level",
         "FOURTH_LEVEL": "fourth level",
         "MAKE_FREQ": "Make frequency list",
-        "INCLUDE_CAT": "Include categories with no hits"
+        "INCLUDE_CAT": "Include categories with no hits",
+        "IGNORE_CASE": "Ignore case",
+        "CLEAR_FREQ_OPT": "Default Value",
+        "FREQ_CONCORDANCE": "Frequency Concordances"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
@@ -179,8 +179,7 @@
         "MIN": "min. sensitivity",
         "LOG_DICE": "logDice",
         "MI_LOG": "MI.log_f",
-        "SET_COLLOCATION": "Set Collocation Opt.",
-        "REMOVE_COLLOCATION": "Remove Collocation Opt."
+        "MAKE_COLLOCATIONS": "Make Collocations"
       },
       "FILTER_OPTIONS": {
         "CONCORDANCE_FILTER": "Concordance filter",
@@ -195,6 +194,27 @@
         "FILTER_CON": "Filter concordance"
       },
       "TEXT_TYPE_SECTION": {}
+    },
+    "COLLOCATION": {
+      "CONC_COUNT": "Concurrence count",
+      "CAND_COUNT": "Candidate count",
+      "T_SCORE": "T-score",
+      "MI": "MI",
+      "MI3": "MI3",
+      "LOG_LIKELIHOOD": "log likelihood",
+      "MIN_SENS": "min. sensitivity",
+      "LOG_DICE": "logDice",
+      "MI_LOG_F": "MI.log_f"
+    },
+    "FREQUENCY": {
+      "WORD": "Word",
+      "WORD_LAST": "Word",
+      "LEMMA": "Lemma",
+      "TAG": "Tag",
+      "FREQUENCY": "Frequency",
+      "ITEMS": "Items",
+      "TOTAL_FREQ": "Total frequency",
+      "REL": "Rel [%]"
     },
     "CREDITS": {
       "LABEL": "Credits"
@@ -248,7 +268,8 @@
       "FOR": "for",
       "TIMES": "times"
     },
-    "RESET": "Reset"
+    "RESET": "Reset",
+    "CLEAR": "Clear"
   },
   "USER": {
     "USER": "User",

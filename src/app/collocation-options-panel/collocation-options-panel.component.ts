@@ -1,12 +1,37 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { CollocationOptionsQueryRequest } from '../model/collocation-options-query-request';
+import { CollocationOptionsQueryRequestDTO, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request-dto';
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
-import { INSTALLATION_LIST } from '../utils/lookup-tab';
+import { EmitterService } from '../utils/emitter.service';
 
 const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
+
+const STAT_DESC: { [key: string]: string } = {
+  T_SCORE: 't',
+  MI: 'm',
+  MI3: '3',
+  LOG: 'l',
+  MIN: 's',
+  MI_LOG: 'p',
+  REL_FREQ: 'r',
+  ABS_FREQ: 'f',
+  LOG_DICE: 'd',
+};
+
+const OPTIOIN_LIST = [
+  new KeyValueItem('T_SCORE', 'T_SCORE'),
+  new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
+  new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
+  new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
+];
+
+const ATTRIBUTE_LIST = [
+  new KeyValueItem('WORD', 'WORD'),
+  new KeyValueItem('TAG', 'TAG'),
+  new KeyValueItem('LEMMA', 'LEMMA')
+];
+
 @Component({
   selector: 'app-collocation-options-panel',
   templateUrl: './collocation-options-panel.component.html',
@@ -15,29 +40,20 @@ const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
 export class CollocationOptionsPanelComponent {
 
   @Input() public showRightButton = false;
+  @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
-  public attributeList: KeyValueItem[] = [
-    new KeyValueItem('WORD', 'WORD'),
-    new KeyValueItem('TAG', 'TAG'),
-    new KeyValueItem('LEMMA', 'LEMMA')
-  ];
-  public optionList: KeyValueItem[] = [
-    new KeyValueItem('T_SCORE', 'T_SCORE'),
-    new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
-    new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
-    new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
-  ];
+  public collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
+  public attributeList: KeyValueItem[] = ATTRIBUTE_LIST;
+  public optionList: KeyValueItem[] = OPTIOIN_LIST;
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly emitterService: EmitterService
   ) {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
-    const inst = INSTALLATION_LIST.find(i => i.index === environment.installation);
     this.collocationOptionsQueryRequest = collOptReq ?
-      JSON.parse(collOptReq) :
-      inst && inst.startup.collocationOptionsQueryRequest;
+      JSON.parse(collOptReq) : DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST;
   }
 
   public closeSidebar(): void {
@@ -45,27 +61,29 @@ export class CollocationOptionsPanelComponent {
   }
 
 
-  public setCollocationOption(): void {
+  public loadCollocationsOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
+    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (basicFieldRequest) {
+      this.emitterService.makeCollocation.next(basicFieldRequest);
+      this.loadCollocations.emit(true);
+    }
+    this.closeSidebarEvent.emit(true);
   }
 
-  public removeCollocationOption(): void {
-    this.queryRequestService.resetOptionsRequest();
-  }
-
-  private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequest): CollocationQueryRequest {
+  private collocationQueryRequestBuild(collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO): CollocationQueryRequest {
     const res = new CollocationQueryRequest();
-    res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute.key : null;
+    res.attribute = !!collocationOptionsQueryRequest.attribute ? collocationOptionsQueryRequest.attribute : null;
     res.minFreqCorpus = collocationOptionsQueryRequest.minFreqCorpus;
     res.minFreqRange = collocationOptionsQueryRequest.minFreqRange;
     res.rangeFrom = collocationOptionsQueryRequest.rangeFrom;
     res.rangeTo = collocationOptionsQueryRequest.rangeTo;
     if (!!collocationOptionsQueryRequest.showFunc) {
-      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(item.key));
+      collocationOptionsQueryRequest.showFunc.forEach(item => res.showFunc?.push(STAT_DESC[item]));
     }
-    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? collocationOptionsQueryRequest.sortBy.key : null;
+    res.sortBy = !!collocationOptionsQueryRequest.sortBy ? STAT_DESC[collocationOptionsQueryRequest.sortBy] : null;
     return res;
   }
 

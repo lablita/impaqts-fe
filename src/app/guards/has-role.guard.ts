@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } fro
 import { AuthService } from '@auth0/auth0-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 
@@ -18,10 +18,11 @@ export class HasRoleGuard implements CanActivate {
 
 
   constructor(
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly menuEmitterService: MenuEmitterService
   ) {
-    this.menuByRoleList = environment.menuByRoleList;
-    this.menuRoutes = environment.menuRoutes;
+    this.menuByRoleList = this.menuEmitterService.menuByRoleList;
+    this.menuRoutes = this.menuEmitterService.menuRoutes;
   }
 
   canActivate(
@@ -44,12 +45,12 @@ export class HasRoleGuard implements CanActivate {
 
   private getRoutesByMenu(menu: string[], menuRoutes: KeyValueItem[]): string[] {
     const result: string[] = [];
-    menu.forEach(voiceMenu => {
-      const route = menuRoutes.find(i => i.key === voiceMenu)?.value;
+    menu.forEach(itemMenu => {
+      const route = menuRoutes.find(i => i.key === itemMenu)?.value;
       if (route !== undefined) {
         result.push(route);
       }
-    })
+    });
     return result;
   }
 

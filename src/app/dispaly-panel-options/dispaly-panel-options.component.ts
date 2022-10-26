@@ -1,7 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, SELECT_CORPUS, SORT, VIEW_OPTIONS, WORD_LIST } from '../model/constants';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import {
+  COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
+} from '../common/routes-constants';
+import { FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
+import { SortQueryRequest } from '../model/sort-query-request';
 import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
@@ -9,15 +14,16 @@ import { DisplayPanelService } from '../services/display-panel.service';
   templateUrl: './dispaly-panel-options.component.html',
   styleUrls: ['./dispaly-panel-options.component.scss']
 })
-export class DispalyPanelOptionsComponent implements OnInit {
+export class DispalyPanelOptionsComponent {
 
   @Input() isVisualQuery = false;
-  @Input() selectedCorpus: KeyValueItem | null = null;
+  @Input() selectedCorpus: string | null = null;
   @Input() metadataAttributes: KeyValueItem[] = [];
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
-
-  public selectCorpus = SELECT_CORPUS;
+  @Output() public loadCollocations = new EventEmitter<boolean>();
+  @Output() public sort = new EventEmitter<SortQueryRequest>();
+  @Output() public frequency = new EventEmitter<FrequencyQueryRequest>();
 
   public VIEW_OPTIONS = VIEW_OPTIONS;
   public WORD_LIST = WORD_LIST;
@@ -31,14 +37,30 @@ export class DispalyPanelOptionsComponent implements OnInit {
     public displayPanelService: DisplayPanelService
   ) { }
 
-  private init(): void {
-    this.displayPanelService.panelItemSelected = this.displayPanelService.panelItemSelected === CONCORDANCE
-      ? VIEW_OPTIONS : this.displayPanelService.panelItemSelected;
+  public loadColl(): void {
+    this.loadCollocations.emit(true);
   }
 
-  ngOnInit(): void {
-    this.init();
+  public sortConcordances(sortQueryRequest: SortQueryRequest): void {
+    this.sort.emit(sortQueryRequest);
   }
+
+  public loadFrequencies(frequencyQueryRequest: FrequencyQueryRequest): void {
+    this.frequency.emit(frequencyQueryRequest);
+  }
+
+  public displayOptionsPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.optionsPanelSubject;
+  }
+
+  public displayMetadataPanel(): BehaviorSubject<boolean> {
+    return this.displayPanelService.metadataPanelSubject;
+  }
+
+  public closeMetadataPanel(): void {
+    this.displayPanelService.metadataButtonSubject.next();
+  }
+
 }
 
 

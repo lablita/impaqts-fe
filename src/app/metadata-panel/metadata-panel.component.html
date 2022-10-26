@@ -11,10 +11,10 @@
         <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
       </div>
       <p-scrollPanel [style]="{width: '100%'}" styleClass="custombar">
-        <div *ngFor="let metadatum of metadataQueryService.metadata, let i = index" class="field grid mb-2">
+        <div *ngFor="let metadatum of metadata, let i = index" class="field grid mb-2">
           <!-- FreeText-->
           <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-1">{{metadatum.name |
-              translate}}</label>
+            translate}}</label>
           <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">
             <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
           </div>
@@ -26,13 +26,13 @@
           <!-- Single selection -->
           <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
             <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
-              (onNodeSelect)="nodeSelect($event)" stlye="color: red !importatnt;">
+              (onNodeSelect)="nodeSelect($event)" class="text-red">
             </p-tree>
           </div>
         </div>
       </p-scrollPanel>
       <span class="flex justify-content-center">
-        <button pButton type=" button" icon="pi" label="{{'RESET' | translate}}" [disabled]="loading"
+        <button pButton type=" button" label="{{'PAGE.CLEAR' | translate}}" [disabled]="loading"
           (click)="resetMetadata()"></button>
       </span>
     </div>

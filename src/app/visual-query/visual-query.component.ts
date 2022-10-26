@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent, Message } from 'primeng/api';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
+import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { VISUAL_QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import {
-  INSTALLATION, SELECT_CORPUS, VISUAL_QUERY
-} from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { Corpus } from '../model/corpus';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
@@ -21,7 +21,10 @@ import { QueryResponse } from '../model/query-response';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { ErrorMessagesService } from '../services/error-messages.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { SocketService } from '../services/socket.service';
+import { EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 @Component({
@@ -55,7 +58,7 @@ export class VisualQueryComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public selectedCorpus: KeyValueItem | null = null;
   public holdSelectedCorpusStr?: string;
-  public selectCorpus = SELECT_CORPUS;
+  public selectCorpus = SELECT_CORPUS_LABEL;
 
   public totalResults = 0;
   public simpleResult?: string;
@@ -98,6 +101,9 @@ export class VisualQueryComponent implements OnInit {
     private readonly metadataUtilService: MetadataUtilService,
     private readonly socketService: SocketService,
     public displayPanelService: DisplayPanelService,
+    private readonly emitterService: EmitterService,
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly metadataQueryService: MetadataQueryService,
     private readonly sanitizer: DomSanitizer
   ) { }
 
@@ -116,7 +122,7 @@ export class VisualQueryComponent implements OnInit {
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(corpus.name, corpus.name)));
     }
 
-    this.translateService.stream(SELECT_CORPUS).subscribe(res => this.selectCorpus = res);
+    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
   }
 
   public addTokenQuery(): void {
@@ -161,7 +167,7 @@ export class VisualQueryComponent implements OnInit {
           qr.end = qr.start + event.rows;
         }
       }
-      qr.corpus = this.selectedCorpus.key;
+      qr.corpus = this.selectedCorpus.value;
       this.socketService.sendMessage(qr);
     }
   }
@@ -196,16 +202,23 @@ export class VisualQueryComponent implements OnInit {
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusStr) {
+        this.metadataQueryService.clearMetadata();
         this.metadataUtilService.createMatadataTree(
-          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(res => {
-            this.metadataTextTypes = res.md;
-            this.enableAddMetadata = res.ended;
-            if (this.enableAddMetadata) {
-              // ordinamento position
-              this.metadataTextTypes.sort((a, b) => a.position - b.position);
-              this.enableSpinner = false;
-            }
-          });
+          this.selectedCorpus.key, JSON.parse(JSON.stringify(this.installation)), true).subscribe(
+            {
+              next: metadata => this.metadataQueryService.setMetadata(metadata),
+              error: err => {
+                this.emitterService.spinnerMetadata.emit(false);
+                const metadataErrorMsg = {} as Message;
+                metadataErrorMsg.severity = 'error';
+                metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+                metadataErrorMsg.summary = 'Errore';
+                this.errorMessagesService.sendError(metadataErrorMsg);
+              },
+              complete: () => {
+                this.emitterService.spinnerMetadata.emit(false);
+              }
+            });
         this.holdSelectedCorpusStr = this.selectedCorpus.key;
       } else {
         this.enableSpinner = false;
@@ -286,8 +299,8 @@ export class VisualQueryComponent implements OnInit {
 
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, kwicline.leftContext + kwicline.leftContext,
-      kwicline.rightContext + kwicline.rightContext);
+    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
+      KWICline.stripTags(kwicline.rightContext, false));
   }
 
   private closeWebSocket(): void {

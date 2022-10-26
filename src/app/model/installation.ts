@@ -7,5 +7,5 @@ export class Installation {
   corpora: Corpus[] = [];
   logos: Logo[] = [];
   credits = '';
-  copyrights = '';
+  copyright = '';
 }

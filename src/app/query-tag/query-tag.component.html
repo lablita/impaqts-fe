@@ -37,7 +37,7 @@
       </div>
       <div class="grid" *ngIf="metadata && tag">
         <div class="col">
-          <button pButton icon="pi" label="Select Type" type="button" (click)="op.toggle($event)"></button>
+          <button pButton label="Select Type" type="button" (click)="op.toggle($event)"></button>
         </div>
         <div class="col flex">{{selectedMetadata}}</div>
       </div>
@@ -52,7 +52,7 @@
             <div class="mt-1 ml-3 p-component">
               <div>
                 <p-tree [value]="root.tree" selectionMode="single" [(selection)]="root.selection"
-                  (onNodeSelect)="selectedNode(root)" stlye="color: red !importatnt;">
+                  (onNodeSelect)="selectedNode(root)" class="text-red">
                 </p-tree>
               </div>
             </div>

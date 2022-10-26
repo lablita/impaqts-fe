@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CREDITS, INSTALLATION } from '../model/constants';
+import { INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
 import { DisplayPanelService } from '../services/display-panel.service';
 
@@ -17,7 +17,6 @@ export class CreditsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.displayPanelService.panelItemSelected = CREDITS;
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.credits = (JSON.parse(inst) as Installation).credits;

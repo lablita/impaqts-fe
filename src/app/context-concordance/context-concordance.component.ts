@@ -1,6 +1,24 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
+import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
 import { KeyValueItem } from '../model/key-value-item';
+import { QueryRequestService } from '../services/query-request.service';
+
+const WINDOWS = [
+  new KeyValueItem('LEFT', 'LEFT'),
+  new KeyValueItem('RIGHT', 'RIGHT'),
+  new KeyValueItem('BOTH', 'BOTH')
+];
+
+const ITEMS = [
+  new KeyValueItem('ALL', 'ALL'),
+  new KeyValueItem('ANY', 'ANY'),
+  new KeyValueItem('NONE', 'NONE')
+];
+
+const TOKENS = [1, 2, 3, 4, 5, 7, 10, 15];
+
+
+
 
 @Component({
   selector: 'app-context-concordance',
@@ -9,27 +27,27 @@ import { KeyValueItem } from '../model/key-value-item';
 })
 export class ContextConcordanceComponent implements OnInit {
 
-  @Input() public contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
   @Input() public panel = false;
 
-  public windows: KeyValueItem[] = [new KeyValueItem('LEFT', 'LEFT'), new KeyValueItem('RIGHT', 'RIGHT'), new KeyValueItem('BOTH', 'BOTH')];
+  public windows: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedWindow: KeyValueItem | null = null;
-  public items: KeyValueItem[] = [new KeyValueItem('ALL', 'ALL'), new KeyValueItem('ANY', 'ANY'), new KeyValueItem('NONE', 'NONE')];
+  public items: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedItem: KeyValueItem | null = null;
-  public tokens: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  public tokens: number[] = Array.from<number>({ length: 0 });
   public selectedToken: KeyValueItem | null = null;
 
-  ngOnInit(): void {
+  constructor(
+    private readonly queryRequestService: QueryRequestService
+  ) { }
 
-    for (let i = 1; i < 6; i++) {
-      this.tokens.push(new KeyValueItem('' + i, '' + i));
-    }
-    this.tokens.push(new KeyValueItem('7', '7'));
-    this.tokens.push(new KeyValueItem('10', '10'));
-    this.tokens.push(new KeyValueItem('15', '15'));
-    if (this.contextConcordanceQueryRequest) {
-      this.contextConcordanceQueryRequest.token = this.tokens[4];
-    }
+  ngOnInit(): void {
+    this.windows = WINDOWS;
+    this.items = ITEMS;
+    this.tokens = TOKENS;
+  }
+
+  get contextConcordanceQueryRequest(): ContextConcordanceQueryRequestDTO {
+    return this.queryRequestService.getContextConcordanceQueryRequestDTO();
   }
 
 }

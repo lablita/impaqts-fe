@@ -1,0 +1,81 @@
+<div *ngIf="visible">
+  <div class="flex justify-content-center">
+    <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
+  </div>
+
+
+  <div *ngIf="kwicLines.length > 0">
+    <h3 *ngIf="totalResults && !loading">{{sortOptions.length > 1 ? sortOptions[0] + " " + sortOptions[1] :
+      sortOptions[0]}}
+      <ng-container *ngIf="queryWithContext; else queryNoContext">
+        <span (click)="makeConcordanceFromBreadcrumbs()">
+          <span *ngFor="let fr of fieldRequests" style="color:red; text-decoration: underline; cursor: pointer;">
+            {{fr ? fr.simpleResult : ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b>
+        </span>
+      </ng-container>
+      
+      <ng-template #queryNoContext>
+        <span *ngFor="let fr of fieldRequests; let i = index">
+          <span style="color:red;">
+            <a (click)="clickConc(fr)" *ngIf="i<(fieldRequests.length-1)">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
+            <a *ngIf="i===fieldRequests.length-1">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
+          </span>&nbsp;
+          <b>{{firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
+        </span>
+      </ng-template>
+      <span *ngFor="let description of descriptions, let idx = index">
+        > 
+        <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;" (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
+        <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>
+        &nbsp;<b>{{description.size}}</b>
+      </span>
+    </h3>
+  </div>
+</div>
+<div *ngIf="visible" style="width: 150px;">
+  <p-dialog header="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" [(visible)]="displayModal" [style]="{width: '700'}"
+    [baseZIndex]="10000">
+    <iframe title="Video" style="border: 0px;" width="600" height="450" [src]="videoUrl" allow="autoplay"
+      allowfullscreen></iframe>
+  </p-dialog>
+</div>
+<p-table [ngClass]="{'hidden': (!visible || noResultFound) && !loading}" [value]="kwicLines" [lazy]="true"
+  [loading]="loading" (onLazyLoad)="loadConcordance($event)" [paginator]="true" styleClass="p-datatable-striped"
+  [rows]="initialPagination" [totalRecords]="totalResults"
+  currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
+  [rowsPerPageOptions]="paginations" [autoLayout]="true">
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 80px;"></th>
+      <th class="p-text-center" style="width: 180px;">Left</th>
+      <th class="p-text-center" style="width: 80px;">Kwic</th>
+      <th class="p-text-center" style="width: 180px;">Right</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
+    <tr>
+      <td>
+        <button [disabled]="loading" pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
+          (click)="showVideoDlg(rowIndex)"></button>
+      </td>
+      <td class="p-text-right" [innerHTML]="stripTags(kwicLine.leftContext, withContextConcordance())"></td>
+      <td class="p-text-center">
+        <p-button [disabled]="loading" label="{{kwicLine.kwic}}" styleClass="p-button-link"
+          (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
+      </td>
+      <td class="p-text-left" [innerHTML]="stripTags(kwicLine.rightContext, withContextConcordance())"></td>
+    </tr>
+  </ng-template>
+</p-table>
+<p-overlayPanel #op [style]="{width: '450px'}">
+  <ng-template pTemplate>
+    <div [innerHTML]="resultContext?.before"></div>
+    <div style="text-align: center;" class="text-red">
+      {{resultContext?.keyword}}
+    </div>
+    <div [innerHTML]="resultContext?.after"></div>
+  </ng-template>
+</p-overlayPanel>
+<div class="mt-3 w-12" *ngIf="visible && noResultFound && !loading">
+  <h3 style="text-align: center;" class="text-red">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
+</div>

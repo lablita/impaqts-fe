@@ -1,8 +1,8 @@
-import { CollocationOptionsQueryRequest } from './collocation-options-query-request';
-import { FilterOptionsQueryRequest } from './filter-options-query.request';
-import { FreqOptionsQueryRequest } from './freq-options-query_request';
+import { CollocationOptionsQueryRequestDTO } from './collocation-options-query-request-dto';
+import { FilterOptionsQueryRequestDTO } from './filter-options-query-request-dto';
+import { FreqOptions } from './freq-options';
 import { KeyValueItem } from './key-value-item';
-import { SortOptionsQueryRequest } from './sort-options-query-request';
+import { SortOptionsQueryRequestDTO } from './sort-options-query-request-dto';
 import { ViewOptionsQueryRequest } from './view-options-query-request';
 import { WordListOptionsQueryRequest } from './word-list-options-query-request';
 
@@ -10,19 +10,19 @@ export class Startup {
   corpusList: KeyValueItem[];
   viewOptionsQueryRequest: ViewOptionsQueryRequest;
   wordListOptionsQueryRequest: WordListOptionsQueryRequest;
-  sortOptionsQueryRequest: SortOptionsQueryRequest;
-  freqOptionsQueryRequest: FreqOptionsQueryRequest;
-  collocationOptionsQueryRequest: CollocationOptionsQueryRequest;
-  filterOptionsQueryRequest: FilterOptionsQueryRequest;
+  sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
+  freqOptionsQueryRequest: FreqOptions;
+  collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
+  filterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO;
 
   constructor(
     corpusList: KeyValueItem[],
     viewOptionsQueryRequest: ViewOptionsQueryRequest,
     wordListOptionsQueryRequest: WordListOptionsQueryRequest,
-    sortOptionsQueryRequest: SortOptionsQueryRequest,
-    freqOptionsQueryRequest: FreqOptionsQueryRequest,
-    collocationOptionsQueryRequest: CollocationOptionsQueryRequest,
-    filterOptionsQueryRequest: FilterOptionsQueryRequest
+    sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
+    freqOptionsQueryRequest: FreqOptions,
+    collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO,
+    filterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO
   ) {
     this.corpusList = corpusList;
     this.viewOptionsQueryRequest = viewOptionsQueryRequest;
@@ -30,6 +30,6 @@ export class Startup {
     this.sortOptionsQueryRequest = sortOptionsQueryRequest;
     this.freqOptionsQueryRequest = freqOptionsQueryRequest;
     this.collocationOptionsQueryRequest = collocationOptionsQueryRequest;
-    this.filterOptionsQueryRequest = filterOptionsQueryRequest;
+    this.filterOptionsQueryRequestDTO = filterOptionsQueryRequestDTO;
   }
 }
