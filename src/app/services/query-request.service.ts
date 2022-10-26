@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
 import { FieldRequest } from '../model/field-request';
+import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
-import { ConcordanceRequestPayload } from '../utils/emitter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +14,9 @@ export class QueryRequestService {
 
   private basicFieldRequest: FieldRequest | null = null;
   // used for visual queries
-  private ConcordanceRequestPayload: ConcordanceRequestPayload | null = null;
+  private queryPattern: QueryPattern | null = null;
+
+
   private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
@@ -45,7 +47,7 @@ export class QueryRequestService {
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
     if (fieldRequest) {
       this.basicFieldRequest = fieldRequest;
-      this.ConcordanceRequestPayload = null;
+      this.queryPattern = null;
     }
   }
 
@@ -57,14 +59,14 @@ export class QueryRequestService {
     this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
   }
 
-  public setConcordanceRequestPayload(ConcordanceRequestPayload: ConcordanceRequestPayload): void {
-    if (ConcordanceRequestPayload) {
-      this.ConcordanceRequestPayload = ConcordanceRequestPayload;
+  public setQueryPattern(queryPattern: QueryPattern): void {
+    if (queryPattern) {
+      this.queryPattern = queryPattern;
       this.basicFieldRequest = null;
     }
   }
 
-  public getConcordanceRequestPayload(): ConcordanceRequestPayload | null {
-    return this.ConcordanceRequestPayload;
+  public getQueryPattern(): QueryPattern | null {
+    return this.queryPattern;
   }
 }

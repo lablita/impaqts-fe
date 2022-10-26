@@ -19,6 +19,7 @@ import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
@@ -91,7 +92,7 @@ export class VisualQueryComponent implements OnInit {
   public titleResult: string | null = null;
 
   // FIXME: a cosa serve?
-  private simple?: string;
+  //private simple?: string;
   private endpoint = '';
 
   constructor(
@@ -101,7 +102,8 @@ export class VisualQueryComponent implements OnInit {
     private readonly socketService: SocketService,
     public displayPanelService: DisplayPanelService,
     private readonly sanitizer: DomSanitizer,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
@@ -139,10 +141,8 @@ export class VisualQueryComponent implements OnInit {
     if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
     }
-    // this.loading = true;
-    // this.resultView = false;
-    // this.loadConcordances();
-    this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([concordanceRequest], 0, this.queryPattern));
+    this.queryRequestService.setQueryPattern(this.queryPattern);
+    this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
   }
 
   public dropdownCorpus(): void {
