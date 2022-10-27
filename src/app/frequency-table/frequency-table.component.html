@@ -24,10 +24,12 @@
         {{'PAGE.FREQUENCY.TOTAL_FREQ' | translate}}: {{totalFrequency}}</th>
     </tr>
   </ng-template>
-  
+
   <ng-template pTemplate="body" let-line>
     <tr *ngIf="line" [ngClass]="{'hidden': loading}">
-      <td> <a (click)="clickPositive(line)" class="p-n-underlined">P</a> | <a class="p-n-underlined" href="">N</a></td>
+      <td> <button pButton (click)="clickPositive(line)" class="p-button-link p-n-button" label="P"></button> | <button
+          pButton (click)="clickNegative(line)" class="p-button-link p-n-button" label="N"
+          [disabled]="colHeaders.length > 2"></button></td>
       <td *ngIf="multilevel && colHeaders.length >= 2" class="text-right">{{line.word[0]}}</td>
       <td *ngIf="!multilevel" class="text-right"><a href="http://{{line.word[0]}}" target="_blank">{{line.word[0]}}</a>
       </td>
