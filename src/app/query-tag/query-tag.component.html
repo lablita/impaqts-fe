@@ -7,9 +7,9 @@
             [placeholder]="'PAGE.VISUAL_QUERY.SEL_TYPE' | translate">
           </p-dropdown>
         </div>
-        <div class="col-4">
+        <div class="col-4 relative">
           <p-dropdown [(ngModel)]="action" (onChange)="setTagAttr($event)" [options]="actionList"
-            [placeholder]="'PAGE.VISUAL_QUERY.SEL_ACTION' | translate" optionLabel="value">
+            class="absolute right-0" [placeholder]="'PAGE.VISUAL_QUERY.SEL_ACTION' | translate" optionLabel="value">
             <ng-template pTemplate="selectedItem">
               <div *ngIf="action">
                 {{'PAGE.VISUAL_QUERY.' + action.key | translate}}
@@ -26,8 +26,9 @@
           <input class="mr-1" [id]="'tag'" type="text" pInputText style="width: 180px;"
             [placeholder]="'PAGE.VISUAL_QUERY.ANY_WORD' | translate" [(ngModel)]="tag.value">
         </div>
-        <div class="col-4" pTooltip="Case sensitive(Aa) / insensitive(aa)" tooltip>
-          <p-selectButton [options]="caseList" [(ngModel)]="caseSensitive" (onChange)="setMatchCase()">
+        <div class="col-4 relative" pTooltip="Case sensitive(Aa) / insensitive(aa)" tooltip>
+          <p-selectButton [options]="caseList" [(ngModel)]="caseSensitive" (onChange)="setMatchCase()"
+            class="absolute right-0">
           </p-selectButton>
         </div>
       </div>
@@ -59,8 +60,8 @@
 
     </div>
     <div class="col-1">
-      <button pButton pTooltip="Delete Tag" type="button" icon="pi pi-times" class="p-button-rounded" *ngIf="deleteTagOn"
-        (click)="deleteTag($event)"></button>
+      <button pButton pTooltip="Delete Tag" type="button" icon="pi pi-times" class="p-button-rounded delete-tag-button"
+        *ngIf="deleteTagOn" (click)="deleteTag($event)"></button>
     </div>
   </div>
 </span>

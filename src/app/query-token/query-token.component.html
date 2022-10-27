@@ -1,17 +1,13 @@
-<div class="shadow-4">
+<div class="shadow-2">
   <p-card [style]="{'width': '30rem', 'margin-bottom': '2em'}">
-    <div class="flex justify-content-end mb-3">
-      <button pButton type="button" pTooltip="Delete Token" icon="pi pi-times" class="p-button-rounded"
-        (click)="deleteToken()"></button>
-    </div>
     <ng-container *ngIf="token">
-        <div *ngFor="let andTag of token.tags; let idxAnd = index" class="mb-3">
+      <div *ngFor="let andTag of token.tags; let idxAnd = index" class="mb-3">
         <div class="shadow-4">
           <p-card>
             <div *ngFor="let tag of andTag; let idxOr = index">
               <app-query-tag [tag]="tag" [typeList]="typeList" [defaultType]="defaultType" [actionList]="actionList"
-                [defaultAction]="defaultAction" [metadatumTextTypes]="metadatumTextTypes" (delete)="deleteTag(tag, andTag)"
-                [metadata]="metadata" [deleteTagOn]="countTags() > 1">
+                [defaultAction]="defaultAction" [metadatumTextTypes]="metadatumTextTypes"
+                (delete)="deleteTag(tag, andTag)" [metadata]="metadata" [deleteTagOn]="countTags() > 1">
               </app-query-tag>
               <div *ngIf="idxOr < (andTag.length - 1)" class="flex justify-content-center">
                 <b>OR</b>
@@ -29,17 +25,21 @@
       </div>
     </ng-container>
     <div class="flex justify-content-between">
-      <button pButton pTooltip="Add in AND" type="button" class="p-button-raised" label="Add in AND" (click)="addAndTag()">
+      <button pButton pTooltip="Add in AND" type="button" class="p-button-raised" label="Add in AND"
+        (click)="addAndTag()">
       </button>
-  
-      <div *ngIf="repeat && !metadata && token" class="ml-3">
+      <button pButton type="button" pTooltip="Delete Token" label="Delete token" class="p-button-raised"
+        (click)="deleteToken()"></button>
+      <!-- <div *ngIf="repeat && !metadata && token" class="ml-3">
         <label [for]="'minRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.REPEAT' | translate}}</label>
-        <input class="mr-1" [id]="'minRepetitions'" type="number" style="width: 50px;" [(ngModel)]="token.minRepetitions">
+        <input class="mr-1" [id]="'minRepetitions'" type="number" style="width: 50px;"
+          [(ngModel)]="token.minRepetitions">
         <label [for]="'maxRepetitions_'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.FOR' | translate}}</label>
-        <input class="mr-1" [id]="'maxRepetitions'" type="number" style="width: 50px;" [(ngModel)]="token.maxRepetitions">
+        <input class="mr-1" [id]="'maxRepetitions'" type="number" style="width: 50px;"
+          [(ngModel)]="token.maxRepetitions">
         <label [for]="'maxRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.TIMES' | translate}}</label>
-      </div>
-  
+      </div> -->
+
       <!-- <p-overlayPanel #op>
         <p-listbox [options]="optionList" [(ngModel)]="optionSel" optionLabel="value" [style]="{'width':'15rem'}"
           (click)="setOption()">
@@ -54,6 +54,6 @@
     <div class="flex justify-content-end mt-1">
       <div *ngFor="let opt of optionsSel, let i = index">
         {{"PAGE.VISUAL_QUERY." + opt | translate}} {{i < (optionsSel.length -1) ? ', ' : '' }} </div> -->
-      </div> 
+    </div>
   </p-card>
 </div>

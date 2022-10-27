@@ -1,4 +1,3 @@
-import { taggedTemplate } from '@angular/compiler/src/output/output_ast';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
