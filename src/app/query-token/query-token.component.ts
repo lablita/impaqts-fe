@@ -1,3 +1,4 @@
+import { taggedTemplate } from '@angular/compiler/src/output/output_ast';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -83,6 +84,12 @@ export class QueryTokenComponent {
 
   public setMeta(): void {
     return;
+  }
+
+  public countTags(): number {
+    let res = 0;
+    this.token?.tags.forEach(tag => res += tag.length);
+    return res;
   }
 
 }
