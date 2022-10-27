@@ -170,7 +170,7 @@ export class QueryRequestComponent implements OnInit {
     if (installation) {
       installation.corpora.forEach((c, index) => {
         if (c.id === corpus.id) {
-          installation.corpora[index] = c;
+          installation.corpora[index] = corpus;
         }
       });
       this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(

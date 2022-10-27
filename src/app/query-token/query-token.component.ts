@@ -85,4 +85,10 @@ export class QueryTokenComponent {
     return;
   }
 
+  public countTags(): number {
+    let res = 0;
+    this.token?.tags.forEach(tag => res += tag.length);
+    return res;
+  }
+
 }

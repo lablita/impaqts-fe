@@ -18,6 +18,7 @@ export class QueryTagComponent implements OnInit {
   @Input() defaultAction: KeyValueItem | null = null;
   @Input() metadata = false;
   @Input() metadatumTextTypes: Array<Metadatum> | null = Array.from<Metadatum>({ length: 0 });
+  @Input() deleteTagOn = true;
 
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
