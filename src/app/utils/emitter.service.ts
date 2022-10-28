@@ -24,7 +24,7 @@ export class ConcordanceRequestPayload {
 export class EmitterService {
   public spinnerMetadata: EventEmitter<boolean> = new EventEmitter<boolean>();
   public user: BehaviorSubject<User> = new BehaviorSubject(new User());
-  public makeConcordance: BehaviorSubject<ConcordanceRequestPayload> =
+  public makeConcordanceRequestSubject: BehaviorSubject<ConcordanceRequestPayload> =
     new BehaviorSubject<ConcordanceRequestPayload>(new ConcordanceRequestPayload([], 0, null));
   public makeCollocation: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
   public makeFrequency: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());

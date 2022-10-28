@@ -3,7 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 import {
   COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
 } from '../common/routes-constants';
-import { FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { SortQueryRequest } from '../model/sort-query-request';
@@ -23,7 +22,7 @@ export class DispalyPanelOptionsComponent {
   @Input() metadataTextTypes: Metadatum[] = [];
   @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public sort = new EventEmitter<SortQueryRequest>();
-  @Output() public frequency = new EventEmitter<FrequencyQueryRequest>();
+  @Output() public frequency = new EventEmitter<void>();
 
   public VIEW_OPTIONS = VIEW_OPTIONS;
   public WORD_LIST = WORD_LIST;
@@ -45,8 +44,8 @@ export class DispalyPanelOptionsComponent {
     this.sort.emit(sortQueryRequest);
   }
 
-  public loadFrequencies(frequencyQueryRequest: FrequencyQueryRequest): void {
-    this.frequency.emit(frequencyQueryRequest);
+  public loadFrequencies(): void {
+    this.frequency.emit();
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {

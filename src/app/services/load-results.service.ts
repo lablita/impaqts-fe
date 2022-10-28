@@ -69,11 +69,12 @@ export class LoadResultsService {
   }
 
   public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent, qp?: QueryPattern | null): void {
+    const queryRequest = this.queryRequestService.getQueryRequest();
     this.setMetadataQuery();
     if (!!fieldRequests && fieldRequests.length > 0 || !!qp) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
-        const qr: QueryRequest = !!qp ? new QueryRequest() : JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
+        const qr: QueryRequest = !!qp ? new QueryRequest() : queryRequest;
         if (!event) {
           qr.start = 0;
           qr.end = 10;
@@ -168,9 +169,9 @@ export class LoadResultsService {
           } else {
             // remove context query param if present in previous queries
             qr.contextConcordanceQueryRequest = null;
-            this.queryRequestService.queryRequest.contextConcordanceQueryRequest = null;
+            queryRequest.contextConcordanceQueryRequest = null;
           }
-          console.log('queryRequest: ' + JSON.stringify(this.queryRequestService.queryRequest));
+          console.log('queryRequest: ' + JSON.stringify(queryRequest));
           // frequency
           if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
             qr.frequencyQueryRequest?.categories.forEach(cat => {
@@ -186,16 +187,16 @@ export class LoadResultsService {
   }
 
   public getCollocationSortingParams(): CollocationSortingParams {
-    const qr: QueryRequest = JSON.parse(JSON.stringify(this.queryRequestService.queryRequest));
+    const queryRequest = this.queryRequestService.getQueryRequest();
     /** return collocation sorting params */
     const collocationSortingParams = new CollocationSortingParams();
-    if (qr.collocationQueryRequest?.showFunc && qr.collocationQueryRequest?.showFunc?.length > 0) {
+    if (queryRequest.collocationQueryRequest?.showFunc && queryRequest.collocationQueryRequest?.showFunc?.length > 0) {
       const colHeader = ['PAGE.COLLOCATION.CONC_COUNT', 'PAGE.COLLOCATION.CAND_COUNT'];
-      qr.collocationQueryRequest.showFunc.forEach(f => colHeader.push(this.colHeaderList.filter(h => h.key === f)[0].value));
+      queryRequest.collocationQueryRequest.showFunc.forEach(f => colHeader.push(this.colHeaderList.filter(h => h.key === f)[0].value));
       collocationSortingParams.colHeader = colHeader;
     }
-    const sortBy = this.queryRequestService.queryRequest.collocationQueryRequest?.sortBy
-      ? this.queryRequestService.queryRequest.collocationQueryRequest?.sortBy : 'm';
+    const sortBy = queryRequest.collocationQueryRequest?.sortBy
+      ? queryRequest.collocationQueryRequest?.sortBy : 'm';
     collocationSortingParams.headerSortBy = this.colHeaderList.filter(h => h.key === sortBy)[0].value;
     return collocationSortingParams;
   }

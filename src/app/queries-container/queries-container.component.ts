@@ -100,9 +100,10 @@ export class QueriesContainerComponent implements OnInit {
 
   public displayFrequency(): void {
     this.titleResult = 'MENU.FREQUENCY';
-    if (this.queryRequestService.queryRequest.frequencyQueryRequest &&
-      this.queryRequestService.queryRequest.frequencyQueryRequest.categories) {
-      this.categories = this.queryRequestService.queryRequest.frequencyQueryRequest.categories;
+    const queryRequest = this.queryRequestService.getQueryRequest();
+    if (queryRequest.frequencyQueryRequest &&
+      queryRequest.frequencyQueryRequest.categories) {
+      this.categories = queryRequest.frequencyQueryRequest.categories;
     }
   }
 

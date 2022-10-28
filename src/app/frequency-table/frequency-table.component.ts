@@ -57,12 +57,15 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       if (queryResponse) {
         this.loading = false;
+        const queryRequest = this.queryRequestService.getQueryRequest();
         if (queryResponse.error) {
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
           this.errorMessagesService.sendError(errorMessage);
-        } else if (queryResponse.frequency && ((this.queryRequestService.queryRequest
-          && this.queryRequestService.queryRequest.frequencyQueryRequest
-          && this.queryRequestService.queryRequest.frequencyQueryRequest?.categories.length > 0)
+        } else if (queryResponse.frequency && ((
+          queryRequest
+          && queryRequest.frequencyQueryRequest
+          && queryRequest.frequencyQueryRequest.categories
+          && queryRequest.frequencyQueryRequest.categories.length > 0)
           ? this.category === queryResponse.frequency.head : true)) {
           this.totalResults = queryResponse.currentSize;
           this.frequency = queryResponse.frequency;
@@ -109,18 +112,19 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public loadFrequencies(event: any): void {
-    if (this.fieldRequest && this.queryRequestService.queryRequest.frequencyQueryRequest) {
+    const queryRequest = this.queryRequestService.getQueryRequest();
+    if (this.fieldRequest && queryRequest.frequencyQueryRequest) {
       this.loading = true;
       if (event.sortField === '' || event.sortField.indexOf(PAGE_FREQUENCY_FREQUENCY) >= 0) {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = FREQ;
+        queryRequest.frequencyQueryRequest.frequencyType = FREQ;
       } else if (event.sortField.indexOf('PAGE.FREQUENCY.REL') >= 0) {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = REL;
+        queryRequest.frequencyQueryRequest.frequencyType = REL;
       } else if (event.sortField) {
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyType = null;
-        this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyColSort =
+        queryRequest.frequencyQueryRequest.frequencyType = null;
+        queryRequest.frequencyQueryRequest.frequencyColSort =
           (event.sortField as string).substring((event.sortField as string).lastIndexOf('-') + 1);
       }
-      this.queryRequestService.queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;
+      queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;
       this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }
@@ -137,8 +141,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
       concordanceRequestPayload.pos = i + 1;
     });
-    this.queryRequestService.queryRequest.frequencyQueryRequest = null;
-    this.emitterService.makeConcordance.next(concordanceRequestPayload);
+    this.queryRequestService.getQueryRequest().frequencyQueryRequest = null;
+    this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
   }
 
@@ -154,13 +158,14 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
       concordanceRequestPayload.pos = i + 1;
     });
-    this.queryRequestService.queryRequest.frequencyQueryRequest = null;
-    this.emitterService.makeConcordance.next(concordanceRequestPayload);
+    const queryRequest = this.queryRequestService.getQueryRequest();
+    queryRequest.frequencyQueryRequest = null;
+    this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
   }
 
   private setColumnHeaders(): void {
-    const frequencyQueryRequest = this.queryRequestService.queryRequest.frequencyQueryRequest;
+    const frequencyQueryRequest = this.queryRequestService.getQueryRequest().frequencyQueryRequest;
     if (frequencyQueryRequest) {
       this.multilevel = frequencyQueryRequest.multilevelFrequency.length > 0;
       const multilevelColHeaders = frequencyQueryRequest.multilevelFrequency.map(mlfreq => mlfreq.attribute ? mlfreq.attribute : '');

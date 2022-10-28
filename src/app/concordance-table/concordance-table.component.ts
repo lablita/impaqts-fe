@@ -50,6 +50,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public queryWithContext = false;
 
   private readonly queryResponseSubscription: Subscription;
+  private makeConcordanceRequestSubscription: Subscription | null = null;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -87,7 +88,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   ngAfterViewInit(): void {
-    this.emitterService.makeConcordance.subscribe(res => {
+    this.makeConcordanceRequestSubscription = this.emitterService.makeConcordanceRequestSubject.subscribe(res => {
       this.fieldRequests = [];
       this.loading = true;
       if (res.concordances.length > 0 || !!res.qp) {
@@ -113,6 +114,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   ngOnDestroy(): void {
     if (this.queryResponseSubscription) {
       this.queryResponseSubscription.unsubscribe();
+    }
+    if (this.makeConcordanceRequestSubscription) {
+      this.makeConcordanceRequestSubscription.unsubscribe();
     }
   }
 
@@ -144,7 +148,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      this.emitterService.makeConcordanceRequestSubject.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
     }
   }
 
@@ -180,7 +184,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     this.fieldRequests.forEach(fr => {
       concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch));
     });
-    this.emitterService.makeConcordance.next(concordanceRequestPayload);
+    this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
   }
 
   public showDialog(kwicline: KWICline): void {

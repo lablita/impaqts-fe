@@ -204,14 +204,13 @@ export class QueryRequestComponent implements OnInit {
 
     // concordance Context
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    const queryRequest = this.queryRequestService.getQueryRequest();
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      if (this.queryRequestService.queryRequest.sortQueryRequest
-        && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
-        typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
-          ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
+        typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      this.emitterService.makeConcordanceRequestSubject.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
     }
   }
 

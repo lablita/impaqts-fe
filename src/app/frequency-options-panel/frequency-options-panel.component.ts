@@ -66,7 +66,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
-  @Output() public concordanceFrequency = new EventEmitter<FrequencyQueryRequest>();
+  @Output() public concordanceFrequency = new EventEmitter<void>();
 
   public freqOptionsQueryRequest: FreqOptions = FreqOptions.build();
 
@@ -139,7 +139,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   private setFrequencyOption(isSimpleFreq: boolean): void {
     this.queryRequestService.resetOptionsRequest();
     if (this.freqOptionsQueryRequest) {
-      this.queryRequestService.queryRequest.frequencyQueryRequest = this.frequencyQueryRequestBuild(this.freqOptionsQueryRequest, isSimpleFreq);
+      this.queryRequestService.getQueryRequest().frequencyQueryRequest =
+        this.frequencyQueryRequestBuild(this.freqOptionsQueryRequest, isSimpleFreq);
       localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
     }
   }
@@ -167,11 +168,11 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   private getFrequencyOption(): FrequencyQueryRequest | null {
-    return this.queryRequestService.queryRequest.frequencyQueryRequest;
+    return this.queryRequestService.getQueryRequest().frequencyQueryRequest;
   }
 
   private callConcordanceFrequency(attribute: string): void {
-    const res = new FrequencyQueryRequest()
+    const res = new FrequencyQueryRequest();
     res.frequencyColSort = null;
     res.frequencyType = FREQ;
     res.frequencyTypeSort = DESC;
@@ -181,8 +182,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     freqOpt.ignoreCase = false;
     freqOpt.position = NODE_CONTEXT;
     res.multilevelFrequency.push(freqOpt);
-    this.queryRequestService.queryRequest.frequencyQueryRequest = res;
-    this.concordanceFrequency.emit(res);
+    this.queryRequestService.getQueryRequest().frequencyQueryRequest = res;
+    this.concordanceFrequency.emit();
   }
 
   private doMakeFrequency(isSimpleFreq: boolean): void {
@@ -192,7 +193,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       this.emitterService.makeFrequency.next(basicFieldRequest);
       const freqencyOption = this.getFrequencyOption();
       if (freqencyOption) {
-        this.concordanceFrequency.emit(freqencyOption);
+        this.concordanceFrequency.emit();
       }
     }
   }

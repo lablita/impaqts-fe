@@ -64,7 +64,8 @@ export class CollocationOptionsPanelComponent {
   public loadCollocationsOption(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
-    this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
+    this.queryRequestService.getQueryRequest().collocationQueryRequest =
+      this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
       this.emitterService.makeCollocation.next(basicFieldRequest);

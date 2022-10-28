@@ -147,7 +147,7 @@ export class VisualQueryComponent implements OnInit {
       this.queryPattern.structPattern = this.metadata[0];
     }
     this.queryRequestService.setQueryPattern(this.queryPattern);
-    this.emitterService.makeConcordance.next(
+    this.emitterService.makeConcordanceRequestSubject.next(
       new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
   }
 

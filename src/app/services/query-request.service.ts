@@ -10,7 +10,7 @@ import { QueryRequest } from '../model/query-request';
 })
 export class QueryRequestService {
 
-  public queryRequest = new QueryRequest();
+  private queryRequest: QueryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
   // used for visual queries
@@ -68,5 +68,9 @@ export class QueryRequestService {
 
   public getQueryPattern(): QueryPattern | null {
     return this.queryPattern;
+  }
+
+  public getQueryRequest(): QueryRequest {
+    return this.queryRequest;
   }
 }
