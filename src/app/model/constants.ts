@@ -6,6 +6,8 @@ export const INSTALLATION = 'installation';
 export const INTERFACE_LANGUAGE = 'interface_language';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
+
+export const WIDE_CONTEXT_FAILED = 'WIDE_CONTEXT_FAILED';
 /** */
 export const TOP_LEFT = 'TOP_LEFT';
 export const TOP_RIGHT = 'TOP_RIGHT';

@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Message } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
-import { SHUFFLE } from '../model/constants';
+import { INSTALLATION, SHUFFLE } from '../model/constants';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -13,6 +14,7 @@ import { ConcordanceRequest } from '../queries-container/queries-container.compo
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
+import { WideContextService } from '../services/wide-context.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 
 const SORT_LABELS = [
@@ -25,7 +27,8 @@ const SORT_LABELS = [
 @Component({
   selector: 'app-concordance-table',
   templateUrl: './concordance-table.component.html',
-  styleUrls: ['./concordance-table.component.scss']
+  styleUrls: ['./concordance-table.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
@@ -57,6 +60,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly loadResultService: LoadResultsService,
     private readonly queryRequestService: QueryRequestService,
     private readonly errorMessagesService: ErrorMessagesService,
+    private readonly wideContextService: WideContextService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       if (queryResponse) {
@@ -183,11 +187,30 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     this.emitterService.makeConcordance.next(concordanceRequestPayload);
   }
 
-  public showDialog(kwicline: KWICline): void {
-    // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic,
-      KWICline.stripTags(kwicline.leftContext, this.queryRequestService.withContextConcordance()),
-      KWICline.stripTags(kwicline.rightContext, this.queryRequestService.withContextConcordance()));
+  public showWideContext(kwicline: KWICline): void {
+    this.resultContext = null;
+    const corpus = this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
+    const localInst = localStorage.getItem(INSTALLATION);
+    if (localInst && corpus) {
+      const inst = JSON.parse(localInst);
+      this.wideContextService.getWideContext(inst, corpus, kwicline.pos).subscribe({
+        next: response => {
+          if (response && response.wideContextResponse) {
+            const kwic = response.wideContextResponse.kwic ? response.wideContextResponse.kwic : '';
+            const leftContext = response.wideContextResponse?.leftContext ? response.wideContextResponse.leftContext : '';
+            const rightContext = response.wideContextResponse?.rightContext ? response.wideContextResponse.rightContext : '';
+            this.resultContext = new ResultContext(kwic, leftContext, rightContext);
+          }
+        },
+        error: err => {
+          const wideContextError = {} as Message;
+          wideContextError.severity = 'error';
+          wideContextError.detail = 'Non è stato possibile recuperare il contesto';
+          wideContextError.summary = 'Errore';
+          this.errorMessagesService.sendError(wideContextError);
+        }
+      });
+    }
   }
 
   public getItemToBeDisplayed(fieldRequest: FieldRequest): string {

@@ -2,6 +2,7 @@ import { CollocationItem } from './collocation-item';
 import { DescResponse } from './desc-response';
 import { FrequencyItem } from './frequency-item';
 import { KWICline } from './kwicline';
+import { WideContextResponse } from './wide-context-response';
 
 export class QueryResponse {
   kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
@@ -12,4 +13,5 @@ export class QueryResponse {
   currentSize = 0;
   error = false;
   errorMessage = '';
+  wideContextResponse: WideContextResponse | null = null;
 }
