@@ -6,10 +6,8 @@ import { WORD } from '../common/query-constants';
 import { ASC, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
-import { FrequencyOption } from '../model/frequency-query-request';
 import { FrequencyResultLine } from '../model/frequency-result-line';
 import { KeyValueItem } from '../model/key-value-item';
-import { QueryPattern } from '../model/query-pattern';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
@@ -137,7 +135,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public clickPositive(event: any): void {
     const multilevelFrequency = this.queryRequestService.getQueryRequest().frequencyQueryRequest?.multilevelFrequency;
     const typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayload(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0, null);
+    const concordanceRequestPayload = new ConcordanceRequestPayload(
+      !!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
     if (!!multilevelFrequency && multilevelFrequency.length === event.word.length) {
       const token = new QueryToken();
       token.tags.push([]);
@@ -157,8 +156,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
         //concordanceRequestPayload.pos = i + 1;
       });
       token.tags[0] = queryTags;
-      concordanceRequestPayload.qp = new QueryPattern();
-      concordanceRequestPayload.qp?.tokPattern.push(token);
+      // concordanceRequestPayload.qp = new QueryPattern();
+      // concordanceRequestPayload.qp?.tokPattern.push(token);
     }
     //this.queryRequestService.getQueryRequest().frequencyQueryRequest = null;
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
@@ -167,7 +166,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   public clickNegative(event: any): void {
     const typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayload(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0, null);
+    const concordanceRequestPayload = new ConcordanceRequestPayload(
+      !!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
     event.word.forEach((w: string, i: number) => {
       const fieldRequest: FieldRequest = new FieldRequest();
       fieldRequest.matchCase = true;

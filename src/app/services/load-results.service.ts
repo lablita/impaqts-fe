@@ -3,7 +3,7 @@ import { LazyLoadEvent, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -11,7 +11,6 @@ import { ContextConcordanceQueryRequest } from '../model/context-concordance-que
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
-import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
@@ -68,33 +67,32 @@ export class LoadResultsService {
     }
   }
 
-  public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent, qp?: QueryPattern | null): void {
+  public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
     this.setMetadataQuery();
-    if (!!fieldRequests && fieldRequests.length > 0 || !!qp) {
+    if (!!fieldRequests && fieldRequests.length > 0) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
-        const qr: QueryRequest = !!qp && !queryRequest ? new QueryRequest() : queryRequest;
         if (!event) {
-          qr.start = 0;
-          qr.end = 10;
+          queryRequest.start = 0;
+          queryRequest.end = 10;
         } else {
           if (event.first !== undefined && event.first !== null && event.rows !== undefined && event.rows !== null) {
-            qr.start = event.first;
-            qr.end = qr.start + event.rows;
+            queryRequest.start = event.first;
+            queryRequest.end = queryRequest.start + event.rows;
           }
-          if (qr.collocationQueryRequest !== null && event.sortField !== undefined && event.sortField !== null) {
+          if (queryRequest.queryType === REQUEST_TYPE.COLLOCATION_REQUEST && queryRequest.collocationQueryRequest) {
             // collocation sorting
             const sortBy = this.colHeaderList.find(c => c.value === event.sortField)?.key;
-            qr.collocationQueryRequest.sortBy = (sortBy !== null && sortBy !== undefined) ? sortBy : 'm';
+            queryRequest.collocationQueryRequest.sortBy = (sortBy !== null && sortBy !== undefined) ? sortBy : 'm';
           }
         }
-        if (!!qp && !queryRequest) {
+        if (queryRequest.queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST) {
           // VisualQuery
-          qr.corpus = fieldRequest.selectedCorpus.value;
-          qr.queryPattern = qp;
-          this.socketService.sendMessage(qr);
+          queryRequest.corpus = fieldRequest.selectedCorpus.value;
+          this.socketService.sendMessage(queryRequest);
         } else {
+          // !VISUAL_QUERY_REQUEST
           const queryTags: QueryTag[] = [];
           let tag: QueryTag;
           switch (fieldRequest.selectedQueryType?.key) {
@@ -124,9 +122,9 @@ export class LoadResultsService {
             default: // SIMPLE
               fieldRequest.simpleResult = fieldRequest.simple;
           }
-          if (!qr.queryPattern) {
-            qr.queryPattern = new QueryPattern();
-            qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
+          if (!queryRequest.queryPattern) {
+            queryRequest.queryPattern = new QueryPattern();
+            queryRequest.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
           }
           if (fieldRequest.selectedQueryType?.key === SIMPLE) {
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
@@ -140,22 +138,22 @@ export class LoadResultsService {
               tagLemma.value = simpleResultToken;
               token.tags[0].push(tagWord);
               token.tags[0].push(tagLemma);
-              qr.queryPattern?.tokPattern.push(token);
+              queryRequest.queryPattern?.tokPattern.push(token);
             });
           } else {
             const simpleQueryToken = new QueryToken(TOKEN);
             simpleQueryToken.tags[0] = queryTags;
-            qr.queryPattern.tokPattern.push(simpleQueryToken);
+            queryRequest.queryPattern.tokPattern.push(simpleQueryToken);
           }
           if (this.metadataQuery) {
-            qr.queryPattern.structPattern = this.metadataQuery;
+            queryRequest.queryPattern.structPattern = this.metadataQuery;
           }
-          qr.corpus = fieldRequest.selectedCorpus.value;
+          queryRequest.corpus = fieldRequest.selectedCorpus.value;
           // quick sort
-          if (fieldRequest.quickSort) {
-            qr.start = 0;
-            qr.end = qr.end > 0 ? qr.end : 10;
-            qr.sortQueryRequest = fieldRequest.quickSort;
+          if (queryRequest.queryType === REQUEST_TYPE.QUICK_SORT_REQUEST && fieldRequest.quickSort) {
+            queryRequest.start = 0;
+            queryRequest.end = queryRequest.end > 0 ? queryRequest.end : 10;
+            queryRequest.sortQueryRequest = fieldRequest.quickSort;
           }
           // context
           if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
@@ -165,23 +163,25 @@ export class LoadResultsService {
               fieldRequest.contextConcordance?.lemma,
               fieldRequest.contextConcordance?.item.key
             );
-            qr.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
-            this.queryRequestService.setContextConcordance(qr.contextConcordanceQueryRequest);
+            queryRequest.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
+            this.queryRequestService.setContextConcordance(queryRequest.contextConcordanceQueryRequest);
             // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
           } else {
             // remove context query param if present in previous queries
-            qr.contextConcordanceQueryRequest = null;
+            queryRequest.contextConcordanceQueryRequest = null;
             queryRequest.contextConcordanceQueryRequest = null;
           }
           console.log('queryRequest: ' + JSON.stringify(queryRequest));
           // frequency
-          if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
-            qr.frequencyQueryRequest?.categories.forEach(cat => {
-              qr.frequencyQueryRequest!.category = cat;
-              this.socketService.sendMessage(qr);
+          if (queryRequest.frequencyQueryRequest &&
+            queryRequest.frequencyQueryRequest?.categories &&
+            queryRequest.frequencyQueryRequest?.categories.length > 0) {
+            queryRequest.frequencyQueryRequest?.categories.forEach(cat => {
+              queryRequest.frequencyQueryRequest!.category = cat;
+              this.socketService.sendMessage(queryRequest);
             });
           } else {
-            this.socketService.sendMessage(qr);
+            this.socketService.sendMessage(queryRequest);
           }
         }
       }

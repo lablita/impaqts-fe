@@ -23,9 +23,11 @@ export class SortOptionsQueryRequestDTO {
   backward: boolean;
   levelSelected: number;
   sortOptionList: Array<SortOptionDTO> = Array.from<SortOptionDTO>({ length: 0 });
+  multilevel = false;
 
   constructor(attribute: string, sortKey: string, numberTokens: number, ignoreCase: boolean,
-    backward: boolean, levelSelected: number, sortOptionList: Array<SortOptionDTO>) {
+    backward: boolean, levelSelected: number, sortOptionList: Array<SortOptionDTO>,
+    multilevel: boolean) {
     this.attribute = attribute;
     this.sortKey = sortKey;
     this.numberTokens = numberTokens;
@@ -33,6 +35,7 @@ export class SortOptionsQueryRequestDTO {
     this.backward = backward;
     this.levelSelected = levelSelected;
     this.sortOptionList = sortOptionList;
+    this.multilevel = multilevel;
   }
 }
 
@@ -62,6 +65,7 @@ export const DEFAULT_SORT_OPTIONS_QUERY_REQUEST = new SortOptionsQueryRequestDTO
       false,
       false,
       NODE)
-  ]);
+  ],
+  false);
 
 

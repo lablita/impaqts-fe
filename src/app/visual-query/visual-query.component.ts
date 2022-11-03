@@ -5,6 +5,7 @@ import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { VISUAL_QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -147,8 +148,9 @@ export class VisualQueryComponent implements OnInit {
       this.queryPattern.structPattern = this.metadata[0];
     }
     this.queryRequestService.setQueryPattern(this.queryPattern);
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.VISUAL_QUERY_REQUEST;
     this.emitterService.makeConcordanceRequestSubject.next(
-      new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
+      new ConcordanceRequestPayload([concordanceRequest], 0));
   }
 
   public corpusSelect(): void {

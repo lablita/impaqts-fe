@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationOptionsQueryRequestDTO, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request-dto';
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -61,9 +62,10 @@ export class CollocationOptionsPanelComponent {
   }
 
 
-  public loadCollocationsOption(): void {
+  public retrieveCollocations(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.COLLOCATION_REQUEST;
     this.queryRequestService.getQueryRequest().collocationQueryRequest =
       this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();

@@ -11,4 +11,5 @@ export class SortQueryRequest {
   ignoreCase: boolean | null = null;
   backward: boolean | null = null;
   multilevelSort: Array<SortOption> = Array.from<SortOption>({ length: 0 });
+  multilevel = false;
 }

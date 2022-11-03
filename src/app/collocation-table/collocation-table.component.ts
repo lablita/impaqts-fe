@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
@@ -32,7 +34,8 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    private readonly errorMessagesService: ErrorMessagesService
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly queryRequestService: QueryRequestService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       if (queryResponse) {
@@ -80,6 +83,7 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
     if (this.fieldRequest) {
       this.loading = true;
       this.setColumnHeaders();
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.COLLOCATION_REQUEST;
       this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }

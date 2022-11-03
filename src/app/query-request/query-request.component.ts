@@ -202,6 +202,7 @@ export class QueryRequestComponent implements OnInit {
     localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
     localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
     this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.resetQueryPattern();
     let typeSearch = ['Query'];
     this.titleResultChange.emit('MENU.CONCORDANCE');
 
@@ -213,7 +214,8 @@ export class QueryRequestComponent implements OnInit {
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordanceRequestSubject.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }
   }
 

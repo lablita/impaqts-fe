@@ -13,15 +13,18 @@ export class QueryRequestService {
   private queryRequest: QueryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
-  // used for visual queries
-  private queryPattern: QueryPattern | null = null;
 
 
   private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
+  }
+
+  public resetQueryPattern(): void {
+    this.queryRequest.queryPattern = new QueryPattern();
   }
 
   public isOptionSet(): boolean {
@@ -47,7 +50,6 @@ export class QueryRequestService {
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
     if (fieldRequest) {
       this.basicFieldRequest = fieldRequest;
-      this.queryPattern = null;
     }
   }
 
@@ -61,13 +63,13 @@ export class QueryRequestService {
 
   public setQueryPattern(queryPattern: QueryPattern): void {
     if (queryPattern) {
-      this.queryPattern = queryPattern;
+      this.queryRequest.queryPattern = queryPattern;
       this.basicFieldRequest = null;
     }
   }
 
   public getQueryPattern(): QueryPattern | null {
-    return this.queryPattern;
+    return this.queryRequest.queryPattern;
   }
 
   public getQueryRequest(): QueryRequest {

@@ -95,7 +95,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     this.makeConcordanceRequestSubscription = this.emitterService.makeConcordanceRequestSubject.subscribe(res => {
       this.fieldRequests = [];
       this.loading = true;
-      if (res.concordances.length > 0 || !!res.qp) {
+      if (res.concordances.length > 0) {
         if (res.concordances.length > 0) {
           res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
           if (res.concordances[res.pos].sortOptions.length > 1) {
@@ -109,7 +109,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
           this.fieldRequests = [res.concordances[0].fieldRequest];
         }
         this.sortOptions = res.concordances[res.pos].sortOptions;
-        this.loadResultService.loadResults(this.fieldRequests, undefined, res.qp);
+        this.loadResultService.loadResults(this.fieldRequests, undefined);
 
       }
     });
@@ -152,7 +152,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      this.emitterService.makeConcordanceRequestSubject.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }
   }
 
@@ -182,7 +183,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
 
   public clickConc(event: any): void {
     let typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayload([], 0, null);
+    const concordanceRequestPayload = new ConcordanceRequestPayload([], 0);
     const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
     this.fieldRequests = this.fieldRequests.slice(0, index + 1);
     this.fieldRequests.forEach(fr => {
