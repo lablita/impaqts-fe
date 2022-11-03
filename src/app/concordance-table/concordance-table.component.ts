@@ -96,7 +96,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
       this.fieldRequests = [];
       this.loading = true;
       if (res.concordances.length > 0 || !!res.qp) {
-        if (!res.qp) {
+        if (res.concordances.length > 0) {
           res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
           if (res.concordances[res.pos].sortOptions.length > 1) {
             const foundSortOption = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1]);

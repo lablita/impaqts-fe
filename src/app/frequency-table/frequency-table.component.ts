@@ -1,12 +1,17 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { TOKEN } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { WORD } from '../common/query-constants';
 import { ASC, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
+import { FrequencyOption } from '../model/frequency-query-request';
 import { FrequencyResultLine } from '../model/frequency-result-line';
 import { KeyValueItem } from '../model/key-value-item';
+import { QueryPattern } from '../model/query-pattern';
+import { QueryTag } from '../model/query-tag';
+import { QueryToken } from '../model/query-token';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
@@ -130,18 +135,32 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public clickPositive(event: any): void {
+    const multilevelFrequency = this.queryRequestService.getQueryRequest().frequencyQueryRequest?.multilevelFrequency;
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload(!!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0, null);
-    event.word.forEach((w: string, i: number) => {
-      const fieldRequest: FieldRequest = new FieldRequest();
-      fieldRequest.matchCase = true;
-      fieldRequest.word = w;
-      fieldRequest.selectedQueryType = new KeyValueItem(WORD, WORD);
-      fieldRequest.selectedCorpus = this.corpus;
-      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
-      concordanceRequestPayload.pos = i + 1;
-    });
-    this.queryRequestService.getQueryRequest().frequencyQueryRequest = null;
+    if (!!multilevelFrequency && multilevelFrequency.length === event.word.length) {
+      const token = new QueryToken();
+      token.tags.push([]);
+      const queryTags: QueryTag[] = [];
+      event.word.forEach((w: string, i: number) => {
+        let tag: QueryTag;
+        tag = new QueryTag(TOKEN, multilevelFrequency[i].attribute!, w);
+        tag.matchCase = !multilevelFrequency[i].ignoreCase;
+        tag.position = multilevelFrequency[i].position;
+        queryTags.push(tag);
+        // const fieldRequest: FieldRequest = new FieldRequest();
+        // fieldRequest.matchCase = true;
+        // fieldRequest.word = w;
+        // fieldRequest.selectedQueryType = new KeyValueItem(WORD, WORD);
+        // fieldRequest.selectedCorpus = this.corpus;
+        // concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
+        //concordanceRequestPayload.pos = i + 1;
+      });
+      token.tags[0] = queryTags;
+      concordanceRequestPayload.qp = new QueryPattern();
+      concordanceRequestPayload.qp?.tokPattern.push(token);
+    }
+    //this.queryRequestService.getQueryRequest().frequencyQueryRequest = null;
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
   }

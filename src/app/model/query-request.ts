@@ -18,7 +18,7 @@ export class QueryRequest {
   corpus = '';
   cql = '';
   queryInCql = false;
-  queryPattern: QueryPattern = new QueryPattern();
+  queryPattern: QueryPattern | null = null;
   collocationQueryRequest: CollocationQueryRequest | null = null;
   sortQueryRequest: SortQueryRequest | null = null;
   frequencyQueryRequest: FrequencyQueryRequest | null = null;

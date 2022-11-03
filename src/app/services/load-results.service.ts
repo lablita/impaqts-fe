@@ -74,7 +74,7 @@ export class LoadResultsService {
     if (!!fieldRequests && fieldRequests.length > 0 || !!qp) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
-        const qr: QueryRequest = !!qp ? new QueryRequest() : queryRequest;
+        const qr: QueryRequest = !!qp && !queryRequest ? new QueryRequest() : queryRequest;
         if (!event) {
           qr.start = 0;
           qr.end = 10;
@@ -89,7 +89,7 @@ export class LoadResultsService {
             qr.collocationQueryRequest.sortBy = (sortBy !== null && sortBy !== undefined) ? sortBy : 'm';
           }
         }
-        if (!!qp) {
+        if (!!qp && !queryRequest) {
           // VisualQuery
           qr.corpus = fieldRequest.selectedCorpus.value;
           qr.queryPattern = qp;
@@ -100,32 +100,34 @@ export class LoadResultsService {
           switch (fieldRequest.selectedQueryType?.key) {
             case WORD:
               fieldRequest.simpleResult = fieldRequest.word;
-              tag = this.tagBuilder('word', fieldRequest.word);
+              tag = new QueryTag('word', fieldRequest.word);
               tag.matchCase = fieldRequest.matchCase;
               queryTags.push(tag);
               break;
             case LEMMA:
               fieldRequest.simpleResult = fieldRequest.lemma;
-              queryTags.push(this.tagBuilder('lemma', fieldRequest.lemma));
+              queryTags.push(new QueryTag('lemma', fieldRequest.lemma));
               break;
             case PHRASE:
               fieldRequest.simpleResult = fieldRequest.phrase;
-              queryTags.push(this.tagBuilder('phrase', fieldRequest.phrase));
+              queryTags.push(new QueryTag('phrase', fieldRequest.phrase));
               break;
             case CHARACTER:
               fieldRequest.simpleResult = fieldRequest.character;
-              queryTags.push(this.tagBuilder('character', fieldRequest.character));
+              queryTags.push(new QueryTag('character', fieldRequest.character));
               break;
             case CQL:
               fieldRequest.simpleResult = fieldRequest.cql;
-              tag = this.tagBuilder('cql', fieldRequest.cql);
-              queryTags.push(this.tagBuilder('cql', fieldRequest.cql));
+              tag = new QueryTag('cql', fieldRequest.cql);
+              queryTags.push(new QueryTag('cql', fieldRequest.cql));
               break;
             default: // SIMPLE
               fieldRequest.simpleResult = fieldRequest.simple;
           }
-          qr.queryPattern = new QueryPattern();
-          qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
+          if (!qr.queryPattern) {
+            qr.queryPattern = new QueryPattern();
+            qr.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
+          }
           if (fieldRequest.selectedQueryType?.key === SIMPLE) {
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();
@@ -138,7 +140,7 @@ export class LoadResultsService {
               tagLemma.value = simpleResultToken;
               token.tags[0].push(tagWord);
               token.tags[0].push(tagLemma);
-              qr.queryPattern.tokPattern.push(token);
+              qr.queryPattern?.tokPattern.push(token);
             });
           } else {
             const simpleQueryToken = new QueryToken(TOKEN);
@@ -271,12 +273,12 @@ export class LoadResultsService {
     }
   }
 
-  private tagBuilder(type: string, value: string): QueryTag {
-    const tag = new QueryTag(TOKEN);
-    tag.name = type;
-    tag.value = value;
-    return tag;
-  }
+  // private tagBuilder(type: string, value: string): QueryTag {
+  //   const tag = new QueryTag(TOKEN);
+  //   tag.name = type;
+  //   tag.value = value;
+  //   return tag;
+  // }
 
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison
