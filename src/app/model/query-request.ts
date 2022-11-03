@@ -3,6 +3,7 @@ import { ContextConcordanceQueryRequest } from "./context-concordance-query-requ
 import { FrequencyQueryRequest } from "./frequency-query-request";
 import { QueryPattern } from "./query-pattern";
 import { SortQueryRequest } from "./sort-query-request";
+import { WideContextRequest } from "./wide-context-request";
 
 export class WordListOption {
   subcorpus = '';
@@ -22,4 +23,6 @@ export class QueryRequest {
   sortQueryRequest: SortQueryRequest | null = null;
   frequencyQueryRequest: FrequencyQueryRequest | null = null;
   contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
+  wideContextRequest: WideContextRequest | null = null;
+
 }

@@ -12,7 +12,7 @@
             {{fr ? fr.simpleResult : ''}}</span>&nbsp;<b>{{firstItemTotalResults}}</b>
         </span>
       </ng-container>
-      
+
       <ng-template #queryNoContext>
         <span *ngFor="let fr of fieldRequests; let i = index">
           <span style="color:red;">
@@ -23,8 +23,9 @@
         </span>
       </ng-template>
       <span *ngFor="let description of descriptions, let idx = index">
-        > 
-        <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;" (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
+        >
+        <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;"
+          (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
         <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>
         &nbsp;<b>{{description.size}}</b>
       </span>
@@ -60,7 +61,7 @@
       <td class="p-text-right" [innerHTML]="stripTags(kwicLine.leftContext, withContextConcordance())"></td>
       <td class="p-text-center">
         <p-button [disabled]="loading" label="{{kwicLine.kwic}}" styleClass="p-button-link"
-          (click)="op.toggle($event); showDialog(kwicLine)"></p-button>
+          (click)="op.toggle($event); showWideContext(kwicLine)"></p-button>
       </td>
       <td class="p-text-left" [innerHTML]="stripTags(kwicLine.rightContext, withContextConcordance())"></td>
     </tr>
@@ -68,11 +69,16 @@
 </p-table>
 <p-overlayPanel #op [style]="{width: '450px'}">
   <ng-template pTemplate>
-    <div [innerHTML]="resultContext?.before"></div>
-    <div style="text-align: center;" class="text-red">
-      {{resultContext?.keyword}}
+    <div *ngIf="!resultContext" class="flex context-spinner justify-content-center">
+      <p-progressSpinner></p-progressSpinner>
     </div>
-    <div [innerHTML]="resultContext?.after"></div>
+    <div *ngIf=" resultContext">
+      <div [innerHTML]="resultContext.before"></div>
+      <div style="text-align: center;" class="text-red">
+        {{resultContext.keyword}}
+      </div>
+      <div [innerHTML]="resultContext.after"></div>
+    </div>
   </ng-template>
 </p-overlayPanel>
 <div class="mt-3 w-12" *ngIf="visible && noResultFound && !loading">

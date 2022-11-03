@@ -3,6 +3,7 @@ export class KWICline {
   leftContext: Array<string> = Array.from<string>({ length: 0 });
   kwic = '';
   rightContext: Array<string> = Array.from<string>({ length: 0 });
+  pos = 0;
 
   public static stripTags(context: Array<string>, withContextConcordance: boolean): string {
     let ret = '';

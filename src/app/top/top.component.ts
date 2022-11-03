@@ -83,6 +83,7 @@ export class TopComponent {
 
   private logout(): void {
     this.authService.logout();
+    localStorage.clear();
   }
 
 }
