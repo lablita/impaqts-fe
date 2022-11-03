@@ -15,9 +15,7 @@
         {{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}
       </label>
       <div class="col-12 md:col-5">
-        <input id="simple_query" type="text" pInputText formControlName="simple"
-          [disabled]="!queryRequestForm.value.selectedCorpus || (!!selectedQueryType && selectedQueryType.key !== 'simple')"
-          class="width-80">
+        <input id="simple_query" type="text" pInputText formControlName="simple" class="width-80">
       </div>
     </div>
     <div *ngIf="!displayContext" style="height: 30px;">

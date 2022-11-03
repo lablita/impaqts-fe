@@ -55,7 +55,7 @@ export class QueryRequestComponent implements OnInit {
     selectedCorpus: new UntypedFormControl(null),
     selectedQueryType: new UntypedFormControl(DEFAULT_SELECTED_QUERY_TYPE),
     lemma: new UntypedFormControl(''),
-    simple: new UntypedFormControl(''),
+    simple: new UntypedFormControl({ value: '', disabled: true }),
     phrase: new UntypedFormControl(''),
     word: new UntypedFormControl(''),
     character: new UntypedFormControl(''),
@@ -96,6 +96,13 @@ export class QueryRequestComponent implements OnInit {
       new KeyValueItem(CHARACTER, CHARACTER),
       new KeyValueItem(CQL, CQL)
     ];
+    this.setBasicFieldRequest();
+    this.queryRequestForm.valueChanges.subscribe(change => {
+      this.setBasicFieldRequest();
+    });
+    if (this.queryRequestForm) {
+      this.queryRequestForm.controls.selectedCorpus.valueChanges.subscribe(change => this.toggleSimpleDisabling(change));
+    }
     this.selectedQueryType = this.queryTypes[0];
     if (!!localStorage.getItem('selectedCorpus')) {
       const lsSelectedCorpus = localStorage.getItem('selectedCorpus');
@@ -108,10 +115,6 @@ export class QueryRequestComponent implements OnInit {
       }
       this.corpusSelect();
     }
-    this.setBasicFieldRequest();
-    this.queryRequestForm.valueChanges.subscribe(change => {
-      this.setBasicFieldRequest();
-    });
   }
 
   public corpusSelect(): void {
@@ -255,5 +258,14 @@ export class QueryRequestComponent implements OnInit {
       this.queryRequestForm.controls.matchCase.value,
       this.queryRequestForm.controls.selectedQueryType.value);
     this.queryRequestService.setBasicFieldRequest(fieldRequest);
+  }
+
+  private toggleSimpleDisabling(newSelectedCorpus: KeyValueItem): void {
+    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType.key !== 'simple');
+    if (disabled) {
+      this.queryRequestForm.get('simple')?.disable();
+    } else {
+      this.queryRequestForm.get('simple')?.enable();
+    }
   }
 }
