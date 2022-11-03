@@ -1,9 +1,9 @@
-import { CollocationQueryRequest } from "./collocation-query-request";
-import { ContextConcordanceQueryRequest } from "./context-concordance-query-request";
-import { FrequencyQueryRequest } from "./frequency-query-request";
-import { QueryPattern } from "./query-pattern";
-import { SortQueryRequest } from "./sort-query-request";
-import { WideContextRequest } from "./wide-context-request";
+import { CollocationQueryRequest } from './collocation-query-request';
+import { ContextConcordanceQueryRequest } from './context-concordance-query-request';
+import { FrequencyQueryRequest } from './frequency-query-request';
+import { QueryPattern } from './query-pattern';
+import { SortQueryRequest } from './sort-query-request';
+import { WideContextRequest } from './wide-context-request';
 
 export class WordListOption {
   subcorpus = '';
