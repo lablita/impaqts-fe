@@ -125,7 +125,7 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickLeft(): void {
-    const sortOptionList = this.sortOptionsQueryRequest.sortOptionList;
+    //const sortOptionList = this.sortOptionsQueryRequest.sortOptionList;
     const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
       WORD,
       LEFT_CONTEXT,
@@ -133,7 +133,7 @@ export class SortOptionsPanelComponent implements OnInit {
       false,
       false,
       0,
-      sortOptionList,
+      [],
       false
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
@@ -226,7 +226,7 @@ export class SortOptionsPanelComponent implements OnInit {
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.getQueryRequest().sortQueryRequest = !!sortQueryRequest
       ? sortQueryRequest : this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
-    localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.queryRequestService.getQueryRequest().sortQueryRequest));
+    localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
   }
 
   private getSortOption(): SortQueryRequest | null {
@@ -238,6 +238,7 @@ export class SortOptionsPanelComponent implements OnInit {
 
   private makeConcordances(): void {
     const sortQueryRequest = this.queryRequestService.getQueryRequest().sortQueryRequest;
+    this.queryRequestService.resetQueryPattern();
     let typeSearch = ['Query'];
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     const queryRequest = this.queryRequestService.getQueryRequest();

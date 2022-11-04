@@ -65,6 +65,7 @@ export class CollocationOptionsPanelComponent {
   public retrieveCollocations(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.resetQueryPattern()
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.COLLOCATION_REQUEST;
     this.queryRequestService.getQueryRequest().collocationQueryRequest =
       this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
