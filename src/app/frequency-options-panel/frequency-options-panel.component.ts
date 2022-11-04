@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, TAG, WORD } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { FIRST, FOURTH, NODE_CONTEXT, SECOND, THIRD } from '../common/sort-constants';
 import { DESC } from '../model/constants';
 import { FreqOptions } from '../model/freq-options';
@@ -78,7 +79,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public positionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public selectedPosition: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public isSimpleFreq = true;
+  public isConcordanceFreq = true;
   public metadataAttributes: Array<string> = Array.from<string>({ length: 0 });
 
 
@@ -119,14 +120,18 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.queryRequestService.resetOptionsRequest();
   }
 
-  public makeFreq(): void {
-    this.isSimpleFreq = true;
-    this.doMakeFrequency(this.isSimpleFreq);
+  public makeConcordanceFreq(): void {
+    this.isConcordanceFreq = true;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUST;
+    this.setFrequencyOption(this.isConcordanceFreq);
+    this.doMakeFrequency();
   }
 
   public makeMultilevelFreq(): void {
-    this.isSimpleFreq = false;
-    this.doMakeFrequency(this.isSimpleFreq);
+    this.isConcordanceFreq = false;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST;
+    this.setFrequencyOption(this.isConcordanceFreq);
+    this.doMakeFrequency();
   }
 
   public levelCheck(event: any, i: number): void {
@@ -183,11 +188,12 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     freqOpt.position = NODE_CONTEXT;
     res.multilevelFrequency.push(freqOpt);
     this.queryRequestService.getQueryRequest().frequencyQueryRequest = res;
-    this.concordanceFrequency.emit();
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST;
+    this.doMakeFrequency();
   }
 
-  private doMakeFrequency(isSimpleFreq: boolean): void {
-    this.setFrequencyOption(isSimpleFreq);
+  private doMakeFrequency(): void {
+    this.queryRequestService.resetQueryPattern();
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
       this.emitterService.makeFrequency.next(basicFieldRequest);
@@ -197,6 +203,5 @@ export class FrequencyOptionsPanelComponent implements OnInit {
       }
     }
   }
-
 
 }

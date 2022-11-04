@@ -50,6 +50,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public multilevel = false;
 
   private readonly queryResponseSubscription: Subscription;
+  private makeFrequencySubscription: Subscription | null = null;
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -90,14 +91,16 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
-    this.emitterService.makeFrequency.subscribe(fieldRequest => {
-      // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
-      if (fieldRequest && fieldRequest.selectedCorpus) {
-        this.loading = true;
-        this.fieldRequest = fieldRequest;
-        this.loadResultService.loadResults([fieldRequest]);
-      }
-    });
+    if (!this.makeFrequencySubscription) {
+      this.makeFrequencySubscription = this.emitterService.makeFrequency.subscribe(fieldRequest => {
+        // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
+        if (fieldRequest && fieldRequest.selectedCorpus) {
+          this.loading = true;
+          this.fieldRequest = fieldRequest;
+          this.loadResultService.loadResults([fieldRequest]);
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {

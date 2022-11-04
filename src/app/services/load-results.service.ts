@@ -156,7 +156,7 @@ export class LoadResultsService {
             queryRequest.sortQueryRequest = fieldRequest.quickSort;
           }
           // context
-          if (fieldRequest.contextConcordance && fieldRequest.contextConcordance?.lemma) {
+          if (queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST && fieldRequest.contextConcordance) {
             const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
               fieldRequest.contextConcordance?.window.key,
               fieldRequest.contextConcordance?.token,
@@ -165,17 +165,13 @@ export class LoadResultsService {
             );
             queryRequest.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
             this.queryRequestService.setContextConcordance(queryRequest.contextConcordanceQueryRequest);
-            // this.queryRequestService.queryRequest.contextConcordanceQueryRequest = qr.contextConcordanceQueryRequest;
           } else {
             // remove context query param if present in previous queries
-            queryRequest.contextConcordanceQueryRequest = null;
             queryRequest.contextConcordanceQueryRequest = null;
           }
           console.log('queryRequest: ' + JSON.stringify(queryRequest));
           // frequency
-          if (queryRequest.frequencyQueryRequest &&
-            queryRequest.frequencyQueryRequest?.categories &&
-            queryRequest.frequencyQueryRequest?.categories.length > 0) {
+          if (queryRequest.queryType === REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUST) {
             queryRequest.frequencyQueryRequest?.categories.forEach(cat => {
               queryRequest.frequencyQueryRequest!.category = cat;
               this.socketService.sendMessage(queryRequest);

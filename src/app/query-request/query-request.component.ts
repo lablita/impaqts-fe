@@ -4,7 +4,7 @@ import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -211,6 +211,7 @@ export class QueryRequestComponent implements OnInit {
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      this.queryRequestService.getQueryRequest().queryType = (!!fieldRequest.contextConcordance && !!fieldRequest.contextConcordance.lemma) ? REQUEST_TYPE.CONTEXT_QUERY_REQUEST : REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }

@@ -17,7 +17,7 @@
 
     <p-accordion>
       <p-accordionTab header="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.MULTI_FREQ_DIST' | translate}}"
-        [selected]="!isSimpleFreq">
+        [selected]="!isConcordanceFreq">
         <div class="field ml-2">
           <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" |
             translate}}</label>
@@ -64,7 +64,7 @@
 
       </p-accordionTab>
       <p-accordionTab header="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}"
-        [selected]="isSimpleFreq">
+        [selected]="isConcordanceFreq">
         <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
         <div class="field ml-2">
           <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" |
@@ -84,7 +84,7 @@
 
         <span class="flex justify-content-center">
           <button pButton type="button" [disabled]="freqOptionsQueryRequest.categories.length<1"
-            label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}" (click)="makeFreq()"
+            label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_CONCORDANCE' | translate}}" (click)="makeConcordanceFreq()"
             class="mr-5"></button>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"
             (click)="removeFrequencyOption()" class="mr-5"></button>
