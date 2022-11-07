@@ -231,7 +231,7 @@ export class VisualQueryComponent implements OnInit {
       url = 'https://player.vimeo.com/video/637089218';
       const start = Math.floor((Math.random() * 5) + 1) + 'm' + Math.floor((Math.random() * 60) + 1) + 's';
       if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1#t=' + start);
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
       }
     }
 

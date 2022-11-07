@@ -176,7 +176,9 @@ export class LoadResultsService {
           // frequency
           if (qr.frequencyQueryRequest && qr.frequencyQueryRequest?.categories && qr.frequencyQueryRequest?.categories.length > 0) {
             qr.frequencyQueryRequest?.categories.forEach(cat => {
-              qr.frequencyQueryRequest!.category = cat;
+              if (qr.frequencyQueryRequest) {
+                qr.frequencyQueryRequest.category = cat;
+              }
               this.socketService.sendMessage(qr);
             });
           } else {
