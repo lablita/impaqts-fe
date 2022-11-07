@@ -36,4 +36,5 @@ export class AppInitializerService {
   public loadCorpus(idCorpus: number): Observable<Corpus> {
     return this.http.get<Corpus>(`${environment.installationUrl}/corpus/${idCorpus}`);
   }
+
 }

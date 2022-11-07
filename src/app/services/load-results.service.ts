@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LazyLoadEvent, TreeNode } from 'primeng/api';
+import { LazyLoadEvent, Message, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
@@ -18,11 +18,13 @@ import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
 import { TextTypesRequest } from '../model/text-types-request';
 import { DisplayPanelService } from './display-panel.service';
+import { ErrorMessagesService } from './error-messages.service';
 import { MetadataQueryService } from './metadata-query.service';
 import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
 
+const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
   colHeader: Array<string> = Array.from<string>({ length: 0 });
   headerSortBy = '';
@@ -36,8 +38,6 @@ export class LoadResultsService {
   /** private */
   private metadataQuery: QueryToken | null = null;
 
-  private readonly ERROR_PREFIX = 'ERROR';
-
   private readonly colHeaderList: KeyValueItem[] = [
     new KeyValueItem('f', 'PAGE.COLLOCATION.CONC_COUNT'),
     new KeyValueItem('F', 'PAGE.COLLOCATION.CAND_COUNT'),
@@ -50,7 +50,7 @@ export class LoadResultsService {
     new KeyValueItem('p', 'PAGE.COLLOCATION.MI_LOG_F')
   ];
 
-  private readonly queryResponse$: Observable<QueryResponse | null> | null = null;
+  private queryResponse$: Observable<QueryResponse | null> | null = null;
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
@@ -58,6 +58,7 @@ export class LoadResultsService {
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService,
+    private readonly errorMessagesService: ErrorMessagesService
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -67,6 +68,7 @@ export class LoadResultsService {
       }
     }
   }
+
 
   public loadResults(fieldRequests: FieldRequest[], event?: LazyLoadEvent, qp?: QueryPattern | null): void {
     this.setMetadataQuery();
@@ -281,12 +283,16 @@ export class LoadResultsService {
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
       map(resp => {
-        if (resp && JSON.stringify(resp).indexOf(`"${this.ERROR_PREFIX}`) === 0) {
-          resp = new QueryResponse();
-          resp.error = true;
-          return resp;
+        let queryResponse = resp as QueryResponse;
+        if (queryResponse && queryResponse.errorResponse) {
+          if (queryResponse.errorResponse.errorCode === 403) {
+            return this.handleForbiddenResponse(queryResponse);
+          }
+          queryResponse = new QueryResponse();
+          queryResponse.error = true;
+          return queryResponse;
         } else {
-          return this.handleQueryResponse(resp);
+          return this.handleQueryResponse(queryResponse);
         }
       }),
       catchError(err => { throw err; }),
@@ -298,7 +304,7 @@ export class LoadResultsService {
     );
   }
 
-  private handleQueryResponse(resp: any): QueryResponse {
+  private handleQueryResponse(resp: QueryResponse): QueryResponse {
     let corpusSelected = true;
     const qr = resp as QueryResponse;
     if (qr.kwicLines && qr.kwicLines.length > 0) {
@@ -315,5 +321,12 @@ export class LoadResultsService {
     return qr;
   }
 
-
+  private handleForbiddenResponse(resp: QueryResponse): null {
+    const forbiddenMessage = {} as Message;
+    forbiddenMessage.severity = 'error';
+    forbiddenMessage.summary = 'Autorizzazione negata';
+    forbiddenMessage.detail = 'Non hai i permessi per eseguire la query richiesta';
+    this.errorMessagesService.sendError(forbiddenMessage);
+    return null;
+  }
 }

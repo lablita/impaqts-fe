@@ -1,5 +1,6 @@
 import { CollocationItem } from './collocation-item';
 import { DescResponse } from './desc-response';
+import { ErrorResponse } from './error-response';
 import { FrequencyItem } from './frequency-item';
 import { KWICline } from './kwicline';
 import { WideContextResponse } from './wide-context-response';
@@ -11,7 +12,10 @@ export class QueryResponse {
   descResponses: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
   inProgress = false;
   currentSize = 0;
-  error = false;
   errorMessage = '';
   wideContextResponse: WideContextResponse | null = null;
+  errorResponse: ErrorResponse | null = null;
+
+  // not sent by BE
+  error = false;
 }

@@ -23,7 +23,7 @@ export class RoleDirective implements OnInit {
           this.role = !!u ? u['https://impaqts.eu.auth0.meta/role'] : '';
           this.init();
         }
-      })
+      });
   }
 
   private init(): void {
