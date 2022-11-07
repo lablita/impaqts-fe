@@ -7,6 +7,12 @@ image: node:14.18.0
 
 pipelines:
   branches:
+    develop:
+      - step:
+          name: Sonar
+          script:
+            - npm ci
+            - npm run sonar
     master:
       - step:
           size: 2x # Double resources available for this step.
