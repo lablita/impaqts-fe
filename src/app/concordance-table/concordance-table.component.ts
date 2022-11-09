@@ -110,7 +110,6 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         }
         this.sortOptions = res.concordances[res.pos].sortOptions;
         this.loadResultService.loadResults(this.fieldRequests, undefined);
-
       }
     });
   }

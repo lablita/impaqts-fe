@@ -7,6 +7,7 @@ import { DESC } from '../model/constants';
 import { FreqOptions } from '../model/freq-options';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
@@ -49,13 +50,6 @@ const MULTI_ATTRIBUTE = [
   new KeyValueItem('word', CONCORDANCE_WORD)
 ];
 
-const METADATA_ATTRIBUTES = [
-  'doc.sito',
-  'doc.url',
-  'doc.categoria',
-  'doc.produzione',
-  'doc.wordcount'
-]
 
 @Component({
   selector: 'app-frequency-options-panel',
@@ -85,7 +79,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
@@ -101,7 +96,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
     this.selectedMultiAttribute = MULTI_ATTRIBUTE;
-    this.metadataAttributes = METADATA_ATTRIBUTES;
+    this.metadataAttributes = this.metadataQueryService.getMetadata().map(md => md.name);
   }
 
   public closeSidebar(): void {
@@ -122,7 +117,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
 
   public makeConcordanceFreq(): void {
     this.isConcordanceFreq = true;
-    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUST;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUEST;
     this.setFrequencyOption(this.isConcordanceFreq);
     this.doMakeFrequency();
   }
@@ -196,7 +191,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.queryRequestService.resetQueryPattern();
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
-      this.emitterService.makeFrequency.next(basicFieldRequest);
+      // this.emitterService.makeFrequency.next(basicFieldRequest);
       const freqencyOption = this.getFrequencyOption();
       if (freqencyOption) {
         this.concordanceFrequency.emit();

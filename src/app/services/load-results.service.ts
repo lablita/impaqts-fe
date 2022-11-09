@@ -128,6 +128,7 @@ export class LoadResultsService {
             queryRequest.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
           }
           if (fieldRequest.selectedQueryType?.key === SIMPLE) {
+            queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();
               token.tags.push([]);
@@ -170,19 +171,14 @@ export class LoadResultsService {
             // remove context query param if present in previous queries
             queryRequest.contextConcordanceQueryRequest = null;
           }
-          console.log('queryRequest: ' + JSON.stringify(queryRequest));
           // frequency
-          if (queryRequest.queryType === REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUST) {
-            queryRequest.frequencyQueryRequest?.categories.forEach(cat => {
-              if (queryRequest.frequencyQueryRequest) {
-                queryRequest.frequencyQueryRequest.category = cat;
-              }
-              this.socketService.sendMessage(queryRequest);
-            });
+          if (queryRequest.queryType === REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUEST) {
+            this.socketService.sendMessage(queryRequest);
           } else {
             this.socketService.sendMessage(queryRequest);
           }
         }
+        console.log('queryRequest: ' + JSON.stringify(queryRequest));
       }
     }
   }

@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { TOKEN } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { WORD } from '../common/query-constants';
@@ -92,12 +93,16 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     if (!this.makeFrequencySubscription) {
-      this.makeFrequencySubscription = this.emitterService.makeFrequency.subscribe(fieldRequest => {
+      this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
         // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
         if (fieldRequest && fieldRequest.selectedCorpus) {
           this.loading = true;
           this.fieldRequest = fieldRequest;
-          this.loadResultService.loadResults([fieldRequest]);
+          const queryRequest = this.queryRequestService.getQueryRequest();
+          if (queryRequest && queryRequest.frequencyQueryRequest) {
+            queryRequest.frequencyQueryRequest.category = this.category;
+            this.loadResultService.loadResults([fieldRequest]);
+          }
         }
       });
     }
@@ -107,12 +112,18 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.queryResponseSubscription) {
       this.queryResponseSubscription.unsubscribe();
     }
+    if (this.makeFrequencySubscription) {
+      this.makeFrequencySubscription.unsubscribe();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.visible.currentValue === false) {
+    if (changes.visible && changes.visible.currentValue === false) {
       if (this.queryResponseSubscription) {
         this.queryResponseSubscription.unsubscribe();
+      }
+      if (this.makeFrequencySubscription) {
+        this.makeFrequencySubscription.unsubscribe();
       }
     }
   }

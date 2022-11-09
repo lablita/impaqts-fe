@@ -112,6 +112,11 @@ export class QueriesContainerComponent implements OnInit {
       queryRequest.frequencyQueryRequest.categories) {
       this.categories = queryRequest.frequencyQueryRequest.categories;
     }
+    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (basicFieldRequest) {
+      this.emitterService.makeFrequency.next(basicFieldRequest);
+    }
+
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {
