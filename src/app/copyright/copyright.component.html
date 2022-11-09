@@ -1,5 +1,5 @@
-<p></p>
-<div class="p-d-flex p-flex-wrap p-component">
-  <h3>{{'PAGE.COPYRIGHT.LABEL' | translate}}</h3>
-  <div [innerHTML]="copyright"></div>
-</div>
+<p-card header="{{'PAGE.COPYRIGHT.LABEL' | translate}}">
+  <ng-template pTemplate="content">
+    <div [innerHTML]="copyright"></div>
+  </ng-template>
+</p-card>

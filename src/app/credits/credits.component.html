@@ -1,5 +1,5 @@
-<p></p>
-<div class="p-d-flex p-flex-wrap p-component">
-  <h3>{{'PAGE.CREDITS.LABEL' | translate}}</h3>
-  <div [innerHTML]="credits"></div>
-</div>
+<p-card header="{{'PAGE.CREDITS.LABEL' | translate}}">
+  <ng-template pTemplate="content">
+    <div [innerHTML]="credits"></div>
+  </ng-template>
+</p-card>
