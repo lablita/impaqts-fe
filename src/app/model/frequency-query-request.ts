@@ -2,6 +2,7 @@ export class FrequencyOption {
   attribute: string | null = null;
   ignoreCase: boolean | null = null;
   position: string | null = null; // 1l , 2L... 3R...
+  term: string | null = null;
 }
 export class FrequencyQueryRequest {
   frequencyLimit = 0;
