@@ -42,3 +42,10 @@
     </app-dispaly-panel-options>
   </div>
 </div>
+<p-dialog header="Errore di autorizzazione" [visible]="displayNotAllowedUserForInstallation" [modal]="true"
+  [style]="{width: '50vw'}" [draggable]="false" [resizable]="false" [closeOnEscape]="false" [closable]="false">
+  <p class="m-0">Non hai i permessi per accedere all'installazione</p>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="confirmNotAllowed()" label="Logout" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>

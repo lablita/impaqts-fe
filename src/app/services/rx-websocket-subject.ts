@@ -2,10 +2,12 @@ import { Message } from 'primeng/api';
 import { interval, Observable, Observer, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, share, takeWhile } from 'rxjs/operators';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
+import { QueryRequest } from '../model/query-request';
+import { QueryResponse } from '../model/query-response';
 import { ErrorMessagesService } from './error-messages.service';
 
 /// we inherit from the ordinary Subject
-export class RxWebsocketSubject extends Subject<any> {
+export class RxWebsocketSubject extends Subject<QueryRequest | QueryResponse> {
 
   public connectionStatus: Observable<any>;
 
@@ -88,6 +90,7 @@ export class RxWebsocketSubject extends Subject<any> {
         this.next(m); // when receiving a message, we just send it to our Subject
       },
       error: (error: Event) => {
+        console.error(error);
         if (!this.socket) {
           // in case of an error with a loss of connection, we restore it
           this.socket = null;

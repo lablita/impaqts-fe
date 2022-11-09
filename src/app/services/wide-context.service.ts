@@ -19,7 +19,7 @@ export class WideContextService {
     private readonly http: HttpClient,
     private readonly utils: UtilService) { }
 
-  public getWideContext(installation: Installation, corpusName: string, pos: number, hitlen: number = 1): Observable<QueryResponse | null> {
+  public getWideContext(installation: Installation, corpusName: string, pos: number, hitlen = 1): Observable<QueryResponse | null> {
     const endpoint = installation?.corpora.find(corp => corp.name === corpusName)?.endpoint;
     const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
     return this.http.get<QueryResponse>(`${url}/${WIDE_CONTEXT}/${corpusName}/${pos}/${hitlen}`)

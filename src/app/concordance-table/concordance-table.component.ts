@@ -64,9 +64,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly wideContextService: WideContextService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+      this.loading = false;
       if (queryResponse) {
-        this.loading = false;
-        if (queryResponse.error) {
+        if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
           this.errorMessagesService.sendError(errorMessage);
         } else if (queryResponse.kwicLines.length > 0) {

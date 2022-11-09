@@ -9,6 +9,7 @@ import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { ResultContext } from '../model/result-context';
+import { AuthorizationService } from '../services/authorization.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
@@ -62,15 +63,21 @@ export class QueriesContainerComponent implements OnInit {
   public titleResult: string | null = 'MENU.CONCORDANCE';
   public selectedCorpus: KeyValueItem | null = null;
 
+  // modale che avverte l'utente che non può accedere all'installazione
+  public displayNotAllowedUserForInstallation = false;
 
   constructor(
+    private readonly authorizationService: AuthorizationService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     public readonly displayPanelService: DisplayPanelService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
   ) { }
 
   ngOnInit(): void {
+    this.authorizationService.checkInstallationAuthorization().subscribe({
+      next: allowed => this.displayNotAllowedUserForInstallation = !allowed
+    });
     this.displayPanelService.reset();
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
@@ -117,6 +124,10 @@ export class QueriesContainerComponent implements OnInit {
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {
     this.selectedCorpus = selectedCorpus;
+  }
+
+  public confirmNotAllowed(): void {
+    this.authorizationService.logout();
   }
 
 }

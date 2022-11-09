@@ -30,8 +30,8 @@ export class HasRoleGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return this.authService.user$.pipe(map(u => {
       if (!!u) {
-        const menu = this.getMenuByRole(u['https://impaqts.eu.auth0.meta/role'])
-        const routes = this.getRoutesByMenu(menu, this.menuRoutes)
+        const menu = this.getMenuByRole(u['https://impaqts.eu.auth0.meta/role']);
+        const routes = this.getRoutesByMenu(menu, this.menuRoutes);
         return !!routes.find(path => path === route.url[0].path);
       }
       return false;
