@@ -13,7 +13,6 @@
       <p-scrollPanel [style]="{width: '100%'}" styleClass="custombar">
         <div *ngFor="let metadatum of metadata, let i = index" class="field grid mb-2">
           <!-- FreeText-->
-          {{metadatum | json}}
           <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-1">{{metadatum.name |
             translate}}</label>
           <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">

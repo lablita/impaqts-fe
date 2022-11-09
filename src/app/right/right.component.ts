@@ -31,6 +31,8 @@ export class RightComponent implements OnInit {
   public hideOptionsLabel = false;
   public spinnerMetadata = false;
 
+  public buttonClicked = false;
+
   constructor(
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
@@ -67,10 +69,12 @@ export class RightComponent implements OnInit {
   }
 
   public openSidebarOptions(): void {
+    this.buttonClicked = !this.buttonClicked;
     this.displayPanelService.optionsButtonSubject.next();
   }
 
   public openSidebarMetadata(): void {
+    this.buttonClicked = !this.buttonClicked;
     this.displayPanelService.metadataButtonSubject.next();
   }
 
