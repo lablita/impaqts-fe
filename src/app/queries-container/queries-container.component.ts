@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
@@ -31,7 +31,7 @@ export class ConcordanceRequest {
 })
 export class QueriesContainerComponent implements OnInit {
 
-  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
 
   /** public */
   public metadataTextTypes: Metadatum[] = [];

@@ -7,7 +7,6 @@ import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../co
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
@@ -128,8 +127,8 @@ export class LoadResultsService {
             queryRequest.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
           }
           if (fieldRequest.selectedQueryType?.key === SIMPLE) {
+            queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
             if (queryRequest.queryType !== REQUEST_TYPE.POSITIVE_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST) {
-              queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
             }
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();
@@ -160,16 +159,7 @@ export class LoadResultsService {
             queryRequest.sortQueryRequest = fieldRequest.quickSort;
           }
           // context
-          if (queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST && fieldRequest.contextConcordance) {
-            const contextConcordanceQueryRequest = new ContextConcordanceQueryRequest(
-              fieldRequest.contextConcordance?.window.key,
-              fieldRequest.contextConcordance?.token,
-              fieldRequest.contextConcordance?.lemma,
-              fieldRequest.contextConcordance?.item.key
-            );
-            queryRequest.contextConcordanceQueryRequest = contextConcordanceQueryRequest;
-            this.queryRequestService.setContextConcordance(queryRequest.contextConcordanceQueryRequest);
-          } else {
+          if (queryRequest.queryType !== REQUEST_TYPE.CONTEXT_QUERY_REQUEST) {
             // remove context query param if present in previous queries
             queryRequest.contextConcordanceQueryRequest = null;
           }

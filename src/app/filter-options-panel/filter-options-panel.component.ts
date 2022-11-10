@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FIRST, LAST, NEGATIVE, POSITIVE } from '../common/filter-constants';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { DEFAULT_FILTER_OPTIONS_QUERY_REQUEST, FilterOptionsQueryRequestDTO } from '../model/filter-options-query-request-dto';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
@@ -19,7 +19,7 @@ export class FilterOptionsPanelComponent implements OnInit {
   @Input() public corpus: string | null | undefined = '';
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO | null = ContextConcordanceQueryRequestDTO.getInstance();
+  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequest | null = new ContextConcordanceQueryRequest();
   public filterOptionsQueryRequestDTO: FilterOptionsQueryRequestDTO = FilterOptionsQueryRequestDTO.getInstance();
 
   public displayPanelMetadata = false;

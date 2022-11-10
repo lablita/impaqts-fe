@@ -243,7 +243,7 @@ export class SortOptionsPanelComponent implements OnInit {
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
       if (sortQueryRequest && !!sortQueryRequest.sortKey) {
         typeSearch = ['Sort', sortQueryRequest.sortKey];
       } else if (queryRequest.sortQueryRequest

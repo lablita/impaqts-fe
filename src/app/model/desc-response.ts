@@ -5,4 +5,9 @@ export class DescResponse {
   arg = '';
   op = '';
   size = 0;
+  attribute = '';
+  term = '';
+  position = '';
+  window = '';
+  tokens = 0;
 }

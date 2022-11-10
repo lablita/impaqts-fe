@@ -1,7 +1,7 @@
-import { POSITIVE } from "../common/filter-constants";
-import { FIRST } from "../common/frequency-constants";
-import { ContextConcordanceQueryRequestDTO } from "./context-concordance-query-request-dto";
-import { KeyValueItem } from "./key-value-item";
+import { POSITIVE } from '../common/filter-constants';
+import { FIRST } from '../common/frequency-constants';
+import { ContextConcordanceQueryRequest } from './context-concordance-query-request';
+import { KeyValueItem } from './key-value-item';
 
 export class FilterOptionsQueryRequestDTO {
   filter: KeyValueItem;
@@ -9,7 +9,7 @@ export class FilterOptionsQueryRequestDTO {
   from: number;
   to: number;
   kwic: boolean;
-  contextConcordance?: ContextConcordanceQueryRequestDTO;
+  contextConcordance?: ContextConcordanceQueryRequest;
 
   constructor(
     filter: KeyValueItem,
@@ -17,7 +17,7 @@ export class FilterOptionsQueryRequestDTO {
     from: number,
     to: number,
     kwic: boolean,
-    contextConcordance?: ContextConcordanceQueryRequestDTO
+    contextConcordance?: ContextConcordanceQueryRequest
   ) {
     this.filter = filter;
     this.token = token;

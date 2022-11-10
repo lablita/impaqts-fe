@@ -1,18 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
-import { KeyValueItem } from '../model/key-value-item';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { QueryRequestService } from '../services/query-request.service';
 
 const WINDOWS = [
-  new KeyValueItem('LEFT', 'LEFT'),
-  new KeyValueItem('RIGHT', 'RIGHT'),
-  new KeyValueItem('BOTH', 'BOTH')
+  'LEFT',
+  'RIGHT',
+  'BOTH',
 ];
 
 const ITEMS = [
-  new KeyValueItem('ALL', 'ALL'),
-  new KeyValueItem('ANY', 'ANY'),
-  new KeyValueItem('NONE', 'NONE')
+  'ALL',
+  'ANY',
+  'NONE',
 ];
 
 const TOKENS = [1, 2, 3, 4, 5, 7, 10, 15];
@@ -29,12 +28,9 @@ export class ContextConcordanceComponent implements OnInit {
 
   @Input() public panel = false;
 
-  public windows: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public selectedWindow: KeyValueItem | null = null;
-  public items: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public selectedItem: KeyValueItem | null = null;
+  public windows: Array<string> = [];
+  public items: Array<string> = [];
   public tokens: number[] = Array.from<number>({ length: 0 });
-  public selectedToken: KeyValueItem | null = null;
 
   constructor(
     private readonly queryRequestService: QueryRequestService
@@ -44,10 +40,13 @@ export class ContextConcordanceComponent implements OnInit {
     this.windows = WINDOWS;
     this.items = ITEMS;
     this.tokens = TOKENS;
+    this.queryRequestService.clearContextConcordanceQueryRequest();
+    const cci = ContextConcordanceItem.getInstance();
+    this.queryRequestService.getContextConcordanceQueryRequest().items.push(cci);
   }
 
-  get contextConcordanceQueryRequest(): ContextConcordanceQueryRequestDTO {
-    return this.queryRequestService.getContextConcordanceQueryRequestDTO();
+  get contextConcordanceQueryRequest(): ContextConcordanceQueryRequest {
+    return this.queryRequestService.getContextConcordanceQueryRequest();
   }
 
 }

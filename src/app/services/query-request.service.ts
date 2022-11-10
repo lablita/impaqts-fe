@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
@@ -15,7 +14,7 @@ export class QueryRequestService {
   private basicFieldRequest: FieldRequest | null = null;
 
 
-  private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  private contextConcordanceQueryRequest: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
 
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
@@ -53,12 +52,14 @@ export class QueryRequestService {
     }
   }
 
-  public getContextConcordanceQueryRequestDTO(): ContextConcordanceQueryRequestDTO {
-    return this.contextConcordanceQueryRequestDTO;
+  public getContextConcordanceQueryRequest(): ContextConcordanceQueryRequest {
+    return this.contextConcordanceQueryRequest;
   }
 
-  public clearContextConcordanceQueryRequestDTO(): void {
-    this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  public clearContextConcordanceQueryRequest(): void {
+    this.contextConcordanceQueryRequest.items.splice(0, this.contextConcordanceQueryRequest.items.length);
+    const cci = ContextConcordanceItem.getInstance();
+    this.contextConcordanceQueryRequest.items.push(cci);
   }
 
   public setQueryPattern(queryPattern: QueryPattern): void {

@@ -9,6 +9,7 @@ import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
@@ -210,8 +211,26 @@ export class QueryRequestComponent implements OnInit {
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      this.queryRequestService.getQueryRequest().queryType = (!!fieldRequest.contextConcordance && !!fieldRequest.contextConcordance.lemma) ? REQUEST_TYPE.CONTEXT_QUERY_REQUEST : REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+      if (fieldRequest.contextConcordance && fieldRequest.contextConcordance.items
+        && fieldRequest.contextConcordance.items.length > 0 && fieldRequest.contextConcordance.items[0].term) {
+        // query di contesto, vanno splittati gli item
+        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+        const contextRequestItem = fieldRequest.contextConcordance.items[0];
+        const terms = contextRequestItem.term.split(' ');
+        const ccqr = new ContextConcordanceQueryRequest();
+        ccqr.items = terms.map(term => {
+          const cci = ContextConcordanceItem.getInstance();
+          cci.term = term;
+          cci.attribute = LEMMA;
+          cci.token = contextRequestItem.token;
+          cci.window = contextRequestItem.window;
+          cci.item = contextRequestItem.item;
+          return cci;
+        });
+        this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+      }
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
@@ -235,7 +254,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   public clearContextFields(): void {
-    this.queryRequestService.clearContextConcordanceQueryRequestDTO();
+    this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
   private closeWebSocket(): void {
