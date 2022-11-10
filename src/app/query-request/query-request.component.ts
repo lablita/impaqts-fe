@@ -224,7 +224,7 @@ export class QueryRequestComponent implements OnInit {
           const cci = ContextConcordanceItem.getInstance();
           cci.term = term;
           cci.attribute = LEMMA;
-          cci.token = contextRequestItem.token;
+          cci.tokens = contextRequestItem.tokens;
           cci.window = contextRequestItem.window;
           cci.item = contextRequestItem.item;
           return cci;

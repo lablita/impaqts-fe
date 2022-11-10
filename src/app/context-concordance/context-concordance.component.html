@@ -18,7 +18,7 @@
           </ng-template>
         </p-dropdown>
         <p-dropdown class="mr-3" [options]="tokens" *ngIf="contextConcordanceQueryRequest"
-          [(ngModel)]="contextConcordanceQueryRequest.items[0].token" [showClear]="true">
+          [(ngModel)]="contextConcordanceQueryRequest.items[0].tokens" [showClear]="true">
         </p-dropdown>
         <label class="col label-size">{{"PAGE.CONCORDANCE.TOKENS" | translate}}</label>
       </div>

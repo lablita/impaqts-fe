@@ -3,7 +3,7 @@ import { WORD } from '../common/query-constants';
 export class ContextConcordanceItem {
 
   window: string;
-  token: number;
+  tokens: number;
   term: string;
   attribute: string; // WORD, LEMMA, ...
   item: string;
@@ -16,7 +16,7 @@ export class ContextConcordanceItem {
     item: string,
   ) {
     this.window = window;
-    this.token = token;
+    this.tokens = token;
     this.term = term;
     this.attribute = attribute;
     this.item = item;

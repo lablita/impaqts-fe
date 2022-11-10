@@ -163,7 +163,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         const cci = ContextConcordanceItem.getInstance();
         cci.term = d.term;
         cci.attribute = LEMMA;
-        cci.token = d.tokens;
+        cci.tokens = d.tokens;
         cci.window = d.window;
         // TODO: usare items, cioè all, any, none
         cci.item = 'all';
@@ -197,7 +197,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         if (positionWindow === 'R') {
           window = 'RIGHT';
         }
-        cci.token = +positionToken;
+        cci.tokens = +positionToken;
         cci.window = window;
         // TODO: usare items, cioè all, any, none
         cci.item = 'all';
