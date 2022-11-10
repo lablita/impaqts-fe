@@ -18,18 +18,18 @@
     <div class="flex ml-2">
       <label class="label-size">{{"MENU.FILTER" | translate}}</label>
       <div *ngFor="let filter of filters" class="field-checkbox">
-        <p-radioButton [inputId]="filter.key" name="filter" [value]="filter" [(ngModel)]="selectedFilter">
+        <p-radioButton [inputId]="filter" name="filter" [value]="filter" [(ngModel)]="selectedFilter">
         </p-radioButton>
-        <label [for]="filter.key" class="mr-2 ml-1">{{filter.value}}</label>
+        <label [for]="filter" class="mr-2 ml-1">{{filter | translate}}</label>
       </div>
     </div>
 
     <div class="flex ml-2">
       <label class="label-size">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.SEL_TOKEN" | translate}}</label>
       <div *ngFor="let token of tokens" class="field-checkbox">
-        <p-radioButton [inputId]="token.key" name="filter" [value]="token" [(ngModel)]="selectedToken">
+        <p-radioButton [inputId]="token" name="filter" [value]="token" [(ngModel)]="selectedToken">
         </p-radioButton>
-        <label [for]="token.key" class="mr-2 ml-1">{{token.value}}</label>
+        <label [for]="token" class="mr-2 ml-1">{{token | translate}}</label>
       </div>
     </div>
 
