@@ -21,17 +21,20 @@ const STAT_DESC: { [key: string]: string } = {
 };
 
 const OPTIOIN_LIST = [
-  new KeyValueItem('T_SCORE', 'T_SCORE'),
-  new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
-  new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
-  new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
+  'T_SCORE',
+  'MI',
+  'MI3',
+  'LOG',
+  'MIN',
+  'LOG_DICE',
+  'MI_LOG'
 ];
 
 const ATTRIBUTE_LIST = [
-  new KeyValueItem('WORD', 'WORD'),
-  new KeyValueItem('TAG', 'TAG'),
-  new KeyValueItem('LEMMA', 'LEMMA')
-];
+  'WORD', 
+  'TAG', 
+  'LEMMA'
+]
 
 @Component({
   selector: 'app-collocation-options-panel',
@@ -45,8 +48,8 @@ export class CollocationOptionsPanelComponent {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
-  public attributeList: KeyValueItem[] = ATTRIBUTE_LIST;
-  public optionList: KeyValueItem[] = OPTIOIN_LIST;
+  public attributeList: string[] = ATTRIBUTE_LIST;
+  public optionList: string[] = OPTIOIN_LIST;
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
