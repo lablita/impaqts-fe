@@ -6,7 +6,7 @@ import { KWICline } from './kwicline';
 import { WideContextResponse } from './wide-context-response';
 
 export class QueryResponse {
-  kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
+  kwicLines: Array<KWICline> = [];
   collocations: Array<CollocationItem> = [];
   frequency: FrequencyItem = new FrequencyItem();
   descResponses: Array<DescResponse> = [];

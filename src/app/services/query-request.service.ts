@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { QueryPattern } from '../model/query-pattern';
@@ -35,7 +36,7 @@ export class QueryRequestService {
   }
 
   public withContextConcordance(): boolean {
-    return !!this.queryRequest ? !!this.queryRequest.contextConcordanceQueryRequest : false;
+    return this.queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST || this.queryRequest.queryType === REQUEST_TYPE.PN_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST;
   }
 
   public setContextConcordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {

@@ -34,7 +34,7 @@ const SORT_LABELS = [
 export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
-  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
+  @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
   @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
 
