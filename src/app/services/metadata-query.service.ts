@@ -24,6 +24,25 @@ export class MetadataQueryService {
   public setMetadata(mds: Array<Metadatum>): void {
     this.metadata = mds;
     this.metadata.sort((a, b) => a.position - b.position);
+    this.metadata.forEach(md => this.assignSelectionLabel(md));
+  }
+
+  private assignSelectionLabel(md: Metadatum): void {
+    if (md.multipleChoice) {
+      const selection = md.selection as TreeNode<any>[];
+      console.log(selection);
+      console.log(md.tree);
+      if (md.tree && md.tree[0] && md.tree[0].children) {
+        if (selection.length === md.tree[0].children.length) {
+          // se sono selezionate tutte le foglie, setta come selezionata anche la radice
+          selection.push(md.tree[0]);
+        } else if (selection.length > 0 && selection.findIndex(s => s.label === md.tree[0].label) < 0) {
+          // se sono selezionate alcune foglie ma non tutte, setta come parzialmente selezionata la radice
+          // controllo anche di non aver già messo la radice tra le selezionate in una chiamata precedente
+          md.tree[0].partialSelected = true;
+        }
+      }
+    }
   }
 
   private resetMetadatum(metadatum: Metadatum): void {

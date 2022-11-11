@@ -256,7 +256,8 @@ export class MetadataUtilService {
     const rootParent = {
       label: meta.name,
       selectable: true,
-      children: []
+      children: [],
+      partialSelected: false
     };
     if (values && values.indexOf(meta.name) > -1) {
       selections.push(root);
@@ -278,6 +279,7 @@ export class MetadataUtilService {
           };
           if (values && values.indexOf(md.name) > -1) {
             selections.push(innerNode);
+            innerParentNode.partialSelected = true;
           }
           if (node.children) {
             node.children.push(innerNode);

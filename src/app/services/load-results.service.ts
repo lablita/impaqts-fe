@@ -221,7 +221,6 @@ export class LoadResultsService {
       }
     });
     localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(textTypesRequest));
-    // Tutto in OR
     this.metadataQuery = new QueryToken();
     if (textTypesRequest.freeTexts && textTypesRequest.freeTexts.length > 0) {
       textTypesRequest.freeTexts.forEach(ft => {
@@ -236,18 +235,22 @@ export class LoadResultsService {
       });
     }
     if (textTypesRequest.multiSelects && textTypesRequest.multiSelects.length > 0) {
+      const tagsInAnd: Array<Array<QueryTag>> = [];
       textTypesRequest.multiSelects.forEach(ms => {
+        const tagsInOr: Array<QueryTag> = [];
         if (ms.values) {
           ms.values.forEach(v => {
             const tag = new QueryTag(STRUCT_DOC);
             tag.name = ms.key;
             tag.value = v;
-            if (this.metadataQuery) {
-              this.metadataQuery.tags.push([tag]);
-            }
+            tagsInOr.push(tag);
           });
         }
+        tagsInAnd.push(tagsInOr);
       });
+      if (this.metadataQuery) {
+        this.metadataQuery.tags = tagsInAnd;
+      }
     }
     if (textTypesRequest.singleSelects && textTypesRequest.singleSelects.length > 0) {
       const tag = new QueryTag(STRUCT_DOC);
