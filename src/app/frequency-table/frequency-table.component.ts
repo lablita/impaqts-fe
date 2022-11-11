@@ -167,7 +167,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       const fieldRequest: FieldRequest = new FieldRequest();
       fieldRequest.matchCase = true;
       fieldRequest.word = w;
-      fieldRequest.selectedQueryType = new KeyValueItem(WORD, WORD);
+      fieldRequest.selectedQueryType = WORD;
       fieldRequest.selectedCorpus = this.corpus;
       concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
       concordanceRequestPayload.pos = i + 1;

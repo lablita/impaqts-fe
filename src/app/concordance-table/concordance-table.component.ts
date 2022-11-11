@@ -274,7 +274,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
-    switch (fieldRequest.selectedQueryType?.key) {
+    switch (fieldRequest.selectedQueryType) {
       case WORD:
         return fieldRequest.word;
       case LEMMA:

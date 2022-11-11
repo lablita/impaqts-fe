@@ -14,26 +14,26 @@ import { EmitterService } from '../utils/emitter.service';
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 
 const POSITION_LIST = [
-  new KeyValueItem(L6, L6),
-  new KeyValueItem(L5, L5),
-  new KeyValueItem(L4, L4),
-  new KeyValueItem(L3, L3),
-  new KeyValueItem(L2, L2),
-  new KeyValueItem(L1, L1),
-  new KeyValueItem(NODE_CONTEXT, NODE),
-  new KeyValueItem(R1, R1),
-  new KeyValueItem(R2, R2),
-  new KeyValueItem(R3, R3),
-  new KeyValueItem(R4, R4),
-  new KeyValueItem(R5, R5),
-  new KeyValueItem(R6, R6)
+  L6, 
+  L5, 
+  L4, 
+  L3, 
+  L2, 
+  L1, 
+  NODE,
+  R1, 
+  R2, 
+  R3, 
+  R4, 
+  R5, 
+  R6
 ];
 
 const SELECTED_POSITION = [
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE)
+  NODE,
+  NODE,
+  NODE,
+  NODE
 ];
 
 const LEVELS = [
@@ -71,15 +71,14 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public selectedAttribute: KeyValueItem | null = null;
   public selectedMultiAttribute: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
-  public positionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public selectedPosition: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public positionList: Array<string> = Array.from<string>({ length: 0 });
+  public selectedPosition: Array<string> = Array.from<string>({ length: 0 });
   public isConcordanceFreq = true;
   public metadataAttributes: Array<string> = Array.from<string>({ length: 0 });
 
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
-    private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService
   ) { }
 
@@ -191,7 +190,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.queryRequestService.resetQueryPattern();
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
-      // this.emitterService.makeFrequency.next(basicFieldRequest);
       const freqencyOption = this.getFrequencyOption();
       if (freqencyOption) {
         this.concordanceFrequency.emit();

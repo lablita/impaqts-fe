@@ -24,7 +24,7 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
-const DEFAULT_SELECTED_QUERY_TYPE = new KeyValueItem(SIMPLE, SIMPLE);
+const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
 @Component({
   selector: 'app-query-request',
@@ -41,10 +41,10 @@ export class QueryRequestComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public selectCorpus = SELECT_CORPUS_LABEL;
 
-  public selectedQueryType: KeyValueItem | null = null;
+  public selectedQueryType: string | null = null;
   public displayContext = false;
   public displayQueryType = false;
-  public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public queryTypes: Array<string> = [];
   public lemma = '';
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
@@ -91,11 +91,11 @@ export class QueryRequestComponent implements OnInit {
     }
     this.queryTypes = [
       DEFAULT_SELECTED_QUERY_TYPE,
-      new KeyValueItem(LEMMA, LEMMA),
-      new KeyValueItem(WORD, WORD),
-      new KeyValueItem(PHRASE, PHRASE),
-      new KeyValueItem(CHARACTER, CHARACTER),
-      new KeyValueItem(CQL, CQL)
+      LEMMA,
+      WORD,
+      PHRASE,
+      CHARACTER,
+      CQL
     ];
     this.setBasicFieldRequest();
     this.queryRequestForm.valueChanges.subscribe(change => {
@@ -282,7 +282,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   private toggleSimpleDisabling(newSelectedCorpus: KeyValueItem): void {
-    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType.key !== 'simple');
+    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType !== 'simple');
     if (disabled) {
       this.queryRequestForm.get('simple')?.disable();
     } else {

@@ -10,19 +10,19 @@ import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.serv
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
 const POSITION_LIST = [
-  new KeyValueItem(L3, L3),
-  new KeyValueItem(L2, L2),
-  new KeyValueItem(L1, L1),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(R1, R1),
-  new KeyValueItem(R2, R2),
-  new KeyValueItem(R3, R3),
+  L3,
+  L2,
+  L1,
+  NODE,
+  R1,
+  R2,
+  R3
 ];
 
 const SELECTED_POSITION = [
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
+  NODE,
+  NODE,
+  NODE,
 ];
 
 const SORT_KEYS = [
@@ -32,16 +32,17 @@ const SORT_KEYS = [
 ];
 
 const LEVELS = [
-  new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-  new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'),
-  new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')
-];
+  'FIRST_LEVEL', 
+  'SECOND_LEVEL',
+  'THIRD_LEVEL'
+] 
 
 const MULTI_ATTRIBUTE = [
-  new KeyValueItem('WORD', 'WORD'),
-  new KeyValueItem('WORD', 'WORD'),
-  new KeyValueItem('WORD', 'WORD')
-];
+  'WORD',
+  'WORD',
+  'WORD'
+]
+
 @Component({
   selector: 'app-sort-options-panel',
   templateUrl: './sort-options-panel.component.html',
@@ -63,8 +64,8 @@ export class SortOptionsPanelComponent implements OnInit {
   public selectedSortKey: KeyValueItem | null = null;
   public levels = LEVELS;
   public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
-  public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  public positionList: string[] = [];
+  public selectedPosition: string[] = [];
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
   public disableMultilevelChechbox: boolean[] = [false, false, false];

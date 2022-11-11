@@ -95,7 +95,7 @@ export class LoadResultsService {
           // !VISUAL_QUERY_REQUEST
           const queryTags: QueryTag[] = [];
           let tag: QueryTag;
-          switch (fieldRequest.selectedQueryType?.key) {
+          switch (fieldRequest.selectedQueryType) {
             case WORD:
               fieldRequest.simpleResult = fieldRequest.word;
               tag = new QueryTag('word', fieldRequest.word);
@@ -126,7 +126,7 @@ export class LoadResultsService {
             queryRequest.queryPattern = new QueryPattern();
             queryRequest.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
           }
-          if (fieldRequest.selectedQueryType?.key === SIMPLE) {
+          if (fieldRequest.selectedQueryType === SIMPLE) {
             queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
             if (queryRequest.queryType !== REQUEST_TYPE.POSITIVE_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST) {
             }
