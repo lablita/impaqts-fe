@@ -6,6 +6,7 @@ import { REQUEST_TYPE, WORD } from '../common/query-constants';
 import { ASC, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
+import { FrequencyOption } from '../model/frequency-query-request';
 import { FrequencyResultLine } from '../model/frequency-result-line';
 import { KeyValueItem } from '../model/key-value-item';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
@@ -46,6 +47,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public colHeaders: Array<string> = [];
   public sortField = '';
   public multilevel = false;
+  public operation = '';
 
   private readonly queryResponseSubscription: Subscription;
   private makeFrequencySubscription: Subscription | null = null;
@@ -76,6 +78,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
           this.totalFrequency = this.frequency.totalFreq;
           this.maxFreq = this.frequency.maxFreq;
           this.maxRel = this.frequency.maxRel;
+          this.operation = this.frequency.operation;
           this.noResultFound = this.totalItems < 1;
           this.setColumnHeaders();
         }
@@ -145,19 +148,27 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   public clickPN(event: any, positive: boolean): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
-    if (queryRequest.frequencyQueryRequest) {
-      queryRequest.frequencyQueryRequest.positive = positive;
-    }
-    const multilevelFrequency = queryRequest.frequencyQueryRequest?.freqOptList;
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload(
       !!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
-    if (!!multilevelFrequency && multilevelFrequency.length === event.word.length) {
-      for (let i = 0; i < event.word.length; i++) {
-        multilevelFrequency[i].term = event.word[i];
+    
+    if (this.operation === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST) {
+      if (queryRequest.frequencyQueryRequest) {
+        queryRequest.frequencyQueryRequest.positive = positive;
       }
+      const freqOptList = queryRequest.frequencyQueryRequest?.freqOptList;
+      if (!!freqOptList && freqOptList.length === event.word.length) {
+        for (let i = 0; i < event.word.length; i++) {
+          freqOptList[i].term = event.word[i];
+        }
+      }
+      queryRequest.queryType = REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
+    } else {
+      const freqOpt = new FrequencyOption();
+      freqOpt.term = event.word[0];
+      queryRequest.frequencyQueryRequest?.freqOptList.push(freqOpt);
+      queryRequest.queryType = REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
     }
-    queryRequest.queryType = REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
   }

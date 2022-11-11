@@ -71,10 +71,10 @@ export class QueryTokenComponent {
     }
     if (this.optionsSel.length > 0 && this.token) {
       this.token.sentenceEnd = this.token.sentenceStart = false;
-      this.optionsSel.forEach(op => {
-        if (op === 'START' && this.token) {
+      this.optionsSel.forEach(operation => {
+        if (operation === 'START' && this.token) {
           this.token.sentenceStart = true;
-        } else if (op === 'END' && this.token) {
+        } else if (operation === 'END' && this.token) {
           this.token.sentenceEnd = true;
         }
       });

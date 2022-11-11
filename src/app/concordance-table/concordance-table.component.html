@@ -16,7 +16,7 @@
       <ng-container *ngIf="isQueryWithContext()">
         <span *ngFor="let description of descriptions, let idx = index">
           >
-          {{("RESPONSE." + description.op) | translate}}
+          {{("RESPONSE." + description.operation) | translate}}
           <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;"
             (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
           <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>
@@ -26,7 +26,7 @@
       <ng-container *ngIf="isQueryWithContextFromFrequencyPN()">
         <span *ngFor="let description of descriptions, let idx = index">
           >
-          {{("RESPONSE." + description.op) | translate}}
+          {{("RESPONSE." + description.operation) | translate}}
           <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;"
             (click)="makeConcordanceFromFrequencyPN(idx)">{{description.niceArg}}</a>
           <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>
@@ -65,13 +65,13 @@
       <td class="p-text-right" [innerHTML]="stripTags(kwicLine.leftContext, withContextConcordance())"></td>
       <td class="p-text-center">
         <p-button [disabled]="loading" label="{{kwicLine.kwic}}" styleClass="p-button-link"
-          (click)="op.toggle($event); showWideContext(kwicLine)"></p-button>
+          (click)="operation.toggle($event); showWideContext(kwicLine)"></p-button>
       </td>
       <td class="p-text-left" [innerHTML]="stripTags(kwicLine.rightContext, withContextConcordance())"></td>
     </tr>
   </ng-template>
 </p-table>
-<p-overlayPanel #op [style]="{width: '450px'}">
+<p-overlayPanel #operation [style]="{width: '450px'}">
   <ng-template pTemplate>
     <div *ngIf="!resultContext" class="flex context-spinner justify-content-center">
       <p-progressSpinner></p-progressSpinner>
