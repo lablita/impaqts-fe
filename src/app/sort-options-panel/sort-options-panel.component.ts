@@ -51,7 +51,7 @@ const MULTI_ATTRIBUTE = [
 export class SortOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton = false;
-  @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() public corpusAttributes: KeyValueItem[] = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public concordanceSort = new EventEmitter<SortQueryRequest>();
 
@@ -63,7 +63,7 @@ export class SortOptionsPanelComponent implements OnInit {
   public sortKeys = SORT_KEYS;
   public selectedSortKey: KeyValueItem | null = null;
   public levels = LEVELS;
-  public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public selectedLevels: Array<KeyValueItem> = [];
   public positionList: string[] = [];
   public selectedPosition: string[] = [];
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });

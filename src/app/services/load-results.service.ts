@@ -128,7 +128,7 @@ export class LoadResultsService {
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
             queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
-            if (queryRequest.queryType !== REQUEST_TYPE.PN_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST) {
+            if (queryRequest.queryType !== REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST) {
             }
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();
@@ -164,7 +164,7 @@ export class LoadResultsService {
             queryRequest.contextConcordanceQueryRequest = null;
           }
           // frequency
-          if (queryRequest.queryType === REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUEST) {
+          if (queryRequest.queryType === REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST) {
             this.socketService.sendMessage(queryRequest);
           } else {
             this.socketService.sendMessage(queryRequest);

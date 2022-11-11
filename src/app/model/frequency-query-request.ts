@@ -12,6 +12,6 @@ export class FrequencyQueryRequest {
   frequencyTypeSort: string | null = null;
   categories: Array<string> = Array.from<string>({ length: 0 });
   category: string | null = null;
-  multilevelFrequency: Array<FrequencyOption> = Array.from<FrequencyOption>({ length: 0 });
+  freqOptList: Array<FrequencyOption> =[];
   positive = true;
 }

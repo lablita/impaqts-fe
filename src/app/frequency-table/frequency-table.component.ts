@@ -148,7 +148,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     if (queryRequest.frequencyQueryRequest) {
       queryRequest.frequencyQueryRequest.positive = positive;
     }
-    const multilevelFrequency = queryRequest.frequencyQueryRequest?.multilevelFrequency;
+    const multilevelFrequency = queryRequest.frequencyQueryRequest?.freqOptList;
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload(
       !!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
@@ -157,7 +157,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
         multilevelFrequency[i].term = event.word[i];
       }
     }
-    queryRequest.queryType = REQUEST_TYPE.PN_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST;
+    queryRequest.queryType = REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
   }
@@ -165,8 +165,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   private setColumnHeaders(): void {
     const frequencyQueryRequest = this.queryRequestService.getQueryRequest().frequencyQueryRequest;
     if (frequencyQueryRequest) {
-      this.multilevel = frequencyQueryRequest.multilevelFrequency.length > 0;
-      const multilevelColHeaders = frequencyQueryRequest.multilevelFrequency.map(mlfreq => mlfreq.attribute ? mlfreq.attribute : '');
+      this.multilevel = frequencyQueryRequest.freqOptList.length > 0;
+      const multilevelColHeaders = frequencyQueryRequest.freqOptList.map(freqOpt => freqOpt.attribute ? freqOpt.attribute : '');
       multilevelColHeaders.push(PAGE_FREQUENCY_FREQUENCY);
       this.colHeaders = this.multilevel ? multilevelColHeaders : COL_HEADER_TEXTTYPE;
       this.sortField = `${PAGE_FREQUENCY_FREQUENCY}-${(this.colHeaders.length - 1)}`;

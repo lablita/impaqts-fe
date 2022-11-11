@@ -36,7 +36,7 @@ export class QueryRequestService {
   }
 
   public withContextConcordance(): boolean {
-    return this.queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST || this.queryRequest.queryType === REQUEST_TYPE.PN_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST;
+    return this.queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST || this.queryRequest.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
   }
 
   public setContextConcordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {

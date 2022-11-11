@@ -61,7 +61,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
-  @Output() public concordanceFrequency = new EventEmitter<void>();
+  @Output() public metadataFrequency = new EventEmitter<void>();
 
   public freqOptionsQueryRequest: FreqOptions = FreqOptions.build();
 
@@ -73,7 +73,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
   public positionList: Array<string> = Array.from<string>({ length: 0 });
   public selectedPosition: Array<string> = Array.from<string>({ length: 0 });
-  public isConcordanceFreq = true;
+  public isMetadataFreq = true;
   public metadataAttributes: Array<string> = Array.from<string>({ length: 0 });
 
 
@@ -103,28 +103,28 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickNodeTags(): void {
-    this.callConcordanceFrequency(TAG);
+    this.callMetadataFrequency(TAG);
   }
 
   public clickNodeForms(): void {
-    this.callConcordanceFrequency(WORD);
+    this.callMetadataFrequency(WORD);
   }
 
   public removeFrequencyOption(): void {
     this.queryRequestService.resetOptionsRequest();
   }
 
-  public makeConcordanceFreq(): void {
-    this.isConcordanceFreq = true;
-    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONC_FREQUENCY_QUERY_REQUEST;
-    this.setFrequencyOption(this.isConcordanceFreq);
+  public makeMetadataFreq(): void {
+    this.isMetadataFreq = true;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST;
+    this.setFrequencyOption(this.isMetadataFreq);
     this.doMakeFrequency();
   }
 
   public makeMultilevelFreq(): void {
-    this.isConcordanceFreq = false;
+    this.isMetadataFreq = false;
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST;
-    this.setFrequencyOption(this.isConcordanceFreq);
+    this.setFrequencyOption(this.isMetadataFreq);
     this.doMakeFrequency();
   }
 
@@ -160,7 +160,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
         freqOption.attribute = freqOptionsQueryRequest.freqOptionList[i].attribute;
         freqOption.ignoreCase = freqOptionsQueryRequest.freqOptionList[i].ignoreCase;
         freqOption.position = freqOptionsQueryRequest.freqOptionList[i].position;
-        res.multilevelFrequency.push(freqOption);
+        res.freqOptList.push(freqOption);
       }
     }
     return res;
@@ -170,7 +170,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     return this.queryRequestService.getQueryRequest().frequencyQueryRequest;
   }
 
-  private callConcordanceFrequency(attribute: string): void {
+  private callMetadataFrequency(attribute: string): void {
     const res = new FrequencyQueryRequest();
     res.frequencyColSort = null;
     res.frequencyType = FREQ;
@@ -180,7 +180,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     freqOpt.attribute = attribute;
     freqOpt.ignoreCase = false;
     freqOpt.position = NODE_CONTEXT;
-    res.multilevelFrequency.push(freqOpt);
+    res.freqOptList.push(freqOpt);
     this.queryRequestService.getQueryRequest().frequencyQueryRequest = res;
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST;
     this.doMakeFrequency();
@@ -192,7 +192,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     if (basicFieldRequest) {
       const freqencyOption = this.getFrequencyOption();
       if (freqencyOption) {
-        this.concordanceFrequency.emit();
+        this.metadataFrequency.emit();
       }
     }
   }
