@@ -279,6 +279,11 @@
     "ADVANCEDUSER_ROLE": "Advanced user",
     "USER_ROLE": "Simple user"
   },
+  "RESPONSE": {
+    "NEGATIVE_FILTER": "Negative Filter",
+    "POSITIVE_FILTER": "Positive Filter",
+    "QUERY": "Query"
+  },
   "LANGUAGE": {
     "IT": "ITA",
     "EN": "ENG"

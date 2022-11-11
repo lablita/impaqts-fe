@@ -128,7 +128,7 @@ export class LoadResultsService {
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
             queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
-            if (queryRequest.queryType !== REQUEST_TYPE.POSITIVE_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST) {
+            if (queryRequest.queryType !== REQUEST_TYPE.PN_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST) {
             }
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();

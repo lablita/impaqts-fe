@@ -13,4 +13,5 @@ export class FrequencyQueryRequest {
   categories: Array<string> = Array.from<string>({ length: 0 });
   category: string | null = null;
   multilevelFrequency: Array<FrequencyOption> = Array.from<FrequencyOption>({ length: 0 });
+  positive = true;
 }

@@ -42,8 +42,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public maxRel = 0;
   public noResultFound = true;
   public frequency: FrequencyItem = new FrequencyItem();
-  public lines: Array<FrequencyResultLine> = Array.from<FrequencyResultLine>({ length: 0 });
-  public colHeaders: Array<string> = Array.from<string>({ length: 0 });
+  public lines: Array<FrequencyResultLine> = [];
+  public colHeaders: Array<string> = [];
   public sortField = '';
   public multilevel = false;
 
@@ -143,8 +143,11 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
-  public clickPositive(event: any): void {
+  public clickPN(event: any, positive: boolean): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
+    if (queryRequest.frequencyQueryRequest) {
+      queryRequest.frequencyQueryRequest.positive = positive;
+    }
     const multilevelFrequency = queryRequest.frequencyQueryRequest?.multilevelFrequency;
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload(
@@ -154,26 +157,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
         multilevelFrequency[i].term = event.word[i];
       }
     }
-    queryRequest.queryType = REQUEST_TYPE.POSITIVE_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST;
-    this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
-    this.titleResult.emit('MENU.CONCORDANCE');
-  }
-
-  public clickNegative(event: any): void {
-    const typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayload(
-      !!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
-    event.word.forEach((w: string, i: number) => {
-      const fieldRequest: FieldRequest = new FieldRequest();
-      fieldRequest.matchCase = true;
-      fieldRequest.word = w;
-      fieldRequest.selectedQueryType = WORD;
-      fieldRequest.selectedCorpus = this.corpus;
-      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fieldRequest, typeSearch));
-      concordanceRequestPayload.pos = i + 1;
-    });
-    const queryRequest = this.queryRequestService.getQueryRequest();
-    queryRequest.frequencyQueryRequest = null;
+    queryRequest.queryType = REQUEST_TYPE.PN_FREQUEQUENCY_CONCORDANCE_QUERY_REQUEST;
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
     this.titleResult.emit('MENU.CONCORDANCE');
   }

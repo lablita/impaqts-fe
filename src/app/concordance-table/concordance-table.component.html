@@ -16,6 +16,7 @@
       <ng-container *ngIf="isQueryWithContext()">
         <span *ngFor="let description of descriptions, let idx = index">
           >
+          {{("RESPONSE." + description.op) | translate}}
           <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;"
             (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
           <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>
@@ -25,6 +26,7 @@
       <ng-container *ngIf="isQueryWithContextFromFrequencyPN()">
         <span *ngFor="let description of descriptions, let idx = index">
           >
+          {{("RESPONSE." + description.op) | translate}}
           <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;"
             (click)="makeConcordanceFromFrequencyPN(idx)">{{description.niceArg}}</a>
           <span *ngIf="idx === (descriptions.length-1)" style="color:red;">{{description.niceArg}}</span>

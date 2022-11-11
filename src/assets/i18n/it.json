@@ -276,6 +276,11 @@
     "ADVANCEDUSER_ROLE": "Utente avanzato",
     "USER_ROLE": "Utente semplice"
   },
+  "RESPONSE": {
+    "NEGATIVE_FILTER": "Filtro Negativo",
+    "POSITIVE_FILTER": "Filtro Positivo",
+    "QUERY": "Richiesta"
+  },
   "LANGUAGE": {
     "IT": "ITA",
     "EN": "ING"
