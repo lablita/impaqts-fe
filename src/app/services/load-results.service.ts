@@ -202,7 +202,7 @@ export class LoadResultsService {
     const textTypesRequest = new TextTypesRequest();
     this.metadataQueryService.getMetadata().forEach(md => {
       if (!!md.selection) {
-        if (md.freeText) {
+        if (md.freeText && md.selection && (md.selection as string).length > 0) {
           // freetxt
           textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
         } else if (!md.multipleChoice && md.tree && md.tree[0] && md.tree[0].children && md.tree[0].children.length > 0) {
@@ -216,7 +216,9 @@ export class LoadResultsService {
               values.push(m.label);
             }
           });
-          textTypesRequest.multiSelects.push(new Selection(md.name, undefined, values));
+          if (values.length > 0) {
+            textTypesRequest.multiSelects.push(new Selection(md.name, undefined, values));
+          }
         }
       }
     });
@@ -263,23 +265,15 @@ export class LoadResultsService {
     }
   }
 
-  // private tagBuilder(type: string, value: string): QueryTag {
-  //   const tag = new QueryTag(TOKEN);
-  //   tag.name = type;
-  //   tag.value = value;
-  //   return tag;
-  // }
-
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
       map(resp => {
-        let queryResponse = resp as QueryResponse;
+        const queryResponse = resp as QueryResponse;
         if (queryResponse && queryResponse.errorResponse) {
           if (queryResponse.errorResponse.errorCode === 403) {
             return this.handleForbiddenResponse(queryResponse);
           }
-          queryResponse = new QueryResponse();
           queryResponse.error = true;
           return queryResponse;
         } else {

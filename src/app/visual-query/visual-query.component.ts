@@ -17,6 +17,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
+import { QueryStructure } from '../model/query-structure';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
@@ -146,6 +147,8 @@ export class VisualQueryComponent implements OnInit {
     const concordanceRequest: ConcordanceRequest = new ConcordanceRequest(fieldRequest, typeSearch);
     if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
+    } else {
+      this.queryPattern.structPattern = new QueryStructure();
     }
     this.queryRequestService.setQueryPattern(this.queryPattern);
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.VISUAL_QUERY_REQUEST;
@@ -251,6 +254,7 @@ export class VisualQueryComponent implements OnInit {
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
+      this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
     }
 
     this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);

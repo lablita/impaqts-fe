@@ -30,8 +30,6 @@ export class MetadataQueryService {
   private assignSelectionLabel(md: Metadatum): void {
     if (md.multipleChoice) {
       const selection = md.selection as TreeNode<any>[];
-      console.log(selection);
-      console.log(md.tree);
       if (md.tree && md.tree[0] && md.tree[0].children) {
         if (selection.length === md.tree[0].children.length) {
           // se sono selezionate tutte le foglie, setta come selezionata anche la radice
