@@ -8,7 +8,8 @@
     "build:prod": "ng build --configuration production",
     "test": "ng test",
     "sonar": "sonar-scanner",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "extract": "ngx-translate-extract --input ./src/app -o ./src/assets/i18n/it.json -o ./src/assets/i18n/en.json -o -m _ --clean --sort --format namespaced-json"
   },
   "private": true,
   "dependencies": {

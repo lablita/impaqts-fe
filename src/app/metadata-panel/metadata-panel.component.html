@@ -19,12 +19,12 @@
             <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
           </div>
           <!-- Tree & checkbox-->
-          <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
+          <div class="col-7" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
             <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
             </p-tree>
           </div>
           <!-- Single selection -->
-          <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
+          <div class="col-7" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
             <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
               (onNodeSelect)="nodeSelect($event)" class="text-red">
             </p-tree>
