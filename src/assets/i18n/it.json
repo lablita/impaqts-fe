@@ -158,7 +158,7 @@
         "SECOND_LEVEL": "second level",
         "THIRD_LEVEL": "third level",
         "CLEAR_FREQ_OPT": "Valori Default",
-        "FREQ_CONCORDANCE": "Frequenza Concordanze"
+        "METADATA_FREQ": "Frequenza Metadata"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",

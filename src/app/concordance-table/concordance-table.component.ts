@@ -137,7 +137,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public isQueryWithContextFromFrequencyPN(): boolean {
-    return this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
+    return this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST || this.queryType === REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
   }
 
   public isTextualQuery(): boolean {

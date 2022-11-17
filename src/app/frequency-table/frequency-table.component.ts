@@ -151,11 +151,10 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload(
       !!this.fieldRequest ? [new ConcordanceRequest(this.fieldRequest, typeSearch)] : [], 0);
-    
+    if (queryRequest.frequencyQueryRequest) {
+      queryRequest.frequencyQueryRequest.positive = positive;
+    }
     if (this.operation === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST) {
-      if (queryRequest.frequencyQueryRequest) {
-        queryRequest.frequencyQueryRequest.positive = positive;
-      }
       const freqOptList = queryRequest.frequencyQueryRequest?.freqOptList;
       if (!!freqOptList && freqOptList.length === event.word.length) {
         for (let i = 0; i < event.word.length; i++) {

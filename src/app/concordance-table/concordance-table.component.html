@@ -15,7 +15,6 @@
       </span>
       <ng-container *ngIf="isQueryWithContext()">
         <span *ngFor="let description of descriptions, let idx = index">
-          >
           {{("RESPONSE." + description.operation) | translate}}
           <a *ngIf="idx < (descriptions.length-1)" style="color:red; text-decoration: underline; cursor: pointer;"
             (click)="makeConcordanceFromBreadcrumbs(idx)">{{description.niceArg}}</a>
