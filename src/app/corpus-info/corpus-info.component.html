@@ -1,7 +1,83 @@
-<p></p>
-<span class="p-component">
-  <h2>{{"PAGE.CONCORDANCE.CORPUS" | translate}} - {{"PAGE.CORPUS_INFO.STAT_INFO" | translate}}</h2>
-</span>
+<p>{{corpusInfo | json}}</p>
+
+<h2 class="text-3xl font-medium p-component">{{"PAGE.CONCORDANCE.CORPUS" | translate}} - {{"PAGE.CORPUS_INFO.STAT_INFO"
+  |
+  translate}}</h2>
+
+<p-panel header="{{countsLabel | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CONCORDANCE.TOKENS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.sizes.tokencount}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.WORDS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.sizes.wordcount}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.SENTENCES' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.sizes.sentcount}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.PARAGRAPHS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.sizes.parcount}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.DOCUMENTS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.sizes.doccount}}
+    </div>
+  </div>
+</p-panel>
+
+
+<p-panel header="{{generalInfosLabel | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.LANGUAGE' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.lang}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.ENCODING' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.encoding}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.COMPILED' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.compiled | date : 'full'}}
+    </div>
+  </div>
+</p-panel>
+<p-panel header="{{lexiconSizesLabel | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.LANGUAGE' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.lang}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.ENCODING' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.encoding}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-4 md:mb-0 label">{{'PAGE.CORPUS_INFO.COMPILED' | translate | titlecase}}</div>
+    <div class="col-12 md:col-8">
+      {{corpusInfo.compiled | date : 'full'}}
+    </div>
+  </div>
+</p-panel>
 <div class="p-d-flex p-flex-wrap">
 
   <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 240px;">

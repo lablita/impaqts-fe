@@ -1,8 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
-import { CorpusInfoObj } from '../model/corpus-info-obj';
-import { DisplayPanelService } from '../services/display-panel.service';
+import { INSTALLATION } from '../model/constants';
+import { CorpusInfo } from '../model/corpusinfo/corpus-info';
+import { KeyValueItem } from '../model/key-value-item';
+import { CorpusInfoService } from '../services/corpus-info.service';
 
+class CorpusInfoObj {
+  label: string;
+  value: string;
+  tag = '';
+  constructor(label: string, value: string, tag?: string) {
+    this.label = label;
+    this.value = value;
+    if (tag) {
+      this.tag = tag;
+    }
+  }
+}
 @Component({
   selector: 'app-corpus-info',
   templateUrl: './corpus-info.component.html',
@@ -19,12 +33,24 @@ export class CorpusInfoComponent implements OnInit {
   public structArtLabel = '';
   public structArt: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
 
+  public corpusName: KeyValueItem | null = null;
+  public corpusInfo: CorpusInfo | null = null;
 
   constructor(
-    private readonly displayPanelService: DisplayPanelService
+    private readonly corpusInfoService: CorpusInfoService
   ) { }
 
   ngOnInit(): void {
+    const selectedCorpus = localStorage.getItem('selectedCorpus');
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst && selectedCorpus) {
+      this.corpusName = JSON.parse(selectedCorpus);
+      const installation = JSON.parse(inst);
+      if (this.corpusName && this.corpusName.value) {
+        this.corpusInfoService.getCorpusInfo(installation, this.corpusName.value).subscribe(corpusInfo => this.corpusInfo = corpusInfo);
+      }
+    }
+
     // this.displayPanelService.panelSelectedSubject.next(CORPUS_INFO);
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
     this.counts = [

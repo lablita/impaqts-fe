@@ -16,6 +16,7 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PanelModule } from 'primeng/panel';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -62,7 +63,8 @@ import { TreeModule } from 'primeng/tree';
     SelectButtonModule,
     DialogModule,
     ProgressBarModule,
-    ChartModule
+    ChartModule,
+    PanelModule
   ],
   exports: [
     CommonModule,
@@ -94,7 +96,8 @@ import { TreeModule } from 'primeng/tree';
     SelectButtonModule,
     DialogModule,
     ProgressBarModule,
-    ChartModule
+    ChartModule,
+    PanelModule
   ]
 })
 export class PrimeNgModule { }
