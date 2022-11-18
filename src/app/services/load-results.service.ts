@@ -24,7 +24,7 @@ import { SocketService } from './socket.service';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
-  colHeader: Array<string> = Array.from<string>({ length: 0 });
+  colHeader: Array<string> = [];
   headerSortBy = '';
 }
 
@@ -124,7 +124,7 @@ export class LoadResultsService {
           }
           if (!queryRequest.queryPattern) {
             queryRequest.queryPattern = new QueryPattern();
-            queryRequest.queryPattern.tokPattern = Array.from<QueryToken>({ length: 0 });
+            queryRequest.queryPattern.tokPattern = [];
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
             queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);

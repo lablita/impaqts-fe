@@ -22,7 +22,7 @@ export class SortOptionsQueryRequestDTO {
   ignoreCase: boolean;
   backward: boolean;
   levelSelected: number;
-  sortOptionList: Array<SortOptionDTO> = Array.from<SortOptionDTO>({ length: 0 });
+  sortOptionList: Array<SortOptionDTO> = [];
   multilevel = false;
 
   constructor(attribute: string, sortKey: string, numberTokens: number, ignoreCase: boolean,

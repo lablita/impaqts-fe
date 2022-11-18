@@ -12,12 +12,12 @@ import { QueryTag } from '../model/query-tag';
 export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag | null = null;
-  @Input() typeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  @Input() typeList: Array<KeyValueItem> = [];
   @Input() defaultType: KeyValueItem | null = null;
-  @Input() actionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  @Input() actionList: Array<KeyValueItem> = [];
   @Input() defaultAction: KeyValueItem | null = null;
   @Input() metadata = false;
-  @Input() metadatumTextTypes: Array<Metadatum> | null = Array.from<Metadatum>({ length: 0 });
+  @Input() metadatumTextTypes: Array<Metadatum> | null = [];
   @Input() deleteTagOn = true;
 
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
@@ -31,7 +31,7 @@ export class QueryTagComponent implements OnInit {
   public tagName: KeyValueItem | null = null;
   public caseSensitive: string | null = null;
 
-  public caseList: Array<string> = Array.from<string>({ length: 0 });
+  public caseList: Array<string> = [];
 
   public root: Metadatum = new Metadatum();
 

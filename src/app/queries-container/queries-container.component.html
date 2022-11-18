@@ -6,6 +6,8 @@
       (textTypesAttributesChange)="setTextTypesAttributes($event)" (selectedCorpusChange)="setSelectedCorpus($event)">
     </app-query-request>
 
+    ***{{categories | json}}
+
     <div class="flex mt-3" *ngIf="!!titleResult">
       <p-card class="w-12">
         <ng-container *ngIf="titleResult==='MENU.COLLOCATIONS' && !!selectedCorpus">

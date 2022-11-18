@@ -31,7 +31,7 @@ export class ContextConcordanceComponent implements OnInit {
 
   public windows: Array<string> = [];
   public items: Array<string> = [];
-  public tokens: number[] = Array.from<number>({ length: 0 });
+  public tokens: number[] = [];
 
   constructor(
     public readonly queryRequestService: QueryRequestService

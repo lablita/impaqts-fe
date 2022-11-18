@@ -15,7 +15,7 @@ const FILTER_OPTIONS_QUERY_REQUEST = 'FilterOptionsQueryRequestDTO';
 export class FilterOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton = false;
-  @Input() public metadata: Array<Metadatum> = Array.from<Metadatum>({ length: 0 });
+  @Input() public metadata: Array<Metadatum> = [];
   @Input() public corpus: string | null | undefined = '';
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 

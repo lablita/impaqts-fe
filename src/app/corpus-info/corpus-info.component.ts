@@ -11,13 +11,13 @@ import { DisplayPanelService } from '../services/display-panel.service';
 export class CorpusInfoComponent implements OnInit {
 
   public countsLabel = '';
-  public counts: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public counts: CorpusInfoObj[] = [];
   public generalInfosLabel = '';
-  public generalInfo: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public generalInfo: CorpusInfoObj[] = [];
   public lexiconSizesLabel = '';
-  public lexiconSizes: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public lexiconSizes: CorpusInfoObj[] = [];
   public structArtLabel = '';
-  public structArt: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public structArt: CorpusInfoObj[] = [];
 
 
   constructor(

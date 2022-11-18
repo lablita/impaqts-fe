@@ -17,14 +17,14 @@ import { EmitterService } from '../utils/emitter.service';
 export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
-  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
+  @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
 
-  public colHeader: Array<string> = Array.from<string>({ length: 0 });
+  public colHeader: Array<string> = [];
   public sortField = '';
   public loading = false;
   public totalResults = 0;
-  public collocations: Array<CollocationItem> = Array.from<CollocationItem>({ length: 0 });
+  public collocations: Array<CollocationItem> = [];
   public fieldRequest: FieldRequest | null = null;
   public noResultFound = true;
   public faSortAmountDown = faSortAmountDown;

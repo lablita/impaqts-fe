@@ -5,7 +5,7 @@ import { User } from '../model/user';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 
 export class ConcordanceRequestPayload {
-  concordances: Array<ConcordanceRequest> = Array.from<ConcordanceRequest>({ length: 0 });
+  concordances: Array<ConcordanceRequest> = [];
   pos = 0;
 
   constructor(concordances: Array<ConcordanceRequest>, pos: number) {

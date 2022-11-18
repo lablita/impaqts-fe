@@ -10,7 +10,7 @@ export class FrequencyQueryRequest {
   frequencyType: string | null = null;
   frequencyColSort: string | null = null;
   frequencyTypeSort: string | null = null;
-  categories: Array<string> = Array.from<string>({ length: 0 });
+  categories: Array<string> = [];
   category: string | null = null;
   freqOptList: Array<FrequencyOption> =[];
   positive = true;

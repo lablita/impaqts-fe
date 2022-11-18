@@ -47,19 +47,19 @@ export class QueriesContainerComponent implements OnInit {
   public collocationOptionsLabel = '';
   public filterOptionsLabel = '';
   public totalResults = 0;
-  public metadataAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public textTypesAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public metadataAttributes: Array<KeyValueItem> = [];
+  public textTypesAttributes: Array<KeyValueItem> = [];
 
   public videoUrl: SafeResourceUrl | null = null;
   public displayModal = false;
   public resultContext: ResultContext | null = null;
-  public colHeader: Array<string> = Array.from<string>({ length: 0 });
+  public colHeader: Array<string> = [];
   public headerSortBy = '';
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
   public displayResultPanel = false;
-  public categories: Array<string> = Array.from<string>({ length: 0 });
+  public categories: Array<string> = [];
   public titleResult: string | null = 'MENU.CONCORDANCE';
   public selectedCorpus: KeyValueItem | null = null;
 

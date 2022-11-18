@@ -59,22 +59,22 @@ const MULTI_ATTRIBUTE = [
 export class FrequencyOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton = false;
-  @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() public corpusAttributes: KeyValueItem[] = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public metadataFrequency = new EventEmitter<void>();
 
   public freqOptionsQueryRequest: FreqOptions = FreqOptions.build();
 
-  public attributeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public attributeList: Array<KeyValueItem> = [];
+  public levels: Array<KeyValueItem> = [];
   public selectedLevel: KeyValueItem | null = null;
   public selectedAttribute: KeyValueItem | null = null;
-  public selectedMultiAttribute: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
-  public positionList: Array<string> = Array.from<string>({ length: 0 });
-  public selectedPosition: Array<string> = Array.from<string>({ length: 0 });
+  public selectedMultiAttribute: Array<KeyValueItem> = [];
+  public ignoreCase: Array<boolean> = [];
+  public positionList: Array<string> = [];
+  public selectedPosition: Array<string> = [];
   public isMetadataFreq = true;
-  public metadataAttributes: Array<string> = Array.from<string>({ length: 0 });
+  public metadataAttributes: Array<string> = [];
 
 
   constructor(
@@ -117,8 +117,13 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public makeMetadataFreq(): void {
     this.isMetadataFreq = true;
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST;
-    this.setFrequencyOption(this.isMetadataFreq);
-    this.doMakeFrequency();
+    this.queryRequestService.getQueryRequest().frequencyQueryRequest = new FrequencyQueryRequest();
+    setTimeout(() => {
+      this.setFrequencyOption(this.isMetadataFreq);
+      this.doMakeFrequency();
+    }, 2000)
+    // this.setFrequencyOption(this.isMetadataFreq);
+    // this.doMakeFrequency();
   }
 
   public makeMultilevelFreq(): void {

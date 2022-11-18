@@ -34,7 +34,7 @@ export class MetadataUtilService {
       metadata.forEach(md => {
         if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
           md.tree = [];
-          let filteredSelections: Array<Selection> = Array.from<Selection>({ length: 0 });
+          let filteredSelections: Array<Selection> = [];
           if (this.textTypesRequest && this.textTypesRequest.multiSelects) {
             filteredSelections = this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name);
           }
@@ -61,7 +61,7 @@ export class MetadataUtilService {
         });
       }
       // genero albero flat per componente multiselect check box e single select
-      const obsArray = Array.from<any>({ length: 0 });
+      const obsArray: Array<any> = [];
       metadata.forEach(metadatum => {
         this.res.push(new KeyValueItem(metadatum.name, ''));
         if (metadatum.retrieveValuesFromCorpus) {

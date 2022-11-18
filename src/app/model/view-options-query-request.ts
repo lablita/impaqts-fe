@@ -60,8 +60,8 @@ export class ViewOptionsQueryRequest {
 
   public static getInstance(): ViewOptionsQueryRequest {
     return new ViewOptionsQueryRequest(
-      Array.from<string>({ length: 0 }),
-      Array.from<KeyValueItem>({ length: 0 }), Array.from<KeyValueItem>({ length: 0 }),
+      [],
+      [], [],
       '', false, false, 0, 0, false, false, 0, false, false, false, false, false, false);
   }
 }

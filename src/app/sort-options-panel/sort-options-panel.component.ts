@@ -66,8 +66,8 @@ export class SortOptionsPanelComponent implements OnInit {
   public selectedLevels: Array<KeyValueItem> = [];
   public positionList: string[] = [];
   public selectedPosition: string[] = [];
-  public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
-  public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
+  public ignoreCase: Array<boolean> = [];
+  public backward: Array<boolean> = [];
   public disableMultilevelChechbox: boolean[] = [false, false, false];
   public isSimpleSort = true;
 

@@ -42,7 +42,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public loading = false;
   public totalResults = 0;
   public firstItemTotalResults = 0;
-  public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
+  public kwicLines: Array<KWICline> = [];
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
   public displayModal = false;
@@ -50,8 +50,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
 
-  public descriptions: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
-  public fieldRequests: Array<FieldRequest> = Array.from<FieldRequest>({ length: 0 });
+  public descriptions: Array<DescResponse> = [];
+  public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
 
   private readonly queryResponseSubscription: Subscription;
