@@ -2,6 +2,7 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Ou
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Message } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { INSTALLATION, SHUFFLE } from '../model/constants';
@@ -166,7 +167,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         cci.tokens = d.tokens;
         cci.window = d.window;
         // TODO: usare items, cioè all, any, none
-        cci.item = 'all';
+        cci.lemmaFilterType = CONTEXT_TYPE_ALL;
         ccqr.items.push(cci);
       });
       fieldRequest.contextConcordance = ccqr;
@@ -193,20 +194,19 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         cci.attribute = d.attribute;
         const positionWindow = d.position.substring(1);
         const positionToken = d.position.substring(0, 1);
-        let window = 'LEFT';
+        let window = CONTEXT_WINDOW_LEFT;
         if (positionWindow === 'R') {
-          window = 'RIGHT';
+          window = CONTEXT_WINDOW_RIGHT;
         }
         cci.tokens = +positionToken;
         cci.window = window;
         // TODO: usare items, cioè all, any, none
-        cci.item = 'all';
+        cci.lemmaFilterType = CONTEXT_TYPE_ALL;
         ccqr.items.push(cci);
       });
       fieldRequest.contextConcordance = ccqr;
       this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
       this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
-      // fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
       this.emitterService.makeConcordanceRequestSubject.next(
         new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }

@@ -1,17 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CONTEXT_TYPE_ALL, CONTEXT_TYPE_ANY, CONTEXT_TYPE_NONE, CONTEXT_WINDOW_BOTH, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { QueryRequestService } from '../services/query-request.service';
 
 const WINDOWS = [
-  'LEFT',
-  'RIGHT',
-  'BOTH',
+  CONTEXT_WINDOW_LEFT,
+  CONTEXT_WINDOW_RIGHT,
+  CONTEXT_WINDOW_BOTH,
 ];
 
 const ITEMS = [
-  'ALL',
-  'ANY',
-  'NONE',
+  CONTEXT_TYPE_ALL,
+  CONTEXT_TYPE_ANY,
+  CONTEXT_TYPE_NONE,
 ];
 
 const TOKENS = [1, 2, 3, 4, 5, 7, 10, 15];
@@ -33,7 +34,7 @@ export class ContextConcordanceComponent implements OnInit {
   public tokens: number[] = Array.from<number>({ length: 0 });
 
   constructor(
-    private readonly queryRequestService: QueryRequestService
+    public readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {

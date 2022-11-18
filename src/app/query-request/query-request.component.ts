@@ -215,20 +215,11 @@ export class QueryRequestComponent implements OnInit {
       this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
       if (fieldRequest.contextConcordance && fieldRequest.contextConcordance.items
         && fieldRequest.contextConcordance.items.length > 0 && fieldRequest.contextConcordance.items[0].term) {
-        // query di contesto, vanno splittati gli item
+        //nelle query di contesto si invia un solo elemento
         this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
-        const contextRequestItem = fieldRequest.contextConcordance.items[0];
-        const terms = contextRequestItem.term.split(' ');
         const ccqr = new ContextConcordanceQueryRequest();
-        ccqr.items = terms.map(term => {
-          const cci = ContextConcordanceItem.getInstance();
-          cci.term = term;
-          cci.attribute = LEMMA;
-          cci.tokens = contextRequestItem.tokens;
-          cci.window = contextRequestItem.window;
-          cci.item = contextRequestItem.item;
-          return cci;
-        });
+        fieldRequest.contextConcordance.items.forEach(i => i.attribute = LEMMA);
+        ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
         this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
       }
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {

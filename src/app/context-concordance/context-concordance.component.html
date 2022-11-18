@@ -31,7 +31,7 @@
         <input class="mr-3" style="width: 40%;" id="lemmas" *ngIf="contextConcordanceQueryRequest" type="text"
           pInputText [(ngModel)]="contextConcordanceQueryRequest.items[0].term">
         <p-dropdown *ngIf="contextConcordanceQueryRequest" [options]="items"
-          [(ngModel)]="contextConcordanceQueryRequest.items[0].item" [showClear]="true">
+          [(ngModel)]="contextConcordanceQueryRequest.items[0].lemmaFilterType" [showClear]="true">
           <ng-template let-option pTemplate="item">
             {{'PAGE.CONCORDANCE.' + option | translate}}
           </ng-template>

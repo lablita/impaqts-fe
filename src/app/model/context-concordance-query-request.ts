@@ -1,3 +1,4 @@
+import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_BOTH } from '../common/concordance-constants';
 import { WORD } from '../common/query-constants';
 
 export class ContextConcordanceItem {
@@ -6,7 +7,7 @@ export class ContextConcordanceItem {
   tokens: number;
   term: string;
   attribute: string; // WORD, LEMMA, ...
-  item: string;
+  lemmaFilterType: string;
 
   constructor(
     window: string,
@@ -19,11 +20,11 @@ export class ContextConcordanceItem {
     this.tokens = token;
     this.term = term;
     this.attribute = attribute;
-    this.item = item;
+    this.lemmaFilterType = item;
   }
 
   public static getInstance(): ContextConcordanceItem {
-    return new ContextConcordanceItem('BOTH', 5, '', WORD, 'ALL');
+    return new ContextConcordanceItem(CONTEXT_WINDOW_BOTH, 5, '', WORD, CONTEXT_TYPE_ALL);
   }
 
 }
