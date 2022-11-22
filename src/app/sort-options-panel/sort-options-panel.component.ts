@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { L1, L2, L3, LEFT_CONTEXT, NODE, NODE_CONTEXT, R1, R2, R3, RIGHT_CONTEXT, SHUFFLE_CONTEXT, WORD } from '../common/sort-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { DEFAULT_SORT_OPTIONS_QUERY_REQUEST, SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request-dto';
@@ -225,6 +226,7 @@ export class SortOptionsPanelComponent implements OnInit {
 
   private setSortOption(isSimpleSort: boolean, sortQueryRequest: SortQueryRequest | null): void {
     this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.SORT_REQUEST;
     this.queryRequestService.getQueryRequest().sortQueryRequest = !!sortQueryRequest
       ? sortQueryRequest : this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
     localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));

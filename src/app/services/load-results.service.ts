@@ -153,7 +153,7 @@ export class LoadResultsService {
           }
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           // quick sort
-          if (queryRequest.queryType === REQUEST_TYPE.QUICK_SORT_REQUEST && fieldRequest.quickSort) {
+          if (queryRequest.queryType === REQUEST_TYPE.SORT_REQUEST && fieldRequest.quickSort) {
             queryRequest.start = 0;
             queryRequest.end = queryRequest.end > 0 ? queryRequest.end : 10;
             queryRequest.sortQueryRequest = fieldRequest.quickSort;
