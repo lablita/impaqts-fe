@@ -1,6 +1,7 @@
 import { AlignedDetail } from "./aligned-detail";
 import { CorpusAttribute } from "./corpus-attribute";
 import { CorpusInfoStrucuture } from "./corpus-info-structure";
+import { StructInfo } from "./struct-info";
 
 export class CorpusInfo {
   aligned: Array<string> = [];
@@ -27,6 +28,7 @@ export class CorpusInfo {
   righttoleft = false;
   shortref = '';
   sizes: any;
+  structs: Array<StructInfo> = [];
   structctx = '';
   structures: Array<CorpusInfoStrucuture> = [];
   // TODO

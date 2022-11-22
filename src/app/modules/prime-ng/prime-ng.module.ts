@@ -29,7 +29,7 @@ import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 import { TreeModule } from 'primeng/tree';
-
+import { TreeTableModule } from 'primeng/treetable';
 
 @NgModule({
   declarations: [],
@@ -64,7 +64,8 @@ import { TreeModule } from 'primeng/tree';
     DialogModule,
     ProgressBarModule,
     ChartModule,
-    PanelModule
+    PanelModule,
+    TreeTableModule,
   ],
   exports: [
     CommonModule,
@@ -97,7 +98,8 @@ import { TreeModule } from 'primeng/tree';
     DialogModule,
     ProgressBarModule,
     ChartModule,
-    PanelModule
+    PanelModule,
+    TreeTableModule
   ]
 })
 export class PrimeNgModule { }

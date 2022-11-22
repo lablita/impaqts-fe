@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TreeNode } from 'primeng/api';
 import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
 import { INSTALLATION } from '../model/constants';
 import { CorpusInfo } from '../model/corpusinfo/corpus-info';
@@ -35,6 +36,7 @@ export class CorpusInfoComponent implements OnInit {
 
   public corpusName: KeyValueItem | null = null;
   public corpusInfo: CorpusInfo | null = null;
+  public corpusStructureTree: Array<TreeNode> = [];
 
   constructor(
     private readonly corpusInfoService: CorpusInfoService
@@ -47,7 +49,12 @@ export class CorpusInfoComponent implements OnInit {
       this.corpusName = JSON.parse(selectedCorpus);
       const installation = JSON.parse(inst);
       if (this.corpusName && this.corpusName.value) {
-        this.corpusInfoService.getCorpusInfo(installation, this.corpusName.value).subscribe(corpusInfo => this.corpusInfo = corpusInfo);
+        this.corpusInfoService.getCorpusInfo(installation, this.corpusName.value).subscribe(corpusInfo => {
+          this.corpusInfo = corpusInfo;
+          if (this.corpusInfo) {
+            this.corpusStructureTree = this.getTree(this.corpusInfo);
+          }
+        });
       }
     }
 
@@ -88,6 +95,22 @@ export class CorpusInfoComponent implements OnInit {
       new CorpusInfoObj('PAGE.CORPUS_INFO.S', '15,835,675'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.ARTICLE', '572,515')
     ];
+  }
+
+  private getTree(corpusInfo: CorpusInfo): Array<TreeNode> {
+    return corpusInfo.structs.map(sInfo => {
+      const tn = {} as TreeNode;
+      tn.leaf = false;
+      tn.data = sInfo;
+      tn.children = sInfo.structItems.sort((sItem1, sItem2) => sItem1.name > sItem2.name ? 1 : -1).map(sItem => {
+        const tnItem = {} as TreeNode;
+        tnItem.data = sItem;
+        tnItem.leaf = true;
+        tnItem.parent = tn;
+        return tnItem;
+      });
+      return tn;
+    });
   }
 
 }
