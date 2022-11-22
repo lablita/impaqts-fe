@@ -1,63 +1,77 @@
-<p></p>
-<span class="p-component">
-  <h2>{{"PAGE.CONCORDANCE.CORPUS" | translate}} - {{"PAGE.CORPUS_INFO.STAT_INFO" | translate}}</h2>
-</span>
-<div class="p-d-flex p-flex-wrap">
-
-  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 240px;">
-    <p-table id="myTable" [value]="counts" styleClass="p-datatable-gridlines">
-      <ng-template pTemplate="caption">
-        {{countsLabel | translate}}
-      </ng-template>
-      <ng-template pTemplate="body" let-count>
-        <tr>
-          <td><b>{{count.label | translate | titlecase}}</b></td>
-          <td class="p-text-right">{{count.value}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+<h2 class="text-3xl font-medium p-component">{{"PAGE.CONCORDANCE.CORPUS" | translate}} - {{"PAGE.CORPUS_INFO.STAT_INFO"
+  | translate}}</h2>
+<p-panel header="{{countsLabel | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CONCORDANCE.TOKENS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.sizes.tokencount | number: '1.0-2' : 'it'}}
+    </div>
   </div>
-
-  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 340px;">
-    <p-table id="myTable" [value]="generalInfo" styleClass="p-datatable-gridlines">
-      <ng-template pTemplate="caption">
-        {{generalInfosLabel | translate}}
-      </ng-template>
-      <ng-template pTemplate="body" let-genInfo>
-        <tr>
-          <td><b>{{genInfo.label | translate | titlecase}}</b></td>
-          <td *ngIf="!genInfo.url" class="p-text-right">{{genInfo.value}}</td>
-          <td *ngIf="genInfo.url" class="p-text-right"><a href="{{genInfo.url}}">{{genInfo.value}}</a></td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.WORDS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.sizes.wordcount | number: '1.0-2' : 'it'}}
+    </div>
   </div>
-
-  <div class="p-d-flex p-mt-6 p-mb-6 p-mr-6 p-d-inline" style="width: 240px;">
-    <p-table [value]="counts" styleClass="p-datatable-gridlines">
-      <ng-template pTemplate="caption">
-        {{lexiconSizesLabel | translate}}
-      </ng-template>
-      <ng-template pTemplate="body" let-count>
-        <tr>
-          <td><b>{{count.label | translate | lowercase}}</b></td>
-          <td class="p-text-right">{{count.value}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.SENTENCES' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.sizes.sentcount | number: '1.0-2' : 'it'}}
+    </div>
   </div>
-</div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.PARAGRAPHS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.sizes.parcount | number: '1.0-2' : 'it'}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.DOCUMENTS' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.sizes.doccount | number: '1.0-2' : 'it'}}
+    </div>
+  </div>
+</p-panel>
 
-<span class="p-component">
-  <h3>{{"PAGE.CORPUS_INFO.STRUCT_ATTR" | translate}}</h3>
-</span>
-<div class="p-d-flex p-mb-3 p-mr-3" style="width: 240px;">
-  <p-table id="struct_attr" [value]="structArt">
-    <ng-template pTemplate="body" let-strArt>
-      <tr>
-        <td><b>{{strArt.label | translate | lowercase}}</b></td>
-        <td class="p-text-right">{{strArt.value}}</td>
-      </tr>
+
+<p-panel header="{{generalInfosLabel | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.LANGUAGE' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.lang}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.ENCODING' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.encoding}}
+    </div>
+  </div>
+  <div class="field grid">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{'PAGE.CORPUS_INFO.COMPILED' | translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{corpusInfo.compiled | date : 'full'}}
+    </div>
+  </div>
+</p-panel>
+<p-panel header="{{lexiconSizesLabel | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <div class="field grid" *ngFor="let att of corpusInfo.attributes">
+    <div class="col-12 mb-4 md:col-2 md:mb-0 label">{{att.name| translate | titlecase}}</div>
+    <div class="col-12 md:col-10">
+      {{att.idRange | number: '1.0-2' : 'it'}}
+    </div>
+  </div>
+</p-panel>
+<p-panel header="{{'PAGE.CORPUS_INFO.STRUCT_ATTR' | translate}}" [toggleable]="true" *ngIf="corpusInfo">
+  <p-treeTable [value]="corpusStructureTree">
+    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+      <div class="field grid" [ttRow]="rowNode">
+        <div class="col-12 mb-4 md:col-2 md:mb-0 label">
+          <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+          {{rowData.name}}
+        </div>
+        <div class="col-12 md:col-10">{{rowData.count}}</div>
+      </div>
     </ng-template>
-  </p-table>
-</div>
+  </p-treeTable>
+</p-panel>

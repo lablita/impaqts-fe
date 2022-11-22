@@ -255,7 +255,7 @@ export class VisualQueryComponent implements OnInit {
   }
 
   private setCorpus(corpus: Corpus): void {
-
+    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
     this.metadataUtilService.createMatadataTree(
       `${corpus.id}`, this.installation, true).subscribe(
         {
