@@ -124,6 +124,7 @@ export class QueryRequestComponent implements OnInit {
     this.displayPanelService.reset();
     this.queryRequestService.resetOptionsRequest();
     const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
+    localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
     if (selectedCorpus) {
       const selectedCorpusId = selectedCorpus.key;
       this.emitterService.spinnerMetadata.emit(true);

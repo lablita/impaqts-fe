@@ -1,4 +1,5 @@
 import { CollocationItem } from './collocation-item';
+import { CorpusInfo } from './corpusinfo/corpus-info';
 import { DescResponse } from './desc-response';
 import { ErrorResponse } from './error-response';
 import { FrequencyItem } from './frequency-item';
@@ -14,6 +15,7 @@ export class QueryResponse {
   currentSize = 0;
   errorMessage = '';
   wideContextResponse: WideContextResponse | null = null;
+  corpusInfo: CorpusInfo | null = null;
   errorResponse: ErrorResponse | null = null;
 
   // not sent by BE
