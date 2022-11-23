@@ -46,11 +46,14 @@ export class QueryRequestComponent implements OnInit {
   public displayQueryType = false;
   public queryTypes: Array<string> = [];
   public lemma = '';
+  public DEFAULT_SELECTED_QUERY_TYPE = DEFAULT_SELECTED_QUERY_TYPE;
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
+
+  //queryRequestForm.value.selectedQueryType && (queryRequestForm.value.selectedQueryType !== DEFAULT_SELECTED_QUERY_TYPE)
 
   public queryRequestForm = new UntypedFormGroup({
     selectedCorpus: new UntypedFormControl(null),
@@ -169,6 +172,65 @@ export class QueryRequestComponent implements OnInit {
     this.selectedCorpusChange.emit(selectedCorpus);
   }
 
+  
+  public makeConcordances(): void {
+    localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
+    localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
+    this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.resetQueryPattern();
+    let typeSearch = ['Query'];
+    this.titleResultChange.emit('MENU.CONCORDANCE');
+
+    // concordance Context
+    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    const queryRequest = this.queryRequestService.getQueryRequest();
+    if (fieldRequest) {
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+      if (fieldRequest.contextConcordance && fieldRequest.contextConcordance.items
+        && fieldRequest.contextConcordance.items.length > 0 && fieldRequest.contextConcordance.items[0].term) {
+        //nelle query di contesto si invia un solo elemento
+        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+        const ccqr = new ContextConcordanceQueryRequest();
+        fieldRequest.contextConcordance.items.forEach(i => i.attribute = LEMMA);
+        ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
+        this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+      }
+      if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
+        typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      }
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+      }
+    }
+    
+    public clickQueryType(): void {
+    this.displayQueryType = !this.displayQueryType;
+  }
+  
+  public clickContext(): void {
+    this.displayContext = !this.displayContext;
+    this.clearContextFields();
+  }
+  
+  public clickTextType(): void {
+    this.textTypeStatus = true;
+    this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
+  }
+
+  public clearContextFields(): void {
+    this.queryRequestService.clearContextConcordanceQueryRequest();
+  }
+
+  public queryTypeClick(queryType: string): void {
+    if (queryType !== SIMPLE) {
+      const simpleCtrl = this.queryRequestForm.get(SIMPLE);
+      if (simpleCtrl) {
+        simpleCtrl.disable();
+      }
+    }
+  }
+  
   private setCorpus(corpus: Corpus): void {
     this.metadataQueryService.clearMetadata();
     const installation = this.installation;
@@ -200,59 +262,10 @@ export class QueryRequestComponent implements OnInit {
 
   }
 
-  public makeConcordances(): void {
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
-    localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
-    this.queryRequestService.resetOptionsRequest();
-    this.queryRequestService.resetQueryPattern();
-    let typeSearch = ['Query'];
-    this.titleResultChange.emit('MENU.CONCORDANCE');
-
-    // concordance Context
-    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
-    const queryRequest = this.queryRequestService.getQueryRequest();
-    if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
-      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
-      if (fieldRequest.contextConcordance && fieldRequest.contextConcordance.items
-        && fieldRequest.contextConcordance.items.length > 0 && fieldRequest.contextConcordance.items[0].term) {
-        //nelle query di contesto si invia un solo elemento
-        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
-        const ccqr = new ContextConcordanceQueryRequest();
-        fieldRequest.contextConcordance.items.forEach(i => i.attribute = LEMMA);
-        ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
-        this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
-      }
-      if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
-        typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
-      }
-      this.emitterService.makeConcordanceRequestSubject.next(
-        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
-    }
-  }
-
-  public clickQueryType(): void {
-    this.displayQueryType = !this.displayQueryType;
-  }
-
-  public clickContext(): void {
-    this.displayContext = !this.displayContext;
-    this.clearContextFields();
-  }
-
-  public clickTextType(): void {
-    this.textTypeStatus = true;
-    this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
-  }
-
-  public clearContextFields(): void {
-    this.queryRequestService.clearContextConcordanceQueryRequest();
-  }
-
   private closeWebSocket(): void {
     this.socketService.closeSocket();
   }
-
+  
   private hideQueryTypeAndContext(): void {
     this.displayContext = false;
     this.displayQueryType = false;

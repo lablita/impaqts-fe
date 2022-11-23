@@ -99,26 +99,25 @@ export class LoadResultsService {
           switch (fieldRequest.selectedQueryType) {
             case WORD:
               fieldRequest.simpleResult = fieldRequest.word;
-              tag = new QueryTag('word', fieldRequest.word);
+              tag = new QueryTag(TOKEN, 'word', fieldRequest.word);
               tag.matchCase = fieldRequest.matchCase;
               queryTags.push(tag);
               break;
             case LEMMA:
               fieldRequest.simpleResult = fieldRequest.lemma;
-              queryTags.push(new QueryTag('lemma', fieldRequest.lemma));
+              queryTags.push(new QueryTag(TOKEN, 'lemma', fieldRequest.lemma));
               break;
             case PHRASE:
               fieldRequest.simpleResult = fieldRequest.phrase;
-              queryTags.push(new QueryTag('phrase', fieldRequest.phrase));
+              queryTags.push(new QueryTag(TOKEN, 'phrase', fieldRequest.phrase));
               break;
             case CHARACTER:
               fieldRequest.simpleResult = fieldRequest.character;
-              queryTags.push(new QueryTag('character', fieldRequest.character));
+              queryTags.push(new QueryTag(TOKEN, 'character', fieldRequest.character));
               break;
             case CQL:
               fieldRequest.simpleResult = fieldRequest.cql;
-              tag = new QueryTag('cql', fieldRequest.cql);
-              queryTags.push(new QueryTag('cql', fieldRequest.cql));
+              queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
               break;
             default: // SIMPLE
               fieldRequest.simpleResult = fieldRequest.simple;
