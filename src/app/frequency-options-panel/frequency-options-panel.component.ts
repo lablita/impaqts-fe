@@ -9,23 +9,22 @@ import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query
 import { KeyValueItem } from '../model/key-value-item';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
-import { EmitterService } from '../utils/emitter.service';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 
 const POSITION_LIST = [
-  L6, 
-  L5, 
-  L4, 
-  L3, 
-  L2, 
-  L1, 
+  L6,
+  L5,
+  L4,
+  L3,
+  L2,
+  L1,
   NODE,
-  R1, 
-  R2, 
-  R3, 
-  R4, 
-  R5, 
+  R1,
+  R2,
+  R3,
+  R4,
+  R5,
   R6
 ];
 
@@ -118,13 +117,10 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.isMetadataFreq = true;
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST;
     this.queryRequestService.getQueryRequest().frequencyQueryRequest = new FrequencyQueryRequest();
-    
-    setTimeout(() => {
-      this.setFrequencyOption(this.isMetadataFreq);
-      this.doMakeFrequency();
-    }, 100)
-    // this.setFrequencyOption(this.isMetadataFreq);
-    // this.doMakeFrequency();
+
+    this.setFrequencyOption(this.isMetadataFreq);
+    this.doMakeFrequency();
+
   }
 
   public makeMultilevelFreq(): void {

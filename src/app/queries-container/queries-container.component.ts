@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import { QUERY } from '../common/routes-constants';
@@ -71,8 +71,7 @@ export class QueriesContainerComponent implements OnInit {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     public readonly displayPanelService: DisplayPanelService,
-    //private readonly queryRequestService: QueryRequestService
-    public readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {

@@ -271,12 +271,11 @@ export class LoadResultsService {
     // TODO: add distinctUntilChanged with custom comparison
     return socketServiceSubject.pipe(
       map(resp => {
-        let queryResponse = resp as QueryResponse;
+        const queryResponse = resp as QueryResponse;
         if (queryResponse && queryResponse.errorResponse) {
           if (queryResponse.errorResponse.errorCode === 403) {
             return this.handleForbiddenResponse(queryResponse);
           }
-          queryResponse = new QueryResponse();
           queryResponse.error = true;
           return queryResponse;
         } else {

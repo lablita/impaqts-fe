@@ -23,7 +23,7 @@
         </ng-container>
 
         <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
-          <app-frequency-table *ngFor="let category of queryRequestService.getQueryRequest().frequencyQueryRequest?.categories, let i=index"
+          <app-frequency-table *ngFor="let category of categories, let i=index"
             [visible]="titleResult==='MENU.FREQUENCY' && categories && categories.length>0" [category]="category"
             [first]="i===0" (titleResult)="setTitleResult($event)">
           </app-frequency-table>
