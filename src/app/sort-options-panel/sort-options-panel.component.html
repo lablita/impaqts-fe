@@ -80,7 +80,7 @@
               <div class="mb-4 ml-2">
                 <p-checkbox name="level" [binary]="true" [(ngModel)]="sortOptionsQueryRequest.sortOptionList[i].level"
                   (onChange)="levelCheck($event, i+1)" [disabled]="(i+1) < sortOptionsQueryRequest.levelSelected"
-                  [label]="('PAGE.CONCORDANCE.SORT_OPTIONS.' + level.value) | translate">
+                  [label]="('PAGE.CONCORDANCE.SORT_OPTIONS.' + level) | translate">
                 </p-checkbox>
               </div>
               <div class="field ml-2 mb-3">
@@ -102,7 +102,7 @@
               </div>
               <div class="field ml-2">
                 <p-dropdown [options]="positionList" [(ngModel)]="sortOptionsQueryRequest.sortOptionList[i].position"
-                  optionLabel="value" optionValue="key" [showClear]="true">
+                 [showClear]="true">
                 </p-dropdown>
               </div>
             </div>

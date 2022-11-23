@@ -158,7 +158,7 @@
         "SECOND_LEVEL": "second level",
         "THIRD_LEVEL": "third level",
         "CLEAR_FREQ_OPT": "Valori Default",
-        "FREQ_CONCORDANCE": "Frequenza Concordanze"
+        "METADATA_FREQ": "Frequenza Metadata"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
@@ -275,6 +275,11 @@
     "ADMIN_ROLE": "Amministratore",
     "ADVANCEDUSER_ROLE": "Utente avanzato",
     "USER_ROLE": "Utente semplice"
+  },
+  "RESPONSE": {
+    "NEGATIVE_FILTER": "Filtro Negativo",
+    "POSITIVE_FILTER": "Filtro Positivo",
+    "QUERY": "Richiesta"
   },
   "LANGUAGE": {
     "IT": "ITA",

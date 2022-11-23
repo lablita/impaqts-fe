@@ -1,4 +1,4 @@
-import { ContextConcordanceQueryRequestDTO } from './context-concordance-query-request-dto';
+import { ContextConcordanceQueryRequest } from './context-concordance-query-request';
 import { KeyValueItem } from './key-value-item';
 import { SortQueryRequest } from './sort-query-request';
 
@@ -12,14 +12,14 @@ export class FieldRequest {
   character = '';
   cql = '';
   matchCase = false;
-  selectedQueryType: KeyValueItem | null = null;
-  contextConcordance: ContextConcordanceQueryRequestDTO | null = null;
+  selectedQueryType: string | null = null;
+  contextConcordance: ContextConcordanceQueryRequest | null = null;
   quickSort?: SortQueryRequest | null = null;
 
   public static build(
     selectedCorpus: KeyValueItem | null, simpleResult: string, simple: string, lemma: string,
     phrase: string, word: string, character: string, cql: string, matchCase: boolean,
-    selectedQueryType: KeyValueItem | null): FieldRequest {
+    selectedQueryType: string | null): FieldRequest {
     const fieldRequest = new FieldRequest();
     fieldRequest.selectedCorpus = selectedCorpus;
     fieldRequest.simpleResult = simpleResult;

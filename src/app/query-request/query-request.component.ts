@@ -4,11 +4,12 @@ import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, SIMPLE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
@@ -23,7 +24,7 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
-const DEFAULT_SELECTED_QUERY_TYPE = new KeyValueItem(SIMPLE, SIMPLE);
+const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
 @Component({
   selector: 'app-query-request',
@@ -40,10 +41,10 @@ export class QueryRequestComponent implements OnInit {
   public corpusList: KeyValueItem[] = [];
   public selectCorpus = SELECT_CORPUS_LABEL;
 
-  public selectedQueryType: KeyValueItem | null = null;
+  public selectedQueryType: string | null = null;
   public displayContext = false;
   public displayQueryType = false;
-  public queryTypes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public queryTypes: Array<string> = [];
   public lemma = '';
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
@@ -90,11 +91,11 @@ export class QueryRequestComponent implements OnInit {
     }
     this.queryTypes = [
       DEFAULT_SELECTED_QUERY_TYPE,
-      new KeyValueItem(LEMMA, LEMMA),
-      new KeyValueItem(WORD, WORD),
-      new KeyValueItem(PHRASE, PHRASE),
-      new KeyValueItem(CHARACTER, CHARACTER),
-      new KeyValueItem(CQL, CQL)
+      LEMMA,
+      WORD,
+      PHRASE,
+      CHARACTER,
+      CQL
     ];
     this.setBasicFieldRequest();
     this.queryRequestForm.valueChanges.subscribe(change => {
@@ -203,19 +204,30 @@ export class QueryRequestComponent implements OnInit {
     localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
     localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
     this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.resetQueryPattern();
     let typeSearch = ['Query'];
     this.titleResultChange.emit('MENU.CONCORDANCE');
 
     // concordance Context
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    const queryRequest = this.queryRequestService.getQueryRequest();
     if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      if (this.queryRequestService.queryRequest.sortQueryRequest
-        && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
-        typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
-          ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+      if (fieldRequest.contextConcordance && fieldRequest.contextConcordance.items
+        && fieldRequest.contextConcordance.items.length > 0 && fieldRequest.contextConcordance.items[0].term) {
+        //nelle query di contesto si invia un solo elemento
+        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+        const ccqr = new ContextConcordanceQueryRequest();
+        fieldRequest.contextConcordance.items.forEach(i => i.attribute = LEMMA);
+        ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
+        this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
       }
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
+        typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      }
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }
   }
 
@@ -234,7 +246,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   public clearContextFields(): void {
-    this.queryRequestService.clearContextConcordanceQueryRequestDTO();
+    this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
   private closeWebSocket(): void {
@@ -262,7 +274,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   private toggleSimpleDisabling(newSelectedCorpus: KeyValueItem): void {
-    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType.key !== 'simple');
+    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType !== 'simple');
     if (disabled) {
       this.queryRequestForm.get('simple')?.disable();
     } else {

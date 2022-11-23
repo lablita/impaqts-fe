@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationOptionsQueryRequestDTO, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request-dto';
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -20,17 +21,20 @@ const STAT_DESC: { [key: string]: string } = {
 };
 
 const OPTIOIN_LIST = [
-  new KeyValueItem('T_SCORE', 'T_SCORE'),
-  new KeyValueItem('MI', 'MI'), new KeyValueItem('MI3', 'MI3'),
-  new KeyValueItem('LOG', 'LOG'), new KeyValueItem('MIN', 'MIN'),
-  new KeyValueItem('LOG_DICE', 'LOG_DICE'), new KeyValueItem('MI_LOG', 'MI_LOG')
+  'T_SCORE',
+  'MI',
+  'MI3',
+  'LOG',
+  'MIN',
+  'LOG_DICE',
+  'MI_LOG'
 ];
 
 const ATTRIBUTE_LIST = [
-  new KeyValueItem('WORD', 'WORD'),
-  new KeyValueItem('TAG', 'TAG'),
-  new KeyValueItem('LEMMA', 'LEMMA')
-];
+  'WORD', 
+  'TAG', 
+  'LEMMA'
+]
 
 @Component({
   selector: 'app-collocation-options-panel',
@@ -44,8 +48,8 @@ export class CollocationOptionsPanelComponent {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
-  public attributeList: KeyValueItem[] = ATTRIBUTE_LIST;
-  public optionList: KeyValueItem[] = OPTIOIN_LIST;
+  public attributeList: string[] = ATTRIBUTE_LIST;
+  public optionList: string[] = OPTIOIN_LIST;
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
@@ -61,10 +65,13 @@ export class CollocationOptionsPanelComponent {
   }
 
 
-  public loadCollocationsOption(): void {
+  public retrieveCollocations(): void {
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
-    this.queryRequestService.queryRequest.collocationQueryRequest = this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
+    this.queryRequestService.resetQueryPattern();
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.COLLOCATION_REQUEST;
+    this.queryRequestService.getQueryRequest().collocationQueryRequest =
+      this.collocationQueryRequestBuild(this.collocationOptionsQueryRequest);
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
       this.emitterService.makeCollocation.next(basicFieldRequest);

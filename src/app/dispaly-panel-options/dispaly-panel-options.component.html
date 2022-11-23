@@ -21,7 +21,7 @@
   </app-sort-options-panel>
   <app-frequency-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === FREQUENCY"
     [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceFrequency)="loadFrequencies($event)">
+    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (metadataFrequency)="loadFrequencies()">
   </app-frequency-options-panel>
   <app-collocation-options-panel *ngIf="(displayPanelService.panelSelectedSubject | async) === COLLOCATIONS"
     [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"

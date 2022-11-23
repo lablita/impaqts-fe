@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { L1, L2, L3, LEFT_CONTEXT, NODE, NODE_CONTEXT, R1, R2, R3, RIGHT_CONTEXT, SHUFFLE_CONTEXT, WORD } from '../common/sort-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { DEFAULT_SORT_OPTIONS_QUERY_REQUEST, SortOptionDTO, SortOptionsQueryRequestDTO } from '../model/sort-options-query-request-dto';
@@ -10,19 +11,19 @@ import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.serv
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
 const POSITION_LIST = [
-  new KeyValueItem(L3, L3),
-  new KeyValueItem(L2, L2),
-  new KeyValueItem(L1, L1),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(R1, R1),
-  new KeyValueItem(R2, R2),
-  new KeyValueItem(R3, R3),
+  L3,
+  L2,
+  L1,
+  NODE,
+  R1,
+  R2,
+  R3
 ];
 
 const SELECTED_POSITION = [
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
+  NODE,
+  NODE,
+  NODE,
 ];
 
 const SORT_KEYS = [
@@ -31,16 +32,18 @@ const SORT_KEYS = [
   new KeyValueItem('RIGHT_CONTEXT', 'PAGE.CONCORDANCE.SORT_OPTIONS.RIGHT_CONTEXT')
 ];
 
-const LEVELS = [new KeyValueItem('FIRST_LEVEL', 'FIRST_LEVEL'),
-new KeyValueItem('SECOND_LEVEL', 'SECOND_LEVEL'),
-new KeyValueItem('THIRD_LEVEL', 'THIRD_LEVEL')
-];
+const LEVELS = [
+  'FIRST_LEVEL', 
+  'SECOND_LEVEL',
+  'THIRD_LEVEL'
+] 
 
 const MULTI_ATTRIBUTE = [
-  new KeyValueItem('WORD', 'WORD'),
-  new KeyValueItem('WORD', 'WORD'),
-  new KeyValueItem('WORD', 'WORD')
-];
+  'WORD',
+  'WORD',
+  'WORD'
+]
+
 @Component({
   selector: 'app-sort-options-panel',
   templateUrl: './sort-options-panel.component.html',
@@ -49,7 +52,7 @@ const MULTI_ATTRIBUTE = [
 export class SortOptionsPanelComponent implements OnInit {
 
   @Input() public showRightButton = false;
-  @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() public corpusAttributes: KeyValueItem[] = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public concordanceSort = new EventEmitter<SortQueryRequest>();
 
@@ -61,11 +64,11 @@ export class SortOptionsPanelComponent implements OnInit {
   public sortKeys = SORT_KEYS;
   public selectedSortKey: KeyValueItem | null = null;
   public levels = LEVELS;
-  public selectedLevels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public positionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
-  public selectedPosition: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
-  public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
-  public backward: Array<boolean> = Array.from<boolean>({ length: 0 });
+  public selectedLevels: Array<KeyValueItem> = [];
+  public positionList: string[] = [];
+  public selectedPosition: string[] = [];
+  public ignoreCase: Array<boolean> = [];
+  public backward: Array<boolean> = [];
   public disableMultilevelChechbox: boolean[] = [false, false, false];
   public isSimpleSort = true;
 
@@ -88,7 +91,8 @@ export class SortOptionsPanelComponent implements OnInit {
     if (soqr) {
       this.sortOptionsQueryRequest = JSON.parse(soqr);
     }
-    this.isSimpleSort = this.queryRequestService.queryRequest.sortQueryRequest === null ? true : !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey;
+    const queryRequest = this.queryRequestService.getQueryRequest();
+    this.isSimpleSort = queryRequest.sortQueryRequest === null ? true : !!queryRequest.sortQueryRequest.sortKey;
   }
 
   public closeSidebar(): void {
@@ -123,6 +127,7 @@ export class SortOptionsPanelComponent implements OnInit {
   }
 
   public clickLeft(): void {
+    //const sortOptionList = this.sortOptionsQueryRequest.sortOptionList;
     const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
       WORD,
       LEFT_CONTEXT,
@@ -130,11 +135,13 @@ export class SortOptionsPanelComponent implements OnInit {
       false,
       false,
       0,
-      []
+      [],
+      false
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
+    this.makeConcordances();
   }
 
   public clickRight(): void {
@@ -145,11 +152,13 @@ export class SortOptionsPanelComponent implements OnInit {
       false,
       false,
       0,
-      []
+      [],
+      false
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
+    this.makeConcordances();
   }
 
   public clickNode(): void {
@@ -160,11 +169,13 @@ export class SortOptionsPanelComponent implements OnInit {
       false,
       false,
       0,
-      []
+      [],
+      false
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
+    this.makeConcordances();
   }
 
   public clickShuffle(): void {
@@ -175,11 +186,13 @@ export class SortOptionsPanelComponent implements OnInit {
       false,
       false,
       0,
-      []
+      [],
+      false
     );
     const sortQueryRequest = this.sortQueryRequestBuild(sortOptionsQueryRequest, true);
     this.setSortOption(true, sortQueryRequest);
     this.concordanceSort.emit(sortQueryRequest);
+    this.makeConcordances();
   }
 
   public levelCheck(event: any, i: number): void {
@@ -191,60 +204,58 @@ export class SortOptionsPanelComponent implements OnInit {
 
   private sortQueryRequestBuild(sortOptionsQueryRequest: SortOptionsQueryRequestDTO, isSimpleSort: boolean): SortQueryRequest {
     const res = new SortQueryRequest();
-    if (isSimpleSort) {
-      res.attribute = sortOptionsQueryRequest.attribute;
-      res.sortKey = sortOptionsQueryRequest.sortKey;
-      res.numberTokens = sortOptionsQueryRequest.numberTokens;
-      res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
-      res.backward = sortOptionsQueryRequest.backward;
-    } else {
-      for (let i = 0; i < sortOptionsQueryRequest.levelSelected; i++) {
-        const sortOption = new SortOptionDTO(
-          false,
-          sortOptionsQueryRequest.sortOptionList[i].attribute,
-          sortOptionsQueryRequest.sortOptionList[i].ignoreCase,
-          sortOptionsQueryRequest.sortOptionList[i].backward,
-          sortOptionsQueryRequest.sortOptionList[i].position
-        );
-        res.multilevelSort.push(sortOption);
-      }
+    res.attribute = sortOptionsQueryRequest.attribute;
+    res.sortKey = sortOptionsQueryRequest.sortKey;
+    res.numberTokens = sortOptionsQueryRequest.numberTokens;
+    res.ignoreCase = sortOptionsQueryRequest.ignoreCase;
+    res.backward = sortOptionsQueryRequest.backward;
+    res.multilevel = false;
+    for (let i = 0; i < sortOptionsQueryRequest.levelSelected; i++) {
+      const sortOption = new SortOptionDTO(
+        false,
+        sortOptionsQueryRequest.sortOptionList[i].attribute,
+        sortOptionsQueryRequest.sortOptionList[i].ignoreCase,
+        sortOptionsQueryRequest.sortOptionList[i].backward,
+        sortOptionsQueryRequest.sortOptionList[i].position
+      );
+      res.multilevelSort.push(sortOption);
     }
+    res.multilevel = !this.isSimpleSort;
     return res;
   }
 
-  private setSortOption(isSimpleSort: boolean, quickSortQueryRequest: SortQueryRequest | null): void {
+  private setSortOption(isSimpleSort: boolean, sortQueryRequest: SortQueryRequest | null): void {
     this.queryRequestService.resetOptionsRequest();
-    if (this.sortOptionsQueryRequest) {
-      this.queryRequestService.queryRequest.sortQueryRequest = !!quickSortQueryRequest
-        ? quickSortQueryRequest : this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
-      localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
-    }
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.SORT_REQUEST;
+    this.queryRequestService.getQueryRequest().sortQueryRequest = !!sortQueryRequest
+      ? sortQueryRequest : this.sortQueryRequestBuild(this.sortOptionsQueryRequest, isSimpleSort);
+    localStorage.setItem(SORT_OPTIONS_QUERY_REQUEST, JSON.stringify(this.sortOptionsQueryRequest));
   }
 
   private getSortOption(): SortQueryRequest | null {
-    if (this.queryRequestService.queryRequest && this.queryRequestService.queryRequest.sortQueryRequest) {
-      return this.queryRequestService.queryRequest.sortQueryRequest;
+    if (this.queryRequestService.getQueryRequest() && this.queryRequestService.getQueryRequest().sortQueryRequest) {
+      return this.queryRequestService.getQueryRequest().sortQueryRequest;
     }
     return null;
   }
 
-  private makeConcordances(sortQueryRequest?: SortQueryRequest): void {
-    if (!sortQueryRequest) {
-      this.queryRequestService.resetOptionsRequest();
-    }
+  private makeConcordances(): void {
+    const sortQueryRequest = this.queryRequestService.getQueryRequest().sortQueryRequest;
+    this.queryRequestService.resetQueryPattern();
     let typeSearch = ['Query'];
-    // concordance Context
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    const queryRequest = this.queryRequestService.getQueryRequest();
     if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
       if (sortQueryRequest && !!sortQueryRequest.sortKey) {
         typeSearch = ['Sort', sortQueryRequest.sortKey];
-      } else if (this.queryRequestService.queryRequest.sortQueryRequest
-        && this.queryRequestService.queryRequest.sortQueryRequest !== undefined) {
-        typeSearch = ['Sort', !!this.queryRequestService.queryRequest.sortQueryRequest.sortKey
-          ? this.queryRequestService.queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      } else if (queryRequest.sortQueryRequest
+        && queryRequest.sortQueryRequest !== undefined) {
+        typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey
+          ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }
   }
 

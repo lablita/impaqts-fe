@@ -2,9 +2,11 @@ import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Ou
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Message } from 'primeng/api';
 import { Subscription } from 'rxjs';
-import { CHARACTER, CQL, LEMMA, PHRASE, WORD } from '../common/query-constants';
+import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
+import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { INSTALLATION, SHUFFLE } from '../model/constants';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
@@ -33,14 +35,14 @@ const SORT_LABELS = [
 export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
-  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
+  @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
   @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
 
   public loading = false;
   public totalResults = 0;
   public firstItemTotalResults = 0;
-  public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
+  public kwicLines: Array<KWICline> = [];
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
   public displayModal = false;
@@ -48,11 +50,12 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
 
-  public descriptions: Array<DescResponse> = Array.from<DescResponse>({ length: 0 });
-  public fieldRequests: Array<FieldRequest> = Array.from<FieldRequest>({ length: 0 });
-  public queryWithContext = false;
+  public descriptions: Array<DescResponse> = [];
+  public fieldRequests: Array<FieldRequest> = [];
+  public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
 
   private readonly queryResponseSubscription: Subscription;
+  private makeConcordanceRequestSubscription: Subscription | null = null;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -64,6 +67,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
+      this.queryType = this.queryRequestService.getQueryRequest().queryType;
       if (queryResponse) {
         if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
@@ -79,7 +83,6 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
           this.kwicLines = queryResponse.kwicLines;
           this.noResultFound = queryResponse.currentSize < 1;
           this.descriptions = queryResponse.descResponses;
-          this.queryWithContext = queryResponse.descResponses && queryResponse.descResponses.length > 0;
         } else {
           this.totalResults = 0;
           this.kwicLines = [];
@@ -91,11 +94,11 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   ngAfterViewInit(): void {
-    this.emitterService.makeConcordance.subscribe(res => {
+    this.makeConcordanceRequestSubscription = this.emitterService.makeConcordanceRequestSubject.subscribe(res => {
       this.fieldRequests = [];
       this.loading = true;
-      if (res.concordances.length > 0 || !!res.qp) {
-        if (!res.qp) {
+      if (res.concordances.length > 0) {
+        if (res.concordances.length > 0) {
           res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
           if (res.concordances[res.pos].sortOptions.length > 1) {
             const foundSortOption = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1]);
@@ -108,8 +111,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
           this.fieldRequests = [res.concordances[0].fieldRequest];
         }
         this.sortOptions = res.concordances[res.pos].sortOptions;
-        this.loadResultService.loadResults(this.fieldRequests, undefined, res.qp);
-
+        this.loadResultService.loadResults(this.fieldRequests, undefined);
       }
     });
   }
@@ -117,6 +119,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   ngOnDestroy(): void {
     if (this.queryResponseSubscription) {
       this.queryResponseSubscription.unsubscribe();
+    }
+    if (this.makeConcordanceRequestSubscription) {
+      this.makeConcordanceRequestSubscription.unsubscribe();
     }
   }
 
@@ -128,6 +133,18 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
+  public isQueryWithContext(): boolean {
+    return this.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+  }
+
+  public isQueryWithContextFromFrequencyPN(): boolean {
+    return this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST || this.queryType === REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
+  }
+
+  public isTextualQuery(): boolean {
+    return this.queryType === REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+  }
+
   public loadConcordance(event: any): void {
     if (this.fieldRequests) {
       this.loading = true;
@@ -135,20 +152,63 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
-  public makeConcordanceFromBreadcrumbs(idx?: number): void {
-    if ((idx !== undefined && idx >= 0)) {
-      this.queryRequestService.getContextConcordanceQueryRequestDTO().lemma =
-        this.queryRequestService.getContextConcordanceQueryRequestDTO().lemma.split(' ').slice(0, idx + 1).join(' ');
-    } else {
-      this.queryRequestService.clearContextConcordanceQueryRequestDTO();
-    }
+  public makeConcordanceFromBreadcrumbs(idx: number): void {
+    const descriptionsForContextQuery = this.descriptions.slice(0, idx + 1);
     this.queryRequestService.resetOptionsRequest();
     const typeSearch = ['Query'];
     // concordance Context
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
-      this.emitterService.makeConcordance.next(new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0, null));
+      const ccqr = new ContextConcordanceQueryRequest();
+      descriptionsForContextQuery.forEach(d => {
+        const cci = ContextConcordanceItem.getInstance();
+        cci.term = d.term;
+        cci.attribute = LEMMA;
+        cci.tokens = d.tokens;
+        cci.window = d.window;
+        // TODO: usare items, cioè all, any, none
+        cci.lemmaFilterType = CONTEXT_TYPE_ALL;
+        ccqr.items.push(cci);
+      });
+      fieldRequest.contextConcordance = ccqr;
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+      this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+      // fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+    }
+  }
+
+  public makeConcordanceFromFrequencyPN(idx: number): void {
+    const descriptionsForContextQuery = this.descriptions.slice(0, idx + 1);
+    const descriptionClicked = descriptionsForContextQuery[descriptionsForContextQuery.length - 1];
+    this.queryRequestService.resetOptionsRequest();
+    const typeSearch = ['Query'];
+    // concordance Context
+    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (fieldRequest) {
+      const ccqr = new ContextConcordanceQueryRequest();
+      descriptionsForContextQuery.forEach(d => {
+        const cci = ContextConcordanceItem.getInstance();
+        cci.term = d.term;
+        cci.attribute = d.attribute;
+        const positionWindow = d.position.substring(1);
+        const positionToken = d.position.substring(0, 1);
+        let window = CONTEXT_WINDOW_LEFT;
+        if (positionWindow === 'R') {
+          window = CONTEXT_WINDOW_RIGHT;
+        }
+        cci.tokens = +positionToken;
+        cci.window = window;
+        // TODO: usare items, cioè all, any, none
+        cci.lemmaFilterType = CONTEXT_TYPE_ALL;
+        ccqr.items.push(cci);
+      });
+      fieldRequest.contextConcordance = ccqr;
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+      this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+      this.emitterService.makeConcordanceRequestSubject.next(
+        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
     }
   }
 
@@ -178,13 +238,13 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
 
   public clickConc(event: any): void {
     let typeSearch = ['Query'];
-    const concordanceRequestPayload = new ConcordanceRequestPayload([], 0, null);
+    const concordanceRequestPayload = new ConcordanceRequestPayload([], 0);
     const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
     this.fieldRequests = this.fieldRequests.slice(0, index + 1);
     this.fieldRequests.forEach(fr => {
       concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch));
     });
-    this.emitterService.makeConcordance.next(concordanceRequestPayload);
+    this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
   }
 
   public showWideContext(kwicline: KWICline): void {
@@ -214,7 +274,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
-    switch (fieldRequest.selectedQueryType?.key) {
+    switch (fieldRequest.selectedQueryType) {
       case WORD:
         return fieldRequest.word;
       case LEMMA:

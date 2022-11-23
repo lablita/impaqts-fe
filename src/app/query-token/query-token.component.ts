@@ -13,11 +13,11 @@ import { QueryToken } from '../model/query-token';
 export class QueryTokenComponent {
 
   @Input() token: QueryToken | null = null;
-  @Input() typeList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() typeList: KeyValueItem[] = [];
   @Input() defaultType: KeyValueItem | null = null;
-  @Input() actionList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() actionList: KeyValueItem[] = [];
   @Input() defaultAction: KeyValueItem | null = null;
-  @Input() metaList: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() metaList: KeyValueItem[] = [];
   @Input() option = false;
   @Input() metadata = false;
   @Input() metadatumTextTypes: Metadatum[] | null = null;
@@ -71,10 +71,10 @@ export class QueryTokenComponent {
     }
     if (this.optionsSel.length > 0 && this.token) {
       this.token.sentenceEnd = this.token.sentenceStart = false;
-      this.optionsSel.forEach(op => {
-        if (op === 'START' && this.token) {
+      this.optionsSel.forEach(operation => {
+        if (operation === 'START' && this.token) {
           this.token.sentenceStart = true;
-        } else if (op === 'END' && this.token) {
+        } else if (operation === 'END' && this.token) {
           this.token.sentenceEnd = true;
         }
       });

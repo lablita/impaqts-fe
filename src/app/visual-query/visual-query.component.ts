@@ -5,6 +5,7 @@ import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
 import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { VISUAL_QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -52,7 +53,7 @@ export class VisualQueryComponent implements OnInit {
   public defaulAction: KeyValueItem = new KeyValueItem('IS', 'IS');
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
-  public metadataTextTypes: Array<Metadatum> = Array.from<Metadatum>({ length: 0 });
+  public metadataTextTypes: Array<Metadatum> = [];
   public metadata: QueryToken[] = [];
 
   public installation?: Installation;
@@ -62,7 +63,7 @@ export class VisualQueryComponent implements OnInit {
 
   public totalResults = 0;
   public simpleResult?: string;
-  public kwicLines: Array<KWICline> = Array.from<KWICline>({ length: 0 });
+  public kwicLines: Array<KWICline> = [];
   public TotalKwicline?: Array<KWICline>;
 
   public loading = false;
@@ -80,8 +81,8 @@ export class VisualQueryComponent implements OnInit {
   public collocationOptionsLabel = '';
   public filterOptionsLabel = '';
   public displayPanelOptions = false;
-  public metadataAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public textTypesAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public metadataAttributes: Array<KeyValueItem> = [];
+  public textTypesAttributes: Array<KeyValueItem> = [];
 
   public resultView = false;
   public noResultFound = false;
@@ -147,8 +148,9 @@ export class VisualQueryComponent implements OnInit {
       this.queryPattern.structPattern = this.metadata[0];
     }
     this.queryRequestService.setQueryPattern(this.queryPattern);
-    this.emitterService.makeConcordance.next(
-      new ConcordanceRequestPayload([concordanceRequest], 0, this.queryRequestService.getQueryPattern()));
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.VISUAL_QUERY_REQUEST;
+    this.emitterService.makeConcordanceRequestSubject.next(
+      new ConcordanceRequestPayload([concordanceRequest], 0));
   }
 
   public corpusSelect(): void {
@@ -194,7 +196,7 @@ export class VisualQueryComponent implements OnInit {
       this.enableAddMetadata = false;
       this.enableSpinner = false;
       this.menuEmitterService.corpusSelected = false;
-      this.kwicLines = Array.from<KWICline>({ length: 0 });
+      this.kwicLines = [];
       this.metadata = [];
       this.queryPattern.tokPattern = [];
     }

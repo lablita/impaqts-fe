@@ -3,6 +3,11 @@ export class DescResponse {
   toUrl = '';
   rel = 0;
   arg = '';
-  op = '';
+  operation = '';
   size = 0;
+  attribute = '';
+  term = '';
+  position = '';
+  window = '';
+  tokens = 0;
 }

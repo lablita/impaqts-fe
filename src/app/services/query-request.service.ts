@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { REQUEST_TYPE } from '../common/query-constants';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
@@ -10,18 +10,21 @@ import { QueryRequest } from '../model/query-request';
 })
 export class QueryRequestService {
 
-  public queryRequest = new QueryRequest();
+  private queryRequest: QueryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
-  // used for visual queries
-  private queryPattern: QueryPattern | null = null;
 
 
-  private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  private contextConcordanceQueryRequest: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
+
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
+  }
+
+  public resetQueryPattern(): void {
+    this.queryRequest.queryPattern = new QueryPattern();
   }
 
   public isOptionSet(): boolean {
@@ -33,7 +36,7 @@ export class QueryRequestService {
   }
 
   public withContextConcordance(): boolean {
-    return !!this.queryRequest ? !!this.queryRequest.contextConcordanceQueryRequest : false;
+    return this.queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST || this.queryRequest.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
   }
 
   public setContextConcordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {
@@ -47,26 +50,31 @@ export class QueryRequestService {
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
     if (fieldRequest) {
       this.basicFieldRequest = fieldRequest;
-      this.queryPattern = null;
     }
   }
 
-  public getContextConcordanceQueryRequestDTO(): ContextConcordanceQueryRequestDTO {
-    return this.contextConcordanceQueryRequestDTO;
+  public getContextConcordanceQueryRequest(): ContextConcordanceQueryRequest {
+    return this.contextConcordanceQueryRequest;
   }
 
-  public clearContextConcordanceQueryRequestDTO(): void {
-    this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  public clearContextConcordanceQueryRequest(): void {
+    this.contextConcordanceQueryRequest.items.splice(0, this.contextConcordanceQueryRequest.items.length);
+    const cci = ContextConcordanceItem.getInstance();
+    this.contextConcordanceQueryRequest.items.push(cci);
   }
 
   public setQueryPattern(queryPattern: QueryPattern): void {
     if (queryPattern) {
-      this.queryPattern = queryPattern;
+      this.queryRequest.queryPattern = queryPattern;
       this.basicFieldRequest = null;
     }
   }
 
   public getQueryPattern(): QueryPattern | null {
-    return this.queryPattern;
+    return this.queryRequest.queryPattern;
+  }
+
+  public getQueryRequest(): QueryRequest {
+    return this.queryRequest;
   }
 }

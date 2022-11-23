@@ -6,5 +6,6 @@ export class FrequencyItem {
   totalFreq = 0;
   maxFreq = 0;
   maxRel = 0;
-  items: Array<FrequencyResultLine> = Array.from<FrequencyResultLine>({ length: 0 });
+  items: Array<FrequencyResultLine> = [];
+  operation = ''
 }

@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
+import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 
 @Component({
@@ -15,14 +17,14 @@ import { EmitterService } from '../utils/emitter.service';
 export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() public initialPagination = 10;
-  @Input() public paginations: Array<number> = Array.from<number>({ length: 0 });
+  @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
 
-  public colHeader: Array<string> = Array.from<string>({ length: 0 });
+  public colHeader: Array<string> = [];
   public sortField = '';
   public loading = false;
   public totalResults = 0;
-  public collocations: Array<CollocationItem> = Array.from<CollocationItem>({ length: 0 });
+  public collocations: Array<CollocationItem> = [];
   public fieldRequest: FieldRequest | null = null;
   public noResultFound = true;
   public faSortAmountDown = faSortAmountDown;
@@ -32,7 +34,8 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    private readonly errorMessagesService: ErrorMessagesService
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly queryRequestService: QueryRequestService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -80,6 +83,7 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
     if (this.fieldRequest) {
       this.loading = true;
       this.setColumnHeaders();
+      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.COLLOCATION_REQUEST;
       this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }

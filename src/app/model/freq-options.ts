@@ -10,9 +10,9 @@ export class FreqOptions {
   freqLimit = 0;
   freqLimitMulti = 0;
   includeCat = false;
-  categories: Array<string> = Array.from<string>({ length: 0 });
+  categories: Array<string> = [];
   levelSelected = 0;
-  freqOptionList: Array<FreqOption> = Array.from<FreqOption>({ length: 0 });
+  freqOptionList: Array<FreqOption> = [];
 
   public static build(): FreqOptions {
     const freqOptionsQueryRequest = new FreqOptions();

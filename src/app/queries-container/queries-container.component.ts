@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
@@ -31,7 +31,7 @@ export class ConcordanceRequest {
 })
 export class QueriesContainerComponent implements OnInit {
 
-  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  public contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
 
   /** public */
   public metadataTextTypes: Metadatum[] = [];
@@ -47,19 +47,19 @@ export class QueriesContainerComponent implements OnInit {
   public collocationOptionsLabel = '';
   public filterOptionsLabel = '';
   public totalResults = 0;
-  public metadataAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public textTypesAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public metadataAttributes: Array<KeyValueItem> = [];
+  public textTypesAttributes: Array<KeyValueItem> = [];
 
   public videoUrl: SafeResourceUrl | null = null;
   public displayModal = false;
   public resultContext: ResultContext | null = null;
-  public colHeader: Array<string> = Array.from<string>({ length: 0 });
+  public colHeader: Array<string> = [];
   public headerSortBy = '';
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
 
   public displayResultPanel = false;
-  public categories: Array<string> = Array.from<string>({ length: 0 });
+  public categories: Array<string> = [];
   public titleResult: string | null = 'MENU.CONCORDANCE';
   public selectedCorpus: KeyValueItem | null = null;
 
@@ -71,7 +71,7 @@ export class QueriesContainerComponent implements OnInit {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
     public readonly displayPanelService: DisplayPanelService,
-    private readonly queryRequestService: QueryRequestService,
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
@@ -107,10 +107,16 @@ export class QueriesContainerComponent implements OnInit {
 
   public displayFrequency(): void {
     this.titleResult = 'MENU.FREQUENCY';
-    if (this.queryRequestService.queryRequest.frequencyQueryRequest &&
-      this.queryRequestService.queryRequest.frequencyQueryRequest.categories) {
-      this.categories = this.queryRequestService.queryRequest.frequencyQueryRequest.categories;
+    const queryRequest = this.queryRequestService.getQueryRequest();
+    if (queryRequest.frequencyQueryRequest &&
+      queryRequest.frequencyQueryRequest.categories) {
+      this.categories = queryRequest.frequencyQueryRequest.categories;
     }
+    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+    if (basicFieldRequest) {
+      this.emitterService.makeFrequency.next(basicFieldRequest);
+    }
+
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {

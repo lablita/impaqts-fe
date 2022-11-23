@@ -40,7 +40,7 @@
         <label [for]="'maxRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.TIMES' | translate}}</label>
       </div> -->
 
-      <!-- <p-overlayPanel #op>
+      <!-- <p-overlayPanel #operation>
         <p-listbox [options]="optionList" [(ngModel)]="optionSel" optionLabel="value" [style]="{'width':'15rem'}"
           (click)="setOption()">
           <ng-template let-option pTemplate="item">
@@ -48,7 +48,7 @@
           </ng-template>
         </p-listbox>
       </p-overlayPanel>
-      <button *ngIf="option" pButton label=" " (click)="op.toggle($event)"><i
+      <button *ngIf="option" pButton label=" " (click)="operation.toggle($event)"><i
           class="pi pi-bars"></i>&nbsp;{{"PAGE.VISUAL_QUERY.OPTION" | translate}}</button>
     </div>
     <div class="flex justify-content-end mt-1">

@@ -1,9 +1,10 @@
-import { CollocationQueryRequest } from "./collocation-query-request";
-import { ContextConcordanceQueryRequest } from "./context-concordance-query-request";
-import { FrequencyQueryRequest } from "./frequency-query-request";
-import { QueryPattern } from "./query-pattern";
-import { SortQueryRequest } from "./sort-query-request";
-import { WideContextRequest } from "./wide-context-request";
+import { REQUEST_TYPE } from '../common/query-constants';
+import { CollocationQueryRequest } from './collocation-query-request';
+import { ContextConcordanceQueryRequest } from './context-concordance-query-request';
+import { FrequencyQueryRequest } from './frequency-query-request';
+import { QueryPattern } from './query-pattern';
+import { SortQueryRequest } from './sort-query-request';
+import { WideContextRequest } from './wide-context-request';
 
 export class WordListOption {
   subcorpus = '';
@@ -18,11 +19,13 @@ export class QueryRequest {
   corpus = '';
   cql = '';
   queryInCql = false;
-  queryPattern: QueryPattern = new QueryPattern();
+  queryPattern: QueryPattern | null = null;
   collocationQueryRequest: CollocationQueryRequest | null = null;
   sortQueryRequest: SortQueryRequest | null = null;
   frequencyQueryRequest: FrequencyQueryRequest | null = null;
   contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
   wideContextRequest: WideContextRequest | null = null;
+
+  queryType: REQUEST_TYPE = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
 
 }

@@ -1,5 +1,5 @@
 export class FrequencyResultLine {
-  word: Array<string> = Array.from<string>({ length: 0 });
+  word: Array<string> = [];
   freq = 0;
   fBar = 0;
   noRel = 0;
