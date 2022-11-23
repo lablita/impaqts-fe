@@ -11,6 +11,7 @@ import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryResponse } from '../model/query-response';
+import { QueryStructure } from '../model/query-structure';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
@@ -128,8 +129,6 @@ export class LoadResultsService {
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
             queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
-            if (queryRequest.queryType !== REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST) {
-            }
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();
               token.tags.push([]);
@@ -201,7 +200,7 @@ export class LoadResultsService {
     /** Metadata */
     const textTypesRequest = new TextTypesRequest();
     this.metadataQueryService.getMetadata().forEach(md => {
-      if (!!md.selection) {
+      if (!!md.selection && !!md.selection.toString()) {
         if (md.freeText) {
           // freetxt
           textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
@@ -259,13 +258,6 @@ export class LoadResultsService {
       }
     }
   }
-
-  // private tagBuilder(type: string, value: string): QueryTag {
-  //   const tag = new QueryTag(TOKEN);
-  //   tag.name = type;
-  //   tag.value = value;
-  //   return tag;
-  // }
 
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison
