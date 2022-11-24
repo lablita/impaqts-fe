@@ -8,6 +8,7 @@ import { ContextConcordanceQueryRequest } from '../model/context-concordance-que
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
+import { PanelLabelStatus } from '../model/panel-label-status';
 import { ResultContext } from '../model/result-context';
 import { AuthorizationService } from '../services/authorization.service';
 import { DisplayPanelService } from '../services/display-panel.service';
@@ -66,6 +67,10 @@ export class QueriesContainerComponent implements OnInit {
   // modale che avverte l'utente che non può accedere all'installazione
   public displayNotAllowedUserForInstallation = false;
 
+  public panelDisplayMTD = false;
+  public panelDisplayOPT = true;
+  public titleLabel = '';
+
   constructor(
     private readonly authorizationService: AuthorizationService,
     private readonly menuEmitterService: MenuEmitterService,
@@ -78,6 +83,11 @@ export class QueriesContainerComponent implements OnInit {
     this.authorizationService.checkInstallationAuthorization().subscribe({
       next: allowed => this.displayNotAllowedUserForInstallation = !allowed
     });
+    this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
+     this.panelDisplayMTD = panelLabelStatus.panelDisplayMTD;
+     this.panelDisplayOPT = panelLabelStatus.panelDisplayOPT;
+     this.titleLabel = panelLabelStatus.titleLabel;
+    })
     this.displayPanelService.reset();
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
@@ -102,7 +112,7 @@ export class QueriesContainerComponent implements OnInit {
   }
 
   public displayCollocations(): void {
-    this.titleResult = 'MENU.COLLOCATIONS';
+    this.titleResult = 'MENU.COLLOCATION';
   }
 
   public displayFrequency(): void {
@@ -119,13 +129,13 @@ export class QueriesContainerComponent implements OnInit {
 
   }
 
-  public displayOptionsPanel(): BehaviorSubject<boolean> {
-    return this.displayPanelService.optionsPanelSubject;
-  }
+  // public displayOptionsPanel(): BehaviorSubject<boolean> {
+  //   return this.displayPanelService.optionsPanelSubject;
+  // }
 
-  public displayMetadataPanel(): BehaviorSubject<boolean> {
-    return this.displayPanelService.metadataPanelSubject;
-  }
+  // public displayMetadataPanel(): BehaviorSubject<boolean> {
+  //   return this.displayPanelService.metadataPanelSubject;
+  // }
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {
     this.selectedCorpus = selectedCorpus;

@@ -3,8 +3,8 @@ import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
-  ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATIONS, CORPUS_INFO, FILTER, FREQUENCY,
-  QUERY, RESULT_CONCORDANCE, RESULT_QUERY, SORT, VIEW_OPTIONS, VISUAL_QUERY, WORD_LIST
+  ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATION, CORPUS_INFO, FILTER, FREQUENCY,
+  QUERY, RESULT_CONCORDANCE, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST
 } from '../common/routes-constants';
 import { BOTTOM_LEFT, INSTALLATION } from '../model/constants';
 import { Installation } from '../model/installation';
@@ -33,7 +33,7 @@ export class MenuComponent implements OnInit {
 
   private readonly menuQueryStr: string[] = [QUERY, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
-  private readonly menuDisplayPanel: string[] = [VIEW_OPTIONS, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATIONS];
+  private readonly menuDisplayPanel: string[] = [VIEW_OPTION, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATION];
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
@@ -127,12 +127,12 @@ export class MenuComponent implements OnInit {
           break;
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
-        case VIEW_OPTIONS:
+        case VIEW_OPTION:
         case WORD_LIST:
         case SORT:
         case FILTER:
         case FREQUENCY:
-        case COLLOCATIONS:
+        case COLLOCATION:
           this.setMenuItemsByRole(!!routesRole ? routesRole : [], this.menuDisplayPanel);
           break;
 

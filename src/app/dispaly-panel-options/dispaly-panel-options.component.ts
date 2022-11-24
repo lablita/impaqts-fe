@@ -1,8 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import {
-  COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
-} from '../common/routes-constants';
+import {COLLOCATION, FILTER, FREQUENCY, SORT, VIEW_OPTION, WORD_LIST} from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { SortQueryRequest } from '../model/sort-query-request';
@@ -13,28 +11,35 @@ import { DisplayPanelService } from '../services/display-panel.service';
   templateUrl: './dispaly-panel-options.component.html',
   styleUrls: ['./dispaly-panel-options.component.scss']
 })
-export class DispalyPanelOptionsComponent {
+export class DispalyPanelOptionsComponent implements OnChanges{
 
   @Input() isVisualQuery = false;
   @Input() selectedCorpus: string | null = null;
   @Input() metadataAttributes: KeyValueItem[] = [];
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
+  @Input() titleLabel: string = '';
+  @Input() panelDisplayMTD: boolean = false;
+  @Input() panelDisplayOPT: boolean = false;
   @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public sort = new EventEmitter<SortQueryRequest>();
   @Output() public frequency = new EventEmitter<void>();
 
-  public VIEW_OPTIONS = VIEW_OPTIONS;
+  public VIEW_OPTION = VIEW_OPTION;
   public WORD_LIST = WORD_LIST;
   public SORT = SORT;
   public FILTER = FILTER;
   public FREQUENCY = FREQUENCY;
-  public COLLOCATIONS = COLLOCATIONS;
+  public COLLOCATION = COLLOCATION;
   public titleOption: string | null = null;
 
   constructor(
     public displayPanelService: DisplayPanelService
   ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.titleLabel = '';
+  }
 
   public loadColl(): void {
     this.loadCollocations.emit(true);
@@ -57,7 +62,7 @@ export class DispalyPanelOptionsComponent {
   }
 
   public closeMetadataPanel(): void {
-    this.displayPanelService.metadataButtonSubject.next();
+    this.displayPanelService.labelMTDClickSubject.next();
   }
 
 }

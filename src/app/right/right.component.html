@@ -1,19 +1,6 @@
-<!-- <a *ngIf="!hideMetadataLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button"
-  style="top: 200px; z-index: 999;" (click)="openSidebarMetadata()"
-  [ngClass]="{'disabled': !(metadataButtonEnabled() | async)}">
-  <div class="flex align-items-center">
-    <div>
-      <fa-icon *ngIf="checkMetadata()" style="font-size: large" [icon]="faCheck"></fa-icon>
-      {{'PAGE.CONCORDANCE.METADATA' | translate}}
-    </div>
-    <div *ngIf="spinnerMetadata" class="progress-spinner">
-      <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-    </div>
-  </div>
-</a> -->
-<a *ngIf="!hideMetadataLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button"
-  style="top: 200px; z-index: 999" (click)="openSidebarMetadata()"
-  [ngClass]="{'disabled': !(metadataButtonEnabled() | async), 'vertical metadata': buttonClicked}">
+<a *ngIf="labelVisibleMTD" p-button class="flex justify-content-center p-shadow-7 p-component right-button"
+  style="top: 200px; z-index: 999" (click)="labelMTDClick()"
+  [ngClass]="{'disabled': labelDisableMTD, 'vertical metadata': verticalLabel}">
   <div class="flex align-items-center">
     <div>
       <fa-icon *ngIf="checkMetadata()" style="font-size: large" [icon]="faCheck"></fa-icon>
@@ -24,9 +11,9 @@
     </div>
   </div>
 </a>
-<a *ngIf="!hideOptionsLabel" p-button class="flex justify-content-center p-shadow-7 p-component right-button"
-  style="top: 300px; z-index:999;" (click)="openSidebarOptions()"
-  [ngClass]="{'disabled': !(optionsButtonEnabled() | async), 'vertical options': buttonClicked}">
+<a *ngIf="labelVisibleOPT" p-button class="flex justify-content-center p-shadow-7 p-component right-button"
+  style="top: 300px; z-index:999;" (click)="labelOPTClick()"
+  [ngClass]="{'disabled': labelDisableOPT, 'vertical options': verticalLabel}">
   <div class="flex align-items-center">
     <div *ngIf="titleLabel">
       <fa-icon *ngIf="checkOptions()" style="font-size: large" [icon]="faCheck"></fa-icon>
