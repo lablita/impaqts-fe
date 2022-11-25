@@ -15,9 +15,9 @@
   style="top: 300px; z-index:999;" (click)="labelOPTClick()"
   [ngClass]="{'disabled': labelDisableOPT, 'vertical options': verticalLabel}">
   <div class="flex align-items-center">
-    <div *ngIf="titleLabel">
+    <div *ngIf="!!titleLabelKeyValue">
       <fa-icon *ngIf="checkOptions()" style="font-size: large" [icon]="faCheck"></fa-icon>
-      {{titleLabel | translate}}
+      {{titleLabelKeyValue.value| translate}}
     </div>
   </div>
 </a>

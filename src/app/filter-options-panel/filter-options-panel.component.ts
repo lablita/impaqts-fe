@@ -14,7 +14,6 @@ const FILTER_OPTIONS_QUERY_REQUEST = 'FilterOptionsQueryRequestDTO';
 })
 export class FilterOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton = false;
   @Input() public metadata: Array<Metadatum> = [];
   @Input() public corpus: string | null | undefined = '';
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
@@ -38,21 +37,6 @@ export class FilterOptionsPanelComponent implements OnInit {
     this.tokens = [FIRST, LAST]
     this.filterOptionsQueryRequestDTO = foqr ? JSON.parse(foqr) : DEFAULT_FILTER_OPTIONS_QUERY_REQUEST;
 
-    // this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.POSITIVE').subscribe({
-    //   next: res => {
-    //     this.filters = [];
-    //     this.filters.push(new KeyValueItem(POSITIVE, res));
-    //   }
-    // });
-    // this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.NEGATIVE').subscribe({ next: res => this.filters.push(new KeyValueItem(NEGATIVE, res)) });
-
-    // this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.FIRST').subscribe({
-    //   next: res => {
-    //     this.tokens = [];
-    //     this.tokens.push(new KeyValueItem(FIRST, res));
-    //   }
-    // });
-    // this.translateService.stream('PAGE.CONCORDANCE.FILTER_OPTIONS.LAST').subscribe({ next: res => this.tokens.push(new KeyValueItem(LAST, res)) });
     if (!!this.metadata && this.metadata.length > 0) {
       this.metadata.forEach(m => {
         if ('tree' in m) {

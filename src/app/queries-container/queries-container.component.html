@@ -39,7 +39,7 @@
   <div class="flex flex-column w-6"
     *ngIf="(panelDisplayMTD || panelDisplayOPT) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus.key" 
-      [titleLabel]="titleLabel" [panelDisplayMTD]="panelDisplayMTD" [panelDisplayOPT]="panelDisplayOPT"
+      [panelDisplayMTD]="panelDisplayMTD" [panelDisplayOPT]="panelDisplayOPT"
       [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
       [metadataTextTypes]="metadataTextTypes" (loadCollocations)="displayCollocations()" (sort)="displayConcordances()"
       (frequency)="displayFrequency()">

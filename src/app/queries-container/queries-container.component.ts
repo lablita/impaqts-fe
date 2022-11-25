@@ -69,7 +69,7 @@ export class QueriesContainerComponent implements OnInit {
 
   public panelDisplayMTD = false;
   public panelDisplayOPT = true;
-  public titleLabel = '';
+  public titleLabelKeyValue: KeyValueItem | null = null;
 
   constructor(
     private readonly authorizationService: AuthorizationService,
@@ -86,7 +86,7 @@ export class QueriesContainerComponent implements OnInit {
     this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
      this.panelDisplayMTD = panelLabelStatus.panelDisplayMTD;
      this.panelDisplayOPT = panelLabelStatus.panelDisplayOPT;
-     this.titleLabel = panelLabelStatus.titleLabel;
+     this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
     this.displayPanelService.reset();
     this.emitterService.pageMenu = QUERY;
@@ -128,14 +128,6 @@ export class QueriesContainerComponent implements OnInit {
     }
 
   }
-
-  // public displayOptionsPanel(): BehaviorSubject<boolean> {
-  //   return this.displayPanelService.optionsPanelSubject;
-  // }
-
-  // public displayMetadataPanel(): BehaviorSubject<boolean> {
-  //   return this.displayPanelService.metadataPanelSubject;
-  // }
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {
     this.selectedCorpus = selectedCorpus;

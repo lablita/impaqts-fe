@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { KeyValue } from '@angular/common';
+import { Component, KeyValueDiffers, OnInit } from '@angular/core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
+import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
@@ -13,7 +15,7 @@ import { EmitterService } from '../utils/emitter.service';
   styleUrls: ['./right.component.scss']
 })
 export class RightComponent implements OnInit {
-  public titleLabel: string | undefined;
+  public titleLabelKeyValue: KeyValueItem | null = null;
   public faCheck = faCheck;
   public labelVisibleMTD = false;
   public labelVisibleOPT = false;
@@ -38,7 +40,7 @@ export class RightComponent implements OnInit {
       this.labelVisibleOPT = panelLabelStatus.labelVisibleOPT;
       this.labelDisableMTD = panelLabelStatus.labelDisableMTD;
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
-      this.titleLabel = panelLabelStatus.titleLabel;
+      this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
     this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => this.spinnerMetadata = event });
   }

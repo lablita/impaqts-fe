@@ -43,7 +43,6 @@ const ATTRIBUTE_LIST = [
 })
 export class CollocationOptionsPanelComponent {
 
-  @Input() public showRightButton = false;
   @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 

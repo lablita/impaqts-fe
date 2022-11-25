@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {COLLOCATION, FILTER, FREQUENCY, SORT, VIEW_OPTION, WORD_LIST} from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -11,14 +11,13 @@ import { DisplayPanelService } from '../services/display-panel.service';
   templateUrl: './dispaly-panel-options.component.html',
   styleUrls: ['./dispaly-panel-options.component.scss']
 })
-export class DispalyPanelOptionsComponent implements OnChanges{
+export class DispalyPanelOptionsComponent {
 
   @Input() isVisualQuery = false;
   @Input() selectedCorpus: string | null = null;
   @Input() metadataAttributes: KeyValueItem[] = [];
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
-  @Input() titleLabel: string = '';
   @Input() panelDisplayMTD: boolean = false;
   @Input() panelDisplayOPT: boolean = false;
   @Output() public loadCollocations = new EventEmitter<boolean>();
@@ -32,13 +31,10 @@ export class DispalyPanelOptionsComponent implements OnChanges{
   public FREQUENCY = FREQUENCY;
   public COLLOCATION = COLLOCATION;
   public titleOption: string | null = null;
-
+  
   constructor(
     public displayPanelService: DisplayPanelService
-  ) { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.titleLabel = '';
+  ) {
   }
 
   public loadColl(): void {

@@ -23,7 +23,6 @@ class DropdownIG {
 
 export class WordListOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] | null = null;
   @Input() public textTypesAttributes: KeyValueItem[] | null = null;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();

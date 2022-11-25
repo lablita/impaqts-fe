@@ -1,3 +1,5 @@
+import { KeyValueItem } from "./key-value-item";
+
 export class PanelLabelStatus {
     panelDisplayMTD = false;
     panelDisplayOPT = false; 
@@ -5,17 +7,17 @@ export class PanelLabelStatus {
     labelVisibleOPT = false;
     labelDisableMTD = false;
     labelDisableOPT = false;
-    titleLabel = '';
+    titleLabelKeyValue = new KeyValueItem('','');
     
     constructor(panelDisplayMTD: boolean, panelDisplayOPT: boolean,  
         labelVisibleMTD: boolean, labelVisibleOPT: boolean, 
-        labelDisableMTD: boolean, labelDisableOPT: boolean, titleLabel: string) {
+        labelDisableMTD: boolean, labelDisableOPT: boolean, titleLabelKeyValue: KeyValueItem) {
             this.panelDisplayMTD = panelDisplayMTD;
             this.panelDisplayOPT = panelDisplayOPT;
             this.labelVisibleMTD = labelVisibleMTD;
             this.labelVisibleOPT = labelVisibleOPT;
             this.labelDisableMTD = labelDisableMTD;
             this.labelDisableOPT = labelDisableOPT;
-            this.titleLabel = titleLabel;
+            this.titleLabelKeyValue = titleLabelKeyValue;
     }
 }

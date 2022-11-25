@@ -57,7 +57,6 @@ const MULTI_ATTRIBUTE = [
 })
 export class FrequencyOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton = false;
   @Input() public corpusAttributes: KeyValueItem[] = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public metadataFrequency = new EventEmitter<void>();

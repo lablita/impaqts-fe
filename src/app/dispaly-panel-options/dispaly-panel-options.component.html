@@ -4,30 +4,27 @@
     </app-metadata-panel>
   </div>
 </div>
-{{titleLabel}}
 <div class="ml-3" *ngIf="panelDisplayOPT && selectedCorpus">
-  <app-view-options-panel *ngIf="titleLabel === VIEW_OPTION"
-    [showRightButton]="(displayPanelService.optionsPanelSubject | async)!" [corpusAttributes]="metadataAttributes"
+  <app-view-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === VIEW_OPTION"
+    [corpusAttributes]="metadataAttributes"
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()">
   </app-view-options-panel>
-  <app-word-list-options-panel *ngIf="titleLabel === WORD_LIST"
+  <app-word-list-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === WORD_LIST"
     [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-    [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()">
   </app-word-list-options-panel>
-  <app-sort-options-panel *ngIf="titleLabel === SORT"
-    [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
+  <app-sort-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === SORT"
+    [corpusAttributes]="metadataAttributes"
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceSort)="sortConcordances($event)">
   </app-sort-options-panel>
-  <app-frequency-options-panel *ngIf="titleLabel === FREQUENCY"
-    [corpusAttributes]="metadataAttributes" [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
+  <app-frequency-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FREQUENCY"
+    [corpusAttributes]="metadataAttributes"
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (metadataFrequency)="loadFrequencies()">
   </app-frequency-options-panel>
-  <app-collocation-options-panel *ngIf="titleLabel === COLLOCATION"
-    [showRightButton]="(displayPanelService.optionsPanelSubject | async)!"
+  <app-collocation-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === COLLOCATION"
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (loadCollocations)="loadColl()">
   </app-collocation-options-panel>
-  <app-filter-options-panel *ngIf="titleLabel === FILTER"
+  <app-filter-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FILTER"
     [corpus]="selectedCorpus" [metadata]="metadataTextTypes">
   </app-filter-options-panel>
 </div>
