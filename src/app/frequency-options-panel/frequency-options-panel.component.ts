@@ -116,7 +116,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.isMetadataFreq = true;
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST;
     this.queryRequestService.getQueryRequest().frequencyQueryRequest = new FrequencyQueryRequest();
-
     this.setFrequencyOption(this.isMetadataFreq);
     this.doMakeFrequency();
 
@@ -191,8 +190,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.queryRequestService.resetQueryPattern();
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
-      const freqencyOption = this.getFrequencyOption();
-      if (freqencyOption) {
+      const frequencyOption = this.getFrequencyOption();
+      if (frequencyOption) {
         this.metadataFrequency.emit();
       }
     }

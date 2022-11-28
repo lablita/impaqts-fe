@@ -72,10 +72,10 @@ export class QueriesContainerComponent implements OnInit {
   public titleLabelKeyValue: KeyValueItem | null = null;
 
   constructor(
+    public readonly displayPanelService: DisplayPanelService,
     private readonly authorizationService: AuthorizationService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
-    public readonly displayPanelService: DisplayPanelService,
     private readonly queryRequestService: QueryRequestService
   ) { }
 
@@ -116,7 +116,10 @@ export class QueriesContainerComponent implements OnInit {
   }
 
   public displayFrequency(): void {
-    this.titleResult = 'MENU.FREQUENCY';
+    this.titleResult = '';
+    setTimeout(()=>{                          
+      this.titleResult = 'MENU.FREQUENCY';
+    }, 100);
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (queryRequest.frequencyQueryRequest &&
       queryRequest.frequencyQueryRequest.categories) {
