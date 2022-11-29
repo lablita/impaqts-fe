@@ -116,10 +116,12 @@ export class QueriesContainerComponent implements OnInit {
   }
 
   public displayFrequency(): void {
+    // workaround to reload frequency table when press same button in frequency panel
     this.titleResult = '';
     setTimeout(()=>{                          
       this.titleResult = 'MENU.FREQUENCY';
     }, 100);
+    //
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (queryRequest.frequencyQueryRequest &&
       queryRequest.frequencyQueryRequest.categories) {
