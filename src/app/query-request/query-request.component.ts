@@ -53,8 +53,6 @@ export class QueryRequestComponent implements OnInit {
   public CHARACTER = CHARACTER;
   public CQL = CQL;
 
-  //queryRequestForm.value.selectedQueryType && (queryRequestForm.value.selectedQueryType !== DEFAULT_SELECTED_QUERY_TYPE)
-
   public queryRequestForm = new UntypedFormGroup({
     selectedCorpus: new UntypedFormControl(null),
     selectedQueryType: new UntypedFormControl(DEFAULT_SELECTED_QUERY_TYPE),

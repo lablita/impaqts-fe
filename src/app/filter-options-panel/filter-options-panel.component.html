@@ -1,57 +1,61 @@
 <div class="mt-3">
   <p-card>
-    <div class="flex justify-content-center">
-      <h2>{{"MENU.FILTER" | translate}}</h2>
-    </div>
-    <div class="mt-4">
-      <h3>{{"PAGE.CONCORDANCE.FILTER_OPTIONS.CONCORDANCE_FILTER" | translate}}</h3>
-    </div>
-    <div class="grid ml-4 mb-3">
-      <div class="col-6 flex justify-content-center">
-        <button pButton type="button" label="{{'MENU.OVERLAPS' | translate}}" (click)="clickOverlaps()"></button>
+    <form [formGroup]="filterQueryRequestForm">
+      <div class="flex justify-content-center">
+        <h2>{{"MENU.FILTER" | translate}}</h2>
       </div>
-      <div class="col-6 flex justify-content-center">
-        <button pButton type="button" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}" (click)="clickFirst()"></button>
+      <div class="mt-4">
+        <h3>{{"PAGE.CONCORDANCE.FILTER_OPTIONS.CONCORDANCE_FILTER" | translate}}</h3>
       </div>
-    </div>
-
-    <div class="flex ml-2">
-      <label class="label-size">{{"MENU.FILTER" | translate}}</label>
-      <div *ngFor="let filter of filters" class="field-checkbox">
-        <p-radioButton [inputId]="filter" name="filter" [value]="filter" [(ngModel)]="selectedFilter">
-        </p-radioButton>
-        <label [for]="filter" class="mr-2 ml-1">{{filter | translate}}</label>
+      <div class="grid ml-4 mb-3">
+        <div class="col-6 flex justify-content-center">
+          <button pButton type="button" label="{{'MENU.OVERLAPS' | translate}}" (click)="clickOverlaps()"></button>
+        </div>
+        <div class="col-6 flex justify-content-center">
+          <button pButton type="button" label="{{'MENU.FIRST_HIT_IN_DOC' | translate}}" (click)="clickFirst()"></button>
+        </div>
       </div>
-    </div>
-
-    <div class="flex ml-2">
-      <label class="label-size">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.SEL_TOKEN" | translate}}</label>
-      <div *ngFor="let token of tokens" class="field-checkbox">
-        <p-radioButton [inputId]="token" name="filter" [value]="token" [(ngModel)]="selectedToken">
-        </p-radioButton>
-        <label [for]="token" class="mr-2 ml-1">{{token | translate}}</label>
+  
+      <div class="flex ml-2">
+        <label class="label-size">{{"MENU.FILTER" | translate}}</label>
+        <div *ngFor="let filter of filters" class="field-radiobutton">
+          <p-radioButton [inputId]="filter" name="filter" [value]="filter"
+          formControlName="filter">
+          </p-radioButton>
+          <label [for]="filter" class="mr-2 ml-1">{{filter | translate}}</label>
+        </div>
       </div>
-    </div>
-
-    <div class="flex justify-content-center formgroup-inline">
-      <div class="field">
-        <label for="rangeFrom" class="mr-2">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.FROM" | translate}}</label>
-        <input id="rangeFrom" type="number" pInputText style="width: 50px;"
-          [(ngModel)]="filterOptionsQueryRequestDTO.from" class="mr-3">
+  
+      <div class="flex ml-2">
+        <label class="label-size">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.SEL_TOKEN" | translate}}</label>
+        <div *ngFor="let token of tokens" class="field-checkbox">
+          <p-radioButton [inputId]="token" name="token" [value]="token" 
+          formControlName="token">
+          </p-radioButton>
+          <label [for]="token" class="mr-2 ml-1">{{token | translate}}</label>
+        </div>
       </div>
-      <div class="field ml-2">
-        <label for="rangeTo" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
-        <input id="rangeTo" type="number" pInputText style="width: 50px;" [(ngModel)]="filterOptionsQueryRequestDTO.to">
+  
+      <div class="flex justify-content-center formgroup-inline">
+        <div class="field">
+          <label for="rangeFrom" class="mr-2">{{"PAGE.CONCORDANCE.FILTER_OPTIONS.FROM" | translate}}</label>
+          <input id="rangeFrom" type="number" pInputText style="width: 50px;"
+          formControlName="from" class="mr-3">
+        </div>
+        <div class="field ml-2">
+          <label for="rangeTo" class="mr-2">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.TO" | translate}}</label>
+          <input id="rangeTo" type="number" pInputText style="width: 50px;" formControlName="to">
+        </div>
+        <div class="field-checkbox ml-2 align-self-center">
+          <p-checkbox name="nonWords" [binary]="true" [label]="'PAGE.CONCORDANCE.FILTER_OPTIONS.KWIC' | translate"
+          formControlName="kwic">
+          </p-checkbox>
+        </div>
       </div>
-      <div class="field-checkbox ml-2 align-self-center">
-        <p-checkbox name="nonWords" [binary]="true" [label]="'PAGE.CONCORDANCE.FILTER_OPTIONS.KWIC' | translate"
-          [(ngModel)]="filterOptionsQueryRequestDTO.kwic">
-        </p-checkbox>
-      </div>
-    </div>
-    <span class="flex justify-content-center mt-3">
-      <button pButton type="button" label="{{'PAGE.CONCORDANCE.FILTER_OPTIONS.FILTER_CON' | translate}}"
-        (click)="clickMakeFilter()" class="mr-5"></button>
-    </span>
+      <span class="flex justify-content-center mt-3">
+        <button pButton type="button" label="{{'PAGE.CLEAR' | translate}}"
+          (click)="resetFilter()" class="mr-5"></button>
+      </span>
+    </form>
   </p-card>
 </div>

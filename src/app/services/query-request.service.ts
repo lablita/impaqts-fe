@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
+import { FilterConcordanceQueryRequest } from '../model/filter-concordance-query-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 
@@ -21,6 +22,7 @@ export class QueryRequestService {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
+    //this.queryRequest.filterConcordanceQueryRequest = null;
   }
 
   public resetQueryPattern(): void {
@@ -28,7 +30,8 @@ export class QueryRequestService {
   }
 
   public isOptionSet(): boolean {
-    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || !!this.queryRequest.frequencyQueryRequest;
+    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || 
+    !!this.queryRequest.frequencyQueryRequest || !!this.queryRequest.filterConcordanceQueryRequest;
   }
 
   public resetContextConcordance(): void {
@@ -50,6 +53,12 @@ export class QueryRequestService {
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
     if (fieldRequest) {
       this.basicFieldRequest = fieldRequest;
+    }
+  }
+
+  public setFilterConcordanceQueryRequest(filterConcordanceQueryRequest: FilterConcordanceQueryRequest): void {
+    if (filterConcordanceQueryRequest) {
+      this.queryRequest.filterConcordanceQueryRequest = filterConcordanceQueryRequest;
     }
   }
 

@@ -25,6 +25,6 @@
     (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (loadCollocations)="loadColl()">
   </app-collocation-options-panel>
   <app-filter-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FILTER"
-    [corpus]="selectedCorpus" [metadata]="metadataTextTypes">
+  (closeSidebarEvent)="displayPanelService.closeOptionsPanel()">
   </app-filter-options-panel>
 </div>
