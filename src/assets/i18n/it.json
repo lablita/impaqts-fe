@@ -25,7 +25,7 @@
     "FREQUENCY": "Frequenza",
     "NODE_TAGS": "Node tags",
     "NODE_FORMS": "Node forms",
-    "COLLOCATIONS": "Collocazioni",
+    "COLLOCATION": "Collocazioni",
     "CONC_DECS": "ConcDesc",
     "VISUALIZE": "Visualize",
     "VISUAL_QUERY": "Visual Query"
@@ -93,7 +93,6 @@
         "SORT": "Simple Sort",
         "STRUCTURES": "Structures",
         "TOOLTIPS": "as tooltips",
-        "VIEW_OPTIONS": "Visualizzazione",
         "WORD_LC": "word (lowercase)"
       },
       "WORD_OPTIONS": {
@@ -125,8 +124,7 @@
         "SIMPLE": "Simple",
         "SUBCORPUS": "Subcorpus",
         "VALUE_OF": "Value of n",
-        "WHITE_LIST": "Whitelist",
-        "WORD_OPTIONS": "Word list options"
+        "WHITE_LIST": "Whitelist"
       },
       "SORT_OPTIONS": {
         "BACKWARD": "Backward",
@@ -140,7 +138,6 @@
         "SECOND_LEVEL": "second level (... then sort by ...)",
         "SIMPLE_SORT": "Simple sort",
         "SORT_KEY": "Sort key",
-        "SORT_OPTIONS": "Sort options",
         "THIRD_LEVEL": "third level (... finally sort by)",
         "CLEAR_SORT_OPT": "Valori Default",
         "SORT_CONCORDANCE": "Ordina Concordanze"
@@ -150,7 +147,6 @@
         "FOURTH_LEVEL": "fourth level",
         "FREQ_DIST": "Text type frequency distribution",
         "FREQ_LIMIT": "Frequency limit",
-        "FREQ_OPTIONS": "Frequency opt.",
         "INCLUDE_CAT": "Includi categorie senza risultati",
         "IGNORE_CASE": "Ignore case",
         "MAKE_FREQ": "Make frequency list",
@@ -267,6 +263,14 @@
     },
     "RESET": "Reset",
     "CLEAR": "Cancella"
+  },
+  "OPTION_LABEL": {
+    "VIEW": "Visualizzazione",
+    "WORD_LIST": "Word list options",
+    "SORT": "Sort options",
+    "FILTER": "Filtri",
+    "FREQUENCY": "Frequency opt.",
+    "COLLOCATION": "Collocazioni"
   },
   "USER": {
     "USER": "Utente",

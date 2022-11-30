@@ -42,7 +42,6 @@ export class MetadataPanelComponent implements OnInit {
   public resetMetadata(): void {
     localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
-    console.log('reset');
   }
 
   public isFilterOptions(): boolean {

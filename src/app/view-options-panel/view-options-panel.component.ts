@@ -17,7 +17,6 @@ const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string | null | undefined = null;
-  @Input() public showRightButton = false;
   @Input() public corpusAttributes: Array<KeyValueItem> = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 

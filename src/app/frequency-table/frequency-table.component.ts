@@ -93,7 +93,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     if (!this.makeFrequencySubscription) {
-      this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
+       this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
         // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
         if (fieldRequest && fieldRequest.selectedCorpus) {
           this.loading = true;

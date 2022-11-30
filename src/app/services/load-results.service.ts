@@ -11,6 +11,7 @@ import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryResponse } from '../model/query-response';
+import { QueryStructure } from '../model/query-structure';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
@@ -98,26 +99,25 @@ export class LoadResultsService {
           switch (fieldRequest.selectedQueryType) {
             case WORD:
               fieldRequest.simpleResult = fieldRequest.word;
-              tag = new QueryTag('word', fieldRequest.word);
+              tag = new QueryTag(TOKEN, 'word', fieldRequest.word);
               tag.matchCase = fieldRequest.matchCase;
               queryTags.push(tag);
               break;
             case LEMMA:
               fieldRequest.simpleResult = fieldRequest.lemma;
-              queryTags.push(new QueryTag('lemma', fieldRequest.lemma));
+              queryTags.push(new QueryTag(TOKEN, 'lemma', fieldRequest.lemma));
               break;
             case PHRASE:
               fieldRequest.simpleResult = fieldRequest.phrase;
-              queryTags.push(new QueryTag('phrase', fieldRequest.phrase));
+              queryTags.push(new QueryTag(TOKEN, 'phrase', fieldRequest.phrase));
               break;
             case CHARACTER:
               fieldRequest.simpleResult = fieldRequest.character;
-              queryTags.push(new QueryTag('character', fieldRequest.character));
+              queryTags.push(new QueryTag(TOKEN, 'character', fieldRequest.character));
               break;
             case CQL:
               fieldRequest.simpleResult = fieldRequest.cql;
-              tag = new QueryTag('cql', fieldRequest.cql);
-              queryTags.push(new QueryTag('cql', fieldRequest.cql));
+              queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
               break;
             default: // SIMPLE
               fieldRequest.simpleResult = fieldRequest.simple;
@@ -128,8 +128,6 @@ export class LoadResultsService {
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
             queryRequest.queryPattern?.tokPattern.splice(0, queryRequest.queryPattern.tokPattern.length);
-            if (queryRequest.queryType !== REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST) {
-            }
             fieldRequest.simpleResult.split(' ').forEach(simpleResultToken => {
               const token = new QueryToken();
               token.tags.push([]);
@@ -201,7 +199,7 @@ export class LoadResultsService {
     /** Metadata */
     const textTypesRequest = new TextTypesRequest();
     this.metadataQueryService.getMetadata().forEach(md => {
-      if (!!md.selection) {
+      if (!!md.selection && !!md.selection.toString()) {
         if (md.freeText) {
           // freetxt
           textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
@@ -259,13 +257,6 @@ export class LoadResultsService {
       }
     }
   }
-
-  // private tagBuilder(type: string, value: string): QueryTag {
-  //   const tag = new QueryTag(TOKEN);
-  //   tag.name = type;
-  //   tag.value = value;
-  //   return tag;
-  // }
 
   private initWebSocket(socketServiceSubject: RxWebsocketSubject): Observable<QueryResponse | null> {
     // TODO: add distinctUntilChanged with custom comparison

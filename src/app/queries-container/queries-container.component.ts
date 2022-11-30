@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -8,6 +7,7 @@ import { ContextConcordanceQueryRequest } from '../model/context-concordance-que
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
+import { PanelLabelStatus } from '../model/panel-label-status';
 import { ResultContext } from '../model/result-context';
 import { AuthorizationService } from '../services/authorization.service';
 import { DisplayPanelService } from '../services/display-panel.service';
@@ -66,11 +66,15 @@ export class QueriesContainerComponent implements OnInit {
   // modale che avverte l'utente che non può accedere all'installazione
   public displayNotAllowedUserForInstallation = false;
 
+  public panelDisplayMTD = false;
+  public panelDisplayOPT = true;
+  public titleLabelKeyValue: KeyValueItem | null = null;
+
   constructor(
+    public readonly displayPanelService: DisplayPanelService,
     private readonly authorizationService: AuthorizationService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
-    public readonly displayPanelService: DisplayPanelService,
     private readonly queryRequestService: QueryRequestService
   ) { }
 
@@ -78,6 +82,11 @@ export class QueriesContainerComponent implements OnInit {
     this.authorizationService.checkInstallationAuthorization().subscribe({
       next: allowed => this.displayNotAllowedUserForInstallation = !allowed
     });
+    this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
+      this.panelDisplayMTD = panelLabelStatus.panelDisplayMTD;
+      this.panelDisplayOPT = panelLabelStatus.panelDisplayOPT;
+      this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
+    })
     this.displayPanelService.reset();
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
@@ -102,11 +111,16 @@ export class QueriesContainerComponent implements OnInit {
   }
 
   public displayCollocations(): void {
-    this.titleResult = 'MENU.COLLOCATIONS';
+    this.titleResult = 'MENU.COLLOCATION';
   }
 
   public displayFrequency(): void {
-    this.titleResult = 'MENU.FREQUENCY';
+    // workaround to reload frequency table when press same button in frequency panel
+    this.titleResult = '';
+    setTimeout(() => {
+      this.titleResult = 'MENU.FREQUENCY';
+    }, 0);
+    //
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (queryRequest.frequencyQueryRequest &&
       queryRequest.frequencyQueryRequest.categories) {
@@ -116,15 +130,6 @@ export class QueriesContainerComponent implements OnInit {
     if (basicFieldRequest) {
       this.emitterService.makeFrequency.next(basicFieldRequest);
     }
-
-  }
-
-  public displayOptionsPanel(): BehaviorSubject<boolean> {
-    return this.displayPanelService.optionsPanelSubject;
-  }
-
-  public displayMetadataPanel(): BehaviorSubject<boolean> {
-    return this.displayPanelService.metadataPanelSubject;
   }
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {
