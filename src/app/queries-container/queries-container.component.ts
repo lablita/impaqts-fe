@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -84,9 +83,9 @@ export class QueriesContainerComponent implements OnInit {
       next: allowed => this.displayNotAllowedUserForInstallation = !allowed
     });
     this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
-     this.panelDisplayMTD = panelLabelStatus.panelDisplayMTD;
-     this.panelDisplayOPT = panelLabelStatus.panelDisplayOPT;
-     this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
+      this.panelDisplayMTD = panelLabelStatus.panelDisplayMTD;
+      this.panelDisplayOPT = panelLabelStatus.panelDisplayOPT;
+      this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
     this.displayPanelService.reset();
     this.emitterService.pageMenu = QUERY;
@@ -118,9 +117,9 @@ export class QueriesContainerComponent implements OnInit {
   public displayFrequency(): void {
     // workaround to reload frequency table when press same button in frequency panel
     this.titleResult = '';
-    setTimeout(()=>{                          
+    setTimeout(() => {
       this.titleResult = 'MENU.FREQUENCY';
-    }, 100);
+    }, 0);
     //
     const queryRequest = this.queryRequestService.getQueryRequest();
     if (queryRequest.frequencyQueryRequest &&
@@ -131,7 +130,6 @@ export class QueriesContainerComponent implements OnInit {
     if (basicFieldRequest) {
       this.emitterService.makeFrequency.next(basicFieldRequest);
     }
-
   }
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {
