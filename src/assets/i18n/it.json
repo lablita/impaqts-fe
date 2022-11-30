@@ -69,6 +69,7 @@
       "WORD_FORM": "Word form",
       "WORD": "Parola",
       "VIEW_OPTIONS": {
+        "VIEW_OPTIONS": "View options",
         "ALLOW_MULT": "Allow multiple lines selection",
         "ATTRIBUTE": "Attribute",
         "ATTRIBUTES": "Attributes",

@@ -1,4 +1,5 @@
 import { MenuItem } from 'primeng/api';
+import { StringMappingType } from 'typescript';
 
 export class MenuItemObject implements MenuItem {
   label?: string;
@@ -9,7 +10,10 @@ export class MenuItemObject implements MenuItem {
   expanded = false;
   disabled = false;
   routerLink: any;
-
+  styleClass?: string;
+  tooltip?: string;
+  visible?: boolean;
+  
   constructor(
     label: string | null, icon: string | null, command: any, url: string | null,
     items: MenuItem[] | null, expanded: boolean, disabled: boolean, routerLink: any) {
