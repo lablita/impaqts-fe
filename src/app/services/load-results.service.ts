@@ -2,20 +2,19 @@ import { Injectable } from '@angular/core';
 import { LazyLoadEvent, Message, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { STRUCT_DOC, TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
+import { TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { RESULT_COLLOCATION, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
+import { MetadataRequest } from '../model/metadata-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryResponse } from '../model/query-response';
-import { QueryStructure } from '../model/query-structure';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
-import { TextTypesRequest } from '../model/text-types-request';
 import { DisplayPanelService } from './display-panel.service';
 import { ErrorMessagesService } from './error-messages.service';
 import { MetadataQueryService } from './metadata-query.service';
@@ -197,15 +196,15 @@ export class LoadResultsService {
 
   private setMetadataQuery(): void {
     /** Metadata */
-    const textTypesRequest = new TextTypesRequest();
+    const metadataRequest = new MetadataRequest();
     this.metadataQueryService.getMetadata().forEach(md => {
       if (!!md.selection && !!md.selection.toString()) {
         if (md.freeText) {
           // freetxt
-          textTypesRequest.freeTexts.push(new Selection(md.name, md.selection as string));
+          metadataRequest.freeTexts.push(new Selection(md.name, md.selection as string));
         } else if (!md.multipleChoice && md.tree && md.tree[0] && md.tree[0].children && md.tree[0].children.length > 0) {
           // single
-          textTypesRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
+          metadataRequest.singleSelects.push(new Selection(md.name, (md.selection as TreeNode).label));
         } else {
           // multi
           const values: string[] = [];
@@ -214,46 +213,64 @@ export class LoadResultsService {
               values.push(m.label);
             }
           });
-          textTypesRequest.multiSelects.push(new Selection(md.name, undefined, values));
+          metadataRequest.multiSelects.push(new Selection(md.name, undefined, values));
         }
       }
     });
-    localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(textTypesRequest));
+    localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
     // Tutto in OR
     this.metadataQuery = new QueryToken();
-    if (textTypesRequest.freeTexts && textTypesRequest.freeTexts.length > 0) {
-      textTypesRequest.freeTexts.forEach(ft => {
-        const tag = new QueryTag(STRUCT_DOC);
-        if (ft.value) {
-          tag.name = ft.key;
-          tag.value = ft.value;
-          if (this.metadataQuery) {
-            this.metadataQuery.tags.push([tag]);
+    if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
+      metadataRequest.freeTexts.forEach(ft => {
+        const structTagTokens = ft.value?.split('.');
+        if (structTagTokens) {
+          const structTag = structTagTokens[0];
+          const tag = new QueryTag(structTag);
+          if (ft.value) {
+            if (structTagTokens.length > 1) {
+              tag.name = structTagTokens[1];
+            } else {
+              tag.name = ft.key;
+            }
+            tag.value = ft.value;
+            if (this.metadataQuery) {
+              this.metadataQuery.tags.push([tag]);
+            }
           }
         }
       });
     }
-    if (textTypesRequest.multiSelects && textTypesRequest.multiSelects.length > 0) {
-      textTypesRequest.multiSelects.forEach(ms => {
+    if (metadataRequest.multiSelects && metadataRequest.multiSelects.length > 0) {
+      metadataRequest.multiSelects.forEach(ms => {
         if (ms.values) {
           ms.values.forEach(v => {
-            const tag = new QueryTag(STRUCT_DOC);
-            tag.name = ms.key;
-            tag.value = v;
-            if (this.metadataQuery) {
-              this.metadataQuery.tags.push([tag]);
+            const structTagTokens = ms.key?.split('.');
+            if (structTagTokens) {
+              const structTag = structTagTokens[0];
+              const tag = new QueryTag(structTag);
+              if (structTagTokens.length > 1) {
+                tag.name = structTagTokens[1];
+              } else {
+                tag.name = ms.key;
+              }
+              tag.value = v;
+              if (this.metadataQuery) {
+                this.metadataQuery.tags.push([tag]);
+              }
             }
           });
         }
       });
     }
-    if (textTypesRequest.singleSelects && textTypesRequest.singleSelects.length > 0) {
-      const tag = new QueryTag(STRUCT_DOC);
-      const singleSelect = textTypesRequest.singleSelects[0];
-      if (singleSelect && singleSelect.value) {
-        tag.name = singleSelect.key;
-        tag.value = singleSelect.value;
-        this.metadataQuery.tags.push([tag]);
+    if (metadataRequest.singleSelects && metadataRequest.singleSelects.length > 0) {
+      const singleSelect = metadataRequest.singleSelects[0];
+      if (singleSelect.value) {
+        const tag = new QueryTag(singleSelect.value);
+        if (singleSelect && singleSelect.value) {
+          tag.name = singleSelect.key;
+          tag.value = singleSelect.value;
+          this.metadataQuery.tags.push([tag]);
+        }
       }
     }
   }

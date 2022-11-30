@@ -5,9 +5,9 @@ import { map } from 'rxjs/operators';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
+import { MetadataRequest } from '../model/metadata-request';
 import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
-import { TextTypesRequest } from '../model/text-types-request';
 import { QueriesContainerService } from '../queries-container/queries-container.service';
 
 @Injectable({
@@ -17,7 +17,7 @@ import { QueriesContainerService } from '../queries-container/queries-container.
 export class MetadataUtilService {
 
   public res: KeyValueItem[] = [];
-  private textTypesRequest: TextTypesRequest = new TextTypesRequest();
+  private metadataRequest: MetadataRequest = new MetadataRequest();
 
   constructor(
     private readonly queriesContainerService: QueriesContainerService,
@@ -29,14 +29,14 @@ export class MetadataUtilService {
       let metadata = installation.corpora.filter(c => c.id === +corpusId)[0].metadata.filter(md => md.documentMetadatum);
       // recuro i dati salvati nel localstorage
       const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
-      this.textTypesRequest = ttqr ? JSON.parse(ttqr) : null;
+      this.metadataRequest = ttqr ? JSON.parse(ttqr) : null;
       // genero albero per componente multiselect check box
       metadata.forEach(md => {
         if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
           md.tree = [];
           let filteredSelections: Array<Selection> = [];
-          if (this.textTypesRequest && this.textTypesRequest.multiSelects) {
-            filteredSelections = this.textTypesRequest.multiSelects.filter(ms => ms.key === md.name);
+          if (this.metadataRequest && this.metadataRequest.multiSelects) {
+            filteredSelections = this.metadataRequest.multiSelects.filter(ms => ms.key === md.name);
           }
           const res = this.generateTree(md, (filteredSelections[0] && filteredSelections[0].values) ? filteredSelections[0].values : []);
           md.tree.push(res.tree);
@@ -44,14 +44,14 @@ export class MetadataUtilService {
         }
       });
       // recupero freeText da localstorage
-      if (this.textTypesRequest && this.textTypesRequest.freeTexts) {
+      if (this.metadataRequest && this.metadataRequest.freeTexts) {
         metadata.forEach(md => {
           if (md.freeText) {
             let value = null;
-            if (this.textTypesRequest && this.textTypesRequest.freeTexts && this.textTypesRequest.freeTexts.length > 0) {
-              const ft = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name);
+            if (this.metadataRequest && this.metadataRequest.freeTexts && this.metadataRequest.freeTexts.length > 0) {
+              const ft = this.metadataRequest.freeTexts.filter(freeT => freeT.key === md.name);
               if (ft.length > 0) {
-                value = this.textTypesRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
+                value = this.metadataRequest.freeTexts.filter(freeT => freeT.key === md.name)[0].value;
               }
             }
             if (value) {
@@ -94,15 +94,15 @@ export class MetadataUtilService {
       }
     }
     if (metadatum) {
-      const selected = this.textTypesRequest &&
-        this.textTypesRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
-        this.textTypesRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] :
-        (this.textTypesRequest && this.textTypesRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
-          this.textTypesRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] : null);
+      const selected = this.metadataRequest &&
+        this.metadataRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
+        this.metadataRequest.singleSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] :
+        (this.metadataRequest && this.metadataRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name).length > 0 ?
+          this.metadataRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] : null);
       metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
-        metadata = this.linkLeafs(metadata, this.textTypesRequest);
+        metadata = this.linkLeafs(metadata, this.metadataRequest);
         metadata.forEach(md => {
           if (!md.multipleChoice && !md.freeText) {
             this.setUnselectable(md.tree[0]);
@@ -217,7 +217,7 @@ export class MetadataUtilService {
   }
 
   // collego quanto recuperato dal corpus al nodo corretto
-  private linkLeafs(metadata: Metadatum[], textTypesRequest: TextTypesRequest): Metadatum[] {
+  private linkLeafs(metadata: Metadatum[], metadataRequest: MetadataRequest): Metadatum[] {
     metadata.forEach(md => {
       if (md.child && md.retrieveValuesFromCorpus) {
         metadata.forEach(m => {
@@ -225,9 +225,9 @@ export class MetadataUtilService {
             const node = this.retrieveNodeFromTree(m.tree[0], md.name, 0);
             if (!!node && md && md.tree && md.tree[0] && md.tree[0].children) {
               node.children = md.tree[0].children.slice();
-              const selected = textTypesRequest && textTypesRequest.multiSelects
-                && textTypesRequest.multiSelects.filter(ms => ms.key === m.name)[0]
-                && textTypesRequest.multiSelects.filter(ms => ms.key === m.name)[0].values;
+              const selected = metadataRequest && metadataRequest.multiSelects
+                && metadataRequest.multiSelects.filter(ms => ms.key === m.name)[0]
+                && metadataRequest.multiSelects.filter(ms => ms.key === m.name)[0].values;
               if (selected) {
                 selected.forEach(sel => {
                   if (md.tree[0].children) {

@@ -1,9 +1,8 @@
-import { STRUCT_DOC, TOKEN } from '../common/constants';
 
 export class QueryTag {
   name = '';
   value = '';
-  structure: 'token' | 'doc';
+  structure = '';
   startsWithValue = false;
   endsWithValue = false;
   containsValue = false;
@@ -13,7 +12,7 @@ export class QueryTag {
   position: string | null = null;
 
   constructor(struct: string, name?: string, value?: string) {
-    this.structure = struct === TOKEN ? TOKEN : STRUCT_DOC;
+    this.structure = struct;
     if (!!name) {
       this.name = name;
     }
