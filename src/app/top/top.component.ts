@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { INSTALLATION, INTERFACE_LANGUAGE, LOGIN, LOGOUT, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
@@ -8,8 +8,7 @@ import { EmitterService } from '../utils/emitter.service';
 @Component({
   selector: 'app-top',
   templateUrl: './top.component.html',
-  styleUrls: ['./top.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./top.component.scss']
 })
 
 export class TopComponent {
