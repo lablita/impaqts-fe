@@ -3,7 +3,7 @@ import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
-  ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATION, CORPUS_INFO, FILTER, FREQUENCY,
+  ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATION, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY,
   QUERY, RESULT_CONCORDANCE, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST
 } from '../common/routes-constants';
 import { BOTTOM_LEFT, INSTALLATION } from '../model/constants';
@@ -21,19 +21,24 @@ export class MenuEvent {
     public item: string,
   ) { }
 }
+
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
-
+   
   public items: MenuItemObject[] = [];
   public urlBottomLeft: string | null = null;
+  
+  public readonly CREDITS = CREDITS_ROUTE;
+  public readonly COPYRIGHT = COPYRIGHT_ROUTE;
 
   private readonly menuQueryStr: string[] = [QUERY, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
   private readonly menuDisplayPanel: string[] = [VIEW_OPTION, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATION];
+  private readonly menuItemsWIP: string[] = [ALL_WORDS, ALL_LEMMAS, WORD_LIST, FILTER, VIEW_OPTION]
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
@@ -52,6 +57,10 @@ export class MenuComponent implements OnInit {
     private readonly queryRequestService: QueryRequestService
   ) { }
 
+  public click(route: string): void {
+    this.displayPanelService.menuItemClickSubject.next(route);
+
+  }
   ngOnInit(): void {
     this.authService.user$.subscribe(u => {
       if (!!u) {
@@ -110,6 +119,12 @@ export class MenuComponent implements OnInit {
         }
         );
         this.items = menuItems;
+        this.items.forEach(item => {
+          if (this.menuItemsWIP.includes(item.routerLink)) {
+            item.styleClass = 'wip-backgroung-color';
+            item.disabled = true;
+          }
+        });
       }
     });
   }
@@ -168,5 +183,6 @@ export class MenuComponent implements OnInit {
     }
     return '';
   }
+
 
 }

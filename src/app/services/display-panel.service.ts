@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { COLLOCATION_OPTION_LABEL, COPYRIGHT, CREDITS, FILTER_OPTION_LABEL, FREQ_OPTION_LABEL, MENU_CONCORDANCE, 
   SORT_OPTION_LABEL, VIEW_OPTION_LABEL, WORD_LIST_OPTION_LABEL} from '../common/label-constants';
-import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, CORPUS_INFO, FILTER, FREQUENCY, QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST} from '../common/routes-constants';
+import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST} from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
 
@@ -21,8 +21,8 @@ const MENU_NO_LABEL = [
   ALL_LEMMAS,
   VISUAL_QUERY,
   WORD_LIST,
-  CREDITS,
-  COPYRIGHT
+  CREDITS_ROUTE,
+  COPYRIGHT_ROUTE,
 ]
 
 const panelLabelStatusStart = new PanelLabelStatus(false, false, true, true, false, true, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
