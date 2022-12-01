@@ -17,8 +17,9 @@
 
 // inverting colors of selected item, because color of selected item is the same as the bar one
 ::ng-deep .p-button {
-  background-color: #FFC107 !important;
-  border-color: #FFC107 !important;
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #212529 !important;
 }
 
 ::ng-deep .p-highlight {
