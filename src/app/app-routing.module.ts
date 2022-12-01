@@ -43,13 +43,11 @@ const routes: Routes = [
       },
       {
         path: CREDITS_ROUTE,
-        component: CreditsComponent,
-        canActivate: [EMMACorpGuard]
+        component: CreditsComponent
       },
       {
         path: COPYRIGHT_ROUTE,
-        component: CopyrightComponent,
-        canActivate: [EMMACorpGuard]
+        component: CopyrightComponent
       },
       {
         path: VISUAL_QUERY,

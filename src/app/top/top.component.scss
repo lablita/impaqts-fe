@@ -1,4 +1,4 @@
-:host {
+.topheader {
   position: fixed;
   top: 0;
   left: 0;
@@ -13,4 +13,16 @@
   height: 40px;
   margin-left: 20px;
   margin-top: 5px;
+}
+
+// inverting colors of selected item, because color of selected item is the same as the bar one
+.p-button {
+  background-color: #FFC107 !important;
+  border-color: #FFC107 !important;
+}
+
+.p-highlight {
+  background-color: #fff !important;
+  border-color: #fff ! important;
+  color: #212529 !important;
 }

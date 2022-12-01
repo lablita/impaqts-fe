@@ -60,7 +60,7 @@ export class QueriesContainerComponent implements OnInit {
 
   public displayResultPanel = false;
   public categories: Array<string> = [];
-  public titleResult: string | null = 'MENU.CONCORDANCE';
+  public titleResult: string | null = null;
   public selectedCorpus: KeyValueItem | null = null;
 
   // modale che avverte l'utente che non può accedere all'installazione

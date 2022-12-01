@@ -33,13 +33,11 @@
       </p-card>
     </div>
   </div>
-  <div class="flex flex-column w-6"
-    *ngIf="(panelDisplayMTD || panelDisplayOPT) && !!selectedCorpus">
-    <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus.key" 
-      [panelDisplayMTD]="panelDisplayMTD" [panelDisplayOPT]="panelDisplayOPT"
-      [metadataAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-      [metadataTextTypes]="metadataTextTypes" (loadCollocations)="displayCollocations()" (sort)="displayConcordances()"
-      (frequency)="displayFrequency()">
+  <div class="flex flex-column w-6" *ngIf="(panelDisplayMTD || panelDisplayOPT) && !!selectedCorpus">
+    <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus.key"
+      [panelDisplayMTD]="panelDisplayMTD" [panelDisplayOPT]="panelDisplayOPT" [metadataAttributes]="metadataAttributes"
+      [textTypesAttributes]="textTypesAttributes" [metadataTextTypes]="metadataTextTypes"
+      (loadCollocations)="displayCollocations()" (sort)="displayConcordances()" (frequency)="displayFrequency()">
     </app-dispaly-panel-options>
   </div>
 </div>
