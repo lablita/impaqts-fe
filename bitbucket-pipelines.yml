@@ -7,6 +7,12 @@ image: node:14.18.0
 
 pipelines:
   branches:
+    develop:
+      - step:
+          name: Sonar
+          script:
+            - npm ci
+            - npm run sonar
     master:
       - step:
           size: 2x # Double resources available for this step.
@@ -23,3 +29,9 @@ pipelines:
                 S3_BUCKET: "drwolf-impaqts-frontend"
                 LOCAL_PATH: "dist/impaqts-fe"
                 ACL: "public-read"
+            - pipe: atlassian/aws-cloudfront-invalidate:0.6.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID # Optional if already defined in the context or OIDC used.
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY # Optional if already defined in the context or OIDC used.
+                AWS_DEFAULT_REGION: "eu-west-1" # Optional if already defined in the context.
+                DISTRIBUTION_ID: "E263CTGMHO0P4P"

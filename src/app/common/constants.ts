@@ -7,4 +7,6 @@ export const HTTPS = 'https://';
 export const WS = 'ws://';
 export const WSS = 'wss://';
 
+export const WIDE_CONTEXT = 'widecontext';
+export const CORPUS_INFO = 'info';
 

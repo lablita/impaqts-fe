@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
-import { ContextConcordanceQueryRequestDTO } from '../model/context-concordance-query-request-dto';
+import { REQUEST_TYPE } from '../common/query-constants';
+import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
+import { FilterConcordanceQueryRequest } from '../model/filter-concordance-query-request';
+import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 
 @Injectable({
@@ -9,18 +11,27 @@ import { QueryRequest } from '../model/query-request';
 })
 export class QueryRequestService {
 
-  public queryRequest = new QueryRequest();
+  private queryRequest: QueryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
-  private contextConcordanceQueryRequestDTO: ContextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+
+
+  private contextConcordanceQueryRequest: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
+
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
+    //this.queryRequest.filterConcordanceQueryRequest = null;
+  }
+
+  public resetQueryPattern(): void {
+    this.queryRequest.queryPattern = new QueryPattern();
   }
 
   public isOptionSet(): boolean {
-    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || !!this.queryRequest.frequencyQueryRequest;
+    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || 
+    !!this.queryRequest.frequencyQueryRequest || !!this.queryRequest.filterConcordanceQueryRequest;
   }
 
   public resetContextConcordance(): void {
@@ -28,7 +39,7 @@ export class QueryRequestService {
   }
 
   public withContextConcordance(): boolean {
-    return !!this.queryRequest ? !!this.queryRequest.contextConcordanceQueryRequest : false;
+    return this.queryRequest.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST || this.queryRequest.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST;
   }
 
   public setContextConcordance(contextConcordanceQueryRequest: ContextConcordanceQueryRequest): void {
@@ -40,14 +51,39 @@ export class QueryRequestService {
   }
 
   public setBasicFieldRequest(fieldRequest: FieldRequest): void {
-    this.basicFieldRequest = fieldRequest;
+    if (fieldRequest) {
+      this.basicFieldRequest = fieldRequest;
+    }
   }
 
-  public getContextConcordanceQueryRequestDTO(): ContextConcordanceQueryRequestDTO {
-    return this.contextConcordanceQueryRequestDTO;
+  public setFilterConcordanceQueryRequest(filterConcordanceQueryRequest: FilterConcordanceQueryRequest): void {
+    if (filterConcordanceQueryRequest) {
+      this.queryRequest.filterConcordanceQueryRequest = filterConcordanceQueryRequest;
+    }
   }
 
-  public clearContextConcordanceQueryRequestDTO(): void {
-    this.contextConcordanceQueryRequestDTO = ContextConcordanceQueryRequestDTO.getInstance();
+  public getContextConcordanceQueryRequest(): ContextConcordanceQueryRequest {
+    return this.contextConcordanceQueryRequest;
+  }
+
+  public clearContextConcordanceQueryRequest(): void {
+    this.contextConcordanceQueryRequest.items.splice(0, this.contextConcordanceQueryRequest.items.length);
+    const cci = ContextConcordanceItem.getInstance();
+    this.contextConcordanceQueryRequest.items.push(cci);
+  }
+
+  public setQueryPattern(queryPattern: QueryPattern): void {
+    if (queryPattern) {
+      this.queryRequest.queryPattern = queryPattern;
+      this.basicFieldRequest = null;
+    }
+  }
+
+  public getQueryPattern(): QueryPattern | null {
+    return this.queryRequest.queryPattern;
+  }
+
+  public getQueryRequest(): QueryRequest {
+    return this.queryRequest;
   }
 }

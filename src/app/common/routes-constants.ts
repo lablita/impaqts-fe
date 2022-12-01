@@ -12,9 +12,9 @@ export const RESULT_QUERY = 'result_query';
 export const RESULT_CONCORDANCE = 'result_concordance';
 export const RESULT_COLLOCATION = 'result_collocation';
 export const AS_SUBCORPUS = 'as_subcorpus';
-export const VIEW_OPTIONS = 'view_options';
+export const VIEW_OPTION = 'view_option';
 export const SORT = 'sort';
 export const FILTER = 'filter';
 export const FREQUENCY = 'frequency';
-export const COLLOCATIONS = 'collocations';
+export const COLLOCATION = 'collocation';
 

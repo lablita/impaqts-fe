@@ -10,8 +10,8 @@
     </p-card>
 
     <div class="flex justify-content-between p-component mt-3" style="width: 240px;">
-      <a class="ml-6" [routerLink]="['/credits']">credits</a>
-      <a class="mr-6" [routerLink]="['/copyright']">copyright</a>
+      <button pButton class="p-button-text p-button-info ml-6" [routerLink]="['/credits']" label="credits"></button>
+      <button pButton class="p-button-text p-button-info mr-6" [routerLink]="['/copyright']" label="copyright"></button>
     </div>
     <img *ngIf="urlBottomLeft" [src]="urlBottomLeft" class="logo" alt="logoMenu">
   </div>

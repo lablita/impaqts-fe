@@ -6,9 +6,9 @@ import { MetadataQueryService } from '../services/metadata-query.service';
 
 export class SubMetadatum {
   currentSize = 0;
-  kwicLines: Array<string> = Array.from<string>({ length: 0 });
+  kwicLines: Array<string> = [];
   inProgress = false;
-  metadataValues: Array<string> = Array.from<string>({ length: 0 });
+  metadataValues: Array<string> = [];
 }
 
 @Component({
@@ -42,7 +42,6 @@ export class MetadataPanelComponent implements OnInit {
   public resetMetadata(): void {
     localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
-    console.log('reset');
   }
 
   public isFilterOptions(): boolean {

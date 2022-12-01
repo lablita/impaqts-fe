@@ -34,3 +34,19 @@ a.right-button {
   bottom: 0px;
   right: 0;
 }
+
+.vertical {
+  transform: rotate(90deg);
+  right: -28px !important;
+}
+
+.options {
+  top: 350px !important;
+}
+
+.test-right {
+  background-color: red;
+  position: absolute;
+  top: 500px;
+  right: 0;
+}

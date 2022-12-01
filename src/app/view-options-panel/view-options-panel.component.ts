@@ -17,12 +17,11 @@ const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string | null | undefined = null;
-  @Input() public showRightButton = false;
-  @Input() public corpusAttributes: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  @Input() public corpusAttributes: Array<KeyValueItem> = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public attributeChekBox: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public displayAttr: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public attributeChekBox: Array<KeyValueItem> = [];
+  public displayAttr: Array<KeyValueItem> = [];
   public selectedDisplayAttr: KeyValueItem | null = null;
   public asTooltipLabel = '';
   public refsUpLabel = '';

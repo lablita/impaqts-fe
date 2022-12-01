@@ -1,8 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { TreeNode } from 'primeng/api';
 import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
-import { CorpusInfoObj } from '../model/corpus-info-obj';
-import { DisplayPanelService } from '../services/display-panel.service';
+import { INSTALLATION } from '../model/constants';
+import { CorpusInfo } from '../model/corpusinfo/corpus-info';
+import { KeyValueItem } from '../model/key-value-item';
+import { CorpusInfoService } from '../services/corpus-info.service';
 
+class CorpusInfoObj {
+  label: string;
+  value: string;
+  tag = '';
+  constructor(label: string, value: string, tag?: string) {
+    this.label = label;
+    this.value = value;
+    if (tag) {
+      this.tag = tag;
+    }
+  }
+}
 @Component({
   selector: 'app-corpus-info',
   templateUrl: './corpus-info.component.html',
@@ -11,20 +26,38 @@ import { DisplayPanelService } from '../services/display-panel.service';
 export class CorpusInfoComponent implements OnInit {
 
   public countsLabel = '';
-  public counts: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public counts: CorpusInfoObj[] = [];
   public generalInfosLabel = '';
-  public generalInfo: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public generalInfo: CorpusInfoObj[] = [];
   public lexiconSizesLabel = '';
-  public lexiconSizes: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public lexiconSizes: CorpusInfoObj[] = [];
   public structArtLabel = '';
-  public structArt: CorpusInfoObj[] = Array.from<CorpusInfoObj>({ length: 0 });
+  public structArt: CorpusInfoObj[] = [];
 
+  public corpusName: KeyValueItem | null = null;
+  public corpusInfo: CorpusInfo | null = null;
+  public corpusStructureTree: Array<TreeNode> = [];
 
   constructor(
-    private readonly displayPanelService: DisplayPanelService
+    private readonly corpusInfoService: CorpusInfoService
   ) { }
 
   ngOnInit(): void {
+    const selectedCorpus = localStorage.getItem('selectedCorpus');
+    const inst = localStorage.getItem(INSTALLATION);
+    if (inst && selectedCorpus) {
+      this.corpusName = JSON.parse(selectedCorpus);
+      const installation = JSON.parse(inst);
+      if (this.corpusName && this.corpusName.value) {
+        this.corpusInfoService.getCorpusInfo(installation, this.corpusName.value).subscribe(corpusInfo => {
+          this.corpusInfo = corpusInfo;
+          if (this.corpusInfo) {
+            this.corpusStructureTree = this.getTree(this.corpusInfo);
+          }
+        });
+      }
+    }
+
     // this.displayPanelService.panelSelectedSubject.next(CORPUS_INFO);
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
     this.counts = [
@@ -62,6 +95,22 @@ export class CorpusInfoComponent implements OnInit {
       new CorpusInfoObj('PAGE.CORPUS_INFO.S', '15,835,675'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.ARTICLE', '572,515')
     ];
+  }
+
+  private getTree(corpusInfo: CorpusInfo): Array<TreeNode> {
+    return corpusInfo.structs.map(sInfo => {
+      const tn = {} as TreeNode;
+      tn.leaf = false;
+      tn.data = sInfo;
+      tn.children = sInfo.structItems.sort((sItem1, sItem2) => sItem1.name > sItem2.name ? 1 : -1).map(sItem => {
+        const tnItem = {} as TreeNode;
+        tnItem.data = sItem;
+        tnItem.leaf = true;
+        tnItem.parent = tn;
+        return tnItem;
+      });
+      return tn;
+    });
   }
 
 }

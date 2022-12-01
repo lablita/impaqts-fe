@@ -115,5 +115,7 @@
       }
     }
   },
-  "defaultProject": "impaqts-fe"
+  "cli": {
+    "analytics": false
+  }
 }

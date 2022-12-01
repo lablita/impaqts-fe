@@ -28,7 +28,7 @@
     "FREQUENCY": "Frequency",
     "NODE_TAGS": "Node tags",
     "NODE_FORMS": "Node forms",
-    "COLLOCATIONS": "Collocations",
+    "COLLOCATION": "Collocations",
     "CONC_DECS": "ConcDesc",
     "VISUALIZE": "Visualize",
     "VISUAL_QUERY": "Visual Query"
@@ -72,7 +72,6 @@
       "FILE_UPLOADED": "File uploaded",
       "VIDEO": "Video",
       "VIEW_OPTIONS": {
-        "VIEW_OPTIONS": "View options",
         "ATTRIBUTES": "Attributes",
         "STRUCTURES": "Structures",
         "REFERENCES": "References",
@@ -100,7 +99,6 @@
         "CHANGE_VIEW": "Change view options"
       },
       "WORD_OPTIONS": {
-        "WORD_OPTIONS": "Word list options",
         "SUBCORPUS": "Subcorpus",
         "SEARCH_ATTR": "Search attribute",
         "N_GRAM": "use n-grams",
@@ -132,7 +130,6 @@
         "BUTTON": "Make word list"
       },
       "SORT_OPTIONS": {
-        "SORT_OPTIONS": "Sort options",
         "SIMPLE_SORT": "Simple sort",
         "SORT_KEY": "Sort key",
         "LEFT_CONTEXT": "Left context",
@@ -149,7 +146,6 @@
         "SORT_CONCORDANCE": "Sort Concordances"
       },
       "FREQ_OPTIONS": {
-        "FREQ_OPTIONS": "Frequency opt.",
         "FREQ_DIST": "Text type frequency distribution",
         "MULTI_FREQ_DIST": "Multilevel frequency distribution",
         "FREQ_LIMIT": "Frequency limit",
@@ -161,7 +157,7 @@
         "INCLUDE_CAT": "Include categories with no hits",
         "IGNORE_CASE": "Ignore case",
         "CLEAR_FREQ_OPT": "Default Value",
-        "FREQ_CONCORDANCE": "Frequency Concordances"
+        "METADATA_FREQ": "Metadata frequency"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
@@ -271,6 +267,14 @@
     "RESET": "Reset",
     "CLEAR": "Clear"
   },
+  "OPTION_LABEL": {
+    "VIEW": "View",
+    "WORD_LIST": "Word list options",
+    "SORT": "Sort options",
+    "FILTER": "Filter",
+    "FREQUENCY": "Frequency opt.",
+    "COLLOCATION": "Collocations"
+  },
   "USER": {
     "USER": "User",
     "EMAIL": "Email",
@@ -278,6 +282,11 @@
     "ADMIN_ROLE": "Admin",
     "ADVANCEDUSER_ROLE": "Advanced user",
     "USER_ROLE": "Simple user"
+  },
+  "RESPONSE": {
+    "NEGATIVE_FILTER": "Negative Filter",
+    "POSITIVE_FILTER": "Positive Filter",
+    "QUERY": "Query"
   },
   "LANGUAGE": {
     "IT": "ITA",

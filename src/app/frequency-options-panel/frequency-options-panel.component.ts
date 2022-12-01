@@ -1,37 +1,38 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, TAG, WORD } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { FIRST, FOURTH, NODE_CONTEXT, SECOND, THIRD } from '../common/sort-constants';
 import { DESC } from '../model/constants';
 import { FreqOptions } from '../model/freq-options';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
-import { EmitterService } from '../utils/emitter.service';
 
 const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 
 const POSITION_LIST = [
-  new KeyValueItem(L6, L6),
-  new KeyValueItem(L5, L5),
-  new KeyValueItem(L4, L4),
-  new KeyValueItem(L3, L3),
-  new KeyValueItem(L2, L2),
-  new KeyValueItem(L1, L1),
-  new KeyValueItem(NODE_CONTEXT, NODE),
-  new KeyValueItem(R1, R1),
-  new KeyValueItem(R2, R2),
-  new KeyValueItem(R3, R3),
-  new KeyValueItem(R4, R4),
-  new KeyValueItem(R5, R5),
-  new KeyValueItem(R6, R6)
+  L6,
+  L5,
+  L4,
+  L3,
+  L2,
+  L1,
+  NODE,
+  R1,
+  R2,
+  R3,
+  R4,
+  R5,
+  R6
 ];
 
 const SELECTED_POSITION = [
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE),
-  new KeyValueItem(NODE, NODE)
+  NODE,
+  NODE,
+  NODE,
+  NODE
 ];
 
 const LEVELS = [
@@ -48,13 +49,6 @@ const MULTI_ATTRIBUTE = [
   new KeyValueItem('word', CONCORDANCE_WORD)
 ];
 
-const METADATA_ATTRIBUTES = [
-  'doc.sito',
-  'doc.url',
-  'doc.categoria',
-  'doc.produzione',
-  'doc.wordcount'
-]
 
 @Component({
   selector: 'app-frequency-options-panel',
@@ -63,28 +57,27 @@ const METADATA_ATTRIBUTES = [
 })
 export class FrequencyOptionsPanelComponent implements OnInit {
 
-  @Input() public showRightButton = false;
-  @Input() public corpusAttributes: KeyValueItem[] = Array.from<KeyValueItem>({ length: 0 });
+  @Input() public corpusAttributes: KeyValueItem[] = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
-  @Output() public concordanceFrequency = new EventEmitter<FrequencyQueryRequest>();
+  @Output() public metadataFrequency = new EventEmitter<void>();
 
   public freqOptionsQueryRequest: FreqOptions = FreqOptions.build();
 
-  public attributeList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public levels: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
+  public attributeList: Array<KeyValueItem> = [];
+  public levels: Array<KeyValueItem> = [];
   public selectedLevel: KeyValueItem | null = null;
   public selectedAttribute: KeyValueItem | null = null;
-  public selectedMultiAttribute: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public ignoreCase: Array<boolean> = Array.from<boolean>({ length: 0 });
-  public positionList: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public selectedPosition: Array<KeyValueItem> = Array.from<KeyValueItem>({ length: 0 });
-  public isSimpleFreq = true;
-  public metadataAttributes: Array<string> = Array.from<string>({ length: 0 });
+  public selectedMultiAttribute: Array<KeyValueItem> = [];
+  public ignoreCase: Array<boolean> = [];
+  public positionList: Array<string> = [];
+  public selectedPosition: Array<string> = [];
+  public isMetadataFreq = true;
+  public metadataAttributes: Array<string> = [];
 
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
-    private readonly emitterService: EmitterService
+    private readonly metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
@@ -100,7 +93,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
     this.selectedMultiAttribute = MULTI_ATTRIBUTE;
-    this.metadataAttributes = METADATA_ATTRIBUTES;
+    this.metadataAttributes = this.metadataQueryService.getMetadata().map(md => md.name);
   }
 
   public closeSidebar(): void {
@@ -108,25 +101,31 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public clickNodeTags(): void {
-    this.callConcordanceFrequency(TAG);
+    this.callMetadataFrequency(TAG);
   }
 
   public clickNodeForms(): void {
-    this.callConcordanceFrequency(WORD);
+    this.callMetadataFrequency(WORD);
   }
 
   public removeFrequencyOption(): void {
     this.queryRequestService.resetOptionsRequest();
   }
 
-  public makeFreq(): void {
-    this.isSimpleFreq = true;
-    this.doMakeFrequency(this.isSimpleFreq);
+  public makeMetadataFreq(): void {
+    this.isMetadataFreq = true;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST;
+    this.queryRequestService.getQueryRequest().frequencyQueryRequest = new FrequencyQueryRequest();
+    this.setFrequencyOption(this.isMetadataFreq);
+    this.doMakeFrequency();
+
   }
 
   public makeMultilevelFreq(): void {
-    this.isSimpleFreq = false;
-    this.doMakeFrequency(this.isSimpleFreq);
+    this.isMetadataFreq = false;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST;
+    this.setFrequencyOption(this.isMetadataFreq);
+    this.doMakeFrequency();
   }
 
   public levelCheck(event: any, i: number): void {
@@ -139,7 +138,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   private setFrequencyOption(isSimpleFreq: boolean): void {
     this.queryRequestService.resetOptionsRequest();
     if (this.freqOptionsQueryRequest) {
-      this.queryRequestService.queryRequest.frequencyQueryRequest = this.frequencyQueryRequestBuild(this.freqOptionsQueryRequest, isSimpleFreq);
+      this.queryRequestService.getQueryRequest().frequencyQueryRequest =
+        this.frequencyQueryRequestBuild(this.freqOptionsQueryRequest, isSimpleFreq);
       localStorage.setItem(FREQ_OPTIONS_QUERY_REQUEST, JSON.stringify(this.freqOptionsQueryRequest));
     }
   }
@@ -160,18 +160,18 @@ export class FrequencyOptionsPanelComponent implements OnInit {
         freqOption.attribute = freqOptionsQueryRequest.freqOptionList[i].attribute;
         freqOption.ignoreCase = freqOptionsQueryRequest.freqOptionList[i].ignoreCase;
         freqOption.position = freqOptionsQueryRequest.freqOptionList[i].position;
-        res.multilevelFrequency.push(freqOption);
+        res.freqOptList.push(freqOption);
       }
     }
     return res;
   }
 
   private getFrequencyOption(): FrequencyQueryRequest | null {
-    return this.queryRequestService.queryRequest.frequencyQueryRequest;
+    return this.queryRequestService.getQueryRequest().frequencyQueryRequest;
   }
 
-  private callConcordanceFrequency(attribute: string): void {
-    const res = new FrequencyQueryRequest()
+  private callMetadataFrequency(attribute: string): void {
+    const res = new FrequencyQueryRequest();
     res.frequencyColSort = null;
     res.frequencyType = FREQ;
     res.frequencyTypeSort = DESC;
@@ -180,22 +180,21 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     freqOpt.attribute = attribute;
     freqOpt.ignoreCase = false;
     freqOpt.position = NODE_CONTEXT;
-    res.multilevelFrequency.push(freqOpt);
-    this.queryRequestService.queryRequest.frequencyQueryRequest = res;
-    this.concordanceFrequency.emit(res);
+    res.freqOptList.push(freqOpt);
+    this.queryRequestService.getQueryRequest().frequencyQueryRequest = res;
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST;
+    this.doMakeFrequency();
   }
 
-  private doMakeFrequency(isSimpleFreq: boolean): void {
-    this.setFrequencyOption(isSimpleFreq);
+  private doMakeFrequency(): void {
+    this.queryRequestService.resetQueryPattern();
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
-      this.emitterService.makeFrequency.next(basicFieldRequest);
-      const freqencyOption = this.getFrequencyOption();
-      if (freqencyOption) {
-        this.concordanceFrequency.emit(freqencyOption);
+      const frequencyOption = this.getFrequencyOption();
+      if (frequencyOption) {
+        this.metadataFrequency.emit();
       }
     }
   }
-
 
 }

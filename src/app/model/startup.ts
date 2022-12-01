@@ -1,5 +1,5 @@
 import { CollocationOptionsQueryRequestDTO } from './collocation-options-query-request-dto';
-import { FilterOptionsQueryRequestDTO } from './filter-options-query-request-dto';
+import { FilterOptionsQueryRequestDTO } from './filter-concordance-query-request';
 import { FreqOptions } from './freq-options';
 import { KeyValueItem } from './key-value-item';
 import { SortOptionsQueryRequestDTO } from './sort-options-query-request-dto';

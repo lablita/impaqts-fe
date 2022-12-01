@@ -1,9 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import {
-  COLLOCATIONS, FILTER, FREQUENCY, SORT, VIEW_OPTIONS, WORD_LIST
-} from '../common/routes-constants';
-import { FrequencyQueryRequest } from '../model/frequency-query-request';
+import {COLLOCATION, FILTER, FREQUENCY, SORT, VIEW_OPTION, WORD_LIST} from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { SortQueryRequest } from '../model/sort-query-request';
@@ -21,21 +18,24 @@ export class DispalyPanelOptionsComponent {
   @Input() metadataAttributes: KeyValueItem[] = [];
   @Input() textTypesAttributes: KeyValueItem[] = [];
   @Input() metadataTextTypes: Metadatum[] = [];
+  @Input() panelDisplayMTD: boolean = false;
+  @Input() panelDisplayOPT: boolean = false;
   @Output() public loadCollocations = new EventEmitter<boolean>();
   @Output() public sort = new EventEmitter<SortQueryRequest>();
-  @Output() public frequency = new EventEmitter<FrequencyQueryRequest>();
+  @Output() public frequency = new EventEmitter<void>();
 
-  public VIEW_OPTIONS = VIEW_OPTIONS;
+  public VIEW_OPTION = VIEW_OPTION;
   public WORD_LIST = WORD_LIST;
   public SORT = SORT;
   public FILTER = FILTER;
   public FREQUENCY = FREQUENCY;
-  public COLLOCATIONS = COLLOCATIONS;
+  public COLLOCATION = COLLOCATION;
   public titleOption: string | null = null;
-
+  
   constructor(
     public displayPanelService: DisplayPanelService
-  ) { }
+  ) {
+  }
 
   public loadColl(): void {
     this.loadCollocations.emit(true);
@@ -45,8 +45,8 @@ export class DispalyPanelOptionsComponent {
     this.sort.emit(sortQueryRequest);
   }
 
-  public loadFrequencies(frequencyQueryRequest: FrequencyQueryRequest): void {
-    this.frequency.emit(frequencyQueryRequest);
+  public loadFrequencies(): void {
+    this.frequency.emit();
   }
 
   public displayOptionsPanel(): BehaviorSubject<boolean> {
@@ -58,7 +58,7 @@ export class DispalyPanelOptionsComponent {
   }
 
   public closeMetadataPanel(): void {
-    this.displayPanelService.metadataButtonSubject.next();
+    this.displayPanelService.labelMTDClickSubject.next();
   }
 
 }

@@ -10,5 +10,6 @@ export class SortQueryRequest {
   numberTokens = 0;
   ignoreCase: boolean | null = null;
   backward: boolean | null = null;
-  multilevelSort: Array<SortOption> = Array.from<SortOption>({ length: 0 });
+  multilevelSort: Array<SortOption> = [];
+  multilevel = false;
 }

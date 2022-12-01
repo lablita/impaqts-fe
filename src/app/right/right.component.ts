@@ -1,23 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { KeyValue } from '@angular/common';
+import { Component, KeyValueDiffers, OnInit } from '@angular/core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { BehaviorSubject } from 'rxjs';
-import { FREQ_OPTIONS_LABEL, MENU_COLL_OPTIONS, MENU_FILTER, SORT_OPTIONS_LABEL, VIEW_OPTIONS_LABEL, WORD_OPTIONS_LABEL } from '../common/label-constants';
-import { COLLOCATIONS, CONCORDANCE, FILTER, FREQUENCY, QUERY, SORT, VIEW_OPTIONS, WORD_LIST } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { PanelLabelStatus } from '../model/panel-label-status';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
-
-export const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
-  new KeyValueItem(CONCORDANCE, VIEW_OPTIONS_LABEL),
-  new KeyValueItem(VIEW_OPTIONS, VIEW_OPTIONS_LABEL),
-  new KeyValueItem(WORD_LIST, WORD_OPTIONS_LABEL),
-  new KeyValueItem(SORT, SORT_OPTIONS_LABEL),
-  new KeyValueItem(FILTER, MENU_FILTER),
-  new KeyValueItem(FREQUENCY, FREQ_OPTIONS_LABEL),
-  new KeyValueItem(COLLOCATIONS, MENU_COLL_OPTIONS)
-];
 
 @Component({
   selector: 'app-right',
@@ -25,12 +15,17 @@ export const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
   styleUrls: ['./right.component.scss']
 })
 export class RightComponent implements OnInit {
-  public titleLabel: string | undefined;
+  public titleLabelKeyValue: KeyValueItem | null = null;
   public faCheck = faCheck;
-  public hideMetadataLabel = false;
-  public hideOptionsLabel = false;
+  public labelVisibleMTD = false;
+  public labelVisibleOPT = false;
+  public labelDisableMTD = false;
+  public labelDisableOPT = false;
+  
   public spinnerMetadata = false;
 
+  public verticalLabel = false;
+  
   constructor(
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
@@ -39,39 +34,23 @@ export class RightComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.displayPanelService.menuChangedSubject.subscribe(newMenuString => {
-      if (newMenuString) {
-        let labelToCheck = newMenuString;
-        if (labelToCheck === QUERY) {
-          labelToCheck = VIEW_OPTIONS;
-        }
-        this.titleLabel = MENU_TO_PANEL_LABEL.find(item => {
-          const translatedItem = item.key;
-          return translatedItem === labelToCheck;
-        })?.key;
-        if (this.titleLabel) {
-          this.hideMetadataLabel = false;
-          this.hideOptionsLabel = false;
-        } else {
-          this.hideMetadataLabel = true;
-          this.hideOptionsLabel = true;
-        }
-        if (this.titleLabel) {
-          this.displayPanelService.panelSelectedSubject.next(this.titleLabel);
-        }
-        this.titleLabel = MENU_TO_PANEL_LABEL.find(item => item.key === this.titleLabel)?.value;
-      }
-    });
-
+    this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
+      this.verticalLabel = panelLabelStatus.panelDisplayMTD || panelLabelStatus.panelDisplayOPT;
+      this.labelVisibleMTD = panelLabelStatus.labelVisibleMTD;
+      this.labelVisibleOPT = panelLabelStatus.labelVisibleOPT;
+      this.labelDisableMTD = panelLabelStatus.labelDisableMTD;
+      this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
+      this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
+    })
     this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => this.spinnerMetadata = event });
   }
 
-  public openSidebarOptions(): void {
-    this.displayPanelService.optionsButtonSubject.next();
+  public labelOPTClick(): void {
+    this.displayPanelService.labelOPTClickSubject.next();
   }
 
-  public openSidebarMetadata(): void {
-    this.displayPanelService.metadataButtonSubject.next();
+  public labelMTDClick(): void {
+    this.displayPanelService.labelMTDClickSubject.next();
   }
 
   public checkMetadata(): boolean {

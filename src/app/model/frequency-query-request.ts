@@ -1,7 +1,8 @@
 export class FrequencyOption {
   attribute: string | null = null;
   ignoreCase: boolean | null = null;
-  position: string | null = null;
+  position: string | null = null; // 1l , 2L... 3R...
+  term: string | null = null;
 }
 export class FrequencyQueryRequest {
   frequencyLimit = 0;
@@ -9,7 +10,8 @@ export class FrequencyQueryRequest {
   frequencyType: string | null = null;
   frequencyColSort: string | null = null;
   frequencyTypeSort: string | null = null;
-  categories: Array<string> = Array.from<string>({ length: 0 });
+  categories: Array<string> = [];
   category: string | null = null;
-  multilevelFrequency: Array<FrequencyOption> = Array.from<FrequencyOption>({ length: 0 });
+  freqOptList: Array<FrequencyOption> =[];
+  positive = true;
 }

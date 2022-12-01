@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { INSTALLATION, INTERFACE_LANGUAGE, LOGIN, LOGOUT, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
+import { AuthorizationService } from '../services/authorization.service';
 import { EmitterService } from '../utils/emitter.service';
 @Component({
   selector: 'app-top',
@@ -26,7 +26,7 @@ export class TopComponent {
   constructor(
     private readonly translateService: TranslateService,
     private readonly emitterService: EmitterService,
-    private readonly authService: AuthService
+    private readonly authorizationService: AuthorizationService,
   ) {
     this.init();
   }
@@ -70,19 +70,10 @@ export class TopComponent {
 
   public loginLogout(): void {
     if (this.authLabel === LOGOUT) {
-      localStorage.removeItem(INSTALLATION);
-      this.logout();
+      this.authorizationService.logout();
     } else {
-      this.loginWithRedirect();
+      this.authorizationService.loginWithRedirect();
     }
-  }
-
-  private loginWithRedirect(): void {
-    this.authService.loginWithRedirect();
-  }
-
-  private logout(): void {
-    this.authService.logout();
   }
 
 }
