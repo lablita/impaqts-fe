@@ -6,7 +6,7 @@ import {
   ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATION, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY,
   QUERY, RESULT_CONCORDANCE, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST
 } from '../common/routes-constants';
-import { BOTTOM_LEFT, INSTALLATION } from '../model/constants';
+import { BOTTOM_LEFT, INSTALLATION, INTERFACE_LANGUAGE } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
@@ -28,12 +28,16 @@ export class MenuEvent {
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
-   
+
   public items: MenuItemObject[] = [];
   public urlBottomLeft: string | null = null;
-  
+
   public readonly CREDITS = CREDITS_ROUTE;
   public readonly COPYRIGHT = COPYRIGHT_ROUTE;
+  public user: User = new User();
+  public languages: KeyValueItem[] = [new KeyValueItem('en', 'EN'), new KeyValueItem('it', 'IT')];
+  public selectedLanguage: KeyValueItem | null = null;
+  public selectedLang = '';
 
   private readonly menuQueryStr: string[] = [QUERY, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
@@ -44,7 +48,6 @@ export class MenuComponent implements OnInit {
   private menuByRoleList: RoleMenu[] = [];
   private menuNoRole: string[] = [];
   private menuRoutes: KeyValueItem[] = [];
-  public user: User = new User();
 
   private menuEmitterServiceSubscription: Subscription | null = null;
 
@@ -59,13 +62,20 @@ export class MenuComponent implements OnInit {
 
   public click(route: string): void {
     this.displayPanelService.menuItemClickSubject.next(route);
-
   }
+
   ngOnInit(): void {
+    this.selectedLang = this.translateService.currentLang;
+    this.selectedLanguage = this.languages.filter(lang => lang.key === localStorage.getItem(INTERFACE_LANGUAGE))[0];
+    if (!this.selectedLanguage) {
+      this.selectedLanguage = new KeyValueItem(
+        this.translateService.defaultLang.toLowerCase(),
+        this.translateService.defaultLang.toUpperCase());
+    }
     this.authService.user$.subscribe(u => {
       if (!!u) {
-        const user: User = new User(u.name, u['https://impaqts.eu.auth0.meta/email'], u['https://impaqts.eu.auth0.meta/role']);
-        this.role = !!user.role ? user.role : '';
+        this.user = new User(u.name, u['https://impaqts.eu.auth0.meta/email'], u['https://impaqts.eu.auth0.meta/role']);
+        this.role = !!this.user.role ? this.user.role : '';
       }
 
       this.menuByRoleList = this.menuEmitterService.menuByRoleList;
@@ -96,6 +106,13 @@ export class MenuComponent implements OnInit {
         });
       }
     });
+  }
+
+  public selectLanguage(event: any): void {
+    if (event) {
+      localStorage.setItem(INTERFACE_LANGUAGE, event.value);
+      this.translateService.use(event.value);
+    }
   }
 
   private setMenuItemsByRole(routesRole: string[], routesPage: string[]): void {

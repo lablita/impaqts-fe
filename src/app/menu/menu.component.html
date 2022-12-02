@@ -1,18 +1,28 @@
-<div style="height: 100%;">
+<div style="height: 100%;" class="flex flex-column justify-content-between">
   <div>
     <p-panelMenu [model]="items"></p-panelMenu>
   </div>
-  <div style="position: fixed; bottom: 0px; left: 0px;">
-    <p-card *ngIf="!!user.name">
-      <div pTooltip="{{('USER.' + user.role + '_ROLE' | translate)}} - {{user.email}}" tooltipPosition="top">
+  <div class="bottom-info flex flex-column justify-content-end">
+    <div class="light-background p-3">
+      <div class="p-component ml-3" *ngIf="user"
+        pTooltip="{{('USER.' + user.role + '_ROLE' | translate)}} - {{user.email}}" tooltipPosition="top">
         {{user.name}}
       </div>
-    </p-card>
-
-    <div class="flex justify-content-between p-component mt-3" style="width: 240px;">
-      <button pButton class="p-button-text p-button-info ml-6" [routerLink]="['/credits']" label="credits" (click)="click(CREDITS)"></button>
-      <button pButton class="p-button-text p-button-info mr-6" [routerLink]="['/copyright']" label="copyright" (click)="click(COPYRIGHT)"></button>
+      <div class="p-component mt-3 ml-3 flex justify-content-start align-items-center">
+        <div>{{'LANGUAGE.LABEL' | translate}}</div>
+        <p-dropdown class="ml-3" [options]="languages" optionLabel="value" optionValue="key" [(ngModel)]="selectedLang"
+          (onChange)="selectLanguage($event)" emptyMessage="Scegli una lingua">
+        </p-dropdown>
+      </div>
     </div>
-    <img *ngIf="urlBottomLeft" [src]="urlBottomLeft" class="logo" alt="logoMenu">
+    <div class="flex justify-content-between p-component mt-3" style="width: 240px;">
+      <button pButton class="p-button-text p-button-info ml-6" [routerLink]="['/credits']" label="credits"
+        (click)="click(CREDITS)"></button>
+      <button pButton class="p-button-text p-button-info mr-6" [routerLink]="['/copyright']" label="copyright"
+        (click)="click(COPYRIGHT)"></button>
+    </div>
+    <div>
+      <img *ngIf="urlBottomLeft" [src]="urlBottomLeft" class="logo" alt="logoMenu">
+    </div>
   </div>
 </div>
