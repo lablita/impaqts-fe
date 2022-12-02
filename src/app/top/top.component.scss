@@ -14,16 +14,3 @@
   margin-left: 20px;
   margin-top: 5px;
 }
-
-// inverting colors of selected item, because color of selected item is the same as the bar one
-::ng-deep .p-button {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
-  color: #212529 !important;
-}
-
-::ng-deep .p-highlight {
-  background-color: #fff !important;
-  border-color: #fff ! important;
-  color: #212529 !important;
-}

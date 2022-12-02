@@ -131,6 +131,7 @@
         "BUTTON": "Make word list"
       },
       "SORT_OPTIONS": {
+        "TITLE": "Sort",
         "SIMPLE_SORT": "Simple sort",
         "SORT_KEY": "Sort key",
         "LEFT_CONTEXT": "Left context",
@@ -291,6 +292,7 @@
   },
   "LANGUAGE": {
     "IT": "ITA",
-    "EN": "ENG"
+    "EN": "ENG",
+    "LABEL": "Language"
   }
 }

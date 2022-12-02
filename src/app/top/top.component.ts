@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { INSTALLATION, INTERFACE_LANGUAGE, LOGIN, LOGOUT, TOP_LEFT, TOP_RIGHT } from '../model/constants';
+import { INSTALLATION, LOGIN, LOGOUT, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
-import { KeyValueItem } from '../model/key-value-item';
 import { AuthorizationService } from '../services/authorization.service';
 import { EmitterService } from '../utils/emitter.service';
 @Component({
@@ -15,13 +14,10 @@ export class TopComponent {
 
   public urlTopLeft: string | null = null;
   public urlTopRight: string | null = null;
-  public languages: KeyValueItem[] = [new KeyValueItem('en', 'EN'), new KeyValueItem('it', 'IT')];
-  public selectedLanguage: KeyValueItem | null = null;
   public authLabel = '';
   public name: string | null = null;
   public role: string | null = null;
   public email: string | null = null;
-  public selectedLang = '';
 
   constructor(
     private readonly translateService: TranslateService,
@@ -32,7 +28,6 @@ export class TopComponent {
   }
 
   private init(): void {
-    this.selectedLang = this.translateService.currentLang;
     this.emitterService.user.subscribe(
       {
         next: user => {
@@ -52,19 +47,6 @@ export class TopComponent {
           }
         });
       }
-    }
-    this.selectedLanguage = this.languages.filter(lang => lang.key === localStorage.getItem(INTERFACE_LANGUAGE))[0];
-    if (!this.selectedLanguage) {
-      this.selectedLanguage = new KeyValueItem(
-        this.translateService.defaultLang.toLowerCase(),
-        this.translateService.defaultLang.toUpperCase());
-    }
-  }
-
-  public selectLanguage(event: any): void {
-    if (event) {
-      localStorage.setItem(INTERFACE_LANGUAGE, event.value);
-      this.translateService.use(event.value);
     }
   }
 
