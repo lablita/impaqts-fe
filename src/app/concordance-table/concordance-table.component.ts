@@ -57,6 +57,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
 
+  private currentQueryId = '';
+
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
@@ -72,22 +74,22 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
           this.errorMessagesService.sendError(errorMessage);
-        } else if (queryResponse.kwicLines.length > 0) {
-          this.firstItemTotalResults = queryResponse.currentSize;
-          let tr = queryResponse.currentSize;
-          if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
-            // ultimo elemento delle descResponses ha il totale visualizzato
-            tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
-          }
-          this.totalResults = tr;
-          this.kwicLines = queryResponse.kwicLines;
-          this.noResultFound = queryResponse.currentSize < 1;
-          this.descriptions = queryResponse.descResponses;
         } else {
-          this.totalResults = 0;
-          this.kwicLines = [];
-          this.noResultFound = true;
-          this.descriptions = [];
+          if (queryResponse.id !== this.currentQueryId || this.kwicLines.length < queryResponse.kwicLines.length) {
+            this.currentQueryId = queryResponse.id;
+            console.log(queryResponse);
+            this.firstItemTotalResults = queryResponse.currentSize;
+            let tr = queryResponse.currentSize;
+            if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
+              // ultimo elemento delle descResponses ha il totale visualizzato
+              tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
+            }
+            this.totalResults = tr;
+            this.kwicLines = queryResponse.kwicLines;
+            this.noResultFound = queryResponse.currentSize < 1;
+            this.descriptions = queryResponse.descResponses;
+          }
+          this.firstItemTotalResults = queryResponse.currentSize;
         }
       }
     });
