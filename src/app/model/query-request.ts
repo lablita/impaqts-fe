@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationQueryRequest } from './collocation-query-request';
 import { ContextConcordanceQueryRequest } from './context-concordance-query-request';
@@ -13,6 +14,7 @@ export class WordListOption {
   nGrams = false;
 }
 export class QueryRequest {
+  id = uuid();
   start = 0;
   end = 0;
   corpusMetadatum = '';

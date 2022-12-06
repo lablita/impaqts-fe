@@ -2,7 +2,6 @@
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
-
   <div *ngIf="kwicLines.length > 0">
     <h3 *ngIf="totalResults && !loading">{{sortOptions.length > 1 ? sortOptions[0] + " " + sortOptions[1] :
       sortOptions[0]}}
