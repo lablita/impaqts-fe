@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { environment } from 'src/environments/environment';
+import { v4 as uuid } from 'uuid';
 import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
@@ -9,7 +10,7 @@ import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
 import { INSTALLATION } from '../model/constants';
-import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
+import { ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
@@ -170,7 +171,7 @@ export class QueryRequestComponent implements OnInit {
     this.selectedCorpusChange.emit(selectedCorpus);
   }
 
-  
+
   public makeConcordances(): void {
     localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
     localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
@@ -178,6 +179,7 @@ export class QueryRequestComponent implements OnInit {
     this.queryRequestService.resetQueryPattern();
     let typeSearch = ['Query'];
     this.titleResultChange.emit('MENU.CONCORDANCE');
+    this.queryRequestService.getQueryRequest().id = uuid();
 
     // concordance Context
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
@@ -199,18 +201,18 @@ export class QueryRequestComponent implements OnInit {
       }
       this.emitterService.makeConcordanceRequestSubject.next(
         new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
-      }
     }
-    
-    public clickQueryType(): void {
+  }
+
+  public clickQueryType(): void {
     this.displayQueryType = !this.displayQueryType;
   }
-  
+
   public clickContext(): void {
     this.displayContext = !this.displayContext;
     this.clearContextFields();
   }
-  
+
   public clickTextType(): void {
     this.textTypeStatus = true;
     this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
@@ -228,7 +230,7 @@ export class QueryRequestComponent implements OnInit {
       }
     }
   }
-  
+
   private setCorpus(corpus: Corpus): void {
     this.metadataQueryService.clearMetadata();
     const installation = this.installation;
@@ -263,7 +265,7 @@ export class QueryRequestComponent implements OnInit {
   private closeWebSocket(): void {
     this.socketService.closeSocket();
   }
-  
+
   private hideQueryTypeAndContext(): void {
     this.displayContext = false;
     this.displayQueryType = false;
