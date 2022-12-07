@@ -79,17 +79,17 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
             this.currentQueryId = queryResponse.id;
             console.log(queryResponse);
             this.firstItemTotalResults = queryResponse.currentSize;
-            let tr = queryResponse.currentSize;
+            this.totalResults = queryResponse.currentSize;
             if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
               // ultimo elemento delle descResponses ha il totale visualizzato
-              tr = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
+              this.totalResults = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
             }
-            this.totalResults = tr;
             this.kwicLines = queryResponse.kwicLines;
             this.noResultFound = queryResponse.currentSize < 1;
             this.descriptions = queryResponse.descResponses;
           }
           this.firstItemTotalResults = queryResponse.currentSize;
+          this.totalResults = queryResponse.currentSize;
         }
       }
     });
