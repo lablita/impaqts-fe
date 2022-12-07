@@ -73,10 +73,7 @@ export class LoadResultsService {
     if (!!fieldRequests && fieldRequests.length > 0) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
-        if (!event) {
-          queryRequest.start = 0;
-          queryRequest.end = 10;
-        } else {
+        if (event) {
           if (event.first !== undefined && event.first !== null && event.rows !== undefined && event.rows !== null) {
             queryRequest.start = event.first;
             queryRequest.end = queryRequest.start + event.rows;
