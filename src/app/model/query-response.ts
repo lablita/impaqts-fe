@@ -9,6 +9,8 @@ import { WideContextResponse } from './wide-context-response';
 
 export class QueryResponse {
   id = uuid();
+  start = 0;
+  end = 10;
   kwicLines: Array<KWICline> = [];
   collocations: Array<CollocationItem> = [];
   frequency: FrequencyItem = new FrequencyItem();

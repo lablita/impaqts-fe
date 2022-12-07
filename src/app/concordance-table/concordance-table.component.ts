@@ -11,6 +11,7 @@ import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
+import { QueryResponse } from '../model/query-response';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { ErrorMessagesService } from '../services/error-messages.service';
@@ -25,7 +26,7 @@ const SORT_LABELS = [
   new KeyValueItem('NODE_CONTEXT', NODE),
   new KeyValueItem('SHUFFLE_CONTEXT', SHUFFLE),
   new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL)
-]
+];
 @Component({
   selector: 'app-concordance-table',
   templateUrl: './concordance-table.component.html',
@@ -42,6 +43,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public loading = false;
   public totalResults = 0;
   public firstItemTotalResults = 0;
+  public first = 0;
   public kwicLines: Array<KWICline> = [];
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
@@ -56,6 +58,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
+  private currentStart = 0;
+  private currentEnd = 0;
 
   private currentQueryId = '';
 
@@ -75,7 +79,11 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
           this.errorMessagesService.sendError(errorMessage);
         } else {
-          if (queryResponse.id !== this.currentQueryId || this.kwicLines.length < queryResponse.kwicLines.length) {
+          if (queryResponse.id !== this.currentQueryId) {
+            this.first = 0;
+          }
+          if (queryResponse.id !== this.currentQueryId ||
+            this.isDifferentPagination(this.currentStart, this.currentEnd, queryResponse)) {
             this.currentQueryId = queryResponse.id;
             console.log(queryResponse);
             this.firstItemTotalResults = queryResponse.currentSize;
@@ -91,6 +99,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
           this.firstItemTotalResults = queryResponse.currentSize;
           this.totalResults = queryResponse.currentSize;
         }
+        this.currentStart = queryResponse.start;
+        this.currentEnd = queryResponse.end;
       }
     });
   }
@@ -140,14 +150,21 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public isQueryWithContextFromFrequencyPN(): boolean {
-    return this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST || this.queryType === REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
+    return this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST
+      || this.queryType === REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
   }
 
   public isTextualQuery(): boolean {
     return this.queryType === REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
   }
 
-  public loadConcordance(event: any): void {
+  public loadConcordanceForPagination(event: any): void {
+    // this.queryRequestService.getQueryRequest().id = uuid();
+    if (event && event.rows) {
+      this.initialPagination = event.rows;
+      this.queryRequestService.getQueryRequest().end = this.queryRequestService.getQueryRequest().start + this.initialPagination;
+    }
+    // do not change query id
     if (this.fieldRequests) {
       this.loading = true;
       this.loadResultService.loadResults(this.fieldRequests, event);
@@ -239,7 +256,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   }
 
   public clickConc(event: any): void {
-    let typeSearch = ['Query'];
+    const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload([], 0);
     const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
     this.fieldRequests = this.fieldRequests.slice(0, index + 1);
@@ -294,5 +311,12 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
 
   public withContextConcordance(): boolean {
     return this.queryRequestService.withContextConcordance();
+  }
+
+  private isDifferentPagination(currentStart: number, currentEnd: number, qResp: QueryResponse): boolean {
+    if (qResp) {
+      return !(currentStart === qResp.start && currentEnd === qResp.end);
+    }
+    return false;
   }
 }

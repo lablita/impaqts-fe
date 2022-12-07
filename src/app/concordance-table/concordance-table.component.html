@@ -43,8 +43,8 @@
   </p-dialog>
 </div>
 <p-table [ngClass]="{'hidden': (!visible || noResultFound) && !loading}" [value]="kwicLines" [lazy]="true"
-  [loading]="loading" (onLazyLoad)="loadConcordance($event)" [paginator]="true" styleClass="p-datatable-striped"
-  [rows]="initialPagination" [totalRecords]="totalResults"
+  [loading]="loading" (onLazyLoad)="loadConcordanceForPagination($event)" [paginator]="true"
+  styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults" [(first)]="first"
   currentPageReportTemplate="'page: {currentPage} of {totalPages}'" [showCurrentPageReport]="true"
   [rowsPerPageOptions]="paginations" [autoLayout]="true">
   <ng-template pTemplate="header">

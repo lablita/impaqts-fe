@@ -16,7 +16,7 @@ export class WordListOption {
 export class QueryRequest {
   id = uuid();
   start = 0;
-  end = 0;
+  end = 10;
   corpusMetadatum = '';
   word = '';
   corpus = '';
