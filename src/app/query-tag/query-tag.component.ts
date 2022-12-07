@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { KeyValueItem } from '../model/key-value-item';
+import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
 
@@ -14,8 +14,8 @@ export class QueryTagComponent implements OnInit {
   @Input() tag: QueryTag | null = null;
   @Input() typeList: Array<KeyValueItem> = [];
   @Input() defaultType: KeyValueItem | null = null;
-  @Input() actionList: Array<KeyValueItem> = [];
-  @Input() defaultAction: KeyValueItem | null = null;
+  @Input() actionList: Array<KeyValueItemExtended> = [];
+  @Input() defaultAction: KeyValueItemExtended | null = null;
   @Input() metadata = false;
   @Input() metadatumTextTypes: Array<Metadatum> | null = [];
   @Input() deleteTagOn = true;
@@ -27,7 +27,7 @@ export class QueryTagComponent implements OnInit {
   public freeInputText = '';
   public metadatumSel: Metadatum | null = null;
 
-  public action: KeyValueItem | null = null;
+  public action: KeyValueItemExtended | null = null;
   public tagName: KeyValueItem | null = null;
   public caseSensitive: string | null = null;
 
@@ -40,6 +40,7 @@ export class QueryTagComponent implements OnInit {
     this.tagName = this.defaultType;
     this.caseList = ['Aa', 'aa'];
     this.caseSensitive = 'Aa';
+    this.actionList = this.actionList
     if (this.defaultType && this.tag) {
       this.tag.name = this.defaultType.key;
       this.tag.matchCase = true;
@@ -127,10 +128,10 @@ export class QueryTagComponent implements OnInit {
           this.tag.endsWithValue = true;
           break;
         case 'REGEXP':
-          this.tag.matchCase = true;
+          this.tag.regexp = true;
           break;
         case 'NOT_REG':
-          this.tag.matchCase = false;
+          this.tag.noregexp = false;
           break;
       }
     }

@@ -10,6 +10,8 @@ export class QueryTag {
   negation = false;
   defaultAttributeCQL = '';
   position: string | null = null;
+  regexp = false;
+  noregexp = false;
 
   constructor(struct: string, name?: string, value?: string) {
     this.structure = struct;

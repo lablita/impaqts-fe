@@ -13,7 +13,7 @@ import { INSTALLATION } from '../model/constants';
 import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
-import { KeyValueItem } from '../model/key-value-item';
+import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
@@ -41,16 +41,16 @@ export class VisualQueryComponent implements OnInit {
   public typeListQuery: KeyValueItem[] = [
     new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'),
     new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
-  public actionList: KeyValueItem[] = [
-    new KeyValueItem('IS', 'IS'),
-    new KeyValueItem('IS_NOT', 'IS_NOT'),
-    new KeyValueItem('BEGINS', 'BEGINS'),
-    new KeyValueItem('CONTAINS', 'CONTAINS'),
-    new KeyValueItem('ENDS', 'ENDS'),
-    new KeyValueItem('REGEXP', 'REGEXP'),
-    new KeyValueItem('NOT_REG', 'NOT_REG')];
+  public actionList: KeyValueItemExtended[] = [
+    new KeyValueItemExtended('IS', 'IS', false),
+    new KeyValueItemExtended('IS_NOT', 'IS_NOT', false),
+    new KeyValueItemExtended('BEGINS', 'BEGINS', false),
+    new KeyValueItemExtended('CONTAINS', 'CONTAINS',false),
+    new KeyValueItemExtended('ENDS', 'ENDS', false),
+    new KeyValueItemExtended('REGEXP', 'REGEXP', true),
+    new KeyValueItemExtended('NOT_REG', 'NOT_REG', true)];
   public defaultType: KeyValueItem = new KeyValueItem('word', 'word');
-  public defaulAction: KeyValueItem = new KeyValueItem('IS', 'IS');
+  public defaulAction: KeyValueItemExtended = new KeyValueItemExtended('IS', 'IS', false);
   public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
 
   public metadataTextTypes: Array<Metadatum> = [];
