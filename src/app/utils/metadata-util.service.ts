@@ -75,6 +75,16 @@ export class MetadataUtilService {
       if (lenObsArray > 0) {
         return concat(...obsArray).pipe(map((res, index) => {
           metadata = this.setInnerTree((res as any).res, metadata, (res as any).metadatum.id, lenObsArray === (index + 1));
+          metadata.forEach(md => {
+            if (Array.isArray(md.selection)) {
+              const selection = md.selection as TreeNode[];
+              if (selection.length > 0 && md.tree[0].children && md.tree[0].children?.length > selection.length) {
+                md.tree[0].partialSelected = true;
+              } else if (md.tree[0].children && md.tree[0].children.length === selection.length) {
+                md.selection.push(md.tree[0]);
+              }
+            }
+          });
           return metadata;
         }));
       } else {
@@ -101,7 +111,7 @@ export class MetadataUtilService {
           this.metadataRequest.multiSelects.filter(ss => metadatum && ss.key === metadatum.name)[0] : null);
       metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
       if (pruneTree) {
-        // collego l'elenco dei metadati recuperato dal corpus e lo collegao al ramo cui spetta
+        // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta
         metadata = this.linkLeafs(metadata, this.metadataRequest);
         metadata.forEach(md => {
           if (!md.multipleChoice && !md.freeText) {
