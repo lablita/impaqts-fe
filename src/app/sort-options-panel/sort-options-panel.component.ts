@@ -7,6 +7,7 @@ import { SortQueryRequest } from '../model/sort-query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import { v4 as uuid } from 'uuid';
 
 const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 
@@ -244,6 +245,7 @@ export class SortOptionsPanelComponent implements OnInit {
     let typeSearch = ['Query'];
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     const queryRequest = this.queryRequestService.getQueryRequest();
+    this.queryRequestService.getQueryRequest().id = uuid();
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
       if (sortQueryRequest && !!sortQueryRequest.sortKey) {
