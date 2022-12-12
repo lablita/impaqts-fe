@@ -28,6 +28,7 @@ import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-visual-query',
@@ -149,6 +150,7 @@ export class VisualQueryComponent implements OnInit {
     }
     this.queryRequestService.setQueryPattern(this.queryPattern);
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.VISUAL_QUERY_REQUEST;
+    this.queryRequestService.getQueryRequest().id = uuid();
     this.emitterService.makeConcordanceRequestSubject.next(
       new ConcordanceRequestPayload([concordanceRequest], 0));
   }
