@@ -22,4 +22,16 @@ export class QueryTag {
       this.value = value;
     }
   }
+
+  public resetTag(): void {
+    this.startsWithValue = false;
+    this.endsWithValue = false;
+    this.containsValue = false;
+    this.matchCase = false;
+    this.negation = false;
+    this.defaultAttributeCQL = '';
+    this.position = null;
+    this.regexp = false;
+    this.noregexp = false;
+  }
 }

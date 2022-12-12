@@ -110,6 +110,7 @@ export class QueryTagComponent implements OnInit {
   }
 
   public setTagAttr(event: any): void {
+    this.tag?.resetTag();
     if (this.tag) {
       switch (event.value.key) {
         case 'IS':
