@@ -219,17 +219,19 @@ export class LoadResultsService {
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
       metadataRequest.freeTexts.forEach(ft => {
-        const structTagTokens = ft.value?.split('.');
+        const structTagTokens = ft.key?.split('.');
         if (structTagTokens) {
           const structTag = structTagTokens[0];
           const tag = new QueryTag(structTag);
-          if (ft.value) {
+          if (ft.key) {
             if (structTagTokens.length > 1) {
               tag.name = structTagTokens[1];
             } else {
               tag.name = ft.key;
             }
-            tag.value = ft.value;
+            if (ft.value) {
+              tag.value = ft.value;
+            }
             if (this.metadataQuery) {
               this.metadataQuery.tags.push([tag]);
             }

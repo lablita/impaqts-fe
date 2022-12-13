@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { COLLOCATION_OPTION_LABEL, COPYRIGHT, CREDITS, FILTER_OPTION_LABEL, FREQ_OPTION_LABEL, MENU_CONCORDANCE, 
   SORT_OPTION_LABEL, VIEW_OPTION_LABEL, WORD_LIST_OPTION_LABEL} from '../common/label-constants';
-import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST} from '../common/routes-constants';
+import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_COLLOCATION, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST} from '../common/routes-constants';
+import { MENU_ITEM } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
 
@@ -23,6 +24,7 @@ const MENU_NO_LABEL = [
   WORD_LIST,
   CREDITS_ROUTE,
   COPYRIGHT_ROUTE,
+  RESULT_COLLOCATION
 ]
 
 const panelLabelStatusStart = new PanelLabelStatus(false, false, true, true, false, true, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
@@ -61,6 +63,11 @@ export class DisplayPanelService {
   private lastClickedMenuItem: string | null = null;
  
   constructor() {
+    const menuItem = localStorage.getItem(MENU_ITEM);
+    if (menuItem) {
+      this.setPanelLabelStatusByMenuItem(menuItem);
+      this.panelLabelStatusSubject.next(this.panelLabelStatus);
+    }
     this.labelMTDClickSubject.subscribe(() => {
       const panelDisplayMTD = this.panelLabelStatus.panelDisplayMTD;
       this.panelLabelStatus = new PanelLabelStatus(
@@ -97,33 +104,7 @@ export class DisplayPanelService {
         this.panelLabelStatusSubject.next(this.panelLabelStatus);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
-      if (MENU_NO_LABEL.indexOf(menuItem) >= 0) {
-        this.panelLabelStatus = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
-      } else if (MENU_LABEL.indexOf(menuItem) >= 0) {
-        if (this.lastClickedMenuItem === menuItem) {
-          //same menu
-          const panelDisplayOPT = this.panelLabelStatus.panelDisplayOPT;
-          this.panelLabelStatus = new PanelLabelStatus(
-            false, 
-            !panelDisplayOPT,
-            true,
-            true,
-            !panelDisplayOPT,
-            false,
-            this.panelLabelStatus.titleLabelKeyValue);
-        } else {
-          //other menu
-          this.panelLabelStatus = new PanelLabelStatus(
-            false, 
-            true,
-            true,
-            true,
-            true,
-            false, this.panelLabelStatus.titleLabelKeyValue);
-        }
-      } else {//start
-        this.panelLabelStatus = panelLabelStatusStart;
-      }
+      this.setPanelLabelStatusByMenuItem(menuItem);
       const menuToPanelLabelItem = MENU_TO_PANEL_LABEL.find(item => item.key === menuItem);
       
       this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL);
@@ -147,5 +128,35 @@ export class DisplayPanelService {
 
   private closeMetadataPanel(): void {
     this.metadataPanelSubject.next(false);
+  }
+
+  private setPanelLabelStatusByMenuItem(menuItem: string): void {
+    if (MENU_NO_LABEL.indexOf(menuItem) >= 0) {
+      this.panelLabelStatus = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
+    } else if (MENU_LABEL.indexOf(menuItem) >= 0) {
+      if (this.lastClickedMenuItem === menuItem) {
+        //same menu
+        const panelDisplayOPT = this.panelLabelStatus.panelDisplayOPT;
+        this.panelLabelStatus = new PanelLabelStatus(
+          false, 
+          !panelDisplayOPT,
+          true,
+          true,
+          !panelDisplayOPT,
+          false,
+          this.panelLabelStatus.titleLabelKeyValue);
+      } else {
+        //other menu
+        this.panelLabelStatus = new PanelLabelStatus(
+          false, 
+          true,
+          true,
+          true,
+          true,
+          false, this.panelLabelStatus.titleLabelKeyValue);
+      }
+    } else {//start
+      this.panelLabelStatus = panelLabelStatusStart;
+    }
   }
 }
