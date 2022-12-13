@@ -7,3 +7,12 @@ export class KeyValueItem {
     this.value = value;
   }
 }
+
+export class KeyValueItemExtended extends KeyValueItem{
+  inactive: boolean;
+  
+  constructor(key: string, value: string, inactive: boolean) {
+    super(key, value);
+    this.inactive = inactive;
+  }
+}

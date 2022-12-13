@@ -4,9 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
   ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATION, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY,
-  QUERY, RESULT_CONCORDANCE, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST
+  QUERY, RESULT_COLLOCATION, RESULT_CONCORDANCE, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST
 } from '../common/routes-constants';
-import { BOTTOM_LEFT, INSTALLATION, INTERFACE_LANGUAGE } from '../model/constants';
+import { BOTTOM_LEFT, INSTALLATION, INTERFACE_LANGUAGE, MENU_ITEM } from '../model/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
@@ -97,6 +97,7 @@ export class MenuComponent implements OnInit {
         this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe({
           next: (event: MenuEvent) => {
             if (event && event.item) {
+              localStorage.setItem(MENU_ITEM, event.item);
               this.setMenuItems(event.item, this.role);
             }
             if (this.menuEmitterService.corpusSelected && this.items && event.item === QUERY) {

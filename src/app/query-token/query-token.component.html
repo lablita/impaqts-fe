@@ -30,30 +30,6 @@
       </button>
       <button pButton type="button" pTooltip="Delete Token" label="Delete token" class="p-button-raised"
         (click)="deleteToken()"></button>
-      <!-- <div *ngIf="repeat && !metadata && token" class="ml-3">
-        <label [for]="'minRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.REPEAT' | translate}}</label>
-        <input class="mr-1" [id]="'minRepetitions'" type="number" style="width: 50px;"
-          [(ngModel)]="token.minRepetitions">
-        <label [for]="'maxRepetitions_'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.FOR' | translate}}</label>
-        <input class="mr-1" [id]="'maxRepetitions'" type="number" style="width: 50px;"
-          [(ngModel)]="token.maxRepetitions">
-        <label [for]="'maxRepetitions'" class="label-size-enlarged">{{'PAGE.VISUAL_QUERY.TIMES' | translate}}</label>
-      </div> -->
-
-      <!-- <p-overlayPanel #operation>
-        <p-listbox [options]="optionList" [(ngModel)]="optionSel" optionLabel="value" [style]="{'width':'15rem'}"
-          (click)="setOption()">
-          <ng-template let-option pTemplate="item">
-            {{'PAGE.VISUAL_QUERY.' + option.value | translate}}
-          </ng-template>
-        </p-listbox>
-      </p-overlayPanel>
-      <button *ngIf="option" pButton label=" " (click)="operation.toggle($event)"><i
-          class="pi pi-bars"></i>&nbsp;{{"PAGE.VISUAL_QUERY.OPTION" | translate}}</button>
-    </div>
-    <div class="flex justify-content-end mt-1">
-      <div *ngFor="let opt of optionsSel, let i = index">
-        {{"PAGE.VISUAL_QUERY." + opt | translate}} {{i < (optionsSel.length -1) ? ', ' : '' }} </div> -->
-    </div>
+   </div>
   </p-card>
 </div>
