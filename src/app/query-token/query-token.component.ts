@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { STRUCT_DOC, TOKEN } from '../common/constants';
-import { KeyValueItem } from '../model/key-value-item';
+import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
@@ -15,8 +15,8 @@ export class QueryTokenComponent {
   @Input() token: QueryToken | null = null;
   @Input() typeList: KeyValueItem[] = [];
   @Input() defaultType: KeyValueItem | null = null;
-  @Input() actionList: KeyValueItem[] = [];
-  @Input() defaultAction: KeyValueItem | null = null;
+  @Input() actionList: KeyValueItemExtended[] = [];
+  @Input() defaultAction: KeyValueItemExtended | null = null;
   @Input() metaList: KeyValueItem[] = [];
   @Input() option = false;
   @Input() metadata = false;

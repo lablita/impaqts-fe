@@ -54,7 +54,7 @@
         translate}}</label>
       <div class="col-12 md:col-3">
         <p-listbox id="show" [options]="optionList" [multiple]="true"
-          [(ngModel)]="collocationOptionsQueryRequest.showFunc">
+          [(ngModel)]="collocationOptionsQueryRequest.showFunc"  (onChange)="changeSortListEnabled()">
           <ng-template let-option pTemplate="item">
             {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option | translate}}
           </ng-template>
@@ -63,9 +63,10 @@
       <label for="sort" class="col-12 md:col-2 align-self-start">{{"PAGE.CONCORDANCE.COLLOCATION_OPTIONS.SORT_BY" |
         translate}}</label>
       <div class="col-12 md:col-3">
-        <p-listbox id="sort" [options]="optionList" [(ngModel)]="collocationOptionsQueryRequest.sortBy">
+        <p-listbox id="sort" [options]="optionSortList" [(ngModel)]="collocationOptionsQueryRequest.sortBy" 
+        optionValue="key" optionDisabled="inactive">
           <ng-template let-option pTemplate="item">
-            {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option | translate}}
+            {{'PAGE.CONCORDANCE.COLLOCATION_OPTIONS.' + option.value | translate}}
           </ng-template>
         </p-listbox>
       </div>
