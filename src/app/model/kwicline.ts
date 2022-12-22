@@ -4,11 +4,13 @@ export class KWICline {
   kwic = '';
   rightContext: Array<string> = [];
   pos = 0;
+  startTime: string | null = null;
+  videoUrl: string | null = null;
 
   public static stripTags(context: Array<string>, withContextConcordance: boolean): string {
     let ret = '';
     if (!!context) {
-      for (let i = 0; i < context.length; i += 2) {
+      for (let i = 0; i < context.length; i = i + 2) {
         if (withContextConcordance) {
           if (context[i + 1] === 'coll') {
             ret += `<span class="text-red">${context[i]}</span>`;
