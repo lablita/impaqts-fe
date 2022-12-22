@@ -58,8 +58,8 @@
   <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
     <tr>
       <td>
-        <button [disabled]="loading" pButton type="button" label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}"
-          (click)="showVideoDlg(rowIndex)"></button>
+        <button [disabled]="loading" pButton type="button" *ngIf="kwicLine.startTime && kwicLine.videoUrl"
+          label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" (click)="showVideoDlg(kwicLine)"></button>
       </td>
       <td class="p-text-right" [innerHTML]="stripTags(kwicLine.leftContext, withContextConcordance())"></td>
       <td class="p-text-center">
