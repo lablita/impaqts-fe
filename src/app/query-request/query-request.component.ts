@@ -48,6 +48,7 @@ export class QueryRequestComponent implements OnInit {
   public queryTypes: Array<string> = [];
   public lemma = '';
   public DEFAULT_SELECTED_QUERY_TYPE = DEFAULT_SELECTED_QUERY_TYPE;
+  public SIMPLE = SIMPLE;
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
