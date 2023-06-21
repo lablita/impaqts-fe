@@ -17,4 +17,5 @@ export const SORT = 'sort';
 export const FILTER = 'filter';
 export const FREQUENCY = 'frequency';
 export const COLLOCATION = 'collocation';
+export const EXPORT_CSV = 'export-csv'
 

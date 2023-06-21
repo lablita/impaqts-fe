@@ -1,19 +1,28 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { HTTP, HTTPS } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE, WORD } from '../common/query-constants';
-import { ASC, DESC } from '../model/constants';
+import { EXPORT_CSV } from '../common/routes-constants';
+import { ASC, DESC, INSTALLATION } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyOption } from '../model/frequency-query-request';
 import { FrequencyResultLine } from '../model/frequency-result-line';
+import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { ErrorMessagesService } from '../services/error-messages.service';
+import { ExportCsvService } from '../services/export-csv.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import { QueryRequest } from '../model/query-request';
+import * as _ from  'lodash';
 
 const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
 
@@ -55,8 +64,10 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
-    private readonly queryRequestService: QueryRequestService,
-    private readonly errorMessagesService: ErrorMessagesService
+    public readonly queryRequestService: QueryRequestService,
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly exportCsvService: ExportCsvService,
+    private readonly httpClient: HttpClient
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -126,6 +137,95 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
         this.makeFrequencySubscription.unsubscribe();
       }
     }
+  }
+
+  public downloadCsv(category: string): void {
+    const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
+    if (queryRequest && queryRequest.frequencyQueryRequest) {
+      queryRequest.frequencyQueryRequest.category = category;
+      this.exportCsvService.exportCvs(this.queryRequestService.getQueryRequest(), category).subscribe((uuid) => {
+        const downloadUrl = 'http://localhost:9000/download/' + uuid;
+        this.download(downloadUrl).then();
+     });
+    }
+  }
+
+  private async download(downloadUrl: string): Promise<void> {
+     // Download the document as a blob
+     const response = await this.httpClient.get(
+      downloadUrl,
+      { responseType: 'blob', observe: 'response' }
+    ).toPromise();
+
+    // Create a URL for the blob
+    const url = URL.createObjectURL(response.body!);
+
+    // Create an anchor element to "point" to it
+    const anchor = document.createElement('a');
+    anchor.href = url;
+
+    // Get the suggested filename for the file from the response headers
+    anchor.download = this.getFilenameFromHeaders(response.headers) || 'file';
+
+    // Simulate a click on our anchor element
+    anchor.click();
+
+    // Discard the object data
+    URL.revokeObjectURL(url);
+  }
+
+  private getFilenameFromHeaders(headers: HttpHeaders) {
+    // The content-disposition header should include a suggested filename for the file
+    const contentDisposition = headers.get('Content-Disposition');
+    if (!contentDisposition) {
+      return null;
+    }
+
+    /* StackOverflow is full of RegEx-es for parsing the content-disposition header,
+    * but that's overkill for my purposes, since I have a known back-end with
+    * predictable behaviour. I can afford to assume that the content-disposition
+    * header looks like the example in the docs
+    * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+    *
+    * In other words, it'll be something like this:
+    *    Content-Disposition: attachment; filename="filename.ext"
+    *
+    * I probably should allow for single and double quotes (or no quotes) around
+    * the filename. I don't need to worry about character-encoding since all of
+    * the filenames I generate on the server side should be vanilla ASCII.
+    */
+
+    const leadIn = 'filename=';
+    const start = contentDisposition.search(leadIn);
+    if (start < 0) {
+      return null;
+    }
+
+    // Get the 'value' after the filename= part (which may be enclosed in quotes)
+    const value = contentDisposition.substring(start + leadIn.length).trim();
+    if (value.length === 0) {
+      return null;
+    }
+
+    // If it's not quoted, we can return the whole thing
+    const firstCharacter = value[0];
+    if (firstCharacter !== '\"' && firstCharacter !== '\'') {
+      return value;
+    }
+
+    // If it's quoted, it must have a matching end-quote
+    if (value.length < 2) {
+      return null;
+    }
+
+    // The end-quote must match the opening quote
+    const lastCharacter = value[value.length - 1];
+    if (lastCharacter !== firstCharacter) {
+      return null;
+    }
+
+    // Return the content of the quotes
+    return value.substring(1, value.length - 1);
   }
 
   public loadFrequencies(event: any): void {
