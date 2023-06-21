@@ -223,15 +223,6 @@ export class QueryRequestComponent implements OnInit {
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
-  public queryTypeClick(queryType: string): void {
-    if (queryType !== SIMPLE) {
-      const simpleCtrl = this.queryRequestForm.get(SIMPLE);
-      if (simpleCtrl) {
-        simpleCtrl.disable();
-      }
-    }
-  }
-
   private setCorpus(corpus: Corpus): void {
     this.metadataQueryService.clearMetadata();
     const installation = this.installation;
@@ -288,7 +279,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   private toggleSimpleDisabling(newSelectedCorpus: KeyValueItem): void {
-    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType !== 'simple');
+    const disabled = !newSelectedCorpus;
     if (disabled) {
       this.queryRequestForm.get('simple')?.disable();
     } else {
