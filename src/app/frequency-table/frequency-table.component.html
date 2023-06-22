@@ -14,8 +14,7 @@
   <ng-template pTemplate="header">
     <tr>
       <th>
-        <button pButton (click)="downloadCsv(category)">CSV</button>
-        <a href="http://localhost:9000/download/pippo">test</a>
+        <button pButton (click)="downloadCsv(category)" [disabled]="loading">CSV</button>
       </th> 
       <th *ngIf="!multilevel" class="text-right" pSortableColumn="0">{{category}}</th>
       <th class="text-right" *ngFor="let col of colHeaders; let idx = index" [pSortableColumn]="col+'-'+idx">{{col |

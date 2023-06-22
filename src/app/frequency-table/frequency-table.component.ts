@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import { HTTP, HTTPS } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE, WORD } from '../common/query-constants';
-import { EXPORT_CSV } from '../common/routes-constants';
+import { DOWNLOAD_CSV, EXPORT_CSV } from '../common/routes-constants';
 import { ASC, DESC, INSTALLATION } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
@@ -25,6 +25,8 @@ import { QueryRequest } from '../model/query-request';
 import * as _ from  'lodash';
 
 const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
+const METADATA_FREQUENCY = 'metadata_frequency'
+const MULTILEVEL_FREQUENCY = 'multilevel_frequency'
 
 const COL_HEADER_TEXTTYPE = [
   'PAGE.FREQUENCY.FREQUENCY',
@@ -140,14 +142,22 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public downloadCsv(category: string): void {
-    const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
-    if (queryRequest && queryRequest.frequencyQueryRequest) {
-      queryRequest.frequencyQueryRequest.category = category;
-      this.exportCsvService.exportCvs(this.queryRequestService.getQueryRequest(), category).subscribe((uuid) => {
-        const downloadUrl = 'http://localhost:9000/download/' + uuid;
-        this.download(downloadUrl).then();
-     });
-    }
+      const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
+      if (queryRequest && queryRequest.frequencyQueryRequest) {
+        queryRequest.frequencyQueryRequest.category = category;
+        queryRequest.end = 100000000;
+        this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+          const inst = localStorage.getItem(INSTALLATION);
+          if (inst) {
+            const installation = JSON.parse(inst) as Installation;
+            const endpoint = installation?.corpora.find(corp => corp.name === queryRequest.corpus)?.endpoint;
+            const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
+            const filename = queryRequest.queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST ? MULTILEVEL_FREQUENCY : `${METADATA_FREQUENCY}_${category}`;
+            const downloadUrl = `${url}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
+            this.download(downloadUrl).then();
+          }
+       });
+      }
   }
 
   private async download(downloadUrl: string): Promise<void> {

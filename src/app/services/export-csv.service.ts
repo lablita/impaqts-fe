@@ -20,13 +20,13 @@ export class ExportCsvService {
     private readonly utils: UtilService
     ) { }
 
-  public exportCvs(request: QueryRequest, type: string): Observable<string> {
+  public exportCvs(request: QueryRequest): Observable<string> {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       const installation = JSON.parse(inst) as Installation;
       const endpoint = installation?.corpora.find(corp => corp.name === request.corpus)?.endpoint;
       const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
-      return this.http.post<string>(`${url}/${EXPORT_CSV}/${type}`, request)
+      return this.http.post<string>(`${url}/${EXPORT_CSV}`, request)
       .pipe(catchError(this.utils.handleErrorObservable('exportCvs', EXPORT_FAILED, '')));
     } else {
       return of('');
