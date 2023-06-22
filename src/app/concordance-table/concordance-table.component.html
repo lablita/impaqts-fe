@@ -49,7 +49,7 @@
   [rowsPerPageOptions]="paginations" [autoLayout]="true">
   <ng-template pTemplate="header">
     <tr>
-      <th style="width: 80px;"></th>
+      <th style="width: 80px;"><button pButton (click)="downloadCsv()" [disabled]="loading">CSV</button></th>
       <th class="p-text-center" style="width: 180px;">Left</th>
       <th class="p-text-center" style="width: 80px;">Kwic</th>
       <th class="p-text-center" style="width: 180px;">Right</th>

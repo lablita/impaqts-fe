@@ -19,6 +19,13 @@ import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { WideContextService } from '../services/wide-context.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import { QueryRequest } from '../model/query-request';
+import * as _ from  'lodash';
+import { ExportCsvService } from '../services/export-csv.service';
+import { Installation } from '../model/installation';
+import { HTTP, HTTPS } from '../common/constants';
+import { environment } from 'src/environments/environment';
+import { DOWNLOAD_CSV } from '../common/routes-constants';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -27,6 +34,8 @@ const SORT_LABELS = [
   new KeyValueItem('SHUFFLE_CONTEXT', SHUFFLE),
   new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL)
 ];
+
+const CONCORDANCE = 'concordance'
 @Component({
   selector: 'app-concordance-table',
   templateUrl: './concordance-table.component.html',
@@ -69,7 +78,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly loadResultService: LoadResultsService,
     private readonly queryRequestService: QueryRequestService,
     private readonly errorMessagesService: ErrorMessagesService,
-    private readonly wideContextService: WideContextService
+    private readonly wideContextService: WideContextService,
+    private readonly exportCsvService: ExportCsvService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -144,6 +154,23 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
       }
     }
   }
+
+  public downloadCsv(): void {
+    const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
+    if (queryRequest) {
+      queryRequest.end = 10000;
+      this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+        const inst = localStorage.getItem(INSTALLATION);
+        if (inst) {
+          const installation = JSON.parse(inst) as Installation;
+          const endpoint = installation?.corpora.find(corp => corp.name === queryRequest.corpus)?.endpoint;
+          const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
+          const downloadUrl = `${url}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
+          this.exportCsvService.download(downloadUrl).then();
+        }
+     });
+    }
+}
 
   public isQueryWithContext(): boolean {
     return this.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
