@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { KeyValueItem } from '../model/key-value-item';
-import { DEFAULT_WORD_LIST_OPTION_QUERY_REQUEST, WordListOptionsQueryRequest } from '../model/word-list-options-query-request';
+import { DEFAULT_WORD_LIST_OPTION_QUERY_REQUEST, WordListRequest } from '../model/word-list-request';
 
 const WORD_LIST_OPTIONS_QUERY_REQUEST = 'wordListOptionsQueryRequest';
 class DropdownIG {
@@ -27,7 +27,7 @@ export class WordListOptionsPanelComponent implements OnInit {
   @Input() public textTypesAttributes: KeyValueItem[] | null = null;
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public wordListOptionsQueryRequest: WordListOptionsQueryRequest;
+  public wordListOptionsQueryRequest: WordListRequest;
   public fileUploadedInfo: string | null = null;
   public frequencyFigures: KeyValueItem[] = [
     new KeyValueItem('HIT_COUNTS', 'HIT_COUNTS'), new KeyValueItem('NON_WORDS', 'NON_WORDS'), new KeyValueItem('ARF', 'ARF')
@@ -53,7 +53,7 @@ export class WordListOptionsPanelComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly messageService: MessageService
   ) {
-    this.wordListOptionsQueryRequest = WordListOptionsQueryRequest.getInstance();
+    this.wordListOptionsQueryRequest = WordListRequest.getInstance();
   }
 
   ngOnInit(): void {
