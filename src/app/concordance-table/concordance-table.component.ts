@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
-import { INSTALLATION, SHUFFLE } from '../model/constants';
+import { CSV_MAX_RESULT, INSTALLATION, SHUFFLE } from '../model/constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
@@ -158,7 +158,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public downloadCsv(): void {
     const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
     if (queryRequest) {
-      queryRequest.end = 10000;
+      queryRequest.end = CSV_MAX_RESULT;
       this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
         const inst = localStorage.getItem(INSTALLATION);
         if (inst) {

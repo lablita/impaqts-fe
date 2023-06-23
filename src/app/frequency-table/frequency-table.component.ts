@@ -6,7 +6,7 @@ import { HTTP, HTTPS } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE} from '../common/query-constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
-import { ASC, DESC, INSTALLATION } from '../model/constants';
+import { ASC, CSV_MAX_RESULT, DESC, INSTALLATION } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyOption } from '../model/frequency-query-request';
@@ -68,7 +68,6 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     public readonly queryRequestService: QueryRequestService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly exportCsvService: ExportCsvService,
-  //  private readonly httpClient: HttpClient
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -144,7 +143,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
       if (queryRequest && queryRequest.frequencyQueryRequest) {
         queryRequest.frequencyQueryRequest.category = category;
-        queryRequest.end = 100000000;
+        queryRequest.end = CSV_MAX_RESULT;
         this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
           const inst = localStorage.getItem(INSTALLATION);
           if (inst) {
