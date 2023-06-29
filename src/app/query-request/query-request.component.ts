@@ -136,7 +136,7 @@ export class QueryRequestComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         if (selectedCorpusId) {
           const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
-          const endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
+          const endpoint = corpus.endpoint;
           this.socketService.setServerHost(endpoint);
           corpus.metadata.sort((a, b) => a.position - b.position);
           corpus.metadata.filter(md => !md.child).forEach(md => {

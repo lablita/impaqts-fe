@@ -164,8 +164,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         if (inst) {
           const installation = JSON.parse(inst) as Installation;
           const endpoint = installation?.corpora.find(corp => corp.name === queryRequest.corpus)?.endpoint;
-          const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
-          const downloadUrl = `${url}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
+          const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
           this.exportCsvService.download(downloadUrl).then();
         }
      });

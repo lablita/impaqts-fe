@@ -168,7 +168,7 @@ export class VisualQueryComponent implements OnInit {
         const selectedCorpusId = this.selectedCorpus.key;
         if (selectedCorpusId) {
           const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
-          this.endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
+          this.endpoint = corpus.endpoint;
           this.socketService.setServerHost(this.endpoint);
           corpus.metadata.sort((a, b) => a.position - b.position);
           corpus.metadata.filter(md => !md.child).forEach(md => {

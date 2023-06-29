@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { WS_URL } from '../common/constants';
+import { WS, WSS, WS_URL } from '../common/constants';
 import { QueryRequest } from '../model/query-request';
 import { ErrorMessagesService } from './error-messages.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -40,9 +41,16 @@ export class SocketService {
 
   public setServerHost(serverHost: string): void {
     this.serverHost = serverHost;
-    this.wsEndpoint = `${this.serverHost}/${WS_URL}`;
+    let endpoint = '';
+    if (environment.production) {
+      endpoint = `${this.serverHost}/${WS_URL}`;
+      endpoint = environment.secureUrl ? WSS + endpoint : WS + endpoint;
+    } else {
+      endpoint = `${this.serverHost}/${WS_URL}`;
+      endpoint = environment.secureUrl ? WSS + 'localhost:4200' + endpoint : WS + 'localhost:4200' + endpoint;
+    }
     this.authService.getAccessTokenSilently().subscribe({
-      next: accessToken => this.wsEndpoint = `${this.wsEndpoint}?accessToken=${accessToken}`
+      next: accessToken => this.wsEndpoint = `${endpoint}?accessToken=${accessToken}`
     });
   }
 

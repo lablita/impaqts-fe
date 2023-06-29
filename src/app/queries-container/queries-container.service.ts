@@ -33,8 +33,7 @@ export class QueriesContainerService {
 
   public getMetadatumValues(installation: Installation, corpus: string, metadatum: string): Observable<any> {
     const endpoint = installation?.corpora.find(corp => corp.name === corpus)?.endpoint;
-    const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
-    return this.http.get<any>(`${url}/metadatum-values/${corpus}/${metadatum}`)
+    return this.http.get<any>(`${endpoint}/metadatum-values/${corpus}/${metadatum}`)
       .pipe(catchError(this.utils.handleErrorObservable('getMetadatumValues', FIND_FAILED, null)));
   }
 
@@ -43,8 +42,7 @@ export class QueriesContainerService {
     if (corpus) {
       const endpoint = corpus?.endpoint;
       const corpusName = corpus.name;
-      const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
-      return this.http.get<any>(`${url}/metadatum-values/${corpusName}/${metadatum.name}`)
+      return this.http.get<any>(`${endpoint}/metadatum-values/${corpusName}/${metadatum.name}`)
         .pipe(map(res => {
           return { res, metadatum };
         }), catchError(this.utils.handleErrorObservable('getMetadatumValues', FIND_FAILED, null)));

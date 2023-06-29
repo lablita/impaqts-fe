@@ -21,8 +21,7 @@ export class WideContextService {
 
   public getWideContext(installation: Installation, corpusName: string, pos: number, hitlen = 1): Observable<QueryResponse | null> {
     const endpoint = installation?.corpora.find(corp => corp.name === corpusName)?.endpoint;
-    const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
-    return this.http.get<QueryResponse>(`${url}/${WIDE_CONTEXT}/${corpusName}/${pos}/${hitlen}`)
+    return this.http.get<QueryResponse>(`${endpoint}/${WIDE_CONTEXT}/${corpusName}/${pos}/${hitlen}`)
       .pipe(catchError(this.utils.handleErrorObservable('getWideContext', FIND_FAILED, null)));
   }
 }

@@ -21,8 +21,7 @@ export class CorpusInfoService {
 
   public getCorpusInfo(installation: Installation, corpusName: string): Observable<CorpusInfo | null> {
     const endpoint = installation?.corpora.find(corp => corp.name === corpusName)?.endpoint;
-    const url = (environment.secureUrl ? HTTPS : HTTP) + endpoint;
-    return this.http.get<QueryResponse>(`${url}/${CORPUS_INFO}/${corpusName}`)
+    return this.http.get<QueryResponse>(`${endpoint}/${CORPUS_INFO}/${corpusName}`)
       .pipe(
         map(qr => qr.corpusInfo),
         catchError(this.utils.handleErrorObservable('getWideContext', FIND_FAILED, null)
