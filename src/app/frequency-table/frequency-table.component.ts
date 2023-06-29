@@ -1,17 +1,14 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { first } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { HTTP, HTTPS } from '../common/constants';
+import { HTTP } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE} from '../common/query-constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
-import { ASC, CSV_MAX_RESULT, DESC, INSTALLATION } from '../model/constants';
+import { ASC, CSV_MAX_RESULT, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyOption } from '../model/frequency-query-request';
 import { FrequencyResultLine } from '../model/frequency-result-line';
-import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { ErrorMessagesService } from '../services/error-messages.service';
@@ -22,6 +19,7 @@ import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.serv
 import { QueryRequest } from '../model/query-request';
 import * as _ from  'lodash';
 import { Subscription } from 'rxjs';
+import { InstallationService } from '../services/installation.service';
 
 const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
 const METADATA_FREQUENCY = 'metadata_frequency'
@@ -68,6 +66,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     public readonly queryRequestService: QueryRequestService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly exportCsvService: ExportCsvService,
+    private readonly installationServices: InstallationService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -145,14 +144,10 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
         queryRequest.frequencyQueryRequest.category = category;
         queryRequest.end = CSV_MAX_RESULT;
         this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
-          const inst = localStorage.getItem(INSTALLATION);
-          if (inst) {
-            const installation = JSON.parse(inst) as Installation;
-            const endpoint = installation?.corpora.find(corp => corp.name === queryRequest.corpus)?.endpoint;
-            const filename = queryRequest.queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST ? MULTILEVEL_FREQUENCY : `${METADATA_FREQUENCY}_${category}`;
-            const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
-            this.exportCsvService.download(downloadUrl).then();
-          }
+        const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
+        const filename = queryRequest.queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST ? MULTILEVEL_FREQUENCY : `${METADATA_FREQUENCY}_${category}`;
+        const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
+        this.exportCsvService.download(downloadUrl).then();
        });
       }
   }

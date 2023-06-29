@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
-import { CSV_MAX_RESULT, INSTALLATION, SHUFFLE } from '../model/constants';
+import { CSV_MAX_RESULT, SHUFFLE } from '../model/constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
@@ -22,10 +22,9 @@ import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.serv
 import { QueryRequest } from '../model/query-request';
 import * as _ from  'lodash';
 import { ExportCsvService } from '../services/export-csv.service';
-import { Installation } from '../model/installation';
-import { HTTP, HTTPS } from '../common/constants';
-import { environment } from 'src/environments/environment';
+import { HTTP } from '../common/constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
+import { InstallationService } from '../services/installation.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -79,7 +78,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly queryRequestService: QueryRequestService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly wideContextService: WideContextService,
-    private readonly exportCsvService: ExportCsvService
+    private readonly exportCsvService: ExportCsvService,
+    private readonly installationServices: InstallationService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -160,13 +160,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     if (queryRequest) {
       queryRequest.end = CSV_MAX_RESULT;
       this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
-        const inst = localStorage.getItem(INSTALLATION);
-        if (inst) {
-          const installation = JSON.parse(inst) as Installation;
-          const endpoint = installation?.corpora.find(corp => corp.name === queryRequest.corpus)?.endpoint;
-          const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
-          this.exportCsvService.download(downloadUrl).then();
-        }
+        const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
+        const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
+        this.exportCsvService.download(downloadUrl).then();
      });
     }
 }
@@ -293,10 +289,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public showWideContext(kwicline: KWICline): void {
     this.resultContext = null;
     const corpus = this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
-    const localInst = localStorage.getItem(INSTALLATION);
-    if (localInst && corpus) {
-      const inst = JSON.parse(localInst);
-      this.wideContextService.getWideContext(inst, corpus, kwicline.pos).subscribe({
+    if (corpus) {
+      this.wideContextService.getWideContext(corpus, kwicline.pos).subscribe({
         next: response => {
           if (response && response.wideContextResponse) {
             const kwic = response.wideContextResponse.kwic ? response.wideContextResponse.kwic : '';

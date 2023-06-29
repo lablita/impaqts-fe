@@ -2,13 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { CORPUS_INFO, HTTP, HTTPS } from '../common/constants';
+import { CORPUS_INFO, HTTP } from '../common/constants';
 import { FIND_FAILED } from '../model/constants';
 import { CorpusInfo } from '../model/corpusinfo/corpus-info';
-import { Installation } from '../model/installation';
 import { QueryResponse } from '../model/query-response';
 import { UtilService } from '../utils/util.service';
+import { InstallationService } from './installation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,10 +16,12 @@ export class CorpusInfoService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly utils: UtilService) { }
+    private readonly utils: UtilService,
+    private readonly installationServices: InstallationService
+    ) { }
 
-  public getCorpusInfo(installation: Installation, corpusName: string): Observable<CorpusInfo | null> {
-    const endpoint = installation?.corpora.find(corp => corp.name === corpusName)?.endpoint;
+  public getCorpusInfo(corpusName: string): Observable<CorpusInfo | null> {
+    const endpoint = this.installationServices.getCompleteEndpoint(corpusName, HTTP);
     return this.http.get<QueryResponse>(`${endpoint}/${CORPUS_INFO}/${corpusName}`)
       .pipe(
         map(qr => qr.corpusInfo),

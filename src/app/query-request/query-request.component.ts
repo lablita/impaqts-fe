@@ -1,9 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
-import { environment } from 'src/environments/environment';
 import { v4 as uuid } from 'uuid';
-import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
@@ -136,8 +134,7 @@ export class QueryRequestComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         if (selectedCorpusId) {
           const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
-          const endpoint = corpus.endpoint;
-          this.socketService.setServerHost(endpoint);
+          this.socketService.setServerHost(corpus.name);
           corpus.metadata.sort((a, b) => a.position - b.position);
           corpus.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options

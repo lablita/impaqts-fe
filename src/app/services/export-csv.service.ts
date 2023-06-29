@@ -2,13 +2,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { HTTP, HTTPS } from '../common/constants';
+import { HTTP } from '../common/constants';
 import { EXPORT_CSV } from '../common/routes-constants';
-import { EXPORT_FAILED, INSTALLATION } from '../model/constants';
-import { Installation } from '../model/installation';
+import { EXPORT_FAILED } from '../model/constants';
 import { QueryRequest } from '../model/query-request';
 import { UtilService } from '../utils/util.service';
+import { InstallationService } from './installation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +17,12 @@ export class ExportCsvService {
   constructor(
     private readonly http: HttpClient,
     private readonly utils: UtilService,
+    private readonly installationServices: InstallationService
     ) { }
 
   public exportCvs(request: QueryRequest): Observable<string> {
-    const inst = localStorage.getItem(INSTALLATION);
-    if (inst) {
-      const installation = JSON.parse(inst) as Installation;
-      const endpoint = installation?.corpora.find(corp => corp.name === request.corpus)?.endpoint;
+    const endpoint = this.installationServices.getCompleteEndpoint(request.corpus, HTTP);
+    if (endpoint){
       return this.http.post<string>(`${endpoint}/${EXPORT_CSV}`, request)
       .pipe(catchError(this.utils.handleErrorObservable('exportCvs', EXPORT_FAILED, '')));
     } else {
