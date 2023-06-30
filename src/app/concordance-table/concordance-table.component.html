@@ -49,7 +49,17 @@
   [rowsPerPageOptions]="paginations" [autoLayout]="true">
   <ng-template pTemplate="header">
     <tr>
-      <th style="width: 80px;"><button pButton (click)="downloadCsv()" [disabled]="loading">CSV</button></th>
+      <th style="width: 80px;">
+       <button pButton (click)="showDialog()" [disabled]="loading">CSV</button>
+       <p-dialog header="File Csv in elaborazione" [(visible)]="dlgVisible" [modal]="true" [closable]="false" [style]="{width: '15vw'}">
+        <div class="flex justify-content-center">
+          <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
+        </div>
+         <p>
+            Attendere il completamento dell'operazione
+        </p>
+       </p-dialog>
+      </th>
       <th class="p-text-center" style="width: 180px;">Left</th>
       <th class="p-text-center" style="width: 80px;">Kwic</th>
       <th class="p-text-center" style="width: 180px;">Right</th>

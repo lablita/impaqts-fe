@@ -59,6 +59,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
   public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
+  public dlgVisible = false;
 
   public descriptions: Array<DescResponse> = [];
   public fieldRequests: Array<FieldRequest> = [];
@@ -68,7 +69,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   private makeConcordanceRequestSubscription: Subscription | null = null;
   private currentStart = 0;
   private currentEnd = 0;
-
+  
   private currentQueryId = '';
 
   constructor(
@@ -155,11 +156,17 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
-  public downloadCsv(): void {
+  public showDialog() {
+    this.dlgVisible = true;
+    this.downloadCsv();
+}
+
+  private downloadCsv(): void {
     const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
     if (queryRequest) {
       queryRequest.end = CSV_MAX_RESULT;
       this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+        this.dlgVisible = false;
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
         this.exportCsvService.download(downloadUrl).then();

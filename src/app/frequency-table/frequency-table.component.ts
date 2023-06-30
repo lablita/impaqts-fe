@@ -56,6 +56,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public sortField = '';
   public multilevel = false;
   public operation = '';
+  public dlgVisible = false;
 
   private readonly queryResponseSubscription: Subscription;
   private makeFrequencySubscription: Subscription | null = null;
@@ -138,12 +139,18 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  public showDialog(category: string) {
+         this.dlgVisible = true;
+         this.downloadCsv(category);
+  }
+
   public downloadCsv(category: string): void {
       const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
       if (queryRequest && queryRequest.frequencyQueryRequest) {
         queryRequest.frequencyQueryRequest.category = category;
         queryRequest.end = CSV_MAX_RESULT;
         this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+        this.dlgVisible = false;  
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
         const filename = queryRequest.queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST ? MULTILEVEL_FREQUENCY : `${METADATA_FREQUENCY}_${category}`;
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
