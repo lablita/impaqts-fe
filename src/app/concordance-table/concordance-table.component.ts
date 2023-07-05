@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Message } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, interval, timer } from 'rxjs';
 import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
-import { CSV_MAX_RESULT, SHUFFLE } from '../model/constants';
+import { CSV_PAGINATION, SHUFFLE } from '../model/constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
@@ -25,6 +25,7 @@ import { ExportCsvService } from '../services/export-csv.service';
 import { HTTP } from '../common/constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
 import { InstallationService } from '../services/installation.service';
+import { startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -64,6 +65,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public descriptions: Array<DescResponse> = [];
   public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+  public progressStatus?: number;
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
@@ -162,14 +164,29 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
 }
 
   private downloadCsv(): void {
+    let timeInterval: Subscription | null = null;
+    const stopPolling = new Subject();
     const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
     if (queryRequest) {
-      queryRequest.end = CSV_MAX_RESULT;
+      queryRequest.end = CSV_PAGINATION;
       this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
-        this.dlgVisible = false;
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
-        this.exportCsvService.download(downloadUrl).then();
+        //polling on csv progress status
+        timeInterval = timer(5000, 2000)
+        .pipe(
+          switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
+          tap(res => {
+            if (res.status === 'OK' || res.status === 'KO') {
+              this.dlgVisible = false;
+              this.exportCsvService.download(downloadUrl).then();
+              stopPolling.next();
+            } else {
+              this.progressStatus = +res.status!
+            }
+          }),
+          takeUntil(stopPolling)
+        ).subscribe();
      });
     }
 }

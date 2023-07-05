@@ -3,11 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HTTP } from '../common/constants';
-import { EXPORT_CSV } from '../common/routes-constants';
+import { EXPORT_CSV, PROGRESS_CSV } from '../common/routes-constants';
 import { EXPORT_FAILED } from '../model/constants';
 import { QueryRequest } from '../model/query-request';
 import { UtilService } from '../utils/util.service';
 import { InstallationService } from './installation.service';
+import { ProgressStatusDTO } from '../model/progress-status-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,10 @@ export class ExportCsvService {
     } else {
       return of('');
     }
+  }
+  public getCsvProgressValue(corpus: string, uuid: string): Observable<ProgressStatusDTO> {
+    const endpoint = this.installationServices.getCompleteEndpoint(corpus, HTTP);
+    return this.http.get<ProgressStatusDTO>(`${endpoint}/${PROGRESS_CSV}/${uuid}`)
   }
 
   public async download(downloadUrl: string): Promise<void> {
@@ -53,7 +58,7 @@ export class ExportCsvService {
    // Discard the object data
    URL.revokeObjectURL(url);
  }
-
+ 
  private getFilenameFromHeaders(headers: HttpHeaders) {
    // The content-disposition header should include a suggested filename for the file
    const contentDisposition = headers.get('Content-Disposition');

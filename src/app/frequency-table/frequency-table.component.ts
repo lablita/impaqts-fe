@@ -4,7 +4,7 @@ import { HTTP } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE} from '../common/query-constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
-import { ASC, CSV_MAX_RESULT, DESC } from '../model/constants';
+import { ASC, CSV_PAGINATION, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyOption } from '../model/frequency-query-request';
@@ -148,7 +148,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
       if (queryRequest && queryRequest.frequencyQueryRequest) {
         queryRequest.frequencyQueryRequest.category = category;
-        queryRequest.end = CSV_MAX_RESULT;
+        queryRequest.end = CSV_PAGINATION;
         this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
         this.dlgVisible = false;  
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);

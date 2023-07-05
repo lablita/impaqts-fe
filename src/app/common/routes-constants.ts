@@ -19,4 +19,5 @@ export const FREQUENCY = 'frequency';
 export const COLLOCATION = 'collocation';
 export const EXPORT_CSV = 'export-csv'
 export const DOWNLOAD_CSV = 'download'
+export const PROGRESS_CSV = 'progress-csv'
 

@@ -1,4 +1,10 @@
 <div *ngIf="visible">
+
+  ***
+  <p-progressBar [value]="'60'" tooltipPosition="bottom" [pTooltip]="'' + progressStatus">
+  </p-progressBar>  
+  ***
+
   <div class="flex justify-content-center">
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
@@ -53,10 +59,18 @@
        <button pButton (click)="showDialog()" [disabled]="loading">CSV</button>
        <p-dialog header="File Csv in elaborazione" [(visible)]="dlgVisible" [modal]="true" [closable]="false" [style]="{width: '15vw'}">
         <div class="flex justify-content-center">
+          
+          <!-- <p-progressBar *ngIf="progressStatus && progressStatus >= 0" [value]="progressStatus" [showValue]="false"
+            tooltipPosition="bottom" [pTooltip]="'' + progressStatus">
+          </p-progressBar> -->
+          ---
+          <p-progressBar [value]="'60'" tooltipPosition="bottom" [pTooltip]="'' + progressStatus">
+          </p-progressBar>          
+          +++
           <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
         </div>
          <p>
-            Attendere il completamento dell'operazione
+            Attendere il completamento dell'operazione, non uscire ne aggiornare la pagina!!!
         </p>
        </p-dialog>
       </th>
