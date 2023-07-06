@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { Message } from 'primeng/api';
-import { environment } from 'src/environments/environment';
-import { STRUCT_DOC, TOKEN, WS, WSS } from '../common/constants';
+import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { VISUAL_QUERY } from '../common/routes-constants';
@@ -96,7 +95,6 @@ export class VisualQueryComponent implements OnInit {
   public initialPagination = 10;
   public titleResult: string | null = null;
 
-  private endpoint = '';
   private holdSelectedCorpusId?: string;
 
   constructor(
@@ -168,8 +166,7 @@ export class VisualQueryComponent implements OnInit {
         const selectedCorpusId = this.selectedCorpus.key;
         if (selectedCorpusId) {
           const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
-          this.endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
-          this.socketService.setServerHost(this.endpoint);
+          this.socketService.setServerHost(corpus.name);
           corpus.metadata.sort((a, b) => a.position - b.position);
           corpus.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options

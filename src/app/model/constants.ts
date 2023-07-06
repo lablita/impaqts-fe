@@ -2,11 +2,13 @@
 export const CONTEXT_INSTALLATION = '/impaqts-configurator';
 export const CONTEXT_CORPORA = '';
 export const FIND_FAILED = 'FIND_FAILED';
+export const EXPORT_FAILED = 'EXPORT_FAILED';
 export const INSTALLATION = 'installation';
 export const INTERFACE_LANGUAGE = 'interface_language';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const MENU_ITEM = 'menu_item';
+export const CSV_PAGINATION = 100;
 
 export const WIDE_CONTEXT_FAILED = 'WIDE_CONTEXT_FAILED';
 /** */

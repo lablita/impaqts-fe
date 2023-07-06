@@ -1,22 +1,25 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
-import { WS_URL } from '../common/constants';
+import { WS } from '../common/constants';
 import { QueryRequest } from '../model/query-request';
 import { ErrorMessagesService } from './error-messages.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
+import { QueryRequestService } from './query-request.service';
+import { InstallationService } from './installation.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
 
-  private serverHost = '';
   private wsEndpoint = '';
   private socketSubject: RxWebsocketSubject | null = null;
 
   constructor(
+    public readonly queryRequestService: QueryRequestService,
     private readonly errorMessageService: ErrorMessagesService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly installationServices: InstallationService
   ) {
 
   }
@@ -38,11 +41,10 @@ export class SocketService {
     return null;
   }
 
-  public setServerHost(serverHost: string): void {
-    this.serverHost = serverHost;
-    this.wsEndpoint = `${this.serverHost}/${WS_URL}`;
+  public setServerHost(corpus: string): void {
+    const endpoint = this.installationServices.getCompleteEndpoint(corpus, WS);
     this.authService.getAccessTokenSilently().subscribe({
-      next: accessToken => this.wsEndpoint = `${this.wsEndpoint}?accessToken=${accessToken}`
+      next: accessToken => this.wsEndpoint = `${endpoint}?accessToken=${accessToken}`
     });
   }
 

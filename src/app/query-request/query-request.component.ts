@@ -1,9 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
-import { environment } from 'src/environments/environment';
 import { v4 as uuid } from 'uuid';
-import { WS, WSS } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
@@ -48,6 +46,7 @@ export class QueryRequestComponent implements OnInit {
   public queryTypes: Array<string> = [];
   public lemma = '';
   public DEFAULT_SELECTED_QUERY_TYPE = DEFAULT_SELECTED_QUERY_TYPE;
+  public SIMPLE = SIMPLE;
   public LEMMA = LEMMA;
   public PHRASE = PHRASE;
   public WORD = WORD;
@@ -135,8 +134,7 @@ export class QueryRequestComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         if (selectedCorpusId) {
           const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
-          const endpoint = environment.secureUrl ? WSS + corpus.endpoint : WS + corpus.endpoint;
-          this.socketService.setServerHost(endpoint);
+          this.socketService.setServerHost(corpus.name);
           corpus.metadata.sort((a, b) => a.position - b.position);
           corpus.metadata.filter(md => !md.child).forEach(md => {
             // Attributes in View Options
@@ -222,15 +220,6 @@ export class QueryRequestComponent implements OnInit {
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
-  public queryTypeClick(queryType: string): void {
-    if (queryType !== SIMPLE) {
-      const simpleCtrl = this.queryRequestForm.get(SIMPLE);
-      if (simpleCtrl) {
-        simpleCtrl.disable();
-      }
-    }
-  }
-
   private setCorpus(corpus: Corpus): void {
     this.metadataQueryService.clearMetadata();
     const installation = this.installation;
@@ -287,7 +276,7 @@ export class QueryRequestComponent implements OnInit {
   }
 
   private toggleSimpleDisabling(newSelectedCorpus: KeyValueItem): void {
-    const disabled = !newSelectedCorpus || (!!this.selectedQueryType && this.selectedQueryType !== 'simple');
+    const disabled = !newSelectedCorpus;
     if (disabled) {
       this.queryRequestForm.get('simple')?.disable();
     } else {
