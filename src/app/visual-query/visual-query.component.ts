@@ -157,6 +157,7 @@ export class VisualQueryComponent implements OnInit {
     this.resultView = false;
     this.noResultFound = false;
     if (this.selectedCorpus) {
+      this.queryRequestService.setCorpus(this.selectedCorpus.value)
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
       this.enableAddToken = true;
@@ -190,6 +191,7 @@ export class VisualQueryComponent implements OnInit {
         this.enableAddMetadata = true;
       }
     } else {
+      this.queryRequestService.resetCorpus();
       this.closeWebSocket();
       this.enableAddToken = false;
       this.enableAddMetadata = false;

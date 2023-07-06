@@ -1,4 +1,7 @@
 {
+  "APP": {
+    "NO_VIDEO": "Nessun video è presente"
+  },
   "MENU": {
     "LOGIN": "Accedi",
     "CONCORDANCE": "Concordanze",
@@ -262,6 +265,13 @@
       "SEL_TYPE": "Select a type",
       "START": "sentence start",
       "TIMES": "times"
+    },
+    "WORD_LIST": {
+      "TITLE": "Word list",
+      "CORPUS": "Corpus",
+      "TOTAL_ITEMS": "Numero totale di elementi",
+      "TOTAL_FREQ": "Totale frequenza",
+      "FREQUENCY": "Frequenza"
     },
     "RESET": "Reset",
     "CLEAR": "Cancella"

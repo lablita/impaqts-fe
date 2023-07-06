@@ -1,0 +1,22 @@
+<h2 class="text-3xl font-medium p-component">{{"PAGE.WORD_LIST.TITLE" | translate}}</h2>
+<p-panel *ngIf="corpus">
+    <div class="field grid">
+      <div class="col-4 mb-4 md:col-2 md:mb-0 label">{{'PAGE.WORD_LIST.CORPUS' | translate | titlecase}}</div>
+      <div class="col-4 md:col-2">
+        {{corpus}}
+      </div>
+    </div>
+    <div class="field grid">
+      <div class="col-4 mb-4 md:col-2 md:mb-0 label">{{'PAGE.WORD_LIST.TOTAL_ITEMS' | translate | titlecase}}</div>
+      <div class="col-4 md:col-2">
+        {{'32741' | number: '1.0-2' : 'it'}}
+      </div>
+    </div>
+    <div class="field grid">
+      <div class="col-4 mb-4 md:col-2 md:mb-0 label">{{'PAGE.WORD_LIST.TOTAL_FREQ' | translate | titlecase}}</div>
+      <div class="col-4 md:col-2">
+        {{'710364813' | number: '1.0-2' : 'it'}}
+      </div>
+    </div>
+</p-panel>
+  

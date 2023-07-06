@@ -266,6 +266,13 @@
       "FOR": "for",
       "TIMES": "times"
     },
+    "WORD_LIST": {
+      "TITLE": "Word list",
+      "CORPUS": "Corpus",
+      "TOTAL_ITEMS": "Total number of items",
+      "TOTAL_FREQ": "Total frequency",
+      "FREQUENCY": "frequency"
+    },
     "RESET": "Reset",
     "CLEAR": "Clear"
   },

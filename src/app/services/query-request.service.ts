@@ -11,6 +11,8 @@ import { QueryRequest } from '../model/query-request';
 })
 export class QueryRequestService {
 
+  private corpus: string | null = null;
+
   private queryRequest: QueryRequest = new QueryRequest();
 
   private basicFieldRequest: FieldRequest | null = null;
@@ -22,7 +24,6 @@ export class QueryRequestService {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
-    //this.queryRequest.filterConcordanceQueryRequest = null;
   }
 
   public resetQueryPattern(): void {
@@ -85,5 +86,17 @@ export class QueryRequestService {
 
   public getQueryRequest(): QueryRequest {
     return this.queryRequest;
+  }
+
+  public getCorpus(): string {
+    return this.corpus ? this.corpus : '';
+  }
+
+  public setCorpus(corpus: string): void {
+    this.corpus = corpus;
+  }
+
+  public resetCorpus(): void {
+    this.corpus = null;
   }
 }

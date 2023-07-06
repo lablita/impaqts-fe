@@ -174,7 +174,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
         //polling on csv progress status
-        timeInterval = timer(5000, 2000)
+        timeInterval = timer(1000, 2000)
         .pipe(
           switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
           tap(res => {

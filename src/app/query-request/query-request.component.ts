@@ -127,6 +127,7 @@ export class QueryRequestComponent implements OnInit {
     const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
     localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
     if (selectedCorpus) {
+      this.queryRequestService.setCorpus(selectedCorpus.value)
       const selectedCorpusId = selectedCorpus.key;
       this.emitterService.spinnerMetadata.emit(true);
       const metadataAttributes: Array<KeyValueItem> = [];
@@ -160,6 +161,7 @@ export class QueryRequestComponent implements OnInit {
         this.emitterService.spinnerMetadata.emit(false);
       }
     } else {
+      this.queryRequestService.resetCorpus();
       this.closeWebSocket();
       this.menuEmitterService.corpusSelected = false;
       this.queryRequestForm.controls.simple.setValue('');

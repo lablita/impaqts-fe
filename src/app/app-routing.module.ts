@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { ALL_LEMMAS, ALL_WORDS, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, QUERY, VISUAL_QUERY } from './common/routes-constants';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
@@ -9,6 +8,8 @@ import { EMMACorpGuard } from './guards/emmacorp.guard';
 import { MainComponent } from './main/main.component';
 import { QueriesContainerComponent } from './queries-container/queries-container.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
+import { WordListComponent } from './word-list/word-list.component';
+import { LEMMA, WORD } from './common/query-constants';
 
 
 const routes: Routes = [
@@ -33,13 +34,15 @@ const routes: Routes = [
       },
       {
         path: ALL_WORDS,
-        component: AllWordsOrLemmasComponent,
-        canActivate: [EMMACorpGuard]
+        component: WordListComponent,
+        canActivate: [EMMACorpGuard],
+        data: { searchAttribute: WORD }
       },
       {
         path: ALL_LEMMAS,
-        component: AllWordsOrLemmasComponent,
-        canActivate: [EMMACorpGuard]
+        component: WordListComponent,
+        canActivate: [EMMACorpGuard],
+        data: { searchAttribute: LEMMA }
       },
       {
         path: CREDITS_ROUTE,

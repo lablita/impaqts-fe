@@ -5,6 +5,7 @@ export const PHRASE = 'phrase';
 export const WORD = 'word';
 export const CHARACTER = 'character';
 export const CQL = 'cql';
+export const TAG = 'tag';
 
 export enum REQUEST_TYPE {
   VISUAL_QUERY_REQUEST = 'VISUAL_QUERY_REQUEST',
