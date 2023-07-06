@@ -61,11 +61,11 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
   public dlgVisible = false;
-
+  
   public descriptions: Array<DescResponse> = [];
   public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
-  public progressStatus?: number;
+  public progressStatus = 0;
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
@@ -161,10 +161,11 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public showDialog() {
     this.dlgVisible = true;
     this.downloadCsv();
-}
+  }
 
   private downloadCsv(): void {
     let timeInterval: Subscription | null = null;
+    let previousProgressValue = 0;
     const stopPolling = new Subject();
     const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
     if (queryRequest) {
@@ -181,8 +182,11 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
               this.dlgVisible = false;
               this.exportCsvService.download(downloadUrl).then();
               stopPolling.next();
+            } else if (res.status === 'KK') {
+               this.progressStatus = previousProgressValue;
             } else {
-              this.progressStatus = +res.status!
+              previousProgressValue = +res.status!;
+              this.progressStatus = +res.status!;
             }
           }),
           takeUntil(stopPolling)
