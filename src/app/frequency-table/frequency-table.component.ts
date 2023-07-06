@@ -141,8 +141,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public showDialog(category: string) {
-         this.dlgVisible = true;
-         this.downloadCsv(category);
+    this.dlgVisible = true;
+    this.downloadCsv(category);
   }
 
   public downloadCsv(category: string): void {
