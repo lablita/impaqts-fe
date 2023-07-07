@@ -20,7 +20,7 @@ export class WordListRequest {
   changeOutSecond?: string | null;
   changeOutThird?: string | null;
   sortField?: string | null;
-  sordDir?: string | null;
+  sortDir?: string | null;
 
   constructor(
     subCorpus?: string | null,

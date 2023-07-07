@@ -20,4 +20,5 @@ export const COLLOCATION = 'collocation';
 export const EXPORT_CSV = 'export-csv'
 export const DOWNLOAD_CSV = 'download'
 export const PROGRESS_CSV = 'progress-csv'
+export const WORD_LIST_URL = 'word-list';
 

@@ -5,7 +5,7 @@ import { InstallationService } from './installation.service';
 import { Observable } from 'rxjs';
 import { QueryResponse } from '../model/query-response';
 import { HTTP } from '../common/constants';
-import { WORD_LIST } from '../common/routes-constants';
+import { WORD_LIST, WORD_LIST_URL } from '../common/routes-constants';
 import { catchError, map } from 'rxjs/operators';
 import { WordListResponse } from '../model/word-list-response';
 import { QueryRequest } from '../model/query-request';
@@ -25,7 +25,7 @@ export class WordListService {
 
   public getWordList(queryRequest: QueryRequest): Observable<WordListResponse | null> {
     const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
-    return this.http.post<QueryResponse>(`${endpoint}/${WORD_LIST}`, queryRequest)
+    return this.http.post<QueryResponse>(`${endpoint}/${WORD_LIST_URL}`, queryRequest)
       .pipe(
         map(qr => qr.wordList),
         catchError(this.utils.handleErrorObservable('getWordList', FIND_FAILED, null)

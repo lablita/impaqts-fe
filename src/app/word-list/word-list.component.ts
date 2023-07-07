@@ -12,6 +12,8 @@ import { WordListService } from '../services/word-list.service';
 import { CORPUS_INFO } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { ASC, DESC } from '../model/constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-word-list',
@@ -28,88 +30,64 @@ export class WordListComponent implements OnInit {
   public totalFrequencies = 0;
   public sortField = '';
   public pageSize = 10;
-  
   public searchAttribute?: string;
 
+  public title = '';
+
+  //per adesso così, poi quando sarà implementato il WordList panel andrà armonizzato con il queryRequestService
+  private queryRequest = new QueryRequest();
 
 
-  private readonly queryResponseSubscription: Subscription;
+  //private readonly queryResponseSubscription: Subscription;
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
     private readonly loadResultService: LoadResultsService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly route: ActivatedRoute,
-    private readonly wordListService: WordListService
-  ) { 
-    this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      this.loading = false;
-      if (queryResponse) {
-        const queryRequest = this.queryRequestService.getQueryRequest();
-        if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
-          const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
-          this.errorMessagesService.sendError(errorMessage);
-        } else if (queryResponse.wordList) {
-          this.totalItems = queryResponse.wordList.totalItems ? queryResponse.wordList.totalItems : 0;
-          this.totalFrequencies = queryResponse.wordList.totalFreqs ? queryResponse.wordList.totalFreqs : 0;
-          this.wordListItems = queryResponse.wordList.items;
-        }
-      }
-    });
-  }
+    private readonly wordListService: WordListService,
+    private readonly translateService: TranslateService
+  ) { }
 
   ngOnInit(): void {
-    //this.corpus = this.queryRequestService.getCorpus();
-    
-    
-    const selectedCorpus: KeyValueItem = JSON.parse(localStorage.getItem('selectedCorpus')!);
-    if (selectedCorpus) {
-      this.searchAttribute = this.route.snapshot.data.searchAttribute;
-      const queryRequest: QueryRequest = new QueryRequest();
-      queryRequest.start = 0;
-      queryRequest.end = this.pageSize;
-      queryRequest.corpus = selectedCorpus.value;
-      const wordListRequest: WordListRequest = new WordListRequest();
-      wordListRequest.searchAttribute = this.searchAttribute;
-      wordListRequest.sortField = 'freq';
-      wordListRequest.sordDir = 'desc';
-      queryRequest.wordListRequest = wordListRequest;
-      queryRequest.queryType = REQUEST_TYPE.WORD_LIST_REQUEST;
-      this.wordListService.getWordList(queryRequest).subscribe(wordList => {
+    const corpusFromLS = localStorage.getItem('selectedCorpus');
+    if (corpusFromLS && JSON.parse(corpusFromLS) !== null) {
+      this.corpus = (JSON.parse(corpusFromLS) as KeyValueItem).value;
+      if (this.corpus) {
+        this.translateService.stream('PAGE.WORD_LIST.TITLE').subscribe(res => this.title = res);
+        this.searchAttribute = this.route.snapshot.data.searchAttribute;
+        this.queryRequest.start = 0;
+        this.queryRequest.end = this.pageSize;
+        this.queryRequest.corpus = this.corpus;
+        const wordListRequest: WordListRequest = new WordListRequest();
+        wordListRequest.searchAttribute = this.searchAttribute;
+        wordListRequest.sortField = 'freq';
+        wordListRequest.sortDir = DESC;
+        wordListRequest.minFreq = 0;
+        wordListRequest.maxFreq = 0;
+        this.queryRequest.wordListRequest = wordListRequest;
+        this.queryRequest.queryType = REQUEST_TYPE.WORD_LIST_REQUEST;
+        this.loading = true;
+      } 
+    } else {
+      this.translateService.stream('PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL').subscribe(res => this.title = res);
+    }
+  }
+
+  public loadWordList(event: any): void {
+    this.loading = true;
+      if (this.queryRequest && this.queryRequest.wordListRequest) {
+        this.queryRequest.wordListRequest.sortDir = event.sortOrder === -1 ? DESC : ASC;
+        this.queryRequest.wordListRequest.sortField = (event.sortField.length < 1 || event.sortField === 'freq') ? "freq" : this.searchAttribute ;
+        this.queryRequest.start = event.first;
+        this.queryRequest.end = event.first + event.rows;
+      }
+      this.wordListService.getWordList(this.queryRequest).subscribe(wordList => {
+        this.loading = false;
         this.wordListItems = wordList?.items ? wordList?.items : [];
         this.totalFrequencies = wordList?.totalFreqs ? wordList?.totalFreqs : 0;
         this.totalItems = wordList?.totalItems ? wordList?.totalItems : 0;
       })
-
-      // this.corpusName = JSON.parse(selectedCorpus);
-      // if (this.corpusName && this.corpusName.value) {
-      //   this.corpusInfoService.getCorpusInfo(this.corpusName.value).subscribe(corpusInfo => {
-      //     this.corpusInfo = corpusInfo;
-      //     if (this.corpusInfo) {
-      //       this.corpusStructureTree = this.getTree(this.corpusInfo);
-      //     }
-      //   });
-      // }
     }
-
-  }
-
-  public loadWordList(event: any): void {
-    const queryRequest = this.queryRequestService.getQueryRequest();
-    // if (this.fieldRequest && queryRequest.frequencyQueryRequest) {
-    //   this.loading = true;
-    //   if (event.sortField === '' || event.sortField.indexOf(PAGE_FREQUENCY_FREQUENCY) >= 0) {
-    //     queryRequest.frequencyQueryRequest.frequencyType = FREQ;
-    //   } else if (event.sortField.indexOf('PAGE.FREQUENCY.REL') >= 0) {
-    //     queryRequest.frequencyQueryRequest.frequencyType = REL;
-    //   } else if (event.sortField) {
-    //     queryRequest.frequencyQueryRequest.frequencyType = null;
-    //     queryRequest.frequencyQueryRequest.frequencyColSort =
-    //       (event.sortField as string).substring((event.sortField as string).lastIndexOf('-') + 1);
-    //   }
-    //   queryRequest.frequencyQueryRequest.frequencyTypeSort = event.sortOrder === -1 ? DESC : ASC;
-    //   this.loadResultService.loadResults([this.fieldRequest], event);
-    // }
-  }
 
 }
