@@ -1,46 +1,51 @@
 export class WordListRequest {
-  subCoprpus: string | null;
-  searchAttribute: string | null;
-  useNGrams: boolean;
-  nGramFrom: number;
-  nGramTo: number;
-  hideSubNGram: boolean;
-  regexp: string | null;
-  minFreq: number;
-  maxFreq: number;
-  whitelist: string | null;
-  blacklist: string | null;
-  nonWords: boolean;
-  freqFigure: string | null;
-  outputType: string | null;
-  kwRefCorpus: string | null;
-  kwRefSubCorpus: string | null;
-  commonWords: number;
-  changeOutFirst: string | null;
-  changeOutSecond: string | null;
-  changeOutThird: string | null;
+  subCoprpus?: string | null;
+  searchAttribute?: string | null;
+  useNGrams?: boolean;
+  nGramFrom?: number;
+  nGramTo?: number;
+  hideSubNGram?: boolean;
+  regexp?: string | null;
+  minFreq?: number;
+  maxFreq?: number;
+  whitelist?: string | null;
+  blacklist?: string | null;
+  nonWords?: boolean;
+  freqFigure?: string | null;
+  outputType?: string | null;
+  kwRefCorpus?: string | null;
+  kwRefSubCorpus?: string | null;
+  commonWords?: number;
+  changeOutFirst?: string | null;
+  changeOutSecond?: string | null;
+  changeOutThird?: string | null;
+  sortField?: string | null;
+  sordDir?: string | null;
 
   constructor(
-    subCorpus: string | null,
-    searchAttribute: string | null,
-    useNGrams: boolean,
-    nGramFrom: number,
-    nGramTo: number,
-    hideSubNGram: boolean,
-    regexp: string | null,
-    minFreq: number,
-    maxFreq: number,
-    whitelist: string | null,
-    blacklist: string | null,
-    nonWords: boolean,
-    freqFigure: string | null,
-    outputType: string | null,
-    kwRefCorpus: string | null,
-    kwRefSubCorpus: string | null,
-    commonWords: number,
-    changeOutFirst: string | null,
-    changeOutSecond: string | null,
-    changeOutThird: string | null
+    subCorpus?: string | null,
+    searchAttribute?: string | null,
+    useNGrams?: boolean,
+    nGramFrom?: number,
+    nGramTo?: number,
+    hideSubNGram?: boolean,
+    regexp?: string | null,
+    minFreq?: number,
+    maxFreq?: number,
+    whitelist?: string | null,
+    blacklist?: string | null,
+    nonWords?: boolean,
+    freqFigure?: string | null,
+    outputType?: string | null,
+    kwRefCorpus?: string | null,
+    kwRefSubCorpus?: string | null,
+    commonWords?: number,
+    changeOutFirst?: string | null,
+    changeOutSecond?: string | null,
+    changeOutThird?: string | null,
+    sortField?: string | null,
+    sortDir?: string | null
+    
   ) {
     this.subCoprpus = subCorpus;
     this.searchAttribute = searchAttribute;

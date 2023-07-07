@@ -7,6 +7,7 @@ import { FrequencyQueryRequest } from './frequency-query-request';
 import { QueryPattern } from './query-pattern';
 import { SortQueryRequest } from './sort-query-request';
 import { WideContextRequest } from './wide-context-request';
+import { WordListRequest } from './word-list-request';
 
 export class WordListOption {
   subcorpus = '';
@@ -29,7 +30,7 @@ export class QueryRequest {
   contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
   wideContextRequest: WideContextRequest | null = null;
   filterConcordanceQueryRequest: FilterConcordanceQueryRequest | null = null;
-
+  wordListRequest: WordListRequest | null = null;
 
   queryType: REQUEST_TYPE = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
 
