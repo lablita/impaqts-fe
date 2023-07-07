@@ -32,6 +32,22 @@
     [sortField]="sortField" [sortOrder]="-1" [autoLayout]="true">
     <ng-template pTemplate="header">
       <tr>
+        <th>
+          <button pButton (click)="showDialog()" [disabled]="loading">CSV</button>
+          <p-dialog header="File Csv in elaborazione" [(visible)]="dlgVisible" [modal]="true" [closable]="false" [style]="{width: '15vw'}">
+            <div class="flex justify-content-center mb-2">
+              <p-progressBar *ngIf="dlgVisible" style="width: 100%;" [value]="progressStatus" tooltipPosition="bottom" [pTooltip]="'' + progressStatus">
+              </p-progressBar>
+              
+            </div>
+            <div class="flex justify-content-center">
+              <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
+            </div>
+            <p>
+              Attendere il completamento dell'operazione.<br> Non uscire ne aggiornare la pagina!!!
+            </p>
+          </p-dialog>
+        </th> 
         <th class="text-left" pSortableColumn="searchAttribute" style="width: 50%;">{{searchAttribute}}<p-sortIcon field="searchAttribute"></p-sortIcon></th>
         <th class="text-left" pSortableColumn="freq" style="width: 50%;">{{'PAGE.WORD_LIST.FREQUENCY' | translate}}<p-sortIcon field="freq"></p-sortIcon></th>
       </tr>
@@ -39,6 +55,7 @@
   
     <ng-template pTemplate="body" let-item>
       <tr *ngIf="item" [ngClass]="{'hidden': loading}">
+        <td></td>
         <td class="text-left">{{item.word}}</td>
         <td class="text-left">{{item.frequency}}</td>
       </tr>

@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { DisplayPanelService } from '../services/display-panel.service';
 import { ActivatedRoute } from '@angular/router';
-import { QueryRequestService } from '../services/query-request.service';
 import { WordListItem } from '../model/word-list-item';
-import { Subscription } from 'rxjs';
-import { LoadResultsService } from '../services/load-results.service';
-import { ErrorMessagesService } from '../services/error-messages.service';
 import { QueryRequest } from '../model/query-request';
 import { WordListRequest } from '../model/word-list-request';
 import { WordListService } from '../services/word-list.service';
-import { CORPUS_INFO } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { ASC, DESC } from '../model/constants';
+import { ASC, CSV_PAGINATION, DESC } from '../model/constants';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject, Subscription, timer } from 'rxjs';
+import { ExportCsvService } from '../services/export-csv.service';
+import { HTTP } from '../common/constants';
+import { InstallationService } from '../services/installation.service';
+import { DOWNLOAD_CSV } from '../common/routes-constants';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-word-list',
@@ -31,22 +32,20 @@ export class WordListComponent implements OnInit {
   public sortField = '';
   public pageSize = 10;
   public searchAttribute?: string;
-
   public title = '';
+  public dlgVisible = false;
+  public progressStatus = 5;
 
   //per adesso così, poi quando sarà implementato il WordList panel andrà armonizzato con il queryRequestService
   private queryRequest = new QueryRequest();
 
 
-  //private readonly queryResponseSubscription: Subscription;
-
   constructor(
-    private readonly queryRequestService: QueryRequestService,
-    private readonly loadResultService: LoadResultsService,
-    private readonly errorMessagesService: ErrorMessagesService,
     private readonly route: ActivatedRoute,
     private readonly wordListService: WordListService,
-    private readonly translateService: TranslateService
+    private readonly translateService: TranslateService,
+    private readonly exportCsvService: ExportCsvService,
+    private readonly installationServices: InstallationService
   ) { }
 
   ngOnInit(): void {
@@ -88,6 +87,43 @@ export class WordListComponent implements OnInit {
         this.totalFrequencies = wordList?.totalFreqs ? wordList?.totalFreqs : 0;
         this.totalItems = wordList?.totalItems ? wordList?.totalItems : 0;
       })
+  }
+
+  public showDialog() {
+    this.dlgVisible = true;
+    this.downloadCsv();
+  }
+
+  public downloadCsv(): void {
+    let timeInterval: Subscription | null = null;
+    let previousProgressValue = 0;
+    const stopPolling = new Subject();
+    if (this.queryRequest && this.queryRequest.wordListRequest) {
+        this.queryRequest.end = CSV_PAGINATION;
+        this.exportCsvService.exportCvs(this.queryRequest).subscribe((uuid) => {
+        const endpoint = this.installationServices.getCompleteEndpoint(this.queryRequest.corpus, HTTP);
+        const filename = this.queryRequest.wordListRequest?.searchAttribute;
+        const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
+         //polling on csv progress status
+         timeInterval = timer(1000, 2000)
+         .pipe(
+           switchMap(() => this.exportCsvService.getCsvProgressValue(this.queryRequest.corpus, uuid)),
+           tap(res => {
+             if (res.status === 'OK' || res.status === 'KO') {
+               this.dlgVisible = false;
+               this.exportCsvService.download(downloadUrl).then();
+               stopPolling.next();
+             } else if (res.status === 'KK') {
+                this.progressStatus = previousProgressValue;
+             } else {
+               previousProgressValue = +res.status!;
+               this.progressStatus = +res.status!;
+             }
+           }),
+           takeUntil(stopPolling)
+         ).subscribe();  
+       });
     }
+  }
 
 }
