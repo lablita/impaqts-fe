@@ -53,8 +53,8 @@ export class WordListComponent implements OnInit {
     if (corpusFromLS && JSON.parse(corpusFromLS) !== null) {
       this.corpus = (JSON.parse(corpusFromLS) as KeyValueItem).value;
       if (this.corpus) {
-        this.translateService.stream('PAGE.WORD_LIST.TITLE').subscribe(res => this.title = res);
         this.searchAttribute = this.route.snapshot.data.searchAttribute;
+        this.translateService.stream('PAGE.WORD_LIST.TITLE').subscribe(res => this.title = res + ' - ' + this.searchAttribute);
         this.queryRequest.start = 0;
         this.queryRequest.end = this.pageSize;
         this.queryRequest.corpus = this.corpus;
