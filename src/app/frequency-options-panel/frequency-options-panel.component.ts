@@ -118,7 +118,6 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.queryRequestService.getQueryRequest().frequencyQueryRequest = new FrequencyQueryRequest();
     this.setFrequencyOption(this.isMetadataFreq);
     this.doMakeFrequency();
-
   }
 
   public makeMultilevelFreq(): void {

@@ -22,7 +22,6 @@ export class QueryRequestService {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
-    //this.queryRequest.filterConcordanceQueryRequest = null;
   }
 
   public resetQueryPattern(): void {
@@ -86,4 +85,5 @@ export class QueryRequestService {
   public getQueryRequest(): QueryRequest {
     return this.queryRequest;
   }
+
 }

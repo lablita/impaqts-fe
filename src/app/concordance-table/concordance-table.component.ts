@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Message } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, interval, timer } from 'rxjs';
 import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
 import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
-import { INSTALLATION, SHUFFLE } from '../model/constants';
+import { CSV_PAGINATION, SHUFFLE } from '../model/constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
@@ -19,6 +19,13 @@ import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { WideContextService } from '../services/wide-context.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import { QueryRequest } from '../model/query-request';
+import * as _ from  'lodash';
+import { ExportCsvService } from '../services/export-csv.service';
+import { HTTP } from '../common/constants';
+import { DOWNLOAD_CSV } from '../common/routes-constants';
+import { InstallationService } from '../services/installation.service';
+import { startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -27,6 +34,8 @@ const SORT_LABELS = [
   new KeyValueItem('SHUFFLE_CONTEXT', SHUFFLE),
   new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL)
 ];
+
+const CONCORDANCE = 'concordance'
 @Component({
   selector: 'app-concordance-table',
   templateUrl: './concordance-table.component.html',
@@ -51,16 +60,18 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
   public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
-
+  public dlgVisible = false;
+  
   public descriptions: Array<DescResponse> = [];
   public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+  public progressStatus = 0;
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
   private currentStart = 0;
   private currentEnd = 0;
-
+  
   private currentQueryId = '';
 
   constructor(
@@ -69,7 +80,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly loadResultService: LoadResultsService,
     private readonly queryRequestService: QueryRequestService,
     private readonly errorMessagesService: ErrorMessagesService,
-    private readonly wideContextService: WideContextService
+    private readonly wideContextService: WideContextService,
+    private readonly exportCsvService: ExportCsvService,
+    private readonly installationServices: InstallationService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -144,6 +157,43 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
       }
     }
   }
+
+  public showDialog() {
+    this.dlgVisible = true;
+    this.downloadCsv();
+  }
+
+  private downloadCsv(): void {
+    let timeInterval: Subscription | null = null;
+    let previousProgressValue = 0;
+    const stopPolling = new Subject();
+    const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
+    if (queryRequest) {
+      queryRequest.end = CSV_PAGINATION;
+      this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+        const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
+        const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
+        //polling on csv progress status
+        timeInterval = timer(1000, 2000)
+        .pipe(
+          switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
+          tap(res => {
+            if (res.status === 'OK' || res.status === 'KO') {
+              this.dlgVisible = false;
+              this.exportCsvService.download(downloadUrl).then();
+              stopPolling.next();
+            } else if (res.status === 'KK') {
+               this.progressStatus = previousProgressValue;
+            } else {
+              previousProgressValue = +res.status!;
+              this.progressStatus = +res.status!;
+            }
+          }),
+          takeUntil(stopPolling)
+        ).subscribe();
+     });
+    }
+}
 
   public isQueryWithContext(): boolean {
     return this.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
@@ -267,10 +317,8 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public showWideContext(kwicline: KWICline): void {
     this.resultContext = null;
     const corpus = this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
-    const localInst = localStorage.getItem(INSTALLATION);
-    if (localInst && corpus) {
-      const inst = JSON.parse(localInst);
-      this.wideContextService.getWideContext(inst, corpus, kwicline.pos).subscribe({
+    if (corpus) {
+      this.wideContextService.getWideContext(corpus, kwicline.pos).subscribe({
         next: response => {
           if (response && response.wideContextResponse) {
             const kwic = response.wideContextResponse.kwic ? response.wideContextResponse.kwic : '';

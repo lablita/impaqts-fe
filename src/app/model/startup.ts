@@ -4,12 +4,12 @@ import { FreqOptions } from './freq-options';
 import { KeyValueItem } from './key-value-item';
 import { SortOptionsQueryRequestDTO } from './sort-options-query-request-dto';
 import { ViewOptionsQueryRequest } from './view-options-query-request';
-import { WordListOptionsQueryRequest } from './word-list-options-query-request';
+import { WordListRequest } from './word-list-request';
 
 export class Startup {
   corpusList: KeyValueItem[];
   viewOptionsQueryRequest: ViewOptionsQueryRequest;
-  wordListOptionsQueryRequest: WordListOptionsQueryRequest;
+  wordListOptionsQueryRequest: WordListRequest;
   sortOptionsQueryRequest: SortOptionsQueryRequestDTO;
   freqOptionsQueryRequest: FreqOptions;
   collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO;
@@ -18,7 +18,7 @@ export class Startup {
   constructor(
     corpusList: KeyValueItem[],
     viewOptionsQueryRequest: ViewOptionsQueryRequest,
-    wordListOptionsQueryRequest: WordListOptionsQueryRequest,
+    wordListOptionsQueryRequest: WordListRequest,
     sortOptionsQueryRequest: SortOptionsQueryRequestDTO,
     freqOptionsQueryRequest: FreqOptions,
     collocationOptionsQueryRequest: CollocationOptionsQueryRequestDTO,

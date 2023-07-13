@@ -44,12 +44,10 @@ export class CorpusInfoComponent implements OnInit {
 
   ngOnInit(): void {
     const selectedCorpus = localStorage.getItem('selectedCorpus');
-    const inst = localStorage.getItem(INSTALLATION);
-    if (inst && selectedCorpus) {
+    if (selectedCorpus) {
       this.corpusName = JSON.parse(selectedCorpus);
-      const installation = JSON.parse(inst);
       if (this.corpusName && this.corpusName.value) {
-        this.corpusInfoService.getCorpusInfo(installation, this.corpusName.value).subscribe(corpusInfo => {
+        this.corpusInfoService.getCorpusInfo(this.corpusName.value).subscribe(corpusInfo => {
           this.corpusInfo = corpusInfo;
           if (this.corpusInfo) {
             this.corpusStructureTree = this.getTree(this.corpusInfo);
