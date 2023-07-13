@@ -156,6 +156,7 @@ export class VisualQueryComponent implements OnInit {
   public corpusSelect(): void {
     this.resultView = false;
     this.noResultFound = false;
+    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus?.value));
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;

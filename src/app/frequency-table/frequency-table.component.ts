@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { first } from 'rxjs/operators';
+import { first, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HTTP } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE} from '../common/query-constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
-import { ASC, CSV_MAX_RESULT, DESC } from '../model/constants';
+import { ASC, CSV_PAGINATION, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
 import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyOption } from '../model/frequency-query-request';
@@ -18,7 +18,7 @@ import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { QueryRequest } from '../model/query-request';
 import * as _ from  'lodash';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, timer } from 'rxjs';
 import { InstallationService } from '../services/installation.service';
 
 const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
@@ -56,6 +56,8 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public sortField = '';
   public multilevel = false;
   public operation = '';
+  public dlgVisible = false;
+  public progressStatus = 0;
 
   private readonly queryResponseSubscription: Subscription;
   private makeFrequencySubscription: Subscription | null = null;
@@ -138,16 +140,41 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  public showDialog(category: string) {
+    this.dlgVisible = true;
+    this.downloadCsv(category);
+  }
+
   public downloadCsv(category: string): void {
+    let timeInterval: Subscription | null = null;
+    let previousProgressValue = 0;
+    const stopPolling = new Subject();
       const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
       if (queryRequest && queryRequest.frequencyQueryRequest) {
         queryRequest.frequencyQueryRequest.category = category;
-        queryRequest.end = CSV_MAX_RESULT;
+        queryRequest.end = CSV_PAGINATION;
         this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
         const filename = queryRequest.queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST ? MULTILEVEL_FREQUENCY : `${METADATA_FREQUENCY}_${category}`;
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
-        this.exportCsvService.download(downloadUrl).then();
+         //polling on csv progress status
+         timeInterval = timer(1000, 2000)
+         .pipe(
+           switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
+           tap(res => {
+             if (res.status === 'OK' || res.status === 'KO') {
+               this.dlgVisible = false;
+               this.exportCsvService.download(downloadUrl).then();
+               stopPolling.next();
+             } else if (res.status === 'KK') {
+                this.progressStatus = previousProgressValue;
+             } else {
+               previousProgressValue = +res.status!;
+               this.progressStatus = +res.status!;
+             }
+           }),
+           takeUntil(stopPolling)
+         ).subscribe();  
        });
       }
   }

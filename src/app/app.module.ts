@@ -12,7 +12,6 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment';
-import { AllWordsOrLemmasComponent } from './all-words-or-lemmas/all-words-or-lemmas.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CollocationOptionsPanelComponent } from './collocation-options-panel/collocation-options-panel.component';
@@ -44,6 +43,7 @@ import { ViewOptionsPanelComponent } from './view-options-panel/view-options-pan
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListOptionsPanelComponent } from './word-list-options-panel/word-list-options-panel.component';
 import { QueryRequestComponent } from './query-request/query-request.component';
+import { WordListComponent } from './word-list/word-list.component';
 
 registerLocaleData(localeIt);
 
@@ -55,7 +55,6 @@ registerLocaleData(localeIt);
     TopComponent,
     QueriesContainerComponent,
     CorpusInfoComponent,
-    AllWordsOrLemmasComponent,
     ViewOptionsPanelComponent,
     WordListOptionsPanelComponent,
     RightComponent,
@@ -77,7 +76,8 @@ registerLocaleData(localeIt);
     ConcordanceTableComponent,
     CollocationTableComponent,
     FrequencyTableComponent,
-    QueryRequestComponent
+    QueryRequestComponent,
+    WordListComponent
   ],
   imports: [
     BrowserModule,
