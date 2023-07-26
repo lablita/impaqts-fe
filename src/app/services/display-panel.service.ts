@@ -27,8 +27,8 @@ const MENU_NO_LABEL = [
   RESULT_COLLOCATION
 ]
 
-const panelLabelStatusStart = new PanelLabelStatus(false, false, true, true, false, true, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
-const panelLabelStatusNoLabel = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
+const panelLabelStatusStart = new PanelLabelStatus(false, false, true, true, false, true, new KeyValueItem(SORT, SORT_OPTION_LABEL));
+const panelLabelStatusNoLabel = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(SORT, SORT_OPTION_LABEL));
 
 const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
   new KeyValueItem(CONCORDANCE, VIEW_OPTION_LABEL),
@@ -107,7 +107,7 @@ export class DisplayPanelService {
       this.setPanelLabelStatusByMenuItem(menuItem);
       const menuToPanelLabelItem = MENU_TO_PANEL_LABEL.find(item => item.key === menuItem);
       
-      this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL);
+      this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(SORT, SORT_OPTION_LABEL);
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
       this.lastClickedMenuItem = menuItem;
     });
@@ -132,7 +132,7 @@ export class DisplayPanelService {
 
   private setPanelLabelStatusByMenuItem(menuItem: string): void {
     if (MENU_NO_LABEL.indexOf(menuItem) >= 0) {
-      this.panelLabelStatus = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
+      this.panelLabelStatus = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(SORT, SORT_OPTION_LABEL));
     } else if (MENU_LABEL.indexOf(menuItem) >= 0) {
       if (this.lastClickedMenuItem === menuItem) {
         //same menu

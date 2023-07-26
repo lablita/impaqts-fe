@@ -28,6 +28,7 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { v4 as uuid } from 'uuid';
+import * as _ from  'lodash';
 
 @Component({
   selector: 'app-visual-query',
@@ -146,7 +147,24 @@ export class VisualQueryComponent implements OnInit {
     if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
     }
-    this.queryRequestService.setQueryPattern(this.queryPattern);
+    //replace . with .* everywhere 
+    const queryPatternToSend: QueryPattern = _.cloneDeep(this.queryPattern);
+    if (queryPatternToSend.tokPattern && queryPatternToSend.tokPattern.length > 0) {
+      queryPatternToSend.tokPattern.forEach(tag => {
+        if (tag.tags && tag.tags.length > 0) {
+          tag.tags.forEach(aqt => {
+            if (aqt &&aqt.length > 0) {
+              aqt.forEach(qt => {
+                if (qt.value === '.') {
+                  qt.value = '.*';
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+    this.queryRequestService.setQueryPattern(queryPatternToSend);
     this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.VISUAL_QUERY_REQUEST;
     this.queryRequestService.getQueryRequest().id = uuid();
     this.emitterService.makeConcordanceRequestSubject.next(
