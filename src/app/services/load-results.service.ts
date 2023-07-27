@@ -308,7 +308,7 @@ export class LoadResultsService {
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     } else if (qr.collocations && qr.collocations.length > 0) {
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
-    } else if (qr.frequency) {
+    } else if (qr.frequency && this.queryRequestService.getQueryRequest().frequencyQueryRequest) {
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
     } else {
       corpusSelected = false;

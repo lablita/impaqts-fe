@@ -122,7 +122,7 @@ export class QueryRequestComponent implements OnInit {
   public corpusSelect(): void {
     this.titleResultChange.emit('');
     this.clickTextType();
-    this.displayPanelService.reset();
+    this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
     const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
     localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
