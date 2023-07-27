@@ -217,6 +217,12 @@ export class QueryRequestComponent implements OnInit {
   }
 
   public clearContextFields(): void {
+    this.queryRequestForm.controls.simple.reset();
+    this.queryRequestForm.controls.lemma.reset();
+    this.queryRequestForm.controls.phrase.reset();
+    this.queryRequestForm.controls.word.reset();
+    this.queryRequestForm.controls.character.reset();
+    this.queryRequestForm.controls.cql.reset();
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
