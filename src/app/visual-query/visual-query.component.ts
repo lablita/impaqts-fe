@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import * as _ from 'lodash';
 import { Message } from 'primeng/api';
+import { v4 as uuid } from 'uuid';
 import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { REQUEST_TYPE } from '../common/query-constants';
@@ -25,34 +27,47 @@ import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
-import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import {
+  ConcordanceRequestPayload,
+  EmitterService,
+} from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
-import { v4 as uuid } from 'uuid';
-import * as _ from  'lodash';
 
 @Component({
   selector: 'app-visual-query',
   templateUrl: './visual-query.component.html',
-  styleUrls: ['./visual-query.component.scss']
+  styleUrls: ['./visual-query.component.scss'],
 })
-
 export class VisualQueryComponent implements OnInit {
-
   public queryPattern: QueryPattern = new QueryPattern();
   public typeListQuery: KeyValueItem[] = [
-    new KeyValueItem('word', 'word'), new KeyValueItem('lemma', 'lemma'), new KeyValueItem('tag', 'tag'),
-    new KeyValueItem('status', 'status'), new KeyValueItem('lc', 'lc'), new KeyValueItem('lemma_lc', 'lemma_lc')];
+    new KeyValueItem('word', 'word'),
+    new KeyValueItem('lemma', 'lemma'),
+    new KeyValueItem('tag', 'tag'),
+    new KeyValueItem('status', 'status'),
+    new KeyValueItem('lc', 'lc'),
+    new KeyValueItem('lemma_lc', 'lemma_lc'),
+  ];
   public actionList: KeyValueItemExtended[] = [
     new KeyValueItemExtended('IS', 'IS', false),
     new KeyValueItemExtended('IS_NOT', 'IS_NOT', false),
     new KeyValueItemExtended('BEGINS', 'BEGINS', false),
-    new KeyValueItemExtended('CONTAINS', 'CONTAINS',false),
+    new KeyValueItemExtended('CONTAINS', 'CONTAINS', false),
     new KeyValueItemExtended('ENDS', 'ENDS', false),
     new KeyValueItemExtended('REGEXP', 'REGEXP', true),
-    new KeyValueItemExtended('NOT_REG', 'NOT_REG', true)];
+    new KeyValueItemExtended('NOT_REG', 'NOT_REG', true),
+  ];
   public defaultType: KeyValueItem = new KeyValueItem('word', 'word');
-  public defaulAction: KeyValueItemExtended = new KeyValueItemExtended('IS', 'IS', false);
-  public optionList: KeyValueItem[] = [new KeyValueItem('1', 'repeat'), new KeyValueItem('2', 'sentence start'), new KeyValueItem('3', 'sentence end')];
+  public defaulAction: KeyValueItemExtended = new KeyValueItemExtended(
+    'IS',
+    'IS',
+    false
+  );
+  public optionList: KeyValueItem[] = [
+    new KeyValueItem('1', 'repeat'),
+    new KeyValueItem('2', 'sentence start'),
+    new KeyValueItem('3', 'sentence end'),
+  ];
 
   public metadataTextTypes: Array<Metadatum> = [];
   public metadata: QueryToken[] = [];
@@ -110,7 +125,7 @@ export class VisualQueryComponent implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
@@ -124,7 +139,10 @@ export class VisualQueryComponent implements OnInit {
   }
 
   public deleteTokenQuery(token: QueryToken): void {
-    this.queryPattern.tokPattern.splice(this.queryPattern.tokPattern.indexOf(token), 1);
+    this.queryPattern.tokPattern.splice(
+      this.queryPattern.tokPattern.indexOf(token),
+      1
+    );
   }
 
   public addTokenMetadata(): void {
@@ -143,38 +161,49 @@ export class VisualQueryComponent implements OnInit {
     const typeSearch = ['Query'];
     const fieldRequest = new FieldRequest();
     fieldRequest.selectedCorpus = this.selectedCorpus;
-    const concordanceRequest: ConcordanceRequest = new ConcordanceRequest(fieldRequest, typeSearch);
+    const concordanceRequest: ConcordanceRequest = new ConcordanceRequest(
+      fieldRequest,
+      typeSearch
+    );
     if (!!this.metadata[0]) {
       this.queryPattern.structPattern = this.metadata[0];
     }
-    //replace . with .* everywhere 
+    //replace empty string with .* everywhere
     const queryPatternToSend: QueryPattern = _.cloneDeep(this.queryPattern);
-    if (queryPatternToSend.tokPattern && queryPatternToSend.tokPattern.length > 0) {
-      queryPatternToSend.tokPattern.forEach(tag => {
+    if (
+      queryPatternToSend.tokPattern &&
+      queryPatternToSend.tokPattern.length > 0
+    ) {
+      queryPatternToSend.tokPattern.forEach((tag) => {
         if (tag.tags && tag.tags.length > 0) {
-          tag.tags.forEach(aqt => {
-            if (aqt &&aqt.length > 0) {
-              aqt.forEach(qt => {
-                if (qt.value === '.') {
+          tag.tags.forEach((aqt) => {
+            if (aqt && aqt.length > 0) {
+              aqt.forEach((qt) => {
+                if (!qt.value || qt.value.trim() === '') {
                   qt.value = '.*';
                 }
-              })
+              });
             }
-          })
+          });
         }
-      })
+      });
     }
     this.queryRequestService.setQueryPattern(queryPatternToSend);
-    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.VISUAL_QUERY_REQUEST;
+    this.queryRequestService.getQueryRequest().queryType =
+      REQUEST_TYPE.VISUAL_QUERY_REQUEST;
     this.queryRequestService.getQueryRequest().id = uuid();
     this.emitterService.makeConcordanceRequestSubject.next(
-      new ConcordanceRequestPayload([concordanceRequest], 0));
+      new ConcordanceRequestPayload([concordanceRequest], 0)
+    );
   }
 
   public corpusSelect(): void {
     this.resultView = false;
     this.noResultFound = false;
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus?.value));
+    localStorage.setItem(
+      'selectedCorpus',
+      JSON.stringify(this.selectedCorpus?.value)
+    );
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
@@ -184,24 +213,34 @@ export class VisualQueryComponent implements OnInit {
       if (this.installation && this.installation.corpora) {
         const selectedCorpusId = this.selectedCorpus.key;
         if (selectedCorpusId) {
-          const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
+          const corpus: Corpus = this.installation.corpora.filter(
+            (corpus) => corpus.id === +selectedCorpusId
+          )[0];
           this.socketService.setServerHost(corpus.name);
           corpus.metadata.sort((a, b) => a.position - b.position);
-          corpus.metadata.filter(md => !md.child).forEach(md => {
-            // Attributes in View Options
-            if (!md.documentMetadatum) {
-              this.metadataAttributes.push(new KeyValueItem(md.name, md.name));
-            } else {
-              this.textTypesAttributes.push(new KeyValueItem(md.name, md.name));
-            }
-          });
+          corpus.metadata
+            .filter((md) => !md.child)
+            .forEach((md) => {
+              // Attributes in View Options
+              if (!md.documentMetadatum) {
+                this.metadataAttributes.push(
+                  new KeyValueItem(md.name, md.name)
+                );
+              } else {
+                this.textTypesAttributes.push(
+                  new KeyValueItem(md.name, md.name)
+                );
+              }
+            });
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
         if (this.installation) {
-          this.appInitializerService.loadCorpus(+this.selectedCorpus.key).subscribe(corpus => {
-            this.setCorpus(corpus);
-          });
+          this.appInitializerService
+            .loadCorpus(+this.selectedCorpus.key)
+            .subscribe((corpus) => {
+              this.setCorpus(corpus);
+            });
         }
         this.holdSelectedCorpusId = this.selectedCorpus.key;
       } else {
@@ -231,8 +270,11 @@ export class VisualQueryComponent implements OnInit {
 
   public showDialog(kwicline: KWICline): void {
     // kwicline.ref to retrive info
-    this.resultContext = new ResultContext(kwicline.kwic, KWICline.stripTags(kwicline.leftContext, false),
-      KWICline.stripTags(kwicline.rightContext, false));
+    this.resultContext = new ResultContext(
+      kwicline.kwic,
+      KWICline.stripTags(kwicline.leftContext, false),
+      KWICline.stripTags(kwicline.rightContext, false)
+    );
   }
 
   public showVideoDlg(rowIndex: number): void {
@@ -241,17 +283,27 @@ export class VisualQueryComponent implements OnInit {
 
     if (this.youtubeVideo) {
       url = 'https://www.youtube.com/embed/OBmlCZTF4Xs';
-      const start = Math.floor((Math.random() * 200) + 1);
-      const end = start + Math.floor((Math.random() * 20) + 1);
+      const start = Math.floor(Math.random() * 200 + 1);
+      const end = start + Math.floor(Math.random() * 20 + 1);
       if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url + '?autoplay=1'
-          + (start ? `&start=${start}` : '') + (end ? `&end=${end}` : ''));
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          url +
+            '?autoplay=1' +
+            (start ? `&start=${start}` : '') +
+            (end ? `&end=${end}` : '')
+        );
       }
     } else {
       url = 'https://player.vimeo.com/video/637089218';
-      const start = Math.floor((Math.random() * 5) + 1) + 'm' + Math.floor((Math.random() * 60) + 1) + 's';
+      const start =
+        Math.floor(Math.random() * 5 + 1) +
+        'm' +
+        Math.floor(Math.random() * 60 + 1) +
+        's';
       if (url?.length > 0) {
-        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${start}`);
+        this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `${url}?autoplay=1#t=${start}`
+        );
       }
     }
 
@@ -268,35 +320,37 @@ export class VisualQueryComponent implements OnInit {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
-      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
+      this.installation.corpora.forEach((corpus) =>
+        this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name))
+      );
     }
 
-    this.translateService.stream(SELECT_CORPUS_LABEL).subscribe((res: any) => this.selectCorpus = res);
+    this.translateService
+      .stream(SELECT_CORPUS_LABEL)
+      .subscribe((res: any) => (this.selectCorpus = res));
   }
 
   private setCorpus(corpus: Corpus): void {
     localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
-    this.metadataUtilService.createMatadataTree(
-      `${corpus.id}`, this.installation, true).subscribe(
-        {
-          next: metadata => {
-            this.metadataQueryService.setMetadata(metadata);
-            this.metadataTextTypes = metadata;
-          },
-          error: err => {
-            this.enableSpinner = false;
-            const metadataErrorMsg = {} as Message;
-            metadataErrorMsg.severity = 'error';
-            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-            metadataErrorMsg.summary = 'Errore';
-            this.errorMessagesService.sendError(metadataErrorMsg);
-          },
-          complete: () => {
-            this.enableSpinner = false;
-            this.enableAddMetadata = true;
-          }
-        });
-
+    this.metadataUtilService
+      .createMatadataTree(`${corpus.id}`, this.installation, true)
+      .subscribe({
+        next: (metadata) => {
+          this.metadataQueryService.setMetadata(metadata);
+          this.metadataTextTypes = metadata;
+        },
+        error: (err) => {
+          this.enableSpinner = false;
+          const metadataErrorMsg = {} as Message;
+          metadataErrorMsg.severity = 'error';
+          metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+          metadataErrorMsg.summary = 'Errore';
+          this.errorMessagesService.sendError(metadataErrorMsg);
+        },
+        complete: () => {
+          this.enableSpinner = false;
+          this.enableAddMetadata = true;
+        },
+      });
   }
-
 }
