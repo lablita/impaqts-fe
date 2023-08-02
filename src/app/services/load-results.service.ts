@@ -157,6 +157,7 @@ export class LoadResultsService {
             // remove context query param if present in previous queries
             queryRequest.contextConcordanceQueryRequest = null;
           }
+
           // frequency
           if (queryRequest.queryType === REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST) {
             this.socketService.sendMessage(queryRequest);
@@ -242,6 +243,7 @@ export class LoadResultsService {
     if (metadataRequest.multiSelects && metadataRequest.multiSelects.length > 0) {
       metadataRequest.multiSelects.forEach(ms => {
         if (ms.values) {
+          const tags: QueryTag[] = [];
           ms.values.forEach(v => {
             const structTagTokens = ms.key?.split('.');
             if (structTagTokens) {
@@ -253,11 +255,12 @@ export class LoadResultsService {
                 tag.name = ms.key;
               }
               tag.value = v;
-              if (this.metadataQuery) {
-                this.metadataQuery.tags.push([tag]);
-              }
+                tags.push(tag);
             }
           });
+          if (this.metadataQuery && tags.length > 0) {
+            this.metadataQuery.tags.push(tags);
+          }
         }
       });
     }
@@ -305,7 +308,7 @@ export class LoadResultsService {
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
     } else if (qr.collocations && qr.collocations.length > 0) {
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
-    } else if (qr.frequency) {
+    } else if (qr.frequency && this.queryRequestService.getQueryRequest().frequencyQueryRequest) {
       this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_COLLOCATION));
     } else {
       corpusSelected = false;

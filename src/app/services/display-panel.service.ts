@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { COLLOCATION_OPTION_LABEL, COPYRIGHT, CREDITS, FILTER_OPTION_LABEL, FREQ_OPTION_LABEL, MENU_CONCORDANCE, 
   SORT_OPTION_LABEL, VIEW_OPTION_LABEL, WORD_LIST_OPTION_LABEL} from '../common/label-constants';
@@ -27,8 +27,8 @@ const MENU_NO_LABEL = [
   RESULT_COLLOCATION
 ]
 
-const panelLabelStatusStart = new PanelLabelStatus(false, false, true, true, false, true, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
-const panelLabelStatusNoLabel = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
+const panelLabelStatusStart = new PanelLabelStatus(false, false, true, true, false, true, new KeyValueItem(SORT, SORT_OPTION_LABEL));
+const panelLabelStatusNoLabel = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(SORT, SORT_OPTION_LABEL));
 
 const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
   new KeyValueItem(CONCORDANCE, VIEW_OPTION_LABEL),
@@ -43,9 +43,9 @@ const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
 @Injectable({
   providedIn: 'root'
 })
-export class DisplayPanelService {
+export class DisplayPanelService implements OnDestroy{
 
-  public panelLabelStatusSubject: BehaviorSubject<PanelLabelStatus> = new BehaviorSubject<PanelLabelStatus>(panelLabelStatusStart);
+  public panelLabelStatusSubject: BehaviorSubject<PanelLabelStatus> = new BehaviorSubject<PanelLabelStatus>(panelLabelStatusNoLabel);
   
   // signals for page events
   public metadataPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -59,13 +59,15 @@ export class DisplayPanelService {
   public menuItemClickSubject: Subject<string> = new Subject();
   
   //states
-  private panelLabelStatus: PanelLabelStatus = panelLabelStatusNoLabel; 
+  private panelLabelStatus: PanelLabelStatus = panelLabelStatusStart; 
   private lastClickedMenuItem: string | null = null;
+
+  //MenuItem
+  private menuItem = QUERY;
  
   constructor() {
-    const menuItem = localStorage.getItem(MENU_ITEM);
-    if (menuItem) {
-      this.setPanelLabelStatusByMenuItem(menuItem);
+    if (this.menuItem) {
+      this.setPanelLabelStatusByMenuItem(this.menuItem);
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
     }
     this.labelMTDClickSubject.subscribe(() => {
@@ -107,13 +109,54 @@ export class DisplayPanelService {
       this.setPanelLabelStatusByMenuItem(menuItem);
       const menuToPanelLabelItem = MENU_TO_PANEL_LABEL.find(item => item.key === menuItem);
       
-      this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL);
+      this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(SORT, SORT_OPTION_LABEL);
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
       this.lastClickedMenuItem = menuItem;
     });
+    // this.optionsPanelSubject.subscribe(res => {
+    //   if (!res) {
+    //     this.panelLabelStatusSubject.next(panelLabelStatusStart);
+    //   }
+    // });
+    // this.metadataPanelSubject.subscribe(res => {
+    //   if (!res) {
+    //     this.panelLabelStatusSubject.next(panelLabelStatusStart);
+    //   }
+    // });
+  }
+  ngOnDestroy(): void {
+    if (this.metadataPanelSubject) {
+      this.metadataPanelSubject.unsubscribe();
+    }
+    if (this.labelOptionsSubject) {
+      this.labelOptionsSubject.unsubscribe();
+    }
+    if (this.labelMetadataSubject) {
+      this.labelMetadataSubject.unsubscribe();
+    }
+    if (this.optionsPanelSubject) {
+      this.optionsPanelSubject.unsubscribe();
+    }
+    if (this.labelMTDClickSubject) {
+      this.labelMTDClickSubject.unsubscribe();
+    }
+    if (this.labelOPTClickSubject) {
+      this.labelOPTClickSubject.unsubscribe();
+    }
+    if (this.menuItemClickSubject) {
+      this.menuItemClickSubject.unsubscribe();
+    }
   }
 
-  public reset(): void {
+  public setMenuItem(menuItem: string) {
+    this.menuItem = menuItem;
+  }
+
+  public closePanel(): void {
+    this.panelLabelStatusSubject.next(panelLabelStatusStart);
+  }
+
+  public reset(): void  {
     this.closeOptionsPanel();
     this.closeMetadataPanel();
   }
@@ -132,7 +175,7 @@ export class DisplayPanelService {
 
   private setPanelLabelStatusByMenuItem(menuItem: string): void {
     if (MENU_NO_LABEL.indexOf(menuItem) >= 0) {
-      this.panelLabelStatus = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(VIEW_OPTION, VIEW_OPTION_LABEL));
+      this.panelLabelStatus = new PanelLabelStatus(false, false, false, false, false, false, new KeyValueItem(SORT, SORT_OPTION_LABEL));
     } else if (MENU_LABEL.indexOf(menuItem) >= 0) {
       if (this.lastClickedMenuItem === menuItem) {
         //same menu

@@ -122,7 +122,7 @@ export class QueryRequestComponent implements OnInit {
   public corpusSelect(): void {
     this.titleResultChange.emit('');
     this.clickTextType();
-    this.displayPanelService.reset();
+    this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
     const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
     localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
@@ -217,6 +217,12 @@ export class QueryRequestComponent implements OnInit {
   }
 
   public clearContextFields(): void {
+    this.queryRequestForm.controls.simple.reset();
+    this.queryRequestForm.controls.lemma.reset();
+    this.queryRequestForm.controls.phrase.reset();
+    this.queryRequestForm.controls.word.reset();
+    this.queryRequestForm.controls.character.reset();
+    this.queryRequestForm.controls.cql.reset();
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
