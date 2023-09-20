@@ -1,49 +1,77 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  SimpleChanges,
+  ViewEncapsulation,
+} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import * as _ from 'lodash';
 import { Message } from 'primeng/api';
-import { Observable, Subject, Subscription, interval, timer } from 'rxjs';
-import { CONTEXT_TYPE_ALL, CONTEXT_WINDOW_LEFT, CONTEXT_WINDOW_RIGHT } from '../common/concordance-constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, WORD } from '../common/query-constants';
+import { Subject, Subscription, timer } from 'rxjs';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import {
+  CONTEXT_TYPE_ALL,
+  CONTEXT_WINDOW_LEFT,
+  CONTEXT_WINDOW_RIGHT,
+} from '../common/concordance-constants';
+import { HTTP } from '../common/constants';
+import {
+  CHARACTER,
+  CQL,
+  LEMMA,
+  PHRASE,
+  REQUEST_TYPE,
+  WORD,
+} from '../common/query-constants';
+import { DOWNLOAD_CSV } from '../common/routes-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
 import { CSV_PAGINATION, SHUFFLE } from '../model/constants';
-import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
+import {
+  ContextConcordanceItem,
+  ContextConcordanceQueryRequest,
+} from '../model/context-concordance-query-request';
 import { DescResponse } from '../model/desc-response';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
+import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { ErrorMessagesService } from '../services/error-messages.service';
+import { ExportCsvService } from '../services/export-csv.service';
+import { InstallationService } from '../services/installation.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { WideContextService } from '../services/wide-context.service';
-import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
-import { QueryRequest } from '../model/query-request';
-import * as _ from  'lodash';
-import { ExportCsvService } from '../services/export-csv.service';
-import { HTTP } from '../common/constants';
-import { DOWNLOAD_CSV } from '../common/routes-constants';
-import { InstallationService } from '../services/installation.service';
-import { startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import {
+  ConcordanceRequestPayload,
+  EmitterService,
+} from '../utils/emitter.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
   new KeyValueItem('RIGHT_CONTEXT', RIGHT),
   new KeyValueItem('NODE_CONTEXT', NODE),
   new KeyValueItem('SHUFFLE_CONTEXT', SHUFFLE),
-  new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL)
+  new KeyValueItem('MULTILEVEL_CONTEXT', MULTILEVEL),
 ];
 
-const CONCORDANCE = 'concordance'
+const CONCORDANCE = 'concordance';
 @Component({
   selector: 'app-concordance-table',
   templateUrl: './concordance-table.component.html',
   styleUrls: ['./concordance-table.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnChanges {
-
+export class ConcordanceTableComponent
+  implements AfterViewInit, OnDestroy, OnChanges
+{
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -57,11 +85,14 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
   public displayModal = false;
-  public videoUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/OBmlCZTF4Xs');
+  public videoUrl: SafeResourceUrl =
+    this.sanitizer.bypassSecurityTrustResourceUrl(
+      'https://www.youtube.com/embed/OBmlCZTF4Xs'
+    );
   public sortOptions: string[] = [];
   public stripTags = KWICline.stripTags;
   public dlgVisible = false;
-  
+
   public descriptions: Array<DescResponse> = [];
   public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
@@ -71,7 +102,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   private makeConcordanceRequestSubscription: Subscription | null = null;
   private currentStart = 0;
   private currentEnd = 0;
-  
+
   private currentQueryId = '';
 
   constructor(
@@ -84,61 +115,91 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly exportCsvService: ExportCsvService,
     private readonly installationServices: InstallationService
   ) {
-    this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      this.loading = false;
-      this.queryType = this.queryRequestService.getQueryRequest().queryType;
-      if (queryResponse) {
-        if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
-          const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
-          this.errorMessagesService.sendError(errorMessage);
-        } else {
-          if (queryResponse.id !== this.currentQueryId) {
-            this.first = 0;
-          }
-          if (queryResponse.id !== this.currentQueryId ||
-            this.isDifferentPagination(this.currentStart, this.currentEnd, queryResponse)) {
-            this.currentQueryId = queryResponse.id;
-            console.log(queryResponse);
+    this.queryResponseSubscription = this.loadResultService
+      .getQueryResponse$()
+      .subscribe((queryResponse) => {
+        this.loading = false;
+        this.queryType = this.queryRequestService.getQueryRequest().queryType;
+        if (queryResponse) {
+          if (queryResponse.error && queryResponse.errorResponse) {
+            const errorMessage = {
+              severity: 'error',
+              summary: 'Errore',
+              detail:
+                'Errore I/O sul server, i dati potrebbero non essere attendibili',
+            };
+            if (queryResponse.errorResponse.errorCode === 500) {
+              this.errorMessagesService.sendError(errorMessage);
+            } else if (queryResponse.errorResponse.errorCode === 400) {
+              errorMessage.detail = queryResponse.errorResponse.errorMessage;
+              this.errorMessagesService.sendError(errorMessage);
+            }
+          } else {
+            if (queryResponse.id !== this.currentQueryId) {
+              this.first = 0;
+            }
+            if (
+              queryResponse.id !== this.currentQueryId ||
+              this.isDifferentPagination(
+                this.currentStart,
+                this.currentEnd,
+                queryResponse
+              )
+            ) {
+              this.currentQueryId = queryResponse.id;
+              console.log(queryResponse);
+              this.firstItemTotalResults = queryResponse.currentSize;
+              this.totalResults = queryResponse.currentSize;
+              if (
+                queryResponse.descResponses &&
+                queryResponse.descResponses.length > 0
+              ) {
+                // ultimo elemento delle descResponses ha il totale visualizzato
+                this.totalResults =
+                  queryResponse.descResponses[
+                    queryResponse.descResponses.length - 1
+                  ].size;
+              }
+              this.kwicLines = queryResponse.kwicLines;
+              this.noResultFound = queryResponse.currentSize < 1;
+              this.descriptions = queryResponse.descResponses;
+            }
             this.firstItemTotalResults = queryResponse.currentSize;
             this.totalResults = queryResponse.currentSize;
-            if (queryResponse.descResponses && queryResponse.descResponses.length > 0) {
-              // ultimo elemento delle descResponses ha il totale visualizzato
-              this.totalResults = queryResponse.descResponses[queryResponse.descResponses.length - 1].size;
-            }
-            this.kwicLines = queryResponse.kwicLines;
-            this.noResultFound = queryResponse.currentSize < 1;
-            this.descriptions = queryResponse.descResponses;
           }
-          this.firstItemTotalResults = queryResponse.currentSize;
-          this.totalResults = queryResponse.currentSize;
+          this.currentStart = queryResponse.start;
+          this.currentEnd = queryResponse.end;
         }
-        this.currentStart = queryResponse.start;
-        this.currentEnd = queryResponse.end;
-      }
-    });
+      });
   }
 
   ngAfterViewInit(): void {
-    this.makeConcordanceRequestSubscription = this.emitterService.makeConcordanceRequestSubject.subscribe(res => {
-      this.fieldRequests = [];
-      this.loading = true;
-      if (res.concordances.length > 0) {
+    this.makeConcordanceRequestSubscription =
+      this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
+        this.fieldRequests = [];
+        this.loading = true;
         if (res.concordances.length > 0) {
-          res.concordances.forEach(c => this.fieldRequests.push(c.fieldRequest));
-          if (res.concordances[res.pos].sortOptions.length > 1) {
-            const foundSortOption = SORT_LABELS.find(sl => sl.key === res.concordances[res.pos].sortOptions[1]);
-            if (foundSortOption && foundSortOption.value) {
-              res.concordances[res.pos].sortOptions[1] = foundSortOption.value;
+          if (res.concordances.length > 0) {
+            res.concordances.forEach((c) =>
+              this.fieldRequests.push(c.fieldRequest)
+            );
+            if (res.concordances[res.pos].sortOptions.length > 1) {
+              const foundSortOption = SORT_LABELS.find(
+                (sl) => sl.key === res.concordances[res.pos].sortOptions[1]
+              );
+              if (foundSortOption && foundSortOption.value) {
+                res.concordances[res.pos].sortOptions[1] =
+                  foundSortOption.value;
+              }
             }
+            this.sortOptions = res.concordances[res.pos].sortOptions;
+          } else {
+            this.fieldRequests = [res.concordances[0].fieldRequest];
           }
           this.sortOptions = res.concordances[res.pos].sortOptions;
-        } else {
-          this.fieldRequests = [res.concordances[0].fieldRequest];
+          this.loadResultService.loadResults(this.fieldRequests, undefined);
         }
-        this.sortOptions = res.concordances[res.pos].sortOptions;
-        this.loadResultService.loadResults(this.fieldRequests, undefined);
-      }
-    });
+      });
   }
 
   ngOnDestroy(): void {
@@ -167,41 +228,54 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     let timeInterval: Subscription | null = null;
     let previousProgressValue = 0;
     const stopPolling = new Subject();
-    const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
+    const queryRequest: QueryRequest = _.cloneDeep(
+      this.queryRequestService.getQueryRequest()
+    );
     if (queryRequest) {
       queryRequest.end = CSV_PAGINATION;
       this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
-        const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
+        const endpoint = this.installationServices.getCompleteEndpoint(
+          queryRequest.corpus,
+          HTTP
+        );
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${CONCORDANCE}/${uuid}`;
         //polling on csv progress status
         timeInterval = timer(1000, 2000)
-        .pipe(
-          switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
-          tap(res => {
-            if (res.status === 'OK' || res.status === 'KO') {
-              this.dlgVisible = false;
-              this.exportCsvService.download(downloadUrl).then();
-              stopPolling.next();
-            } else if (res.status === 'KK') {
-               this.progressStatus = previousProgressValue;
-            } else {
-              previousProgressValue = +res.status!;
-              this.progressStatus = +res.status!;
-            }
-          }),
-          takeUntil(stopPolling)
-        ).subscribe();
-     });
+          .pipe(
+            switchMap(() =>
+              this.exportCsvService.getCsvProgressValue(
+                queryRequest.corpus,
+                uuid
+              )
+            ),
+            tap((res) => {
+              if (res.status === 'OK' || res.status === 'KO') {
+                this.dlgVisible = false;
+                this.exportCsvService.download(downloadUrl).then();
+                stopPolling.next();
+              } else if (res.status === 'KK') {
+                this.progressStatus = previousProgressValue;
+              } else {
+                previousProgressValue = +res.status!;
+                this.progressStatus = +res.status!;
+              }
+            }),
+            takeUntil(stopPolling)
+          )
+          .subscribe();
+      });
     }
-}
+  }
 
   public isQueryWithContext(): boolean {
     return this.queryType === REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
   }
 
   public isQueryWithContextFromFrequencyPN(): boolean {
-    return this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST
-      || this.queryType === REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
+    return (
+      this.queryType === REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST ||
+      this.queryType === REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST
+    );
   }
 
   public isTextualQuery(): boolean {
@@ -212,7 +286,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     // this.queryRequestService.getQueryRequest().id = uuid();
     if (event && event.rows) {
       this.initialPagination = event.rows;
-      this.queryRequestService.getQueryRequest().end = this.queryRequestService.getQueryRequest().start + this.initialPagination;
+      this.queryRequestService.getQueryRequest().end =
+        this.queryRequestService.getQueryRequest().start +
+        this.initialPagination;
     }
     // do not change query id
     if (this.fieldRequests) {
@@ -229,7 +305,7 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (fieldRequest) {
       const ccqr = new ContextConcordanceQueryRequest();
-      descriptionsForContextQuery.forEach(d => {
+      descriptionsForContextQuery.forEach((d) => {
         const cci = ContextConcordanceItem.getInstance();
         cci.term = d.term;
         cci.attribute = LEMMA;
@@ -240,24 +316,31 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         ccqr.items.push(cci);
       });
       fieldRequest.contextConcordance = ccqr;
-      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
-      this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+      this.queryRequestService.getQueryRequest().queryType =
+        REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+      this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest =
+        ccqr;
       // fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequestDTO();
       this.emitterService.makeConcordanceRequestSubject.next(
-        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+        new ConcordanceRequestPayload(
+          [new ConcordanceRequest(fieldRequest, typeSearch)],
+          0
+        )
+      );
     }
   }
 
   public makeConcordanceFromFrequencyPN(idx: number): void {
     const descriptionsForContextQuery = this.descriptions.slice(0, idx + 1);
-    const descriptionClicked = descriptionsForContextQuery[descriptionsForContextQuery.length - 1];
+    const descriptionClicked =
+      descriptionsForContextQuery[descriptionsForContextQuery.length - 1];
     this.queryRequestService.resetOptionsRequest();
     const typeSearch = ['Query'];
     // concordance Context
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (fieldRequest) {
       const ccqr = new ContextConcordanceQueryRequest();
-      descriptionsForContextQuery.forEach(d => {
+      descriptionsForContextQuery.forEach((d) => {
         const cci = ContextConcordanceItem.getInstance();
         cci.term = d.term;
         cci.attribute = d.attribute;
@@ -274,10 +357,16 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         ccqr.items.push(cci);
       });
       fieldRequest.contextConcordance = ccqr;
-      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
-      this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+      this.queryRequestService.getQueryRequest().queryType =
+        REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+      this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest =
+        ccqr;
       this.emitterService.makeConcordanceRequestSubject.next(
-        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+        new ConcordanceRequestPayload(
+          [new ConcordanceRequest(fieldRequest, typeSearch)],
+          0
+        )
+      );
     }
   }
 
@@ -295,7 +384,9 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
         }
       } else {
         if (url?.length > 0) {
-          this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`${url}?autoplay=1#t=${Math.floor(startTime)}`);
+          this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+            `${url}?autoplay=1#t=${Math.floor(startTime)}`
+          );
         }
       }
 
@@ -306,34 +397,50 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
   public clickConc(event: any): void {
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload([], 0);
-    const index = this.fieldRequests.map(fr => fr.word).indexOf(event.word);
+    const index = this.fieldRequests.map((fr) => fr.word).indexOf(event.word);
     this.fieldRequests = this.fieldRequests.slice(0, index + 1);
-    this.fieldRequests.forEach(fr => {
-      concordanceRequestPayload.concordances.push(new ConcordanceRequest(fr, typeSearch));
+    this.fieldRequests.forEach((fr) => {
+      concordanceRequestPayload.concordances.push(
+        new ConcordanceRequest(fr, typeSearch)
+      );
     });
-    this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
+    this.emitterService.makeConcordanceRequestSubject.next(
+      concordanceRequestPayload
+    );
   }
 
   public showWideContext(kwicline: KWICline): void {
     this.resultContext = null;
-    const corpus = this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
+    const corpus =
+      this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
     if (corpus) {
       this.wideContextService.getWideContext(corpus, kwicline.pos).subscribe({
-        next: response => {
+        next: (response) => {
           if (response && response.wideContextResponse) {
-            const kwic = response.wideContextResponse.kwic ? response.wideContextResponse.kwic : '';
-            const leftContext = response.wideContextResponse?.leftContext ? response.wideContextResponse.leftContext : '';
-            const rightContext = response.wideContextResponse?.rightContext ? response.wideContextResponse.rightContext : '';
-            this.resultContext = new ResultContext(kwic, leftContext, rightContext);
+            const kwic = response.wideContextResponse.kwic
+              ? response.wideContextResponse.kwic
+              : '';
+            const leftContext = response.wideContextResponse?.leftContext
+              ? response.wideContextResponse.leftContext
+              : '';
+            const rightContext = response.wideContextResponse?.rightContext
+              ? response.wideContextResponse.rightContext
+              : '';
+            this.resultContext = new ResultContext(
+              kwic,
+              leftContext,
+              rightContext
+            );
           }
         },
-        error: err => {
+        error: (err) => {
           const wideContextError = {} as Message;
           wideContextError.severity = 'error';
-          wideContextError.detail = 'Non è stato possibile recuperare il contesto';
+          wideContextError.detail =
+            'Non è stato possibile recuperare il contesto';
           wideContextError.summary = 'Errore';
           this.errorMessagesService.sendError(wideContextError);
-        }
+        },
       });
     }
   }
@@ -359,7 +466,11 @@ export class ConcordanceTableComponent implements AfterViewInit, OnDestroy, OnCh
     return this.queryRequestService.withContextConcordance();
   }
 
-  private isDifferentPagination(currentStart: number, currentEnd: number, qResp: QueryResponse): boolean {
+  private isDifferentPagination(
+    currentStart: number,
+    currentEnd: number,
+    qResp: QueryResponse
+  ): boolean {
     if (qResp) {
       return !(currentStart === qResp.start && currentEnd === qResp.end);
     }
