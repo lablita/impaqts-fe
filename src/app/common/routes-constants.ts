@@ -17,8 +17,8 @@ export const SORT = 'sort';
 export const FILTER = 'filter';
 export const FREQUENCY = 'frequency';
 export const COLLOCATION = 'collocation';
-export const EXPORT_CSV = 'export-csv'
-export const DOWNLOAD_CSV = 'download'
-export const PROGRESS_CSV = 'progress-csv'
+export const EXPORT_CSV = 'export-csv';
+export const DOWNLOAD_CSV = 'download';
+export const COMPLETE_FREQUENCY_LIST = 'corpus/frequencyLists';
+export const PROGRESS_CSV = 'progress-csv';
 export const WORD_LIST_URL = 'word-list';
-
