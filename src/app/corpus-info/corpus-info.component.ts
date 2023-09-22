@@ -5,6 +5,7 @@ import { INSTALLATION } from '../model/constants';
 import { CorpusInfo } from '../model/corpusinfo/corpus-info';
 import { KeyValueItem } from '../model/key-value-item';
 import { CorpusInfoService } from '../services/corpus-info.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 
 class CorpusInfoObj {
   label: string;
@@ -37,24 +38,24 @@ export class CorpusInfoComponent implements OnInit {
   public corpusName: KeyValueItem | null = null;
   public corpusInfo: CorpusInfo | null = null;
   public corpusStructureTree: Array<TreeNode> = [];
+  public noCorpusInfoToShow = false;
 
   constructor(
-    private readonly corpusInfoService: CorpusInfoService
+    private readonly corpusInfoService: CorpusInfoService,
+    private readonly corpusSelectionService: CorpusSelectionService
   ) { }
 
   ngOnInit(): void {
     const selectedCorpus = localStorage.getItem('selectedCorpus');
     if (selectedCorpus) {
       this.corpusName = JSON.parse(selectedCorpus);
-      if (this.corpusName && this.corpusName.value) {
-        this.corpusInfoService.getCorpusInfo(this.corpusName.value).subscribe(corpusInfo => {
-          this.corpusInfo = corpusInfo;
-          if (this.corpusInfo) {
-            this.corpusStructureTree = this.getTree(this.corpusInfo);
-          }
-        });
-      }
+      this.retrieveCorpusInfo();
+      
     }
+    this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      this.corpusName = selectedCorpus;
+      this.retrieveCorpusInfo();
+    });
 
     // this.displayPanelService.panelSelectedSubject.next(CORPUS_INFO);
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
@@ -93,6 +94,21 @@ export class CorpusInfoComponent implements OnInit {
       new CorpusInfoObj('PAGE.CORPUS_INFO.S', '15,835,675'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.ARTICLE', '572,515')
     ];
+  }
+
+  private retrieveCorpusInfo(): void {
+    if (this.corpusName && this.corpusName.value) {
+      this.corpusInfoService.getCorpusInfo(this.corpusName.value).subscribe(corpusInfo => {
+        this.corpusInfo = corpusInfo;
+        if (this.corpusInfo) {
+          this.corpusStructureTree = this.getTree(this.corpusInfo);
+          this.noCorpusInfoToShow = false
+        } else {
+          this.noCorpusInfoToShow = true
+        }
+      }, err => this.noCorpusInfoToShow = true
+      );
+    }
   }
 
   private getTree(corpusInfo: CorpusInfo): Array<TreeNode> {

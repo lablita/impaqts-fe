@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -32,13 +32,14 @@ import {
   EmitterService,
 } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 
 @Component({
   selector: 'app-visual-query',
   templateUrl: './visual-query.component.html',
   styleUrls: ['./visual-query.component.scss'],
 })
-export class VisualQueryComponent implements OnInit {
+export class VisualQueryComponent implements OnInit, OnDestroy {
   public queryPattern: QueryPattern = new QueryPattern();
   public typeListQuery: KeyValueItem[] = [
     new KeyValueItem('word', 'word'),
@@ -124,13 +125,24 @@ export class VisualQueryComponent implements OnInit {
     private readonly metadataQueryService: MetadataQueryService,
     private readonly sanitizer: DomSanitizer,
     private readonly queryRequestService: QueryRequestService,
-    private readonly appInitializerService: AppInitializerService
+    private readonly appInitializerService: AppInitializerService,
+    private readonly corpusSelectionService: CorpusSelectionService
   ) {}
 
   ngOnInit(): void {
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
+    this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      this.selectedCorpus = selectedCorpus;
+      this.corpusSelected();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.corpusSelectionService.corpusSelectedSubject) {
+      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
+    }
   }
 
   public addTokenQuery(): void {
@@ -197,7 +209,7 @@ export class VisualQueryComponent implements OnInit {
     );
   }
 
-  public corpusSelect(): void {
+  public corpusSelected(): void {
     this.resultView = false;
     this.noResultFound = false;
     localStorage.setItem(

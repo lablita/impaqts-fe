@@ -242,7 +242,8 @@
       "TEXT": "text",
       "SUMMARY": "summary",
       "S": "s",
-      "ARTICLE": "article"
+      "ARTICLE": "article",
+      "NOTHING_TO_SHOW": "No CorpusInfo to Show"
     },
     "VISUAL_QUERY": {
       "QUERY": "Query",

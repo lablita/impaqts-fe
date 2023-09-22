@@ -1,15 +1,5 @@
 <p-card>
   <form [formGroup]="queryRequestForm">
-    <div class="field grid">
-      <label for="corpusSelection" class="col-12 md:col-1">{{"PAGE.CONCORDANCE.CORPUS" |
-        translate}}</label>
-      <div class="col-12 md:col-5">
-        <p-dropdown [options]="corpusList" formControlName="selectedCorpus" optionLabel="value" [filter]="true"
-          [showClear]="true" placeholder="{{selectCorpus | translate}}" (onChange)="corpusSelect()" id="corpusSelection"
-          [style]="{'width':'80%'}" [autoDisplayFirst]="false">
-        </p-dropdown>
-      </div>
-    </div>
     <div class="field grid" [ngClass]="{'hidden': displayQueryType}">
       <label for="simple_query" class="col-12 md:col-1">
         {{"PAGE.CONCORDANCE.SIMPLE_QUERY" | translate}}
@@ -20,20 +10,22 @@
     </div>
     <div [ngClass]="{'hidden': !displayQueryType}"><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p></div>
    
+    
     <div *ngIf="!(displayContext || displayQueryType)" style="height: 30px;">
       <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
         (click)="makeConcordances()"
-        [disabled]="!queryRequestForm.value.selectedCorpus || (displayPanelService.optionsPanelSubject | async)"></button>
+        [disabled]="!selectedCorpus || (displayPanelService.optionsPanelSubject | async)"></button>
     </div>
+    
     <div *ngIf="displayContext" style="height: 30px;">
 
     </div>
     <div class="flex justify-content-center">
       <button [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button"
-        label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" [disabled]="!queryRequestForm.value.selectedCorpus"
+        label="{{'PAGE.CONCORDANCE.QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus"
         class="p-button-text mr-3" (click)="clickQueryType()"></button>&nbsp;
       <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}"
-        [disabled]="!queryRequestForm.value.selectedCorpus" class="p-button-text"
+        [disabled]="!selectedCorpus" class="p-button-text"
         (click)="clickContext()"></button>&nbsp;
     </div>
  

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { v4 as uuid } from 'uuid';
@@ -22,6 +22,7 @@ import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -30,7 +31,7 @@ const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
   templateUrl: './query-request.component.html',
   styleUrls: ['./query-request.component.scss']
 })
-export class QueryRequestComponent implements OnInit {
+export class QueryRequestComponent implements OnInit, OnDestroy {
 
   @Output() titleResultChange = new EventEmitter<string>();
   @Output() selectedCorpusChange = new EventEmitter<KeyValueItem>();
@@ -64,7 +65,7 @@ export class QueryRequestComponent implements OnInit {
     cql: new UntypedFormControl(''),
     matchCase: new UntypedFormControl(false)
   });
-
+  public selectedCorpus: KeyValueItem | null = null;
 
   private holdSelectedCorpusStr = '';
   private installation?: Installation;
@@ -79,9 +80,10 @@ export class QueryRequestComponent implements OnInit {
     private readonly metadataQueryService: MetadataQueryService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly errorMessagesService: ErrorMessagesService,
-    private readonly appInitializerService: AppInitializerService
+    private readonly appInitializerService: AppInitializerService,
+    private readonly corpusSelectionService: CorpusSelectionService
   ) { }
-
+  
   ngOnInit(): void {
     this.hideQueryTypeAndContext();
     const inst = localStorage.getItem(INSTALLATION);
@@ -102,31 +104,32 @@ export class QueryRequestComponent implements OnInit {
     this.queryRequestForm.valueChanges.subscribe(change => {
       this.setBasicFieldRequest();
     });
-    if (this.queryRequestForm) {
-      this.queryRequestForm.controls.selectedCorpus.valueChanges.subscribe(change => this.toggleSimpleDisabling(change));
-    }
     this.selectedQueryType = this.queryTypes[0];
-    if (!!localStorage.getItem('selectedCorpus')) {
-      const lsSelectedCorpus = localStorage.getItem('selectedCorpus');
-      if (lsSelectedCorpus) {
-        this.queryRequestForm.controls.selectedCorpus.setValue(JSON.parse(lsSelectedCorpus));
-      }
       const lsSimpleQuery = localStorage.getItem('simpleQuery');
+      this.queryRequestForm.controls.simple.enable;
       if (lsSimpleQuery) {
         this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
       }
-      this.corpusSelect();
+    this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      this.selectedCorpus = selectedCorpus;
+      this.corpusSelected(selectedCorpus!);
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.corpusSelectionService.corpusSelectedSubject) {
+      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
     }
   }
 
-  public corpusSelect(): void {
+  public corpusSelected(selectedCorpus: KeyValueItem | undefined): void {
     this.titleResultChange.emit('');
     this.clickTextType();
     this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
-    const selectedCorpus = this.queryRequestForm.controls.selectedCorpus.value;
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
+    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
     if (selectedCorpus) {
+      this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
       this.emitterService.spinnerMetadata.emit(true);
       const metadataAttributes: Array<KeyValueItem> = [];
@@ -154,9 +157,9 @@ export class QueryRequestComponent implements OnInit {
             this.setCorpus(corpus);
           });
         }
-        this.holdSelectedCorpusStr = this.queryRequestForm.controls.selectedCorpus.value.key;
+        this.holdSelectedCorpusStr = selectedCorpus.key;
       } else {
-        this.displayPanelService.labelMetadataSubject.next(!!this.queryRequestForm.controls.selectedCorpus.value && !!this.textTypeStatus);
+        this.displayPanelService.labelMetadataSubject.next(!!selectedCorpus && !!this.textTypeStatus);
         this.emitterService.spinnerMetadata.emit(false);
       }
     } else {
@@ -171,7 +174,6 @@ export class QueryRequestComponent implements OnInit {
 
 
   public makeConcordances(): void {
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.queryRequestForm.controls.selectedCorpus.value));
     localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.resetQueryPattern();
@@ -260,15 +262,15 @@ export class QueryRequestComponent implements OnInit {
   private closeWebSocket(): void {
     this.socketService.closeSocket();
   }
-
+  
   private hideQueryTypeAndContext(): void {
     this.displayContext = false;
     this.displayQueryType = false;
   }
-
+  
   private setBasicFieldRequest(): void {
     const fieldRequest = FieldRequest.build(
-      this.queryRequestForm.controls.selectedCorpus.value,
+      this.selectedCorpus,
       '',
       this.queryRequestForm.controls.simple.value,
       this.queryRequestForm.controls.lemma.value,

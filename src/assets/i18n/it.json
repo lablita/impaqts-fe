@@ -242,7 +242,8 @@
       "TAGSET": "Tagset",
       "TEXT": "text",
       "TITLE": "title",
-      "WORDS": "Words"
+      "WORDS": "Words",
+      "NOTHING_TO_SHOW": "No CorpusInfo to Show"
     },
     "VISUAL_QUERY": {
       "ADD_METADATA": "Add Metadata",
