@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
 import { INSTALLATION } from '../model/constants';
@@ -24,7 +24,7 @@ class CorpusInfoObj {
   templateUrl: './corpus-info.component.html',
   styleUrls: ['./corpus-info.component.scss']
 })
-export class CorpusInfoComponent implements OnInit {
+export class CorpusInfoComponent implements OnInit, OnDestroy {
 
   public countsLabel = '';
   public counts: CorpusInfoObj[] = [];
@@ -94,6 +94,12 @@ export class CorpusInfoComponent implements OnInit {
       new CorpusInfoObj('PAGE.CORPUS_INFO.S', '15,835,675'),
       new CorpusInfoObj('PAGE.CORPUS_INFO.ARTICLE', '572,515')
     ];
+  }
+
+  ngOnDestroy(): void {
+    if (this.corpusSelectionService.corpusSelectedSubject) {
+      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
+    }
   }
 
   private retrieveCorpusInfo(): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Message } from 'primeng/api';
@@ -14,13 +14,14 @@ import { ErrorMessagesService } from '../services/error-messages.service';
 import { ExportCsvService } from '../services/export-csv.service';
 import { InstallationService } from '../services/installation.service';
 import { WordListService } from '../services/word-list.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 
 @Component({
   selector: 'app-word-list',
   templateUrl: './word-list.component.html',
   styleUrls: ['./word-list.component.scss'],
 })
-export class WordListComponent implements OnInit {
+export class WordListComponent implements OnInit, OnDestroy {
   public corpus?: string;
   public paginations: number[] = [10, 25, 50];
   public loading = false;
@@ -42,7 +43,8 @@ export class WordListComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly exportCsvService: ExportCsvService,
     private readonly installationService: InstallationService,
-    private readonly errorMessagesService: ErrorMessagesService
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly corpusSelectionService: CorpusSelectionService
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +75,18 @@ export class WordListComponent implements OnInit {
       this.translateService
         .stream('PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL')
         .subscribe((res) => (this.title = res));
+    }
+
+    // this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+    //   this.corpusName = selectedCorpus;
+    //   this.retrieveCorpusInfo();
+    // });
+
+  }
+
+  ngOnDestroy(): void {
+    if (this.corpusSelectionService.corpusSelectedSubject) {
+      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
     }
   }
 

@@ -109,6 +109,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.queryRequestForm.controls.simple.enable;
       if (lsSimpleQuery) {
         this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
+        this.queryRequestForm.controls.simple.enable;
       }
     this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.selectedCorpus = selectedCorpus;
