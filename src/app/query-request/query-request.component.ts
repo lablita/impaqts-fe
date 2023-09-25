@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { v4 as uuid } from 'uuid';
@@ -23,6 +23,7 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { Observable, Subscription } from 'rxjs';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -70,6 +71,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   private holdSelectedCorpusStr = '';
   private installation?: Installation;
   private textTypeStatus = false;
+  private corpusSelectedSubscription?: Subscription;
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
@@ -83,7 +85,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     private readonly appInitializerService: AppInitializerService,
     private readonly corpusSelectionService: CorpusSelectionService
   ) { }
-  
+
   ngOnInit(): void {
     this.hideQueryTypeAndContext();
     const inst = localStorage.getItem(INSTALLATION);
@@ -105,21 +107,24 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.setBasicFieldRequest();
     });
     this.selectedQueryType = this.queryTypes[0];
-      const lsSimpleQuery = localStorage.getItem('simpleQuery');
-      this.queryRequestForm.controls.simple.enable;
-      if (lsSimpleQuery) {
-        this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
-        this.queryRequestForm.controls.simple.enable;
-      }
-    this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
-      this.selectedCorpus = selectedCorpus;
+    const lsSimpleQuery = localStorage.getItem('simpleQuery');
+    if (lsSimpleQuery) {
+      this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
+    }
+
+    this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.corpusSelected(selectedCorpus!);
     });
+    if (this.corpusSelectionService.getSelectedCorpus()) {
+      this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
+      this.queryRequestForm.controls.simple.enable();
+      this.corpusSelected(this.selectedCorpus!);
+    }
   }
 
   ngOnDestroy(): void {
-    if (this.corpusSelectionService.corpusSelectedSubject) {
-      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
+    if (this.corpusSelectedSubscription) {
+      this.corpusSelectedSubscription.unsubscribe();
     }
   }
 
@@ -263,12 +268,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   private closeWebSocket(): void {
     this.socketService.closeSocket();
   }
-  
+
   private hideQueryTypeAndContext(): void {
     this.displayContext = false;
     this.displayQueryType = false;
   }
-  
+
   private setBasicFieldRequest(): void {
     const fieldRequest = FieldRequest.build(
       this.selectedCorpus,

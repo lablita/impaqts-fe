@@ -45,7 +45,8 @@ export class TopComponent implements OnInit{
      const lsSelectedCorpus = localStorage.getItem('selectedCorpus');
       if (lsSelectedCorpus) {
         this.selectedCorpus = JSON.parse(lsSelectedCorpus);
-        this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus);
+        this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus!);
+        this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
       }
   }
 
@@ -81,8 +82,11 @@ export class TopComponent implements OnInit{
   }
 
   public corpusSelect(): void {
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
-    this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus);
+    if (this.selectedCorpus) {
+      this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus);
+      localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
+      this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
+    }
   }
 
 }

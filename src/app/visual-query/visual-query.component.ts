@@ -33,6 +33,7 @@ import {
 } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-visual-query',
@@ -113,6 +114,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public titleResult: string | null = null;
 
   private holdSelectedCorpusId?: string;
+  private corpusSelectedSubscription?: Subscription;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -133,15 +135,19 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
-    this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+    this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.selectedCorpus = selectedCorpus;
       this.corpusSelected();
     });
+    if (this.corpusSelectionService.getSelectedCorpus()) {
+      this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
+      this.corpusSelected();
+    }
   }
 
   ngOnDestroy(): void {
-    if (this.corpusSelectionService.corpusSelectedSubject) {
-      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
+    if (this.corpusSelectedSubscription) {
+      this.corpusSelectedSubscription.unsubscribe();
     }
   }
 

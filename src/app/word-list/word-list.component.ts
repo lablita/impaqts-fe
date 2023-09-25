@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Message } from 'primeng/api';
@@ -15,6 +15,7 @@ import { ExportCsvService } from '../services/export-csv.service';
 import { InstallationService } from '../services/installation.service';
 import { WordListService } from '../services/word-list.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-word-list',
@@ -36,11 +37,11 @@ export class WordListComponent implements OnInit, OnDestroy {
 
   //per adesso così, poi quando sarà implementato il WordList panel andrà armonizzato con il queryRequestService
   private queryRequest = new QueryRequest();
+  private corpusSelectedSubscription?: Subscription;
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly wordListService: WordListService,
-    private readonly translateService: TranslateService,
     private readonly exportCsvService: ExportCsvService,
     private readonly installationService: InstallationService,
     private readonly errorMessagesService: ErrorMessagesService,
@@ -51,48 +52,46 @@ export class WordListComponent implements OnInit, OnDestroy {
     const corpusFromLS = localStorage.getItem('selectedCorpus');
     if (corpusFromLS && JSON.parse(corpusFromLS) !== null) {
       this.corpus = (JSON.parse(corpusFromLS) as KeyValueItem).value;
-      if (this.corpus) {
-        this.searchAttribute = this.route.snapshot.data.searchAttribute;
-        this.translateService
-          .stream('PAGE.WORD_LIST.TITLE')
-          .subscribe(
-            (res) => (this.title = res + ' - ' + this.searchAttribute)
-          );
-        this.queryRequest.start = 0;
-        this.queryRequest.end = this.pageSize;
-        this.queryRequest.corpus = this.corpus;
-        const wordListRequest: WordListRequest = new WordListRequest();
-        wordListRequest.searchAttribute = this.searchAttribute;
-        wordListRequest.sortField = 'freq';
-        wordListRequest.sortDir = DESC;
-        wordListRequest.minFreq = 0;
-        wordListRequest.maxFreq = 0;
-        this.queryRequest.wordListRequest = wordListRequest;
-        this.queryRequest.queryType = REQUEST_TYPE.WORD_LIST_REQUEST;
-        this.loading = true;
-      }
+      this.initWordList();
     } else {
-      this.translateService
-        .stream('PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL')
-        .subscribe((res) => (this.title = res));
+      this.title = 'PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL';
     }
 
-    // this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
-    //   this.corpusName = selectedCorpus;
-    //   this.retrieveCorpusInfo();
-    // });
+    this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      this.corpus = selectedCorpus!.value
+      this.initWordList();
+    });
 
   }
 
+  private initWordList(): void {
+    if (this.corpus) {
+      this.searchAttribute = this.route.snapshot.data.searchAttribute;
+      this.title = 'PAGE.WORD_LIST.TITLE'
+      this.queryRequest.start = 0;
+      this.queryRequest.end = this.pageSize;
+      this.queryRequest.corpus = this.corpus;
+      const wordListRequest: WordListRequest = new WordListRequest();
+      wordListRequest.searchAttribute = this.searchAttribute;
+      wordListRequest.sortField = 'freq';
+      wordListRequest.sortDir = DESC;
+      wordListRequest.minFreq = 0;
+      wordListRequest.maxFreq = 0;
+      this.queryRequest.wordListRequest = wordListRequest;
+      this.queryRequest.queryType = REQUEST_TYPE.WORD_LIST_REQUEST;
+      this.loading = true;
+    }
+  }
+
   ngOnDestroy(): void {
-    if (this.corpusSelectionService.corpusSelectedSubject) {
-      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
+    if (this.corpusSelectedSubscription) {
+      this.corpusSelectedSubscription.unsubscribe();
     }
   }
 
   public loadWordList(event: any): void {
     this.loading = true;
-    if (this.queryRequest && this.queryRequest.wordListRequest) {
+    if (event && this.queryRequest && this.queryRequest.wordListRequest) {
       this.queryRequest.wordListRequest.sortDir =
         event.sortOrder === -1 ? DESC : ASC;
       this.queryRequest.wordListRequest.sortField =

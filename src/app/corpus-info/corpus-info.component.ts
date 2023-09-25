@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { CONCORDANCE_LEMMA, CONCORDANCE_WORD } from '../common/label-constants';
 import { INSTALLATION } from '../model/constants';
@@ -6,6 +6,7 @@ import { CorpusInfo } from '../model/corpusinfo/corpus-info';
 import { KeyValueItem } from '../model/key-value-item';
 import { CorpusInfoService } from '../services/corpus-info.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { Subscription } from 'rxjs';
 
 class CorpusInfoObj {
   label: string;
@@ -39,6 +40,7 @@ export class CorpusInfoComponent implements OnInit, OnDestroy {
   public corpusInfo: CorpusInfo | null = null;
   public corpusStructureTree: Array<TreeNode> = [];
   public noCorpusInfoToShow = false;
+  private corpusSelectedSubscription?: Subscription;
 
   constructor(
     private readonly corpusInfoService: CorpusInfoService,
@@ -52,12 +54,11 @@ export class CorpusInfoComponent implements OnInit, OnDestroy {
       this.retrieveCorpusInfo();
       
     }
-    this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+    this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.corpusName = selectedCorpus;
       this.retrieveCorpusInfo();
     });
 
-    // this.displayPanelService.panelSelectedSubject.next(CORPUS_INFO);
     this.countsLabel = 'PAGE.CORPUS_INFO.COUNTS';
     this.counts = [
       new CorpusInfoObj('PAGE.CONCORDANCE.TOKENS', '380,823,725'),
@@ -97,8 +98,8 @@ export class CorpusInfoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.corpusSelectionService.corpusSelectedSubject) {
-      this.corpusSelectionService.corpusSelectedSubject.unsubscribe();
+    if (this.corpusSelectedSubscription) {
+      this.corpusSelectedSubscription.unsubscribe();
     }
   }
 
