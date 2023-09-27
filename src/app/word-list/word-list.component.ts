@@ -60,6 +60,7 @@ export class WordListComponent implements OnInit, OnDestroy {
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.corpus = selectedCorpus!.value
       this.initWordList();
+      this.loadWordList();
     });
 
   }
@@ -89,7 +90,7 @@ export class WordListComponent implements OnInit, OnDestroy {
     }
   }
 
-  public loadWordList(event: any): void {
+  public loadWordList(event?: any): void {
     this.loading = true;
     if (event && this.queryRequest && this.queryRequest.wordListRequest) {
       this.queryRequest.wordListRequest.sortDir =

@@ -109,7 +109,12 @@ export class LoadResultsService {
           }
         }
         if (queryRequest.queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST) {
-          // VisualQuery
+          queryRequest.queryPattern?.structPattern.tags.forEach(tags => {
+            tags.forEach(tag => {
+              const structTagToken = tag.name.split('.');
+              tag.name = structTagToken[structTagToken.length - 1];
+            })
+          })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           this.socketService.sendMessage(queryRequest);
         } else {

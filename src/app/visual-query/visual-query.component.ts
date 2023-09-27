@@ -136,6 +136,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      this.titleResult = '';
+      this.metadata = [];
       this.selectedCorpus = selectedCorpus;
       this.corpusSelected();
     });
