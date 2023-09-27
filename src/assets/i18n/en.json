@@ -41,6 +41,7 @@
       "SIMPLE_QUERY": "Simple query",
       "MAKE_CONCORDANCE": "Make Concordance",
       "QUERY_TYPES": "Query types",
+      "OTHER_QUERY_TYPES": "Other queries",
       "CONTEXT": "Context",
       "TEXT_TYPE": "Text types",
       "QUERY_TYPE": "Query type",
