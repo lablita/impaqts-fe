@@ -114,6 +114,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.corpusSelected(selectedCorpus!);
+      this.selectedCorpus = selectedCorpus;
+      this.setBasicFieldRequest();
     });
     if (this.corpusSelectionService.getSelectedCorpus()) {
       this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
@@ -133,7 +135,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.clickTextType();
     this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
     if (selectedCorpus) {
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;

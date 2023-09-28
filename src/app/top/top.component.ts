@@ -7,6 +7,7 @@ import { EmitterService } from '../utils/emitter.service';
 import { KeyValueItem } from '../model/key-value-item';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { QueryRequestService } from '../services/query-request.service';
 @Component({
   selector: 'app-top',
   templateUrl: './top.component.html',
@@ -30,7 +31,8 @@ export class TopComponent implements OnInit{
   constructor(
     private readonly emitterService: EmitterService,
     private readonly authorizationService: AuthorizationService,
-    private readonly corpusSelectionService: CorpusSelectionService
+    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly queryRequestService: QueryRequestService
   ) {
     this.init();
   }
@@ -87,6 +89,7 @@ export class TopComponent implements OnInit{
       localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
       this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
     }
+    this.queryRequestService.resetQueryPattern();
   }
 
 }

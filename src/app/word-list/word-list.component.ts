@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Message } from 'primeng/api';
 import { HTTP } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
-import { COMPLETE_FREQUENCY_LIST } from '../common/routes-constants';
+import { COMPLETE_FREQUENCY_LIST, WORD_LIST } from '../common/routes-constants';
 import { ASC, DESC } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequest } from '../model/query-request';
@@ -16,6 +16,7 @@ import { InstallationService } from '../services/installation.service';
 import { WordListService } from '../services/word-list.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { Subscription } from 'rxjs';
+import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
   selector: 'app-word-list',
@@ -45,19 +46,23 @@ export class WordListComponent implements OnInit, OnDestroy {
     private readonly exportCsvService: ExportCsvService,
     private readonly installationService: InstallationService,
     private readonly errorMessagesService: ErrorMessagesService,
-    private readonly corpusSelectionService: CorpusSelectionService
+    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly displayPanelService: DisplayPanelService
   ) {}
 
   ngOnInit(): void {
-    const corpusFromLS = localStorage.getItem('selectedCorpus');
-    if (corpusFromLS && JSON.parse(corpusFromLS) !== null) {
-      this.corpus = (JSON.parse(corpusFromLS) as KeyValueItem).value;
+    this.displayPanelService.menuItemClickSubject.next(WORD_LIST);
+    if (this.corpusSelectionService.getSelectedCorpus()) {
+      this.corpus = this.corpusSelectionService.getSelectedCorpus()!.value
       this.initWordList();
     } else {
       this.title = 'PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL';
     }
-
+    
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      if (selectedCorpus) {
+        this.title = 'PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL';
+      }
       this.corpus = selectedCorpus!.value
       this.initWordList();
       this.loadWordList();

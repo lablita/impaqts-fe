@@ -34,6 +34,7 @@ import {
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { Subscription } from 'rxjs';
+import { QueryStructure } from '../model/query-structure';
 
 @Component({
   selector: 'app-visual-query',
@@ -132,12 +133,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.displayPanelService.menuItemClickSubject.next(VISUAL_QUERY);
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.titleResult = '';
       this.metadata = [];
+      this.queryPattern.structPattern = new QueryStructure();
       this.selectedCorpus = selectedCorpus;
       this.corpusSelected();
     });
