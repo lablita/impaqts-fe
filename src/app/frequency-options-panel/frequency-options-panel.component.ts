@@ -9,8 +9,7 @@ import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query
 import { KeyValueItem } from '../model/key-value-item';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
-
-const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
+import { FREQ_OPTIONS_QUERY_REQUEST } from '../common/constants';
 
 const POSITION_LIST = [
   L6,

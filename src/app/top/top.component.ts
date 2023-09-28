@@ -8,6 +8,8 @@ import { KeyValueItem } from '../model/key-value-item';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { QueryRequestService } from '../services/query-request.service';
+import { COLL_OPTIONS_QUERY_REQUEST, FREQ_OPTIONS_QUERY_REQUEST, SORT_OPTIONS_QUERY_REQUEST, TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
+import { MetadataQueryService } from '../services/metadata-query.service';
 @Component({
   selector: 'app-top',
   templateUrl: './top.component.html',
@@ -32,7 +34,8 @@ export class TopComponent implements OnInit{
     private readonly emitterService: EmitterService,
     private readonly authorizationService: AuthorizationService,
     private readonly corpusSelectionService: CorpusSelectionService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly metadataQueryService: MetadataQueryService
   ) {
     this.init();
   }
@@ -85,8 +88,15 @@ export class TopComponent implements OnInit{
 
   public corpusSelect(): void {
     if (this.selectedCorpus) {
-      this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus);
       localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
+      localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
+      this.metadataQueryService.reset();
+      localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
+      localStorage.removeItem(FREQ_OPTIONS_QUERY_REQUEST);
+      localStorage.removeItem(COLL_OPTIONS_QUERY_REQUEST);
+      this.queryRequestService.resetOptionsRequest();
+
+      this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus);
       this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
     }
     this.queryRequestService.resetQueryPattern();

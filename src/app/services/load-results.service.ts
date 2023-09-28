@@ -15,6 +15,7 @@ import {
 import {
   RESULT_COLLOCATION,
   RESULT_CONCORDANCE,
+  VISUAL_QUERY,
 } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -282,10 +283,9 @@ export class LoadResultsService {
         }
       }
     });
-    localStorage.setItem(
-      TEXT_TYPES_QUERY_REQUEST,
-      JSON.stringify(metadataRequest)
-    );
+    if (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0) {
+      localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
+    }
     // Tutto in OR
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
@@ -387,7 +387,8 @@ export class LoadResultsService {
     if (qr) {
       if (qr.kwicLines && qr.kwicLines.length > 0) {
         this.menuEmitterService.menuEvent$.next(
-          new MenuEvent(RESULT_CONCORDANCE)
+          this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST
+          ? new MenuEvent(VISUAL_QUERY) : new MenuEvent(RESULT_CONCORDANCE)
         );
       } else if (qr.collocations && qr.collocations.length > 0) {
         this.menuEmitterService.menuEvent$.next(

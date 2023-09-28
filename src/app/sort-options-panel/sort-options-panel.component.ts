@@ -8,8 +8,7 @@ import { ConcordanceRequest } from '../queries-container/queries-container.compo
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { v4 as uuid } from 'uuid';
-
-const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
+import { SORT_OPTIONS_QUERY_REQUEST } from '../common/constants';
 
 const POSITION_LIST = [
   L3,
