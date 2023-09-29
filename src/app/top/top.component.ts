@@ -87,19 +87,18 @@ export class TopComponent implements OnInit{
   }
 
   public corpusSelect(): void {
+    localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
+    this.metadataQueryService.reset();
+    localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
+    localStorage.removeItem(FREQ_OPTIONS_QUERY_REQUEST);
+    localStorage.removeItem(COLL_OPTIONS_QUERY_REQUEST);
+    this.queryRequestService.resetOptionsRequest();
+    this.queryRequestService.resetQueryPattern();
     if (this.selectedCorpus) {
       localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
-      localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
-      this.metadataQueryService.reset();
-      localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
-      localStorage.removeItem(FREQ_OPTIONS_QUERY_REQUEST);
-      localStorage.removeItem(COLL_OPTIONS_QUERY_REQUEST);
-      this.queryRequestService.resetOptionsRequest();
-
       this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus);
       this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
     }
-    this.queryRequestService.resetQueryPattern();
   }
 
 }

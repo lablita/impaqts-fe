@@ -283,7 +283,8 @@ export class LoadResultsService {
         }
       }
     });
-    if (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0) {
+    if (REQUEST_TYPE.VISUAL_QUERY_REQUEST !== this.queryRequestService.getQueryRequest().queryType &&
+      (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
       localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
     }
     // Tutto in OR
@@ -303,7 +304,7 @@ export class LoadResultsService {
             if (ft.value) {
               tag.value = ft.value;
             }
-            if (this.metadataQuery) {
+            if (tag.value.length > 0 && this.metadataQuery) {
               this.metadataQuery.tags.push([tag]);
             }
           }

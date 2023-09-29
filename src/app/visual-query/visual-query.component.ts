@@ -130,7 +130,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService,
     private readonly corpusSelectionService: CorpusSelectionService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.displayPanelService.menuItemClickSubject.next(VISUAL_QUERY);
@@ -210,6 +210,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         }
       });
     }
+    queryPatternToSend.structPattern = this.cleanStructPattern(queryPatternToSend.structPattern);
     this.queryRequestService.setQueryPattern(queryPatternToSend);
     this.queryRequestService.getQueryRequest().queryType =
       REQUEST_TYPE.VISUAL_QUERY_REQUEST;
@@ -310,9 +311,9 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       if (url?.length > 0) {
         this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
           url +
-            '?autoplay=1' +
-            (start ? `&start=${start}` : '') +
-            (end ? `&end=${end}` : '')
+          '?autoplay=1' +
+          (start ? `&start=${start}` : '') +
+          (end ? `&end=${end}` : '')
         );
       }
     } else {
@@ -374,5 +375,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           this.enableAddMetadata = true;
         },
       });
+  }
+
+  private cleanStructPattern(structPattern: QueryStructure): QueryStructure {
+    if (structPattern && structPattern.tags && structPattern.tags.length > 0) {
+      structPattern.tags = structPattern.tags.map(tags => tags.filter(tag => tag.value.length > 0));
+    }
+    structPattern.tags = structPattern.tags.filter(tags => tags.length > 0);
+    return structPattern;
   }
 }
