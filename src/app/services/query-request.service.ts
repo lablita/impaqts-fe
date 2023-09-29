@@ -5,6 +5,8 @@ import { FieldRequest } from '../model/field-request';
 import { FilterConcordanceQueryRequest } from '../model/filter-concordance-query-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
+import { KeyValue } from '@angular/common';
+import { KeyValueItem } from '../model/key-value-item';
 
 @Injectable({
   providedIn: 'root'

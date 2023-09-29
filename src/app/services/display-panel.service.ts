@@ -113,16 +113,6 @@ export class DisplayPanelService implements OnDestroy{
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
       this.lastClickedMenuItem = menuItem;
     });
-    // this.optionsPanelSubject.subscribe(res => {
-    //   if (!res) {
-    //     this.panelLabelStatusSubject.next(panelLabelStatusStart);
-    //   }
-    // });
-    // this.metadataPanelSubject.subscribe(res => {
-    //   if (!res) {
-    //     this.panelLabelStatusSubject.next(panelLabelStatusStart);
-    //   }
-    // });
   }
   ngOnDestroy(): void {
     if (this.metadataPanelSubject) {

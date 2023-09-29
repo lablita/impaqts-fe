@@ -1,5 +1,5 @@
 <div style="width: 50%;">
-  <h2 class="text-3xl font-medium p-component">{{title}}</h2>
+  <h2 class="text-3xl font-medium p-component">{{title | translate}} {{searchAttribute ? ' - ' + this.searchAttribute : ''}}</h2>
   <p-panel *ngIf="corpus">
     <div class="field grid">
       <div class="col-12 mb-4 md:col-6 md:mb-0 label">{{'PAGE.WORD_LIST.CORPUS' | translate | titlecase}}</div>

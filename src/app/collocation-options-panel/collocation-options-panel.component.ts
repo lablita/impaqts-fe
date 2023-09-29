@@ -5,8 +5,7 @@ import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItemExtended } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
-
-const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
+import { COLL_OPTIONS_QUERY_REQUEST } from '../common/constants';
 
 const STAT_DESC: { [key: string]: string } = {
   T_SCORE: 't',

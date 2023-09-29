@@ -96,7 +96,8 @@ export class QueryTagComponent implements OnInit {
           this.tag.name = label;
         }
       }
-      this.tag.value = this.selectedMetadata;
+      this.tag.value = !this.freeText ? this.selectedMetadata : '';
+
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -32,13 +32,16 @@ import {
   EmitterService,
 } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { Subscription } from 'rxjs';
+import { QueryStructure } from '../model/query-structure';
 
 @Component({
   selector: 'app-visual-query',
   templateUrl: './visual-query.component.html',
   styleUrls: ['./visual-query.component.scss'],
 })
-export class VisualQueryComponent implements OnInit {
+export class VisualQueryComponent implements OnInit, OnDestroy {
   public queryPattern: QueryPattern = new QueryPattern();
   public typeListQuery: KeyValueItem[] = [
     new KeyValueItem('word', 'word'),
@@ -112,6 +115,7 @@ export class VisualQueryComponent implements OnInit {
   public titleResult: string | null = null;
 
   private holdSelectedCorpusId?: string;
+  private corpusSelectedSubscription?: Subscription;
 
   constructor(
     private readonly translateService: TranslateService,
@@ -124,13 +128,31 @@ export class VisualQueryComponent implements OnInit {
     private readonly metadataQueryService: MetadataQueryService,
     private readonly sanitizer: DomSanitizer,
     private readonly queryRequestService: QueryRequestService,
-    private readonly appInitializerService: AppInitializerService
-  ) {}
+    private readonly appInitializerService: AppInitializerService,
+    private readonly corpusSelectionService: CorpusSelectionService
+  ) { }
 
   ngOnInit(): void {
+    this.displayPanelService.menuItemClickSubject.next(VISUAL_QUERY);
     this.menuEmitterService.corpusSelected = false;
-    this.menuEmitterService.menuEvent$.next(new MenuEvent(VISUAL_QUERY));
     this.init();
+    this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
+      this.titleResult = '';
+      this.metadata = [];
+      this.queryPattern.structPattern = new QueryStructure();
+      this.selectedCorpus = selectedCorpus;
+      this.corpusSelected();
+    });
+    if (this.corpusSelectionService.getSelectedCorpus()) {
+      this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
+      this.corpusSelected();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.corpusSelectedSubscription) {
+      this.corpusSelectedSubscription.unsubscribe();
+    }
   }
 
   public addTokenQuery(): void {
@@ -188,6 +210,7 @@ export class VisualQueryComponent implements OnInit {
         }
       });
     }
+    queryPatternToSend.structPattern = this.cleanStructPattern(queryPatternToSend.structPattern);
     this.queryRequestService.setQueryPattern(queryPatternToSend);
     this.queryRequestService.getQueryRequest().queryType =
       REQUEST_TYPE.VISUAL_QUERY_REQUEST;
@@ -197,7 +220,7 @@ export class VisualQueryComponent implements OnInit {
     );
   }
 
-  public corpusSelect(): void {
+  public corpusSelected(): void {
     this.resultView = false;
     this.noResultFound = false;
     localStorage.setItem(
@@ -288,9 +311,9 @@ export class VisualQueryComponent implements OnInit {
       if (url?.length > 0) {
         this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
           url +
-            '?autoplay=1' +
-            (start ? `&start=${start}` : '') +
-            (end ? `&end=${end}` : '')
+          '?autoplay=1' +
+          (start ? `&start=${start}` : '') +
+          (end ? `&end=${end}` : '')
         );
       }
     } else {
@@ -352,5 +375,13 @@ export class VisualQueryComponent implements OnInit {
           this.enableAddMetadata = true;
         },
       });
+  }
+
+  private cleanStructPattern(structPattern: QueryStructure): QueryStructure {
+    if (structPattern && structPattern.tags && structPattern.tags.length > 0) {
+      structPattern.tags = structPattern.tags.map(tags => tags.filter(tag => tag.value.length > 0));
+    }
+    structPattern.tags = structPattern.tags.filter(tags => tags.length > 0);
+    return structPattern;
   }
 }

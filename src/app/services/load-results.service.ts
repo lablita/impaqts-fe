@@ -15,6 +15,7 @@ import {
 import {
   RESULT_COLLOCATION,
   RESULT_CONCORDANCE,
+  VISUAL_QUERY,
 } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -109,7 +110,12 @@ export class LoadResultsService {
           }
         }
         if (queryRequest.queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST) {
-          // VisualQuery
+          queryRequest.queryPattern?.structPattern.tags.forEach(tags => {
+            tags.forEach(tag => {
+              const structTagToken = tag.name.split('.');
+              tag.name = structTagToken[structTagToken.length - 1];
+            })
+          })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           this.socketService.sendMessage(queryRequest);
         } else {
@@ -277,10 +283,10 @@ export class LoadResultsService {
         }
       }
     });
-    localStorage.setItem(
-      TEXT_TYPES_QUERY_REQUEST,
-      JSON.stringify(metadataRequest)
-    );
+    if (REQUEST_TYPE.VISUAL_QUERY_REQUEST !== this.queryRequestService.getQueryRequest().queryType &&
+      (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
+      localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
+    }
     // Tutto in OR
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
@@ -298,7 +304,7 @@ export class LoadResultsService {
             if (ft.value) {
               tag.value = ft.value;
             }
-            if (this.metadataQuery) {
+            if (tag.value.length > 0 && this.metadataQuery) {
               this.metadataQuery.tags.push([tag]);
             }
           }
@@ -382,7 +388,8 @@ export class LoadResultsService {
     if (qr) {
       if (qr.kwicLines && qr.kwicLines.length > 0) {
         this.menuEmitterService.menuEvent$.next(
-          new MenuEvent(RESULT_CONCORDANCE)
+          this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST
+          ? new MenuEvent(VISUAL_QUERY) : new MenuEvent(RESULT_CONCORDANCE)
         );
       } else if (qr.collocations && qr.collocations.length > 0) {
         this.menuEmitterService.menuEvent$.next(

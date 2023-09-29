@@ -41,6 +41,7 @@
       "SIMPLE_QUERY": "Simple query",
       "MAKE_CONCORDANCE": "Make Concordance",
       "QUERY_TYPES": "Query types",
+      "OTHER_QUERY_TYPES": "Other queries",
       "CONTEXT": "Context",
       "TEXT_TYPE": "Text types",
       "QUERY_TYPE": "Query type",
@@ -242,7 +243,8 @@
       "TEXT": "text",
       "SUMMARY": "summary",
       "S": "s",
-      "ARTICLE": "article"
+      "ARTICLE": "article",
+      "NOTHING_TO_SHOW": "No CorpusInfo to Show"
     },
     "VISUAL_QUERY": {
       "QUERY": "Query",

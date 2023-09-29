@@ -8,6 +8,7 @@ import { CorpusInfo } from '../model/corpusinfo/corpus-info';
 import { QueryResponse } from '../model/query-response';
 import { UtilService } from '../utils/util.service';
 import { InstallationService } from './installation.service';
+//import { error } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class CorpusInfoService {
     return this.http.get<QueryResponse>(`${endpoint}/${CORPUS_INFO}/${corpusName}`)
       .pipe(
         map(qr => qr.corpusInfo),
-        catchError(this.utils.handleErrorObservable('getWideContext', FIND_FAILED, null)
-        ));
+        //catchError(this.utils.handleErrorObservable('getWideContext', FIND_FAILED, null))
+        );
   }
 }
