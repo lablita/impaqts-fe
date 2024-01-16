@@ -161,6 +161,12 @@ export class ConcordanceTableComponent
                   ].size;
               }
               this.kwicLines = queryResponse.kwicLines;
+              this.kwicLines = this.kwicLines.map((kl) => {
+                if (!kl.videoUrl || !kl.videoUrl.startsWith('http')) {
+                  kl.videoUrl = null;
+                }
+                return kl;
+              });
               this.noResultFound = queryResponse.currentSize < 1;
               this.descriptions = queryResponse.descResponses;
             }
