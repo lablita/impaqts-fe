@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, timer } from 'rxjs';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationItem } from '../model/collocation-item';
 import { FieldRequest } from '../model/field-request';
@@ -8,7 +8,17 @@ import { ErrorMessagesService } from '../services/error-messages.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
+import { QueryRequest } from '../model/query-request';
+import { CSV_PAGINATION } from '../model/constants';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { HTTP } from '../common/constants';
+import { DOWNLOAD_CSV } from '../common/routes-constants';
+import { ExportCsvService } from '../services/export-csv.service';
+import { InstallationService } from '../services/installation.service';
+import * as _ from 'lodash';
 
+
+const COLLOCATION = 'collocation';
 @Component({
   selector: 'app-collocation-table',
   templateUrl: './collocation-table.component.html',
@@ -28,6 +38,8 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
   public fieldRequest: FieldRequest | null = null;
   public noResultFound = true;
   public faSortAmountDown = faSortAmountDown;
+  public dlgVisible = false;
+  public progressStatus = 0;
 
   private readonly queryResponseSubscription: Subscription;
 
@@ -35,7 +47,9 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
     private readonly emitterService: EmitterService,
     private readonly loadResultService: LoadResultsService,
     private readonly errorMessagesService: ErrorMessagesService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly exportCsvService: ExportCsvService,
+    private readonly installationServices: InstallationService
   ) {
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
@@ -78,7 +92,6 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
-
   public loadCollocations(event: any): void {
     if (this.fieldRequest) {
       this.loading = true;
@@ -87,6 +100,55 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
       this.loadResultService.loadResults([this.fieldRequest], event);
     }
   }
+
+  public showDialog() {
+    this.dlgVisible = true;
+    this.downloadCsv();
+  }
+
+  private downloadCsv(): void {
+    let timeInterval: Subscription | null = null;
+    let previousProgressValue = 0;
+    const stopPolling = new Subject();
+    const queryRequest: QueryRequest = _.cloneDeep(
+      this.queryRequestService.getQueryRequest()
+    );
+    if (queryRequest) {
+      queryRequest.end = CSV_PAGINATION;
+      this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+        const endpoint = this.installationServices.getCompleteEndpoint(
+          queryRequest.corpus,
+          HTTP
+        );
+        const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${COLLOCATION}/${uuid}`;
+        //polling on csv progress status
+        timeInterval = timer(1000, 2000)
+          .pipe(
+            switchMap(() =>
+              this.exportCsvService.getCsvProgressValue(
+                queryRequest.corpus,
+                uuid
+              )
+            ),
+            tap((res) => {
+              if (res.status === 'OK' || res.status === 'KO') {
+                this.dlgVisible = false;
+                this.exportCsvService.download(downloadUrl).then();
+                stopPolling.next();
+              } else if (res.status === 'KK') {
+                this.progressStatus = previousProgressValue;
+              } else {
+                previousProgressValue = +res.status!;
+                this.progressStatus = +res.status!;
+              }
+            }),
+            takeUntil(stopPolling)
+          )
+          .subscribe();
+      });
+    }
+  }
+
 
   private setColumnHeaders(): void {
     const collocationSortingParams = this.loadResultService.getCollocationSortingParams();

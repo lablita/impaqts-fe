@@ -17,7 +17,22 @@
   [sortField]="sortField" [autoLayout]="true">
     <ng-template pTemplate="header">
       <tr>
-        <th>
+        <th style="width: 80px;">
+          <button pButton (click)="showDialog()" [disabled]="loading">CSV</button>
+          <p-dialog header="File Csv in elaborazione" [(visible)]="dlgVisible" [modal]="true" [closable]="false"
+            [style]="{width: '15vw'}">
+            <div class="flex justify-content-center mb-2">
+              <p-progressBar *ngIf="dlgVisible" style="width: 100%;" [value]="progressStatus" tooltipPosition="bottom"
+                [pTooltip]="'' + progressStatus">
+              </p-progressBar>
+            </div>
+            <div class="flex justify-content-center">
+              <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
+            </div>
+            <p>
+              Attendere il completamento dell'operazione.<br> Non uscire e non aggiornare la pagina.
+            </p>
+          </p-dialog>
         </th>
         <th class="text-right" *ngFor="let col of colHeader" [pSortableColumn]="col">{{col | translate}}
           <fa-icon style="font-size: small" [icon]="faSortAmountDown"></fa-icon>
