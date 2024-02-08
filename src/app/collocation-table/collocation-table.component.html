@@ -21,11 +21,6 @@
           <button pButton (click)="showDialog()" [disabled]="loading">CSV</button>
           <p-dialog header="File Csv in elaborazione" [(visible)]="dlgVisible" [modal]="true" [closable]="false"
             [style]="{width: '15vw'}">
-            <div class="flex justify-content-center mb-2">
-              <p-progressBar *ngIf="dlgVisible" style="width: 100%;" [value]="progressStatus" tooltipPosition="bottom"
-                [pTooltip]="'' + progressStatus">
-              </p-progressBar>
-            </div>
             <div class="flex justify-content-center">
               <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
             </div>
