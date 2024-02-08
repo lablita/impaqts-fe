@@ -10,9 +10,11 @@ import {
   PHRASE,
   REQUEST_TYPE,
   SIMPLE,
+  TAG,
   WORD,
 } from '../common/query-constants';
 import {
+  CONCORDANCE,
   RESULT_COLLOCATION,
   RESULT_CONCORDANCE,
   VISUAL_QUERY,
@@ -39,6 +41,10 @@ export class CollocationSortingParams {
   colHeader: Array<string> = [];
   headerSortBy = '';
 }
+
+const QUERY_TYPE = [
+  CONCORDANCE, SIMPLE, LEMMA, PHRASE, WORD, CHARACTER, CQL, TAG
+]
 
 @Injectable({
   providedIn: 'root',
@@ -154,13 +160,11 @@ export class LoadResultsService {
           }
           if (!queryRequest.queryPattern) {
             queryRequest.queryPattern = new QueryPattern();
-            queryRequest.queryPattern.tokPattern = [];
+          }
+          if (QUERY_TYPE.includes(fieldRequest.selectedQueryType!)) { 
+              queryRequest.queryPattern.tokPattern = [];
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
-            queryRequest.queryPattern?.tokPattern.splice(
-              0,
-              queryRequest.queryPattern.tokPattern.length
-            );
             fieldRequest.simpleResult
               .split(' ')
               .forEach((simpleResultToken) => {

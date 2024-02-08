@@ -43,8 +43,9 @@ export class SocketService {
 
   public setServerHost(corpus: string): void {
     const endpoint = this.installationServices.getCompleteEndpoint(corpus, WS);
+    this.wsEndpoint = `${endpoint}`;
     this.authService.getAccessTokenSilently().subscribe({
-      next: accessToken => this.wsEndpoint = `${endpoint}?accessToken=${accessToken}`
+      next: accessToken => this.wsEndpoint += `?accessToken=${accessToken}`
     });
   }
 
