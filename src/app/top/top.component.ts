@@ -59,7 +59,7 @@ export class TopComponent implements OnInit{
     this.emitterService.user.subscribe(
       {
         next: user => {
-          this.authLabel = !!user.role ? LOGOUT : LOGIN;
+          this.authLabel = !!user.name ? LOGOUT : LOGIN;
         }
       });
 
