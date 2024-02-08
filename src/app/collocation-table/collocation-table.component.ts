@@ -114,6 +114,8 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
       this.queryRequestService.getQueryRequest()
     );
     if (queryRequest) {
+      queryRequest.collocationQueryRequest!.resultSize = this.totalResults;
+
       queryRequest.end = CSV_PAGINATION;
       this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
         const endpoint = this.installationServices.getCompleteEndpoint(
