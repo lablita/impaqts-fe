@@ -6,5 +6,4 @@ export class CollocationQueryRequest {
   minFreqRange: number | null = 0;
   showFunc: string[] | null = [];
   sortBy: string | null = '';
-  resultSize: number | null = 0;
 }
