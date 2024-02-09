@@ -104,7 +104,7 @@ export class ConcordanceTableComponent
   private currentEnd = 0;
 
   private currentQueryId = '';
-
+ 
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
@@ -139,12 +139,12 @@ export class ConcordanceTableComponent
               this.first = 0;
             }
             if (
-              queryResponse.id !== this.currentQueryId ||
+              (queryResponse.id !== this.currentQueryId ||
               this.isDifferentPagination(
                 this.currentStart,
                 this.currentEnd,
                 queryResponse
-              )
+              )) && queryResponse.kwicLines && queryResponse.kwicLines.length > 0
             ) {
               this.currentQueryId = queryResponse.id;
               console.log(queryResponse);
@@ -161,7 +161,7 @@ export class ConcordanceTableComponent
                   ].size;
               }
               this.kwicLines = queryResponse.kwicLines;
-              this.noResultFound = queryResponse.currentSize < 1;
+              this.noResultFound = queryResponse.kwicLines.length < 1;
               this.descriptions = queryResponse.descResponses;
             }
             this.firstItemTotalResults = queryResponse.currentSize;
