@@ -139,12 +139,14 @@ export class ConcordanceTableComponent
               this.first = 0;
             }
             if (
-              queryResponse.id !== this.currentQueryId ||
-              this.isDifferentPagination(
-                this.currentStart,
-                this.currentEnd,
-                queryResponse
-              )
+              (queryResponse.id !== this.currentQueryId ||
+                this.isDifferentPagination(
+                  this.currentStart,
+                  this.currentEnd,
+                  queryResponse
+                )) &&
+              queryResponse.kwicLines &&
+              queryResponse.kwicLines.length > 0
             ) {
               this.currentQueryId = queryResponse.id;
               console.log(queryResponse);
@@ -420,34 +422,40 @@ export class ConcordanceTableComponent
     const corpus =
       this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
     if (corpus) {
-      this.wideContextService.getWideContext(corpus, kwicline.pos, kwicline.kwic.trim().split(" ").length).subscribe({
-        next: (response) => {
-          if (response && response.wideContextResponse) {
-            const kwic = response.wideContextResponse.kwic
-              ? response.wideContextResponse.kwic
-              : '';
-            const leftContext = response.wideContextResponse?.leftContext
-              ? response.wideContextResponse.leftContext
-              : '';
-            const rightContext = response.wideContextResponse?.rightContext
-              ? response.wideContextResponse.rightContext
-              : '';
-            this.resultContext = new ResultContext(
-              kwic,
-              leftContext,
-              rightContext
-            );
-          }
-        },
-        error: (err) => {
-          const wideContextError = {} as Message;
-          wideContextError.severity = 'error';
-          wideContextError.detail =
-            'Non è stato possibile recuperare il contesto';
-          wideContextError.summary = 'Errore';
-          this.errorMessagesService.sendError(wideContextError);
-        },
-      });
+      this.wideContextService
+        .getWideContext(
+          corpus,
+          kwicline.pos,
+          kwicline.kwic.trim().split(' ').length
+        )
+        .subscribe({
+          next: (response) => {
+            if (response && response.wideContextResponse) {
+              const kwic = response.wideContextResponse.kwic
+                ? response.wideContextResponse.kwic
+                : '';
+              const leftContext = response.wideContextResponse?.leftContext
+                ? response.wideContextResponse.leftContext
+                : '';
+              const rightContext = response.wideContextResponse?.rightContext
+                ? response.wideContextResponse.rightContext
+                : '';
+              this.resultContext = new ResultContext(
+                kwic,
+                leftContext,
+                rightContext
+              );
+            }
+          },
+          error: (err) => {
+            const wideContextError = {} as Message;
+            wideContextError.severity = 'error';
+            wideContextError.detail =
+              'Non è stato possibile recuperare il contesto';
+            wideContextError.summary = 'Errore';
+            this.errorMessagesService.sendError(wideContextError);
+          },
+        });
     }
   }
 
