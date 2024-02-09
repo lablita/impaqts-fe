@@ -52,7 +52,7 @@ export class MenuEmitterService {
   }
 
   private initMenuNoRole(): Array<string> {
-    return [MENU_LOGIN, MENU_CONCORDANCE];
+    return [MENU_LOGIN, MENU_CONCORDANCE, MENU_ALL_WORDS, MENU_ALL_LEMMAS];
   }
 
   private initMenuRoutes(): Array<KeyValueItem> {
