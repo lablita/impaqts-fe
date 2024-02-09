@@ -10,4 +10,3 @@ export const environment = {
   installationUrl: 'http://localhost:9001/impaqts-configurator',
   RECONNECT_INTERVAL: 1000, // ms
 };
-

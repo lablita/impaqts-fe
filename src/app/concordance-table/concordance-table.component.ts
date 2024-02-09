@@ -161,6 +161,12 @@ export class ConcordanceTableComponent
                   ].size;
               }
               this.kwicLines = queryResponse.kwicLines;
+              this.kwicLines = this.kwicLines.map((kl) => {
+                if (!kl.videoUrl || !kl.videoUrl.startsWith('http')) {
+                  kl.videoUrl = null;
+                }
+                return kl;
+              });
               this.noResultFound = queryResponse.currentSize < 1;
               this.descriptions = queryResponse.descResponses;
             }
@@ -414,7 +420,7 @@ export class ConcordanceTableComponent
     const corpus =
       this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
     if (corpus) {
-      this.wideContextService.getWideContext(corpus, kwicline.pos).subscribe({
+      this.wideContextService.getWideContext(corpus, kwicline.pos, kwicline.kwic.trim().split(" ").length).subscribe({
         next: (response) => {
           if (response && response.wideContextResponse) {
             const kwic = response.wideContextResponse.kwic

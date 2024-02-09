@@ -24,6 +24,7 @@ import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.serv
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { Observable, Subscription } from 'rxjs';
+import { QueryRequest } from '../model/query-request';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -189,8 +190,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestService.getQueryRequest().id = uuid();
 
     // concordance Context
-    const fieldRequest = this.queryRequestService.getBasicFieldRequest();
-    const queryRequest = this.queryRequestService.getQueryRequest();
+    const fieldRequest = this.trimInputFieldRequest(this.queryRequestService.getBasicFieldRequest());
+    const queryRequest = this.trimInputQueryRequest(this.queryRequestService.getQueryRequest());
+
     if (fieldRequest) {
       fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
       this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
@@ -263,7 +265,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
           }
         });
     }
-
   }
 
   private closeWebSocket(): void {
@@ -298,4 +299,27 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.queryRequestForm.get('simple')?.enable();
     }
   }
+
+  private trimInputFieldRequest(fieldRequest: FieldRequest | null): FieldRequest | null {
+    if (fieldRequest) {
+      fieldRequest.simple = fieldRequest.simple.trim();
+      fieldRequest.lemma = fieldRequest.lemma.trim();
+      fieldRequest.phrase = fieldRequest.phrase.trim();
+      fieldRequest.word = fieldRequest.word.trim();
+      fieldRequest.character = fieldRequest.character.trim();
+      fieldRequest.cql = fieldRequest.cql.trim();
+    }
+    return fieldRequest;
+  }
+
+  private trimInputQueryRequest(queryRequest: QueryRequest): QueryRequest{
+    if (queryRequest) {
+      queryRequest.corpusMetadatum = queryRequest.corpusMetadatum.trim();
+      queryRequest.word = queryRequest.word.trim();
+      queryRequest.corpus = queryRequest.corpus.trim();
+      queryRequest.cql = queryRequest.cql.trim();
+    }
+    return queryRequest;
+  }
+
 }
