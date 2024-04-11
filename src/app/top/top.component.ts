@@ -95,7 +95,7 @@ export class TopComponent implements OnInit{
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.resetQueryPattern();
     if (this.selectedCorpus) {
-      localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
+      // localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
       this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus);
       this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
     }

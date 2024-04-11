@@ -132,6 +132,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   public corpusSelected(selectedCorpus: KeyValueItem | undefined): void {
+    
+    
+    
     this.titleResultChange.emit('');
     this.clickTextType();
     this.displayPanelService.closePanel();
@@ -139,7 +142,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     if (selectedCorpus) {
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
-      this.emitterService.spinnerMetadata.emit(true);
+      if (this.corpusSelectionService.getCorpusChanged()) {
+        this.emitterService.spinnerMetadata.emit(true);
+      } 
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
@@ -162,7 +167,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
           this.appInitializerService.loadCorpus(+selectedCorpusId).subscribe(corpus => {
-            this.setCorpus(corpus);
+            this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged());
           });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
@@ -237,7 +242,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
-  private setCorpus(corpus: Corpus): void {
+  private setCorpus(corpus: Corpus, corpusChanged: boolean): void {
     this.metadataQueryService.clearMetadata();
     const installation = this.installation;
     if (installation) {
@@ -246,24 +251,33 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
           installation.corpora[index] = corpus;
         }
       });
-      this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
-        {
-          next: metadata => this.metadataQueryService.setMetadata(metadata),
-          error: err => {
-            console.error(err);
-            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-            this.emitterService.spinnerMetadata.emit(false);
-            const metadataErrorMsg = {} as Message;
-            metadataErrorMsg.severity = 'error';
-            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-            metadataErrorMsg.summary = 'Errore';
-            this.errorMessagesService.sendError(metadataErrorMsg);
-          },
-          complete: () => {
-            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-            this.emitterService.spinnerMetadata.emit(false);
-          }
-        });
+      if (corpusChanged) {
+        this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
+          {
+            next: metadata => this.metadataQueryService.setMetadata(metadata),
+            error: err => {
+              console.error(err);
+              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+              this.emitterService.spinnerMetadata.emit(false);
+              const metadataErrorMsg = {} as Message;
+              metadataErrorMsg.severity = 'error';
+              metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+              metadataErrorMsg.summary = 'Errore';
+              this.errorMessagesService.sendError(metadataErrorMsg);
+            },
+            complete: () => {
+              localStorage.setItem('metadata', JSON.stringify(this.metadataQueryService.getMetadata()))
+              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+              this.emitterService.spinnerMetadata.emit(false);
+              this.corpusSelectionService.resetCorpusChanged();
+            }
+          });
+      } else {
+        const metadataStr = localStorage.getItem('metadata');
+        if (metadataStr && metadataStr.length > 0) {
+          this.metadataQueryService.setMetadata(JSON.parse(metadataStr));
+        }
+      }
     }
   }
 

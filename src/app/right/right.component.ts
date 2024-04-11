@@ -8,6 +8,7 @@ import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 
 @Component({
   selector: 'app-right',
@@ -31,6 +32,7 @@ export class RightComponent implements OnInit {
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
     private readonly queryRequestService: QueryRequestService,
+    private readonly corpusSelectionService: CorpusSelectionService
   ) { }
 
   ngOnInit(): void {
@@ -42,7 +44,9 @@ export class RightComponent implements OnInit {
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
       this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
-    this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => this.spinnerMetadata = event });
+    this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => {
+      this.spinnerMetadata = event; 
+    }});
   }
 
   public labelOPTClick(): void {
