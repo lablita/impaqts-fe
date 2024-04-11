@@ -145,8 +145,7 @@ export class ConcordanceTableComponent
                   this.currentEnd,
                   queryResponse
                 )) &&
-              queryResponse.kwicLines &&
-              queryResponse.kwicLines.length > 0
+              queryResponse.kwicLines
             ) {
               this.currentQueryId = queryResponse.id;
               console.log(queryResponse);
