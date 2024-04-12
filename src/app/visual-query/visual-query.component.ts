@@ -225,7 +225,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.noResultFound = false;
     localStorage.setItem(
       'selectedCorpus',
-      JSON.stringify(this.selectedCorpus?.value)
+      JSON.stringify(this.selectedCorpus)
     );
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
@@ -354,11 +354,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   private setCorpus(corpus: Corpus): void {
-    //localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
+    const metadataVQStr = localStorage.getItem('metadataVQ');
+    if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime() || !metadataVQStr) {
     this.metadataUtilService
       .createMatadataTree(`${corpus.id}`, this.installation, true)
       .subscribe({
         next: (metadata) => {
+          localStorage.setItem('metadataVQ', JSON.stringify(metadata))
           this.metadataQueryService.setMetadata(metadata);
           this.metadataTextTypes = metadata;
         },
@@ -375,6 +377,15 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           this.enableAddMetadata = true;
         },
       });
+    } else {
+      //this.metadataUtilService.createTree(this.metadataQueryService.getMetadata(), true);
+      //this.metadataTextTypes = this.metadataQueryService.getMetadata();
+
+      this.metadataTextTypes = JSON.parse(metadataVQStr);
+      this.corpusSelectionService.setPageLoadedFirstTime(false);
+      this.enableSpinner = false;
+      this.enableAddMetadata = true;
+    }
   }
 
   private cleanStructPattern(structPattern: QueryStructure): QueryStructure {

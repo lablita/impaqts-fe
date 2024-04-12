@@ -10,6 +10,7 @@ export class CorpusSelectionService {
   public corpusSelectedSubject: Subject<KeyValueItem> = new Subject<KeyValueItem>();
   private selectedCorpus: KeyValueItem | null = null;
   private corpusChanged: boolean = false;
+  private pageLoadedFirstTime: boolean = true;
 
   constructor() { }
 
@@ -34,6 +35,14 @@ export class CorpusSelectionService {
 
   public resetCorpusChanged(): void {
     this.corpusChanged = false;
+  }
+
+  public setPageLoadedFirstTime(value: boolean): void {
+    this.pageLoadedFirstTime = value;
+  }
+
+  public getPageLoadedFirstTime(): boolean {
+    return this.pageLoadedFirstTime;
   }
 
 

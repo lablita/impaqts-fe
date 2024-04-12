@@ -243,15 +243,15 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   private setCorpus(corpus: Corpus, corpusChanged: boolean): void {
-    this.metadataQueryService.clearMetadata();
-    const installation = this.installation;
-    if (installation) {
-      installation.corpora.forEach((c, index) => {
-        if (c.id === corpus.id) {
-          installation.corpora[index] = corpus;
-        }
-      });
-      if (corpusChanged) {
+    if (corpusChanged || this.corpusSelectionService.getPageLoadedFirstTime()) {
+      const installation = this.installation;
+        if (installation) {
+          installation.corpora.forEach((c, index) => {
+            if (c.id === corpus.id) {
+              installation.corpora[index] = corpus;
+            }
+          });
+        this.metadataQueryService.clearMetadata();
         this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
           {
             next: metadata => this.metadataQueryService.setMetadata(metadata),
@@ -273,12 +273,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
             }
           });
       } else {
-        const metadataStr = localStorage.getItem('metadata');
-        if (metadataStr && metadataStr.length > 0) {
-          this.metadataQueryService.setMetadata(JSON.parse(metadataStr));
-        }
+        this.metadataQueryService.resetMetadataService();
       }
     }
+    this.corpusSelectionService.setPageLoadedFirstTime(false);
   }
 
   private closeWebSocket(): void {

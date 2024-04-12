@@ -9,7 +9,7 @@ import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 export class MetadataQueryService {
 
   private metadata: Metadatum[] = [];
-
+ 
   public reset(): void {
     this.metadata.forEach(m => this.resetMetadatum(m));
   }
@@ -19,7 +19,16 @@ export class MetadataQueryService {
   }
 
   public clearMetadata(): void {
-    this.metadata.splice(0, this.metadata.length);
+    this.metadata = [];
+    localStorage.removeItem('metadata');
+  }
+
+  public resetMetadataService(): void {
+    this.metadata = [];
+    const metadataStr = localStorage.getItem('metadata');
+    if (metadataStr && metadataStr.length > 0) {
+      this.setMetadata(JSON.parse(metadataStr));
+    }
   }
 
   public setMetadata(mds: Array<Metadatum>): void {

@@ -40,7 +40,7 @@ export class RightComponent implements OnInit {
       this.verticalLabel = panelLabelStatus.panelDisplayMTD || panelLabelStatus.panelDisplayOPT;
       this.labelVisibleMTD = panelLabelStatus.labelVisibleMTD;
       this.labelVisibleOPT = panelLabelStatus.labelVisibleOPT;
-      this.labelDisableMTD = panelLabelStatus.labelDisableMTD;
+      this.labelDisableMTD = panelLabelStatus.labelDisableMTD || !this.corpusSelectionService.getSelectedCorpus();
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
       this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
