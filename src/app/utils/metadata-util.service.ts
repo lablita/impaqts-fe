@@ -34,27 +34,27 @@ export class MetadataUtilService {
       const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
       this.metadataRequest = ttqr ? JSON.parse(ttqr) : null;
       // genero albero per componente multiselect check box
-      //this.createTree(metadata, visualQueryFlag);
-      metadata.forEach((md) => {
-        if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
-          md.tree = [];
-          let filteredSelections: Array<Selection> = [];
-          if (this.metadataRequest && this.metadataRequest.multiSelects) {
-            filteredSelections = this.metadataRequest.multiSelects.filter(
-              (ms) => ms.key === md.name
-            );
-          }
-          const res = this.generateTree(
-            md,
-            filteredSelections[0] && filteredSelections[0].values
-              ? filteredSelections[0].values
-              : []
-          );
-          md.tree.push(res.tree);
-          md.selection = res.selections;
-        }
-      });
-      //recupero freeText da localstorage
+      this.createTree(metadata, visualQueryFlag);
+      // metadata.forEach((md) => {
+      //   if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
+      //     md.tree = [];
+      //     let filteredSelections: Array<Selection> = [];
+      //     if (this.metadataRequest && this.metadataRequest.multiSelects) {
+      //       filteredSelections = this.metadataRequest.multiSelects.filter(
+      //         (ms) => ms.key === md.name
+      //       );
+      //     }
+      //     const res = this.generateTree(
+      //       md,
+      //       filteredSelections[0] && filteredSelections[0].values
+      //         ? filteredSelections[0].values
+      //         : []
+      //     );
+      //     md.tree.push(res.tree);
+      //     md.selection = res.selections;
+      //   }
+      // });
+      // recupero freeText da localstorage
       if (this.metadataRequest && this.metadataRequest.freeTexts) {
         metadata.forEach((md) => {
           if (md.freeText) {
@@ -137,27 +137,27 @@ export class MetadataUtilService {
     return of([]);
   }
 
-  // public createTree(metadata: Metadatum[], visualQueryFlag: boolean):void {
-  //   metadata.forEach((md) => {
-  //     if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
-  //       md.tree = [];
-  //       let filteredSelections: Array<Selection> = [];
-  //       if (this.metadataRequest && this.metadataRequest.multiSelects) {
-  //         filteredSelections = this.metadataRequest.multiSelects.filter(
-  //           (ms) => ms.key === md.name
-  //         );
-  //       }
-  //       const res = this.generateTree(
-  //         md,
-  //         filteredSelections[0] && filteredSelections[0].values
-  //           ? filteredSelections[0].values
-  //           : []
-  //       );
-  //       md.tree.push(res.tree);
-  //       md.selection = res.selections;
-  //     }
-  //   });
-  // }
+  public createTree(metadata: Metadatum[], visualQueryFlag: boolean):void {
+    metadata.forEach((md) => {
+      if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
+        md.tree = [];
+        let filteredSelections: Array<Selection> = [];
+        if (this.metadataRequest && this.metadataRequest.multiSelects) {
+          filteredSelections = this.metadataRequest.multiSelects.filter(
+            (ms) => ms.key === md.name
+          );
+        }
+        const res = this.generateTree(
+          md,
+          filteredSelections[0] && filteredSelections[0].values
+            ? filteredSelections[0].values
+            : []
+        );
+        md.tree.push(res.tree);
+        md.selection = res.selections;
+      }
+    });
+  }
 
   private setInnerTree(
     res: any,
