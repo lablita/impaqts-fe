@@ -355,43 +355,12 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   private setCorpus(corpus: Corpus): void {
     const metadataVQStr = localStorage.getItem('metadataVQ');
-    
-    // const metadataTreeObs: Observable<Metadatum[]>[] = [];  
-    // metadataTreeObs.push(this.metadataUtilService.createMatadataTree(`${corpus.id}`, this.installation, false));
-    // metadataTreeObs.push(this.metadataUtilService.createMatadataTree(`${corpus.id}`, this.installation, true));
-
-    
-    if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime() 
+    if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime()
       || !metadataVQStr || this.metadataQueryService.getMetadataVQIdCorpus() !== '' + corpus.id) {
-    // if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime()) {
-    //   forkJoin(metadataTreeObs)
-    //   .subscribe({
-    //     next:([metadata, metadataVQ]) => {
-    //       this.metadataQueryService.setMetadata(metadata);
-    //       this.metadataQueryService.setMetadataVQ(metadataVQ);
-    //     },
-    //     error: err => {
-    //       console.error(err);
-    //       this.emitterService.spinnerMetadata.emit(false);
-    //       const metadataErrorMsg = {} as Message;
-    //       metadataErrorMsg.severity = 'error';
-    //       metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-    //       metadataErrorMsg.summary = 'Errore';
-    //       this.errorMessagesService.sendError(metadataErrorMsg);
-    //     },
-    //     complete: () => {
-    //       localStorage.setItem('metadata', JSON.stringify(this.metadataQueryService.getMetadata()));
-    //       localStorage.setItem('metadataVQ', JSON.stringify(this.metadataQueryService.getMetadataVQ()))
-    //       this.emitterService.spinnerMetadata.emit(false);
-    //       this.corpusSelectionService.resetCorpusChanged();
-    //     }
-    //   });
-
       this.metadataUtilService
         .createMatadataTree(`${corpus.id}`, this.installation, true)
         .subscribe({
           next: (metadata) => {
-            //localStorage.setItem('metadataVQ', JSON.stringify(metadata))
             this.metadataQueryService.setMetadata(metadata);
             this.metadataTextTypes = metadata;
           },
@@ -405,16 +374,11 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           },
           complete: () => {
             this.metadataQueryService.storageMetadataVQ();
-            //localStorage.setItem('metadataVQ', JSON.stringify(this.metadataQueryService.getMetadataVQ()));
             this.enableSpinner = false;
             this.enableAddMetadata = true;
           },
         });
     } else {
-      //this.metadataUtilService.createTree(this.metadataQueryService.getMetadata(), true);
-      //this.metadataTextTypes = this.metadataQueryService.getMetadata();
-
-      //this.metadataTextTypes = JSON.parse(metadataVQStr);
       this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();
       this.corpusSelectionService.setPageLoadedFirstTime(false);
       this.enableSpinner = false;

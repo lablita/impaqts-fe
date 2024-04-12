@@ -255,41 +255,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
         });
         this.metadataQueryService.clearMetadata();
         const metadataTreeObs: Observable<Metadatum[]>[] = [];
-        // metadataTreeObs.push(this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false));
-        // metadataTreeObs.push(this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, true));
-
-        // this.metadataUtilService.createMatadataTree(`${corpus.id}`, this.installation, false).subscribe(metadata => {
-        //   this.metadataQueryService.setMetadata(metadata);
-        //   this.metadataUtilService.createMatadataTree(`${corpus.id}`, this.installation, true).subscribe(metadataVQ => 
-        //     this.metadataQueryService.setMetadataVQ(metadataVQ))
-        // });
-
-        // forkJoin(metadataTreeObs)
-        //   .subscribe({
-        //     next:([metadata, metadataVQ]) => {
-        //       this.metadataQueryService.setMetadata(metadata);
-        //       this.metadataQueryService.setMetadataVQ(metadataVQ);
-        //     },
-        //     error: err => {
-        //       console.error(err);
-        //       this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-        //       this.emitterService.spinnerMetadata.emit(false);
-        //       const metadataErrorMsg = {} as Message;
-        //       metadataErrorMsg.severity = 'error';
-        //       metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-        //       metadataErrorMsg.summary = 'Errore';
-        //       this.errorMessagesService.sendError(metadataErrorMsg);
-        //     },
-        //     complete: () => {
-        //       localStorage.setItem('metadata', JSON.stringify(this.metadataQueryService.getMetadata()));
-        //       localStorage.setItem('metadataVQ', JSON.stringify(this.metadataQueryService.getMetadataVQ()))
-        //       this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-        //       this.emitterService.spinnerMetadata.emit(false);
-        //       this.corpusSelectionService.resetCorpusChanged();
-        //     }
-        //   }
-        // )
-
         this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
           {
             next: metadata => this.metadataQueryService.setMetadata(metadata),
@@ -305,7 +270,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
             },
             complete: () => {
               this.metadataQueryService.storageMetadata();
-              //localStorage.setItem('metadata', JSON.stringify(this.metadataQueryService.getMetadata()))
               this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
               this.emitterService.spinnerMetadata.emit(false);
               this.corpusSelectionService.resetCorpusChanged();
