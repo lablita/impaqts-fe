@@ -69,10 +69,10 @@ export class MenuEmitterService {
       new KeyValueItem(MENU_AS_SUBCORPUS, AS_SUBCORPUS),
       new KeyValueItem(MENU_VIEW_OPTION, VIEW_OPTION),
       new KeyValueItem(MENU_SORT, SORT),
-      new KeyValueItem(MENU_FILTER, FILTER),
+      //new KeyValueItem(MENU_FILTER, FILTER),
       new KeyValueItem(MENU_FREQUENCY, FREQUENCY),
       new KeyValueItem(MENU_COLLOCATION, COLLOCATION),
-      new KeyValueItem(MENU_WORD_LIST, WORD_LIST),
+      //new KeyValueItem(MENU_WORD_LIST, WORD_LIST),
     ];
   }
 
