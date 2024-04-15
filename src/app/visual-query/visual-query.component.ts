@@ -361,7 +361,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
         .createMatadataTree(`${corpus.id}`, this.installation, true)
         .subscribe({
           next: (metadata) => {
-            this.metadataQueryService.setMetadata(metadata);
+            this.metadataQueryService.setMetadataVQ(metadata);
             this.metadataTextTypes = metadata;
           },
           error: (err) => {
