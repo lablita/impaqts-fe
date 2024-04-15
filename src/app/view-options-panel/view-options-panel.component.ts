@@ -21,19 +21,6 @@ export class ViewOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
   public attributeChekBox: Array<KeyValueItem> = [];
-  public displayAttr: Array<KeyValueItem> = [];
-  public selectedDisplayAttr: KeyValueItem | null = null;
-  public asTooltipLabel = '';
-  public refsUpLabel = '';
-  public sortGoodLabel = '';
-  public showGDEXLabel = '';
-  public iconForOneLabel = '';
-  public allowMultiLabel = '';
-  public flashCopingLabel = '';
-  public checkSelLinesLabel = '';
-  public showLinesNumLabel = '';
-  public shortLongRefLabel = '';
-
   public viewOptionsQueryRequest: ViewOptionsQueryRequest = ViewOptionsQueryRequest.getInstance();
 
   constructor(
@@ -56,30 +43,6 @@ export class ViewOptionsPanelComponent implements OnInit {
         }
       });
     });
-
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.FOR_EACH_TOKEN').subscribe({
-      next: res => {
-        this.displayAttr = [];
-        this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_FOR_EACH, res));
-      }
-    });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.KWIC_TOKEN').subscribe({
-      next: res => {
-        this.displayAttr.push(new KeyValueItem(OPTIONAL_DISPLAY_ATTR_URL_KWIC, res));
-        this.selectedDisplayAttr = this.displayAttr.filter(da => da.key === this.viewOptionsQueryRequest.displayAttr)[0];
-      }
-    });
-
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe({ next: res => this.asTooltipLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe({ next: res => this.refsUpLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.TOOLTIPS').subscribe({ next: res => this.sortGoodLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.REF_UP').subscribe({ next: res => this.showGDEXLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ICON_FOR').subscribe({ next: res => this.iconForOneLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.ALLOW_MULT').subscribe({ next: res => this.allowMultiLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.COPYING_CLIP').subscribe({ next: res => this.flashCopingLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.CHECK_SEL_LINES').subscribe({ next: res => this.checkSelLinesLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHOW_LINE').subscribe({ next: res => this.showLinesNumLabel = res });
-    this.translateService.stream('PAGE.CONCORDANCE.VIEW_OPTIONS.SHORT_LONG').subscribe({ next: res => this.shortLongRefLabel = res });
   }
 
   public clickChangeViewOption(): void {
@@ -89,13 +52,4 @@ export class ViewOptionsPanelComponent implements OnInit {
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
   }
-
-  public clickKwic(): void {
-    return;
-  }
-
-  public clickSentence(): void {
-    return;
-  }
-
 }

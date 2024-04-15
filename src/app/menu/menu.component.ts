@@ -44,7 +44,7 @@ export class MenuComponent implements OnInit {
   // private readonly menuDisplayPanel: string[] = [VIEW_OPTION, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATION];
   // private readonly menuItemsWIP: string[] = [ WORD_LIST, FILTER, VIEW_OPTION]
   private readonly menuDisplayPanel: string[] = [VIEW_OPTION, SORT, FREQUENCY, COLLOCATION];
-  private readonly menuItemsWIP: string[] = [VIEW_OPTION]
+  private readonly menuItemsWIP: string[] = []
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
