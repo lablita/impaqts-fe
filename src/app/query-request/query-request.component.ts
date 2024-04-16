@@ -23,7 +23,7 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { QueryRequest } from '../model/query-request';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;

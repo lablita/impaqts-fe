@@ -4,18 +4,25 @@
       <h2>{{"PAGE.CONCORDANCE.VIEW_OPTIONS.VIEW_OPTIONS" | translate}}</h2>
     </div>
     <div>
-     <div class="flex justify-content-center">
+      <div class="flex justify-content-center">
         <span class="text-center">
           <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTES' | translate}}</h3>
-          <p-listbox [options]="attributeChekBox" [multiple]="true" [(ngModel)]="viewOptionsQueryRequest.attributes"
-            optionLabel="value"></p-listbox>
+          <p-listbox [options]="corpusAttributes" [multiple]="true" [(ngModel)]="corpusAttributesSelected"
+            optionLabel="value">
+            <ng-template let-option pTemplate="item">
+              {{option.value | translate}}
+            </ng-template>
+
+          </p-listbox>
         </span>
       </div>
     </div>
 
     <span class="flex justify-content-center mt-3">
       <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIEW_OPTIONS.CHANGE_VIEW' | translate}}"
-        (click)="clickChangeViewOption()"></button>
+        (click)="clickChangeViewOption()" class="mr-5"></button>
+      <button pButton type="button" label="{{'PAGE.CONCORDANCE.VIEW_OPTIONS.CLEAR_VIEW_OPT' | translate}}"
+        (click)="deafultValues()" class="mr-5"></button>
     </span>
   </p-card>
 </div>

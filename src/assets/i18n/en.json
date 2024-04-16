@@ -75,7 +75,8 @@
       "VIEW_OPTIONS": {
         "VIEW_OPTIONS": "View options",
         "ATTRIBUTES": "Attributes",
-        "CHANGE_VIEW": "Change view options"
+        "CHANGE_VIEW": "Change view options",
+        "CLEAR_VIEW_OPT": "Default Values"
       },
       "WORD_OPTIONS": {
         "SUBCORPUS": "Subcorpus",

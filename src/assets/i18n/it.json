@@ -74,7 +74,8 @@
       "VIEW_OPTIONS": {
         "VIEW_OPTIONS": "Opzioni di visualizzazione",
         "ATTRIBUTES": "Attributi",
-        "CHANGE_VIEW": "Cambia vista risultati"
+        "CHANGE_VIEW": "Cambia vista risultati",
+        "CLEAR_VIEW_OPT": "Valori Default"
         },
       "WORD_OPTIONS": {
         "ARF": "ARF",

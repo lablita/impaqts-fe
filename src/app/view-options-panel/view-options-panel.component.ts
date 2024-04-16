@@ -5,7 +5,15 @@ import {
   OPTIONAL_DISPLAY_ATTR_URL_KWIC
 } from '../model/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { DEFAULT_VIEW_OPTIONS_QUERY_REQUEST, ViewOptionsQueryRequest } from '../model/view-options-query-request';
+import { QueryRequestService } from '../services/query-request.service';
+import { QueryRequest } from '../model/query-request';
+import { LoadResultsService } from '../services/load-results.service';
+import { WORD } from '../common/query-constants';
+import { ViewOptionQueryRequest } from '../model/view-option-query-request';
+
+const DEFAULT_VIEW_OPTIONS_QUERY_REQUEST_ATTRIBUTES: KeyValueItem[] = [
+  new KeyValueItem(WORD, WORD)
+]
 
 const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
 @Component({
@@ -14,42 +22,43 @@ const VIEW_OPTION_QUERY_REQUEST = 'viewOptionQueryRequest';
   styleUrls: ['./view-options-panel.component.scss']
 })
 
+
+
 export class ViewOptionsPanelComponent implements OnInit {
 
   @Input() public corpus: string | null | undefined = null;
   @Input() public corpusAttributes: Array<KeyValueItem> = [];
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
-  public attributeChekBox: Array<KeyValueItem> = [];
-  public viewOptionsQueryRequest: ViewOptionsQueryRequest = ViewOptionsQueryRequest.getInstance();
+
+ public corpusAttributesSelected: Array<KeyValueItem> = [];
 
   constructor(
-    private readonly translateService: TranslateService
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   ngOnInit(): void {
     const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST);
     if (voqr) {
-      this.viewOptionsQueryRequest = voqr ?
-        JSON.parse(voqr) : DEFAULT_VIEW_OPTIONS_QUERY_REQUEST;
+      this.corpusAttributesSelected = JSON.parse(voqr);
     }
-    this.corpusAttributes.forEach((attribute, index) => {
-      this.translateService.stream(attribute.value).subscribe({
-        next: res => {
-          if (index === 0) {
-            this.attributeChekBox = [];
-          }
-          this.attributeChekBox.push(new KeyValueItem(attribute.key, res));
-        }
-      });
-    });
   }
 
   public clickChangeViewOption(): void {
-    localStorage.setItem(VIEW_OPTION_QUERY_REQUEST, JSON.stringify(this.viewOptionsQueryRequest));
+    localStorage.setItem(VIEW_OPTION_QUERY_REQUEST, JSON.stringify(this.corpusAttributesSelected));
+    const viewOptionQueryRequest = new ViewOptionQueryRequest();
+    viewOptionQueryRequest.attributes = this.corpusAttributesSelected.map(att => att.value);
+
+    this.queryRequestService.getQueryRequest().viewOptionRequest = viewOptionQueryRequest;
   }
 
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
+  }
+
+  public deafultValues(): void {
+    this.queryRequestService.resetOptionsRequest();
+    localStorage.removeItem(VIEW_OPTION_QUERY_REQUEST);
+    this.corpusAttributesSelected = DEFAULT_VIEW_OPTIONS_QUERY_REQUEST_ATTRIBUTES;
   }
 }
