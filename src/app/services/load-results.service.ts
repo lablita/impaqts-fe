@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LazyLoadEvent, Message, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { TEXT_TYPES_QUERY_REQUEST, TOKEN } from '../common/constants';
+import { TEXT_TYPES_QUERY_REQUEST, TOKEN, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
 import {
   CHARACTER,
   CQL,
@@ -35,6 +35,8 @@ import { MetadataQueryService } from './metadata-query.service';
 import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
+import { ViewOptionQueryRequest } from '../model/view-option-query-request';
+import { DEFAULT_VIEW_OPTIONS_QUERY_REQUEST_ATTRIBUTES } from '../common/view-option-constants';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
@@ -90,6 +92,7 @@ export class LoadResultsService {
   ): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
     this.setMetadataQuery();
+    this.setViewOptionQueryRequest();
     if (!!fieldRequests && fieldRequests.length > 0) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
@@ -356,6 +359,17 @@ export class LoadResultsService {
         }
       }
     }
+  }
+
+  private setViewOptionQueryRequest(): void {
+    const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES);
+    let corpusAttributesSelected = DEFAULT_VIEW_OPTIONS_QUERY_REQUEST_ATTRIBUTES;
+    if (voqr) {
+      corpusAttributesSelected = JSON.parse(voqr);
+    } 
+    const viewOptionQueryRequest = new ViewOptionQueryRequest();
+    viewOptionQueryRequest.attributes = corpusAttributesSelected.map(att => att.value);
+    this.queryRequestService.getQueryRequest().viewOptionRequest = viewOptionQueryRequest;
   }
 
   private initWebSocket(

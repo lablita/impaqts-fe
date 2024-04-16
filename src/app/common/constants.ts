@@ -5,6 +5,7 @@ export const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
 export const SORT_OPTIONS_QUERY_REQUEST = 'sortOptionsQueryRequest';
 export const FREQ_OPTIONS_QUERY_REQUEST = 'freqOptionsQueryRequest';
 export const COLL_OPTIONS_QUERY_REQUEST = 'collocationOptionsQueryRequest';
+export const VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES = 'viewOptionQueryRequestAttributes';
 export const HTTP = 'http://';
 export const HTTPS = 'https://';
 export const WS = 'ws://';
