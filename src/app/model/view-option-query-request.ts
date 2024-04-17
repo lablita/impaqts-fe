@@ -1,10 +1,12 @@
 import { WORD } from "../common/query-constants";
 
 export class ViewOptionQueryRequest {
-  attributes: string[] = [];
+  attributesKwic: string[] = [];
+  attributesCtx: string[] = [];
 
   constructor() {
-    this.attributes = [WORD]
+    this.attributesKwic = [WORD];
+    this.attributesCtx = [WORD]
   }
 }
 

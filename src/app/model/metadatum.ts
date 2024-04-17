@@ -17,4 +17,5 @@ export class Metadatum {
   selection: string | TreeNode | TreeNode[] = '';
   selected = false;
   child = false;
+  defaultAttribute = false;
 }

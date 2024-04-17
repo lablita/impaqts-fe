@@ -255,6 +255,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
                 );
               }
             });
+          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {

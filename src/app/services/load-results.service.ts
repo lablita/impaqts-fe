@@ -36,7 +36,6 @@ import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
 import { ViewOptionQueryRequest } from '../model/view-option-query-request';
-import { DEFAULT_VIEW_OPTIONS_QUERY_REQUEST_ATTRIBUTES } from '../common/view-option-constants';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
@@ -164,8 +163,8 @@ export class LoadResultsService {
           if (!queryRequest.queryPattern) {
             queryRequest.queryPattern = new QueryPattern();
           }
-          if (QUERY_TYPE.includes(fieldRequest.selectedQueryType!)) { 
-              queryRequest.queryPattern.tokPattern = [];
+          if (QUERY_TYPE.includes(fieldRequest.selectedQueryType!)) {
+            queryRequest.queryPattern.tokPattern = [];
           }
           if (fieldRequest.selectedQueryType === SIMPLE) {
             fieldRequest.simpleResult
@@ -363,12 +362,13 @@ export class LoadResultsService {
 
   private setViewOptionQueryRequest(): void {
     const voqr = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES);
-    let corpusAttributesSelected = DEFAULT_VIEW_OPTIONS_QUERY_REQUEST_ATTRIBUTES;
+    let corpusAttributesSelected = this.metadataQueryService.getDefaultMetadataAttributes();
     if (voqr) {
       corpusAttributesSelected = JSON.parse(voqr);
-    } 
+    }
     const viewOptionQueryRequest = new ViewOptionQueryRequest();
-    viewOptionQueryRequest.attributes = corpusAttributesSelected.map(att => att.value);
+    viewOptionQueryRequest.attributesKwic = corpusAttributesSelected.map(att => att.value);
+    viewOptionQueryRequest.attributesCtx = this.metadataQueryService.getDefaultMetadataAttributes().map(att => att.value);
     this.queryRequestService.getQueryRequest().viewOptionRequest = viewOptionQueryRequest;
   }
 
@@ -407,7 +407,7 @@ export class LoadResultsService {
       if (qr.kwicLines && qr.kwicLines.length > 0) {
         this.menuEmitterService.menuEvent$.next(
           this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST
-          ? new MenuEvent(VISUAL_QUERY) : new MenuEvent(RESULT_CONCORDANCE)
+            ? new MenuEvent(VISUAL_QUERY) : new MenuEvent(RESULT_CONCORDANCE)
         );
       } else if (qr.collocations && qr.collocations.length > 0) {
         this.menuEmitterService.menuEvent$.next(

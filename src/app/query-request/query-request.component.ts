@@ -155,6 +155,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               textTypesAttributes.push(new KeyValueItem(md.name, md.name));
             }
           });
+          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
       this.textTypesAttributesChange.emit(textTypesAttributes);
