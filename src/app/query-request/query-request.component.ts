@@ -137,6 +137,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
     if (selectedCorpus) {
+      this.metadataQueryService.clearViewOptionAttributesInLocalstorage();
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
       this.emitterService.spinnerMetadata.emit(true);

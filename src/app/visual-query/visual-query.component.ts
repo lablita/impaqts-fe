@@ -228,6 +228,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       JSON.stringify(this.selectedCorpus?.value)
     );
     if (this.selectedCorpus) {
+      this.metadataQueryService.clearViewOptionAttributesInLocalstorage();
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
       this.enableAddToken = true;

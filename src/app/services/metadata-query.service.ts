@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { Metadatum } from '../model/metadatum';
-import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
+import { TEXT_TYPES_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
 import { KeyValue } from '@angular/common';
 import { KeyValueItem } from '../model/key-value-item';
 
@@ -58,6 +58,10 @@ export class MetadataQueryService {
       return defaultMetadataAttribute.map(md => new KeyValueItem(md.name, md.name));
     }
     return [];
+  }
+
+  public clearViewOptionAttributesInLocalstorage(): void {
+    localStorage.removeItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES);
   }
 
 }
