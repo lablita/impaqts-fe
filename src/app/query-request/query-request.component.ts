@@ -78,7 +78,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   constructor(
     private readonly queryRequestService: QueryRequestService,
     public readonly displayPanelService: DisplayPanelService,
-    private readonly emitterService: EmitterService,
+    public readonly emitterService: EmitterService,
     private readonly socketService: SocketService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly metadataQueryService: MetadataQueryService,
