@@ -390,7 +390,7 @@ export class LoadResultsService {
     let corpusSelected = true;
     const qr = resp as QueryResponse;
     if (qr) {
-      if (qr.kwicLines && qr.kwicLines.length > 0) {
+      if (qr.kwicLines) {
         this.menuEmitterService.menuEvent$.next(
           this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.VISUAL_QUERY_REQUEST
           ? new MenuEvent(VISUAL_QUERY) : new MenuEvent(RESULT_CONCORDANCE)
