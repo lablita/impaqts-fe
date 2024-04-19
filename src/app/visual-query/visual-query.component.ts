@@ -33,7 +33,7 @@ import {
 } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, forkJoin } from 'rxjs';
 import { QueryStructure } from '../model/query-structure';
 
 @Component({
@@ -225,7 +225,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.noResultFound = false;
     localStorage.setItem(
       'selectedCorpus',
-      JSON.stringify(this.selectedCorpus?.value)
+      JSON.stringify(this.selectedCorpus)
     );
     if (this.selectedCorpus) {
       this.menuEmitterService.corpusSelected = true;
@@ -354,27 +354,36 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   private setCorpus(corpus: Corpus): void {
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
-    this.metadataUtilService
-      .createMatadataTree(`${corpus.id}`, this.installation, true)
-      .subscribe({
-        next: (metadata) => {
-          this.metadataQueryService.setMetadata(metadata);
-          this.metadataTextTypes = metadata;
-        },
-        error: (err) => {
-          this.enableSpinner = false;
-          const metadataErrorMsg = {} as Message;
-          metadataErrorMsg.severity = 'error';
-          metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-          metadataErrorMsg.summary = 'Errore';
-          this.errorMessagesService.sendError(metadataErrorMsg);
-        },
-        complete: () => {
-          this.enableSpinner = false;
-          this.enableAddMetadata = true;
-        },
-      });
+    const metadataVQStr = localStorage.getItem('metadataVQ');
+    if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime()
+      || !metadataVQStr || this.metadataQueryService.getMetadataVQIdCorpus() !== '' + corpus.id) {
+      this.metadataUtilService
+        .createMatadataTree(`${corpus.id}`, this.installation, true)
+        .subscribe({
+          next: (metadata) => {
+            this.metadataQueryService.setMetadataVQ(metadata);
+            this.metadataTextTypes = metadata;
+          },
+          error: (err) => {
+            this.enableSpinner = false;
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          },
+          complete: () => {
+            this.metadataQueryService.storageMetadataVQ();
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          },
+        });
+    } else {
+      this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();
+      this.corpusSelectionService.setPageLoadedFirstTime(false);
+      this.enableSpinner = false;
+      this.enableAddMetadata = true;
+    }
   }
 
   private cleanStructPattern(structPattern: QueryStructure): QueryStructure {
