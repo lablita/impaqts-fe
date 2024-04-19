@@ -368,7 +368,8 @@ export class LoadResultsService {
     }
     const viewOptionQueryRequest = new ViewOptionQueryRequest();
     viewOptionQueryRequest.attributesKwic = corpusAttributesSelected.map(att => att.value);
-    viewOptionQueryRequest.attributesCtx = this.metadataQueryService.getDefaultMetadataAttributes().map(att => att.value);
+    // viewOptionQueryRequest.attributesCtx = this.metadataQueryService.getDefaultMetadataAttributes().map(att => att.value);
+    viewOptionQueryRequest.attributesCtx = corpusAttributesSelected.map(att => att.value);
     this.queryRequestService.getQueryRequest().viewOptionRequest = viewOptionQueryRequest;
   }
 
