@@ -23,8 +23,10 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, forkJoin } from 'rxjs';
 import { QueryRequest } from '../model/query-request';
+import { Metadatum } from '../model/metadatum';
+import { map } from 'rxjs/operators';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -132,6 +134,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   public corpusSelected(selectedCorpus: KeyValueItem | undefined): void {
+
+
+
     this.titleResultChange.emit('');
     this.clickTextType();
     this.displayPanelService.closePanel();
@@ -139,7 +144,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     if (selectedCorpus) {
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
-      this.emitterService.spinnerMetadata.emit(true);
+      if (this.corpusSelectionService.getCorpusChanged()) {
+        this.emitterService.spinnerMetadata.emit(true);
+      }
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
@@ -162,7 +169,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
           this.appInitializerService.loadCorpus(+selectedCorpusId).subscribe(corpus => {
-            this.setCorpus(corpus);
+            this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged());
           });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
@@ -237,34 +244,42 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
-  private setCorpus(corpus: Corpus): void {
-    this.metadataQueryService.clearMetadata();
-    const installation = this.installation;
-    if (installation) {
-      installation.corpora.forEach((c, index) => {
-        if (c.id === corpus.id) {
-          installation.corpora[index] = corpus;
-        }
-      });
-      this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
-        {
-          next: metadata => this.metadataQueryService.setMetadata(metadata),
-          error: err => {
-            console.error(err);
-            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-            this.emitterService.spinnerMetadata.emit(false);
-            const metadataErrorMsg = {} as Message;
-            metadataErrorMsg.severity = 'error';
-            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-            metadataErrorMsg.summary = 'Errore';
-            this.errorMessagesService.sendError(metadataErrorMsg);
-          },
-          complete: () => {
-            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-            this.emitterService.spinnerMetadata.emit(false);
+  private setCorpus(corpus: Corpus, corpusChanged: boolean): void {
+    if (corpusChanged || this.corpusSelectionService.getPageLoadedFirstTime()) {
+      const installation = this.installation;
+      if (installation) {
+        installation.corpora.forEach((c, index) => {
+          if (c.id === corpus.id) {
+            installation.corpora[index] = corpus;
           }
         });
+        this.metadataQueryService.clearMetadata();
+        const metadataTreeObs: Observable<Metadatum[]>[] = [];
+        this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
+          {
+            next: metadata => this.metadataQueryService.setMetadata(metadata),
+            error: err => {
+              console.error(err);
+              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+              this.emitterService.spinnerMetadata.emit(false);
+              const metadataErrorMsg = {} as Message;
+              metadataErrorMsg.severity = 'error';
+              metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+              metadataErrorMsg.summary = 'Errore';
+              this.errorMessagesService.sendError(metadataErrorMsg);
+            },
+            complete: () => {
+              this.metadataQueryService.storageMetadata();
+              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+              this.emitterService.spinnerMetadata.emit(false);
+              this.corpusSelectionService.resetCorpusChanged();
+            }
+          });
+      } else {
+        this.metadataQueryService.resetMetadataService();
+      }
     }
+    this.corpusSelectionService.setPageLoadedFirstTime(false);
   }
 
   private closeWebSocket(): void {
@@ -312,7 +327,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     return fieldRequest;
   }
 
-  private trimInputQueryRequest(queryRequest: QueryRequest): QueryRequest{
+  private trimInputQueryRequest(queryRequest: QueryRequest): QueryRequest {
     if (queryRequest) {
       queryRequest.corpusMetadatum = queryRequest.corpusMetadatum.trim();
       queryRequest.word = queryRequest.word.trim();
