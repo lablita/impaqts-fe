@@ -228,6 +228,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       JSON.stringify(this.selectedCorpus)
     );
     if (this.selectedCorpus) {
+      this.metadataQueryService.clearViewOptionAttributesInLocalstorage();
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
       this.enableAddToken = true;
@@ -255,6 +256,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
                 );
               }
             });
+          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
