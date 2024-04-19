@@ -23,10 +23,9 @@ import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Observable, Subscription, forkJoin } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { QueryRequest } from '../model/query-request';
 import { Metadatum } from '../model/metadatum';
-import { map } from 'rxjs/operators';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -142,6 +141,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
     if (selectedCorpus) {
+      this.metadataQueryService.clearViewOptionAttributesInLocalstorage();
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
       if (this.corpusSelectionService.getCorpusChanged()) {
@@ -162,6 +162,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               textTypesAttributes.push(new KeyValueItem(md.name, md.name));
             }
           });
+          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
       this.textTypesAttributesChange.emit(textTypesAttributes);

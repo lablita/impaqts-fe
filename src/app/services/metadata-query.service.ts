@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { TreeNode } from 'primeng/api';
 import { Metadatum } from '../model/metadatum';
-import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { CorpusSelectionService } from './corpus-selection.service';
-import { Meta } from '@angular/platform-browser';
-
+import { TEXT_TYPES_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
+import { KeyValueItem } from '../model/key-value-item';
 
 export class Metadata {
   idCorpus: string = '';
@@ -22,6 +20,8 @@ export class MetadataQueryService {
   constructor(
     private readonly corpusSelectionService: CorpusSelectionService
   ){}
+
+  private metadataAttributes: Metadatum[] = [];
 
   public reset(): void {
     this.metadataRef.metadata.forEach(m => this.resetMetadatum(m));
@@ -99,6 +99,26 @@ export class MetadataQueryService {
     if (!!metadatum.subMetadata && metadatum.subMetadata.length > 0) {
       metadatum.subMetadata.forEach(m => this.resetMetadatum(m));
     }
+  }
+  
+  public setMetadataAttribute(metadataAttribute: Metadatum[]): void {
+    this.metadataAttributes = metadataAttribute;
+  }
+ 
+  public getMetadataAttributes(): Metadatum[] {
+    return this.metadataAttributes;
+  }
+
+  public getDefaultMetadataAttributes(): KeyValueItem[] {
+    const defaultMetadataAttribute = this.metadataAttributes.filter(md => md.defaultAttribute);
+    if (defaultMetadataAttribute && defaultMetadataAttribute.length > 0) {
+      return defaultMetadataAttribute.map(md => new KeyValueItem(md.name, md.name));
+    }
+    return [];
+  }
+
+  public clearViewOptionAttributesInLocalstorage(): void {
+    localStorage.removeItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES);
   }
 
 }
