@@ -53,6 +53,7 @@ import {
   ConcordanceRequestPayload,
   EmitterService,
 } from '../utils/emitter.service';
+import { ReferencePositionService } from '../services/reference-position.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -113,7 +114,8 @@ export class ConcordanceTableComponent
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly wideContextService: WideContextService,
     private readonly exportCsvService: ExportCsvService,
-    private readonly installationServices: InstallationService
+    private readonly installationServices: InstallationService,
+    private readonly referencePositionService: ReferencePositionService
   ) {
     this.queryResponseSubscription = this.loadResultService
       .getQueryResponse$()
@@ -457,6 +459,49 @@ export class ConcordanceTableComponent
         });
     }
   }
+
+  public showReference(kwicline: KWICline): void {
+    this.resultContext = null;
+    const corpus =
+      this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
+    if (corpus) {
+      this.referencePositionService
+        .getReferenceByPosition(
+          corpus,
+          kwicline.pos
+        )
+        .subscribe({
+          next: (response) => {
+            if (response && response.wideContextResponse) {
+              // const kwic = response.wideContextResponse.kwic
+              //   ? response.wideContextResponse.kwic
+              //   : '';
+              // const leftContext = response.wideContextResponse?.leftContext
+              //   ? response.wideContextResponse.leftContext
+              //   : '';
+              // const rightContext = response.wideContextResponse?.rightContext
+              //   ? response.wideContextResponse.rightContext
+              //   : '';
+              // this.resultContext = new ResultContext(
+              //   kwic,
+              //   leftContext,
+              //   rightContext
+              // );
+            }
+          },
+          error: (err) => {
+            const referencePositionError = {} as Message;
+            referencePositionError.severity = 'error';
+            referencePositionError.detail =
+              'Non è stato possibile recuperare il riferimento associato';
+              referencePositionError.summary = 'Errore';
+            this.errorMessagesService.sendError(referencePositionError);
+          },
+        });
+    }
+  }
+
+
 
   public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
     switch (fieldRequest.selectedQueryType) {
