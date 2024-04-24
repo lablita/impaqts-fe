@@ -18,4 +18,5 @@ export class Metadatum {
   selected = false;
   child = false;
   defaultAttribute = false;
+  label= '';
 }
