@@ -54,6 +54,7 @@ import {
   EmitterService,
 } from '../utils/emitter.service';
 import { ReferencePositionService } from '../services/reference-position.service';
+import { ReferencePositionResponse } from '../model/reference-position-response';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -98,12 +99,13 @@ export class ConcordanceTableComponent
   public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
   public progressStatus = 0;
+  public referencePositionResponse: ReferencePositionResponse | null = null;
+  public referenceKeys: string[] = [];
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
   private currentStart = 0;
   private currentEnd = 0;
-
   private currentQueryId = '';
 
   constructor(
@@ -421,7 +423,7 @@ export class ConcordanceTableComponent
   public showWideContext(kwicline: KWICline): void {
     this.resultContext = null;
     const corpus =
-      this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
+      this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
       this.wideContextService
         .getWideContext(
@@ -462,8 +464,7 @@ export class ConcordanceTableComponent
 
   public showReference(kwicline: KWICline): void {
     this.resultContext = null;
-    const corpus =
-      this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
+    const corpus = this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
       this.referencePositionService
         .getReferenceByPosition(
@@ -472,21 +473,9 @@ export class ConcordanceTableComponent
         )
         .subscribe({
           next: (response) => {
-            if (response && response.wideContextResponse) {
-              // const kwic = response.wideContextResponse.kwic
-              //   ? response.wideContextResponse.kwic
-              //   : '';
-              // const leftContext = response.wideContextResponse?.leftContext
-              //   ? response.wideContextResponse.leftContext
-              //   : '';
-              // const rightContext = response.wideContextResponse?.rightContext
-              //   ? response.wideContextResponse.rightContext
-              //   : '';
-              // this.resultContext = new ResultContext(
-              //   kwic,
-              //   leftContext,
-              //   rightContext
-              // );
+            if (response && response.referencePositionResponse) {
+              this.referencePositionResponse = response.referencePositionResponse;
+              this.referenceKeys = Object.keys(this.referencePositionResponse.references);
             }
           },
           error: (err) => {

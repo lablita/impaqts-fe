@@ -6,9 +6,8 @@ import { ErrorResponse } from './error-response';
 import { FrequencyItem } from './frequency-item';
 import { KWICline } from './kwicline';
 import { WideContextResponse } from './wide-context-response';
-import { WordListComponent } from '../word-list/word-list.component';
-import { WordListRequest } from './word-list-request';
 import { WordListResponse } from './word-list-response';
+import { ReferencePositionResponse } from './reference-position-response';
 
 export class QueryResponse {
   id = uuid();
@@ -22,6 +21,7 @@ export class QueryResponse {
   currentSize = 0;
   errorMessage = '';
   wideContextResponse: WideContextResponse | null = null;
+  referencePositionResponse: ReferencePositionResponse | null = null;
   corpusInfo: CorpusInfo | null = null;
   errorResponse: ErrorResponse | null = null;
   wordList: WordListResponse = new WordListResponse();

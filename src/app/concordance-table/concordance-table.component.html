@@ -108,17 +108,28 @@
     </div>
   </ng-template>
 </p-overlayPanel>
-<p-overlayPanel #reference [style]="{width: '450px'}">
+<p-overlayPanel #reference [style]="{width: '850px'}">
   <ng-template pTemplate>
-    <div *ngIf="!resultContext" class="flex context-spinner justify-content-center">
+    <div *ngIf="!referencePositionResponse" class="flex context-spinner justify-content-center">
       <p-progressSpinner></p-progressSpinner>
     </div>
-    <div *ngIf=" resultContext">
-      <div [innerHTML]="resultContext.before"></div>
-      <div style="text-align: center;" class="text-red">
-        {{resultContext.keyword}}
+    <div *ngIf="referencePositionResponse">
+      <div class="grid">
+        <div class="col-2"><strong>Token number</strong></div>
+        <div class="col-10">{{referencePositionResponse.tokenNumber}}</div>  
       </div>
-      <div [innerHTML]="resultContext.after"></div>
+      <div class="grid">
+        <div class="col-2"><strong>Document number</strong></div>
+        <div class="col-10">{{referencePositionResponse.documentNumber}}</div>  
+      </div>
+      <div *ngFor="let referenceKey of referenceKeys" class="grid">
+        <div class="col-2"><strong>{{referenceKey}}</strong></div>
+        <div class="col-10" *ngIf="referenceKey.indexOf('url') === -1">{{referencePositionResponse.references[referenceKey]}}</div> 
+        <div class="col-10" *ngIf="referenceKey.indexOf('url') !== -1">
+          <a href="{{referencePositionResponse.references[referenceKey]}}">{{referencePositionResponse.references[referenceKey]}}</a>
+        </div>  
+      </div>
+      
     </div>
   </ng-template>
 </p-overlayPanel>
