@@ -80,7 +80,7 @@
           label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" (click)="showVideoDlg(kwicLine)"></button>
       </td>
       <td class="p-text-center">
-        <p-button [disabled]="loading" label="pos#{{kwicLine.pos}}" styleClass="p-button-link"
+        <p-button [disabled]="loading" label="{{kwicLine.ref}}" styleClass="p-button-link"
           (click)="reference.toggle($event); showReference(kwicLine)"></p-button>
       </td>
 

@@ -9,6 +9,7 @@ import { SortQueryRequest } from './sort-query-request';
 import { WideContextRequest } from './wide-context-request';
 import { WordListRequest } from './word-list-request';
 import { ViewOptionQueryRequest } from './view-option-query-request';
+import { ReferencePositionRequest } from './reference-position-request';
 
 export class WordListOption {
   subcorpus = '';
@@ -30,6 +31,7 @@ export class QueryRequest {
   frequencyQueryRequest: FrequencyQueryRequest | null = null;
   contextConcordanceQueryRequest: ContextConcordanceQueryRequest | null = null;
   wideContextRequest: WideContextRequest | null = null;
+  referencePositionRequest: ReferencePositionRequest | null = null;
   filterConcordanceQueryRequest: FilterConcordanceQueryRequest | null = null;
   wordListRequest: WordListRequest | null = null;
   viewOptionRequest: ViewOptionQueryRequest = new ViewOptionQueryRequest();
