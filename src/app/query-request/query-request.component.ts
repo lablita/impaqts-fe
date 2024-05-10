@@ -3,7 +3,7 @@ import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { v4 as uuid } from 'uuid';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, IMPLICIT, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -56,6 +56,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
+  public isImpaqtsCustom = false;
+  public queryTypeLabel = 'PAGE.CONCORDANCE.QUERY_TYPE';
 
   public queryRequestForm = new UntypedFormGroup({
     selectedCorpus: new UntypedFormControl(null),
@@ -85,8 +87,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly corpusSelectionService: CorpusSelectionService
-  ) { }
+    private readonly corpusSelectionService: CorpusSelectionService,
+  ) { 
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   ngOnInit(): void {
     this.hideQueryTypeAndContext();
@@ -102,7 +106,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       WORD,
       PHRASE,
       CHARACTER,
-      CQL
+      CQL,
+      IMPLICIT
     ];
     this.setBasicFieldRequest();
     this.queryRequestForm.valueChanges.subscribe(change => {
@@ -113,7 +118,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     if (lsSimpleQuery) {
       this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
     }
-
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.corpusSelected(selectedCorpus!);
       this.selectedCorpus = selectedCorpus;
@@ -123,6 +127,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
       this.queryRequestForm.controls.simple.enable();
       this.corpusSelected(this.selectedCorpus!);
+    }
+    if (this.isImpaqtsCustom) {
+      this.queryTypeLabel = 'PAGE.CONCORDANCE.SEARCH_FOR';
+      this.displayQueryType = true;
     }
   }
 
