@@ -277,14 +277,14 @@ export class LoadResultsService {
         ) {
           // single
           metadataRequest.singleSelects.push(
-            new Selection(md.name, (md.selection as TreeNode).label)
+            new Selection(md.name, (md.selection as TreeNode).key)
           );
         } else {
           // multi
           const values: string[] = [];
           (md.selection as TreeNode[]).forEach((m) => {
-            if (m.label) {
-              values.push(m.label);
+            if (m.key) {
+              values.push(m.key);
             }
           });
           metadataRequest.multiSelects.push(
