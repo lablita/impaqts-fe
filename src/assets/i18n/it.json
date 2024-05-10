@@ -145,6 +145,7 @@
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
+        "ATTRIBUTE": "Attribute",
         "LOG_DICE": "logDice",
         "LOG": "log likeihood",
         "MAKE_CANDIDATE_LIST": "Make candidate list",

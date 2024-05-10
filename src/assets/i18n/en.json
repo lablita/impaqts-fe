@@ -145,6 +145,7 @@
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
+        "ATTRIBUTE": "Attribute",
         "RANGE": "In the range from",
         "TO": "to",
         "MIN_FREQ_C": "Minimum frequency in corpus",

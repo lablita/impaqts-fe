@@ -56,6 +56,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
+  public IMPLICIT = IMPLICIT;
   public isImpaqtsCustom = false;
   public queryTypeLabel = 'PAGE.CONCORDANCE.QUERY_TYPE';
 
