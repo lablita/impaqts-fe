@@ -191,12 +191,12 @@ export class MetadataUtilService {
     if (res) {
       metadatum.subMetadata = res;
       const root: TreeNode = {
-        label: metadatum.name,
+        label: metadatum.label ? metadatum.label : metadatum.name,
         selectable: true,
         children: [],
       };
       const rootParent: TreeNode = {
-        label: metadatum.name,
+        label: metadatum.label ? metadatum.label : metadatum.name,
         selectable: true,
         children: [],
       };
@@ -204,6 +204,7 @@ export class MetadataUtilService {
         (res.metadataValues as Array<string>).forEach((el) => {
           const node = {
             label: el,
+            key: el,
             selectable: true,
             parent: rootParent,
           };
@@ -219,6 +220,7 @@ export class MetadataUtilService {
           const e = el;
           const node = {
             label: e,
+            key: e,
             selectable: true,
             parent: rootParent,
           };
@@ -250,16 +252,16 @@ export class MetadataUtilService {
 
   private setChildrenToTreeNode(
     tree: TreeNode[],
-    label: string,
+    key: string,
     children: TreeNode[]
   ): void {
     if (tree && tree.length > 0) {
       for (const node of tree) {
-        if (node.label === label) {
+        if (node.key === key) {
           node.children = children;
           return;
         } else if (node.children && node.children.length > 0) {
-          this.setChildrenToTreeNode(node.children, label, children);
+          this.setChildrenToTreeNode(node.children, key, children);
         }
       }
     }
@@ -268,15 +270,15 @@ export class MetadataUtilService {
   // recupero nodo da albero
   private retrieveNodeFromTree(
     tree: TreeNode,
-    label: string,
+    key: string,
     iteration: number
   ): TreeNode | null {
-    if (iteration > 0 && tree.label === label) {
+    if (iteration > 0 && tree.key === key) {
       return tree;
     } else if (tree.children && tree.children.length > 0) {
       let result: TreeNode | null;
       for (const child of tree.children) {
-        result = this.retrieveNodeFromTree(child, label, iteration++);
+        result = this.retrieveNodeFromTree(child, key, iteration++);
         if (result) {
           return result;
         }
@@ -351,12 +353,12 @@ export class MetadataUtilService {
   ): { tree: TreeNode; selections: TreeNode[] } {
     const selections: TreeNode[] = [];
     const root = {
-      label: meta.name,
+      label: meta.label ? meta.label : meta.name,
       selectable: true,
       children: [],
     };
     const rootParent = {
-      label: meta.name,
+      label: meta.label ? meta.label : meta.name,
       selectable: true,
       children: [],
     };
@@ -371,13 +373,15 @@ export class MetadataUtilService {
       if (!!metadata.subMetadata && metadata.subMetadata?.length > 0) {
         metadata.subMetadata.forEach((md) => {
           const innerNode: TreeNode = {
-            label: md.name,
+            key: md.name,
+            label: md.label ? md.label : md.name,
             parent: parentNode,
             selectable: true,
             children: [],
           };
           const innerParentNode: TreeNode = {
-            label: md.name,
+            key: md.name,
+            label: md.label ? md.label : md.name,
             parent: parentNode,
             selectable: true,
             children: [],
