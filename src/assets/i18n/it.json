@@ -55,6 +55,7 @@
       "MAKE_CONCORDANCE": "Concordanze",
       "MATCH_CASE": "match case",
       "METADATA": "Metadati",
+      "FILTERS": "Filtri",
       "NONE": "none",
       "OF_THESE_ITEMS": "of these items",
       "PHRASE": "Frase",
@@ -137,7 +138,8 @@
         "SECOND_LEVEL": "second level",
         "THIRD_LEVEL": "third level",
         "CLEAR_FREQ_OPT": "Valori Default",
-        "METADATA_FREQ": "Frequenza Metadata"
+        "METADATA_FREQ": "Frequenza Metadata",
+        "FILTERS_FREQ": "Frequenza Filtri"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
@@ -224,7 +226,8 @@
       "NOTHING_TO_SHOW": "No CorpusInfo to Show"
     },
     "VISUAL_QUERY": {
-      "ADD_METADATA": "Add Metadata",
+      "ADD_METADATA": "Aggiungi Metadata",
+      "ADD_FILTERS": "Aggiungi Filtri",
       "ADD_TOKEN": "Add Token",
       "ANY_WORD": "any word",
       "BEGINS": "begins with",
@@ -235,6 +238,7 @@
       "IS_NOT": "is not",
       "IS": "is",
       "METADATA": "Metadata",
+      "FILTERS": "Filtri",
       "NOT_REG": "not regexp",
       "OPTION": "Options",
       "QUERY": "Query",

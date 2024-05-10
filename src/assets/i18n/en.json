@@ -70,6 +70,7 @@
       "WORD_LC": "word (lowercase)",
       "LEMMA_LC": "lemma (lowercase)",
       "METADATA": "Metadata",
+      "FILTERS": "Filters",
       "FILE_UPLOADED": "File uploaded",
       "VIDEO": "Video",
       "VIEW_OPTIONS": {
@@ -138,7 +139,8 @@
         "INCLUDE_CAT": "Include categories with no hits",
         "IGNORE_CASE": "Ignore case",
         "CLEAR_FREQ_OPT": "Default Value",
-        "METADATA_FREQ": "Metadata frequency"
+        "METADATA_FREQ": "Metadata frequency",
+        "FILTERS_FREQ": "Filters frequency"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
@@ -227,8 +229,10 @@
     "VISUAL_QUERY": {
       "QUERY": "Query",
       "METADATA": "Metadata",
+      "FILTERS": "Filers",
       "ADD_TOKEN": "Add Token",
       "ADD_METADATA": "Add Metadata",
+      "ADD_FILTERS": "Add Filters",
       "OPTION": "Options",
       "SEL_TYPE": "Select a type",
       "SEL_ACTION": "Select an action",

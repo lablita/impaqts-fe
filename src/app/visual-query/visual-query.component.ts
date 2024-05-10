@@ -113,6 +113,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
   public titleResult: string | null = null;
+  public metadataLabel = 'PAGE.VISUAL_QUERY.METADATA';
+  public metadataButton = 'PAGE.VISUAL_QUERY.ADD_METADATA';
 
   private holdSelectedCorpusId?: string;
   private corpusSelectedSubscription?: Subscription;
@@ -129,8 +131,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly sanitizer: DomSanitizer,
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly corpusSelectionService: CorpusSelectionService
-  ) { }
+    private readonly corpusSelectionService: CorpusSelectionService,
+  ) { 
+    if (this.appInitializerService.isImpactCustom()) {
+      this.metadataLabel = 'PAGE.VISUAL_QUERY.FILTERS';
+      this.metadataButton = 'PAGE.VISUAL_QUERY.ADD_FILTERS'
+    }
+  }
 
   ngOnInit(): void {
     this.displayPanelService.menuItemClickSubject.next(VISUAL_QUERY);
