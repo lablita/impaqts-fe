@@ -187,6 +187,10 @@ export class LoadResultsService {
             simpleQueryToken.tags[0] = queryTags;
             queryRequest.queryPattern.tokPattern.push(simpleQueryToken);
           }
+          //replace empty string with .* everywhere
+          const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(queryRequest.queryPattern);
+          queryRequest.queryPattern = queryPatternToSend;
+          
           if (this.metadataQuery) {
             queryRequest.queryPattern.structPattern = this.metadataQuery;
           }

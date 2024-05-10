@@ -198,26 +198,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.queryPattern.structPattern = this.metadata[0];
     }
     //replace empty string with .* everywhere
-    const queryPatternToSend: QueryPattern = _.cloneDeep(this.queryPattern);
-    if (
-      queryPatternToSend.tokPattern &&
-      queryPatternToSend.tokPattern.length > 0
-    ) {
-      queryPatternToSend.tokPattern.forEach((tag) => {
-        if (tag.tags && tag.tags.length > 0) {
-          tag.tags.forEach((aqt) => {
-            if (aqt && aqt.length > 0) {
-              aqt.forEach((qt) => {
-                if (!qt.value || qt.value.trim() === '') {
-                  qt.value = '.*';
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-    queryPatternToSend.structPattern = this.cleanStructPattern(queryPatternToSend.structPattern);
+    const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(this.queryPattern);
     this.queryRequestService.setQueryPattern(queryPatternToSend);
     this.queryRequestService.getQueryRequest().queryType =
       REQUEST_TYPE.VISUAL_QUERY_REQUEST;
@@ -393,13 +374,5 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.enableSpinner = false;
       this.enableAddMetadata = true;
     }
-  }
-
-  private cleanStructPattern(structPattern: QueryStructure): QueryStructure {
-    if (structPattern && structPattern.tags && structPattern.tags.length > 0) {
-      structPattern.tags = structPattern.tags.map(tags => tags.filter(tag => tag.value.length > 0));
-    }
-    structPattern.tags = structPattern.tags.filter(tags => tags.length > 0);
-    return structPattern;
   }
 }
