@@ -11,24 +11,52 @@
         <h2>{{"PAGE.CONCORDANCE.TEXT_TYPE" | translate}}</h2>
       </div>
       <p-scrollPanel [style]="{width: '100%'}" styleClass="custombar">
-        <div *ngFor="let metadatum of metadata, let i = index" class="field grid mb-2">
-          <!-- FreeText-->
-          <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-2">{{(metadatum.label ? metadatum.label : metadatum.name) |
-            translate}}</label>
-          <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">
-            <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
+        <ng-container *ngIf="!isImpaqtsCustom">
+          <div *ngFor="let metadatum of metadata, let i = index" class="field grid mb-2">
+            <!-- FreeText-->
+            <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-2">{{(metadatum.label ? metadatum.label : metadatum.name) |
+              translate}}</label>
+            <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">
+              <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
+            </div>
+            <!-- Tree & checkbox-->
+            <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
+              <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
+              </p-tree>
+            </div>
+            <!-- Single selection -->
+            <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
+              <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
+                (onNodeSelect)="nodeSelect($event)" class="text-red">
+              </p-tree>
+            </div>
           </div>
-          <!-- Tree & checkbox-->
-          <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
-            <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
-            </p-tree>
-          </div>
-          <!-- Single selection -->
-          <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
-            <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
-              (onNodeSelect)="nodeSelect($event)" class="text-red">
-            </p-tree>
-          </div>
+        </ng-container>
+        <div *ngIf="isImpaqtsCustom">
+          <p-card *ngFor="let mg of metadataGroupedList">
+            <div class="flex justify-content-center">
+              <h2>{{'METADATA_OPT.'+ mg.metadatumGroup.name | translate}}</h2>
+            </div>
+            <div *ngFor="let metadatum of mg.metadata, let i = index" class="field grid mb-2">
+              <!-- FreeText-->
+              <label *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-2">{{(metadatum.label ? metadatum.label : metadatum.name) |
+                translate}}</label>
+              <div *ngIf="!metadatum.multipleChoice && metadatum.freeText" class="col-5">
+                <input type="text" pInputText [(ngModel)]="metadatum.selection" style="width: 100%;">
+              </div>
+              <!-- Tree & checkbox-->
+              <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && metadatum.multipleChoice">
+                <p-tree [value]="metadatum.tree" selectionMode="checkbox" [(selection)]="metadatum.selection">
+                </p-tree>
+              </div>
+              <!-- Single selection -->
+              <div class="col-6" *ngIf="metadatum.tree && (metadatum.tree.length > 0) && !metadatum.multipleChoice">
+                <p-tree [value]="metadatum.tree" selectionMode="single" [(selection)]="metadatum.selection"
+                  (onNodeSelect)="nodeSelect($event)" class="text-red">
+                </p-tree>
+              </div>
+            </div>
+          </p-card>
         </div>
       </p-scrollPanel>
       <span class="flex justify-content-center">

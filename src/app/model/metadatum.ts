@@ -1,5 +1,6 @@
 import { TreeNode } from 'primeng/api';
 import { Corpus } from './corpus';
+import { MetadatumGroup } from './metadatum-group';
 
 export class Metadatum {
   id = 0;
@@ -19,4 +20,5 @@ export class Metadatum {
   child = false;
   defaultAttribute = false;
   label= '';
+  metadatumGroup: MetadatumGroup | null = null;
 }

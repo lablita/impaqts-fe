@@ -288,5 +288,11 @@
     "IT": "ITA",
     "EN": "ENG",
     "LABEL": "Language"
+  },
+  "METADATA_OPT": {
+    "IMPLICIT": "Implicit",
+    "SPEAKER": "Speaker",
+    "CLAUSE": "Clause",
+    "TYPE": "Type of speech"
   }
 }

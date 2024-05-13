@@ -73,7 +73,7 @@
       "VIDEO": "Video",
       "WINDOW": "Window",
       "WORD_FORM": "Word form",
-      "WORD": "Parola",
+      "WORD": "Forma",
       "VIEW_OPTIONS": {
         "VIEW_OPTIONS": "Opzioni di visualizzazione",
         "ATTRIBUTES": "Attributi",
@@ -288,5 +288,11 @@
     "IT": "ITA",
     "EN": "ING",
     "LABEL": "Lingua"
+  },
+  "METADATA_OPT": {
+    "IMPLICIT": "Implicito",
+    "SPEAKER": "Parlante",
+    "CLAUSE": "Periodo",
+    "TYPE": "Tipo di discorso"
   }
 }
