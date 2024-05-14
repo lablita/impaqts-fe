@@ -36,6 +36,7 @@ import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
 import { ViewOptionQueryRequest } from '../model/view-option-query-request';
+import { AppInitializerService } from './app-initializer.service';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
@@ -67,6 +68,7 @@ export class LoadResultsService {
   ];
 
   private queryResponse$: Observable<QueryResponse | null> | null = null;
+  private isImpaqtsCustom = false;
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
@@ -74,7 +76,8 @@ export class LoadResultsService {
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService,
-    private readonly errorMessagesService: ErrorMessagesService
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly appInitializerService: AppInitializerService
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -83,6 +86,7 @@ export class LoadResultsService {
         this.queryResponse$ = this.initWebSocket(socketServiceSubject);
       }
     }
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
 
   public loadResults(
@@ -125,6 +129,7 @@ export class LoadResultsService {
             })
           })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
+          queryRequest.impaqts = this.isImpaqtsCustom;
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -210,6 +215,7 @@ export class LoadResultsService {
             queryRequest.contextConcordanceQueryRequest = null;
           }
 
+          queryRequest.impaqts = this.isImpaqtsCustom;
           // frequency
           if (
             queryRequest.queryType ===

@@ -293,6 +293,7 @@
     "IMPLICIT": "Implicito",
     "SPEAKER": "Parlante",
     "CLAUSE": "Periodo",
-    "TYPE": "Tipo di discorso"
+    "TYPE": "Tipo di discorso",
+    "NO_LABEL": ""
   }
 }

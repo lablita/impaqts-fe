@@ -82,10 +82,19 @@ export class MetadataPanelComponent implements OnInit {
           metadataGroupUniqueList.push(m);
         }
       });
-     metadataGroupUniqueList.forEach(mg => {
+      metadataGroupUniqueList.forEach(mg => {
         const metadataGrouped = new MetadataGrouped(this.metadata.filter(m => m.metadatumGroup?.id === mg?.id!), mg!);
         result.push(metadataGrouped);
       })
+      //recupero metadati che non hanno un gruppo associato
+      const metadataNoGroup = this.metadata.filter(m => !m.metadatumGroup);
+      if (metadataNoGroup.length > 0) {
+        const metadatumGroup = new MetadatumGroup();
+        metadatumGroup.name = 'NO_LABEL';
+        metadatumGroup.position = 1000;
+        const metadataGrouped = new MetadataGrouped(metadataNoGroup, metadatumGroup);
+        result.push(metadataGrouped);  
+      }
       result.sort((a, b) => a.metadatumGroup.position - b.metadatumGroup.position);
       return result;
   }

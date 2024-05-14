@@ -293,6 +293,7 @@
     "IMPLICIT": "Implicit",
     "SPEAKER": "Speaker",
     "CLAUSE": "Clause",
-    "TYPE": "Type of speech"
+    "TYPE": "Type of speech",
+    "NO_LABEL": ""
   }
 }
