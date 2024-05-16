@@ -12,5 +12,6 @@ export const WS = 'ws://';
 export const WSS = 'wss://';
 
 export const WIDE_CONTEXT = 'widecontext';
+export const REFERENCE_POSITION = 'reference-position';
 export const CORPUS_INFO = 'info';
 

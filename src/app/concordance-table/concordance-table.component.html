@@ -67,6 +67,7 @@
           </p>
         </p-dialog>
       </th>
+      <th class="p-text-center" style="width: 70px;"></th>
       <th class="p-text-center" style="width: 180px;">Left</th>
       <th class="p-text-center" style="width: 80px;">Kwic</th>
       <th class="p-text-center" style="width: 180px;">Right</th>
@@ -75,9 +76,14 @@
   <ng-template pTemplate="body" let-kwicLine let-rowIndex="rowIndex">
     <tr>
       <td>
-        <button [disabled]="loading" pButton type="button" *ngIf="kwicLine.videoUrl"
+        <button [disabled]="loading" pButton type="button" *ngIf="kwicLine.videoUrl" 
           label="{{'PAGE.CONCORDANCE.VIDEO' | translate}}" (click)="showVideoDlg(kwicLine)"></button>
       </td>
+      <td class="p-text-center">
+        <p-button [disabled]="loading" styleClass="p-button-link"
+          (click)="reference.toggle($event); showReference(kwicLine)"><span class="button-ref">{{kwicLine.ref}}</span></p-button>
+      </td>
+
       <td class="p-text-right" [innerHTML]="stripTags(kwicLine.leftContext, withContextConcordance())"></td>
       <td class="p-text-center">
         <p-button [disabled]="loading" label="{{kwicLine.kwic}}" styleClass="p-button-link"
@@ -101,6 +107,32 @@
     </div>
   </ng-template>
 </p-overlayPanel>
+<p-overlayPanel #reference [style]="{width: '850px'}">
+  <ng-template pTemplate>
+    <div *ngIf="!referencePositionResponse" class="flex context-spinner justify-content-center">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+    <div *ngIf="referencePositionResponse">
+      <div class="grid">
+        <div class="col-2"><strong>Token number</strong></div>
+        <div class="col-10">{{referencePositionResponse.tokenNumber}}</div>  
+      </div>
+      <div class="grid">
+        <div class="col-2"><strong>Document number</strong></div>
+        <div class="col-10">{{referencePositionResponse.documentNumber}}</div>  
+      </div>
+      <div *ngFor="let referenceKey of referenceKeys" class="grid">
+        <div class="col-2"><strong>{{referenceKey}}</strong></div>
+        <div class="col-10" *ngIf="referenceKey.indexOf('url') === -1">{{referencePositionResponse.references[referenceKey]}}</div> 
+        <div class="col-10" *ngIf="referenceKey.indexOf('url') !== -1">
+          <a href="{{referencePositionResponse.references[referenceKey]}}">{{referencePositionResponse.references[referenceKey]}}</a>
+        </div>  
+      </div>
+      
+    </div>
+  </ng-template>
+</p-overlayPanel>
+
 <div class="mt-3 w-12" *ngIf="visible && noResultFound && !loading">
   <h3 style="text-align: center;" class="text-red">{{"PAGE.NO_RESULT_FOUND" | translate}}</h3>
 </div>

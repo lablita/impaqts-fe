@@ -3,3 +3,9 @@
     height: 2.5em;
   }
 }
+
+.button-ref {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

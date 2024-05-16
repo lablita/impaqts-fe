@@ -53,6 +53,8 @@ import {
   ConcordanceRequestPayload,
   EmitterService,
 } from '../utils/emitter.service';
+import { ReferencePositionService } from '../services/reference-position.service';
+import { ReferencePositionResponse } from '../model/reference-position-response';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -97,12 +99,13 @@ export class ConcordanceTableComponent
   public fieldRequests: Array<FieldRequest> = [];
   public queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
   public progressStatus = 0;
+  public referencePositionResponse: ReferencePositionResponse | null = null;
+  public referenceKeys: string[] = [];
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
   private currentStart = 0;
   private currentEnd = 0;
-
   private currentQueryId = '';
 
   constructor(
@@ -113,7 +116,8 @@ export class ConcordanceTableComponent
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly wideContextService: WideContextService,
     private readonly exportCsvService: ExportCsvService,
-    private readonly installationServices: InstallationService
+    private readonly installationServices: InstallationService,
+    private readonly referencePositionService: ReferencePositionService
   ) {
     this.queryResponseSubscription = this.loadResultService
       .getQueryResponse$()
@@ -419,7 +423,7 @@ export class ConcordanceTableComponent
   public showWideContext(kwicline: KWICline): void {
     this.resultContext = null;
     const corpus =
-      this.queryRequestService.getBasicFieldRequest()?.selectedCorpus?.value;
+      this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
       this.wideContextService
         .getWideContext(
@@ -457,6 +461,36 @@ export class ConcordanceTableComponent
         });
     }
   }
+
+  public showReference(kwicline: KWICline): void {
+    this.resultContext = null;
+    const corpus = this.queryRequestService.getQueryRequest().corpus;
+    if (corpus) {
+      this.referencePositionService
+        .getReferenceByPosition(
+          corpus,
+          kwicline.pos
+        )
+        .subscribe({
+          next: (response) => {
+            if (response && response.referencePositionResponse) {
+              this.referencePositionResponse = response.referencePositionResponse;
+              this.referenceKeys = Object.keys(this.referencePositionResponse.references);
+            }
+          },
+          error: (err) => {
+            const referencePositionError = {} as Message;
+            referencePositionError.severity = 'error';
+            referencePositionError.detail =
+              'Non è stato possibile recuperare il riferimento associato';
+              referencePositionError.summary = 'Errore';
+            this.errorMessagesService.sendError(referencePositionError);
+          },
+        });
+    }
+  }
+
+
 
   public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
     switch (fieldRequest.selectedQueryType) {
