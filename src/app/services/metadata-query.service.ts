@@ -3,6 +3,8 @@ import { Metadatum } from '../model/metadatum';
 import { CorpusSelectionService } from './corpus-selection.service';
 import { TEXT_TYPES_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
+import { ErrorMessagesService } from './error-messages.service';
+import { Message } from 'primeng/api';
 
 export class Metadata {
   idCorpus: string = '';
@@ -18,7 +20,8 @@ export class MetadataQueryService {
   private metadataVQRef: Metadata = new Metadata();
  
   constructor(
-    private readonly corpusSelectionService: CorpusSelectionService
+    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly errorMessagesService: ErrorMessagesService
   ){}
 
   private metadataAttributes: Metadatum[] = [];
@@ -114,6 +117,11 @@ export class MetadataQueryService {
     if (defaultMetadataAttribute && defaultMetadataAttribute.length > 0) {
       return defaultMetadataAttribute.map(md => new KeyValueItem(md.name, md.name));
     }
+    const metadataErrorMsg = {} as Message;
+    metadataErrorMsg.severity = 'error';
+    metadataErrorMsg.detail = 'Nessun Metadato di tipo Attributo è stato impostato di Default nella configurazione del Corpus, impossibile Proseguire';
+    metadataErrorMsg.summary = 'Errore';
+    this.errorMessagesService.sendError(metadataErrorMsg);
     return [];
   }
 

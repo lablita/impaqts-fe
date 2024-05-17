@@ -36,5 +36,4 @@ export class QueryRequest {
   wordListRequest: WordListRequest | null = null;
   viewOptionRequest: ViewOptionQueryRequest = new ViewOptionQueryRequest();
   queryType: REQUEST_TYPE = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
-  impaqts: boolean = false;
 }

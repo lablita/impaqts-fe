@@ -86,6 +86,7 @@ export class ConcordanceTableComponent
   public kwicLines: Array<KWICline> = [];
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
+  public commentStr: string | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl =
     this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -101,6 +102,7 @@ export class ConcordanceTableComponent
   public progressStatus = 0;
   public referencePositionResponse: ReferencePositionResponse | null = null;
   public referenceKeys: string[] = [];
+  public queryTypeRequest = '';
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
@@ -228,6 +230,7 @@ export class ConcordanceTableComponent
         this.queryResponseSubscription.unsubscribe();
       }
     }
+    this.queryTypeRequest = this.queryRequestService.getQueryRequest().queryType;
   }
 
   public showDialog() {
@@ -405,6 +408,10 @@ export class ConcordanceTableComponent
     }
   }
 
+  public showComment(kwicline: KWICline, type: string) {
+    this.commentStr = kwicline.references[type];
+  }
+
   public clickConc(event: any): void {
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload([], 0);
@@ -476,6 +483,7 @@ export class ConcordanceTableComponent
             if (response && response.referencePositionResponse) {
               this.referencePositionResponse = response.referencePositionResponse;
               this.referenceKeys = Object.keys(this.referencePositionResponse.references);
+              this.referenceKeys.sort((a, b) => a.localeCompare(b));
             }
           },
           error: (err) => {

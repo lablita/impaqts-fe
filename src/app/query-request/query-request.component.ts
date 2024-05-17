@@ -69,6 +69,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     word: new UntypedFormControl(''),
     character: new UntypedFormControl(''),
     cql: new UntypedFormControl(''),
+    implicit: new UntypedFormControl(''),
     matchCase: new UntypedFormControl(false)
   });
   public selectedCorpus: KeyValueItem | null = null;
@@ -142,9 +143,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   public corpusSelected(selectedCorpus: KeyValueItem | undefined): void {
-
-
-
     this.titleResultChange.emit('');
     this.clickTextType();
     this.displayPanelService.closePanel();
@@ -222,6 +220,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
         ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
         this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
       }
+      if (this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT) {
+        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.IMPLICIT_REQUEST;
+        //TODO cql from implicit add search in comment 
+        fieldRequest.cql = '<impl/>';
+        this.queryRequestService.getQueryRequest().cql = '<impl/>';
+      }
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
@@ -251,6 +255,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestForm.controls.word.reset();
     this.queryRequestForm.controls.character.reset();
     this.queryRequestForm.controls.cql.reset();
+    this.queryRequestForm.controls.implicit.reset();
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
@@ -311,6 +316,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.queryRequestForm.controls.word.value,
       this.queryRequestForm.controls.character.value,
       this.queryRequestForm.controls.cql.value,
+      this.queryRequestForm.controls.implicit.value,
       this.queryRequestForm.controls.matchCase.value,
       this.queryRequestForm.controls.selectedQueryType.value);
     this.queryRequestService.setBasicFieldRequest(fieldRequest);

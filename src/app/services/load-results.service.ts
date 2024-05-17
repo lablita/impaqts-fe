@@ -6,6 +6,7 @@ import { TEXT_TYPES_QUERY_REQUEST, TOKEN, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES }
 import {
   CHARACTER,
   CQL,
+  IMPLICIT,
   LEMMA,
   PHRASE,
   REQUEST_TYPE,
@@ -96,7 +97,7 @@ export class LoadResultsService {
     const queryRequest = this.queryRequestService.getQueryRequest();
     this.setMetadataQuery();
     this.setViewOptionQueryRequest();
-    if (!!fieldRequests && fieldRequests.length > 0) {
+    if (!!fieldRequests && fieldRequests.length > 0 && this.queryRequestService.getQueryRequest().viewOptionRequest.attributesCtx) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
         if (event) {
@@ -129,7 +130,6 @@ export class LoadResultsService {
             })
           })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
-          queryRequest.impaqts = this.isImpaqtsCustom;
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -160,6 +160,14 @@ export class LoadResultsService {
               break;
             case CQL:
               fieldRequest.simpleResult = fieldRequest.cql;
+              queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
+              break;
+            case IMPLICIT:
+              fieldRequest.simpleResult = fieldRequest.cql;
+              /* 
+                //TODO
+                fieldRequest.implict?? come lo si tratta??
+              */
               queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
               break;
             default: // SIMPLE
@@ -215,7 +223,6 @@ export class LoadResultsService {
             queryRequest.contextConcordanceQueryRequest = null;
           }
 
-          queryRequest.impaqts = this.isImpaqtsCustom;
           // frequency
           if (
             queryRequest.queryType ===
@@ -378,7 +385,6 @@ export class LoadResultsService {
     }
     const viewOptionQueryRequest = new ViewOptionQueryRequest();
     viewOptionQueryRequest.attributesKwic = corpusAttributesSelected.map(att => att.value);
-    // viewOptionQueryRequest.attributesCtx = this.metadataQueryService.getDefaultMetadataAttributes().map(att => att.value);
     viewOptionQueryRequest.attributesCtx = corpusAttributesSelected.map(att => att.value);
     this.queryRequestService.getQueryRequest().viewOptionRequest = viewOptionQueryRequest;
   }
