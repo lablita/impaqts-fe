@@ -294,6 +294,12 @@
     "SPEAKER": "Parlante",
     "CLAUSE": "Periodo",
     "TYPE": "Tipo di discorso",
-    "NO_LABEL": ""
+    "NO_LABEL": "",
+    "IMPL": "Implicatura",
+    "TOP": "Topic",
+    "PPP": "Presupposizione",
+    "VAG": "Vaghezza",
+    "TYP": "Type",
+    "ESPL": "Esplicitazione"
   }
 }

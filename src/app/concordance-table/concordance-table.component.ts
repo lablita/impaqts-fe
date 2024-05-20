@@ -86,6 +86,8 @@ export class ConcordanceTableComponent
   public kwicLines: Array<KWICline> = [];
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
+  public implStr: string | null = null;
+  public typeStr: string | null = null;
   public commentStr: string | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl =
@@ -408,8 +410,10 @@ export class ConcordanceTableComponent
     }
   }
 
-  public showComment(kwicline: KWICline, type: string) {
-    this.commentStr = kwicline.references[type];
+  public showComment(kwicline: KWICline, implType: string) {
+    this.implStr = implType.toUpperCase();
+    this.typeStr = kwicline.references[implType + '.type'];
+    this.commentStr = kwicline.references[implType + '.comment'];
   }
 
   public clickConc(event: any): void {

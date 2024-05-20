@@ -294,6 +294,12 @@
     "SPEAKER": "Speaker",
     "CLAUSE": "Clause",
     "TYPE": "Type of speech",
-    "NO_LABEL": ""
+    "NO_LABEL": "",
+    "IMPL": "Implicatura",
+    "TOP": "Topic",
+    "PPP": "Presupposizione",
+    "VAG": "Vaghezza",
+    "TYP": "Type",
+    "ESPL": "Esplicitazione"
   }
 }

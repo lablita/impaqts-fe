@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
-import { MetadataQueryService } from '../services/metadata-query.service';
+import { MetadataGrouped, MetadataQueryService } from '../services/metadata-query.service';
 import { AppInitializerService } from '../services/app-initializer.service';
 import { MetadatumGroup } from '../model/metadatum-group';
 
@@ -11,15 +11,6 @@ export class SubMetadatum {
   kwicLines: Array<string> = [];
   inProgress = false;
   metadataValues: Array<string> = [];
-}
-
-export class MetadataGrouped {
-  metadata: Metadatum[] = [];
-  metadatumGroup: MetadatumGroup = new MetadatumGroup;
-  constructor(metadata: Metadatum[], metadatumGroup: MetadatumGroup) {
-    this.metadata = metadata;
-    this.metadatumGroup = metadatumGroup;
-  }
 }
 
 @Component({
@@ -50,7 +41,7 @@ export class MetadataPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.metadata = this.metadataQueryService.getMetadata();
-    this.metadataGroupedList = this.getMetadataGroupedList();
+    this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
     console.log('Metadata Panel Start');
   }
 
@@ -71,31 +62,4 @@ export class MetadataPanelComponent implements OnInit {
     return;
   }
 
-  private getMetadataGroupedList(): Array<MetadataGrouped> {
-      const result: MetadataGrouped[] = [];
-      const metadataGroupUniqueList: MetadatumGroup[] = [];
-      const metadataGroupList: MetadatumGroup[] = this.metadata.filter(m => m.metadatumGroup !== null).map(m => m.metadatumGroup!);
-      metadataGroupList.forEach(m => {
-        if (metadataGroupUniqueList.length === 0) {
-          metadataGroupUniqueList.push(m);
-        } else if (m && !metadataGroupUniqueList.find(mg => mg.id === m.id)) {
-          metadataGroupUniqueList.push(m);
-        }
-      });
-      metadataGroupUniqueList.forEach(mg => {
-        const metadataGrouped = new MetadataGrouped(this.metadata.filter(m => m.metadatumGroup?.id === mg?.id!), mg!);
-        result.push(metadataGrouped);
-      })
-      //recupero metadati che non hanno un gruppo associato
-      const metadataNoGroup = this.metadata.filter(m => !m.metadatumGroup);
-      if (metadataNoGroup.length > 0) {
-        const metadatumGroup = new MetadatumGroup();
-        metadatumGroup.name = 'NO_LABEL';
-        metadatumGroup.position = 1000;
-        const metadataGrouped = new MetadataGrouped(metadataNoGroup, metadatumGroup);
-        result.push(metadataGrouped);  
-      }
-      result.sort((a, b) => a.metadatumGroup.position - b.metadatumGroup.position);
-      return result;
-  }
 }

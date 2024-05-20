@@ -38,6 +38,7 @@ import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
 import { ViewOptionQueryRequest } from '../model/view-option-query-request';
 import { AppInitializerService } from './app-initializer.service';
+import { QueryRequest } from '../model/query-request';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
@@ -95,7 +96,7 @@ export class LoadResultsService {
     event?: LazyLoadEvent
   ): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
-    this.setMetadataQuery();
+    this.setMetadataQuery(queryRequest);
     this.setViewOptionQueryRequest();
     if (!!fieldRequests && fieldRequests.length > 0 && this.queryRequestService.getQueryRequest().viewOptionRequest.attributesCtx) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
@@ -271,7 +272,10 @@ export class LoadResultsService {
     return of(null);
   }
 
-  private setMetadataQuery(): void {
+  private setMetadataQuery(queryRequest: QueryRequest): void {
+    const isImplicitRequest = queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST;
+    const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    
     /** Metadata */
     const metadataRequest = new MetadataRequest();
     this.metadataQueryService.getMetadata().forEach((md) => {
@@ -310,6 +314,17 @@ export class LoadResultsService {
       (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
       localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
     }
+
+    //TODO in OR se IMPLICIT
+    if (isImplicitRequest) {
+      //group
+      // metadataGroupedList.forEach(grouped => {
+      //   grouped.
+      // })
+    }
+
+
+
     // Tutto in OR
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {

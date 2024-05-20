@@ -5,10 +5,20 @@ import { TEXT_TYPES_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '
 import { KeyValueItem } from '../model/key-value-item';
 import { ErrorMessagesService } from './error-messages.service';
 import { Message } from 'primeng/api';
+import { MetadatumGroup } from '../model/metadatum-group';
 
 export class Metadata {
   idCorpus: string = '';
   metadata: Metadatum[] = []
+}
+
+export class MetadataGrouped {
+  metadata: Metadatum[] = [];
+  metadatumGroup: MetadatumGroup = new MetadatumGroup;
+  constructor(metadata: Metadatum[], metadatumGroup: MetadatumGroup) {
+    this.metadata = metadata;
+    this.metadatumGroup = metadatumGroup;
+  }
 }
 
 @Injectable({
@@ -18,6 +28,7 @@ export class MetadataQueryService {
 
   private metadataRef: Metadata = new Metadata();
   private metadataVQRef: Metadata = new Metadata();
+  private metadataGroupedList: MetadataGrouped[] = [];
  
   constructor(
     private readonly corpusSelectionService: CorpusSelectionService,
@@ -71,6 +82,7 @@ export class MetadataQueryService {
       metadataRef.idCorpus = this.corpusSelectionService.getSelectedCorpus()?.key!;
       metadataRef.metadata = mds.sort((a, b) => a.position - b.position);
       this.metadataRef = metadataRef;
+      this.metadataGroupedList = this.buildMetadataGroupedList(mds);
     }
   }
 
@@ -128,5 +140,37 @@ export class MetadataQueryService {
   public clearViewOptionAttributesInLocalstorage(): void {
     localStorage.removeItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES);
   }
+
+  public getMetadataGroupedList(): Array<MetadataGrouped> {
+    return this.metadataGroupedList;
+  }
+
+  private buildMetadataGroupedList(metadata: Metadatum[]): Array<MetadataGrouped> {
+    const result: MetadataGrouped[] = [];
+    const metadataGroupUniqueList: MetadatumGroup[] = [];
+    const metadataGroupList: MetadatumGroup[] = metadata.filter(m => m.metadatumGroup !== null).map(m => m.metadatumGroup!);
+    metadataGroupList.forEach(m => {
+      if (metadataGroupUniqueList.length === 0) {
+        metadataGroupUniqueList.push(m);
+      } else if (m && !metadataGroupUniqueList.find(mg => mg.id === m.id)) {
+        metadataGroupUniqueList.push(m);
+      }
+    });
+    metadataGroupUniqueList.forEach(mg => {
+      const metadataGrouped = new MetadataGrouped(metadata.filter(m => m.metadatumGroup?.id === mg?.id!), mg!);
+      result.push(metadataGrouped);
+    })
+    //recupero metadati che non hanno un gruppo associato
+    const metadataNoGroup = metadata.filter(m => !m.metadatumGroup);
+    if (metadataNoGroup.length > 0) {
+      const metadatumGroup = new MetadatumGroup();
+      metadatumGroup.name = 'NO_LABEL';
+      metadatumGroup.position = 1000;
+      const metadataGrouped = new MetadataGrouped(metadataNoGroup, metadatumGroup);
+      result.push(metadataGrouped);  
+    }
+    result.sort((a, b) => a.metadatumGroup.position - b.metadatumGroup.position);
+    return result;
+}
 
 }
