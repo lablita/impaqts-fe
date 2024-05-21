@@ -3,7 +3,7 @@ import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { v4 as uuid } from 'uuid';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
-import { CHARACTER, CQL, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
+import { CHARACTER, CQL, IMPLICIT, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -25,6 +25,7 @@ import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { Observable, Subscription } from 'rxjs';
 import { QueryRequest } from '../model/query-request';
+import { Metadatum } from '../model/metadatum';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -55,6 +56,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   public WORD = WORD;
   public CHARACTER = CHARACTER;
   public CQL = CQL;
+  public IMPLICIT = IMPLICIT;
+  public isImpaqtsCustom = false;
+  public queryTypeLabel = 'PAGE.CONCORDANCE.QUERY_TYPE';
 
   public queryRequestForm = new UntypedFormGroup({
     selectedCorpus: new UntypedFormControl(null),
@@ -65,6 +69,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     word: new UntypedFormControl(''),
     character: new UntypedFormControl(''),
     cql: new UntypedFormControl(''),
+    implicit: new UntypedFormControl(''),
     matchCase: new UntypedFormControl(false)
   });
   public selectedCorpus: KeyValueItem | null = null;
@@ -77,15 +82,17 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   constructor(
     private readonly queryRequestService: QueryRequestService,
     public readonly displayPanelService: DisplayPanelService,
-    private readonly emitterService: EmitterService,
+    public readonly emitterService: EmitterService,
     private readonly socketService: SocketService,
     private readonly metadataUtilService: MetadataUtilService,
     private readonly metadataQueryService: MetadataQueryService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly corpusSelectionService: CorpusSelectionService
-  ) { }
+    private readonly corpusSelectionService: CorpusSelectionService,
+  ) { 
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   ngOnInit(): void {
     this.hideQueryTypeAndContext();
@@ -101,7 +108,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       WORD,
       PHRASE,
       CHARACTER,
-      CQL
+      CQL,
+      IMPLICIT
     ];
     this.setBasicFieldRequest();
     this.queryRequestForm.valueChanges.subscribe(change => {
@@ -112,7 +120,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     if (lsSimpleQuery) {
       this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
     }
-
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       this.corpusSelected(selectedCorpus!);
       this.selectedCorpus = selectedCorpus;
@@ -122,6 +129,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
       this.queryRequestForm.controls.simple.enable();
       this.corpusSelected(this.selectedCorpus!);
+    }
+    if (this.isImpaqtsCustom) {
+      this.queryTypeLabel = 'PAGE.CONCORDANCE.SEARCH_FOR';
+      this.displayQueryType = true;
     }
   }
 
@@ -137,9 +148,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
     if (selectedCorpus) {
+      this.metadataQueryService.clearViewOptionAttributesInLocalstorage();
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
-      this.emitterService.spinnerMetadata.emit(true);
+      if (this.corpusSelectionService.getCorpusChanged()) {
+        this.emitterService.spinnerMetadata.emit(true);
+      }
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
@@ -155,6 +169,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               textTypesAttributes.push(new KeyValueItem(md.name, md.name));
             }
           });
+          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
       this.textTypesAttributesChange.emit(textTypesAttributes);
@@ -162,7 +177,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
           this.appInitializerService.loadCorpus(+selectedCorpusId).subscribe(corpus => {
-            this.setCorpus(corpus);
+            this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged());
           });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
@@ -205,6 +220,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
         ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
         this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
       }
+      if (this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT) {
+        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.IMPLICIT_REQUEST;
+        //TODO cql from implicit add search in comment 
+        fieldRequest.cql = '<impl/>';
+        this.queryRequestService.getQueryRequest().cql = '<impl/>';
+      }
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
@@ -234,37 +255,46 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestForm.controls.word.reset();
     this.queryRequestForm.controls.character.reset();
     this.queryRequestForm.controls.cql.reset();
+    this.queryRequestForm.controls.implicit.reset();
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
-  private setCorpus(corpus: Corpus): void {
-    this.metadataQueryService.clearMetadata();
-    const installation = this.installation;
-    if (installation) {
-      installation.corpora.forEach((c, index) => {
-        if (c.id === corpus.id) {
-          installation.corpora[index] = corpus;
-        }
-      });
-      this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
-        {
-          next: metadata => this.metadataQueryService.setMetadata(metadata),
-          error: err => {
-            console.error(err);
-            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-            this.emitterService.spinnerMetadata.emit(false);
-            const metadataErrorMsg = {} as Message;
-            metadataErrorMsg.severity = 'error';
-            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-            metadataErrorMsg.summary = 'Errore';
-            this.errorMessagesService.sendError(metadataErrorMsg);
-          },
-          complete: () => {
-            this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-            this.emitterService.spinnerMetadata.emit(false);
+  private setCorpus(corpus: Corpus, corpusChanged: boolean): void {
+    if (corpusChanged || this.corpusSelectionService.getPageLoadedFirstTime()) {
+      const installation = this.installation;
+      if (installation) {
+        installation.corpora.forEach((c, index) => {
+          if (c.id === corpus.id) {
+            installation.corpora[index] = corpus;
           }
         });
+        this.metadataQueryService.clearMetadata();
+        const metadataTreeObs: Observable<Metadatum[]>[] = [];
+        this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
+          {
+            next: metadata => this.metadataQueryService.setMetadata(metadata),
+            error: err => {
+              console.error(err);
+              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+              this.emitterService.spinnerMetadata.emit(false);
+              const metadataErrorMsg = {} as Message;
+              metadataErrorMsg.severity = 'error';
+              metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+              metadataErrorMsg.summary = 'Errore';
+              this.errorMessagesService.sendError(metadataErrorMsg);
+            },
+            complete: () => {
+              this.metadataQueryService.storageMetadata();
+              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+              this.emitterService.spinnerMetadata.emit(false);
+              this.corpusSelectionService.resetCorpusChanged();
+            }
+          });
+      } else {
+        this.metadataQueryService.resetMetadataService();
+      }
     }
+    this.corpusSelectionService.setPageLoadedFirstTime(false);
   }
 
   private closeWebSocket(): void {
@@ -286,6 +316,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.queryRequestForm.controls.word.value,
       this.queryRequestForm.controls.character.value,
       this.queryRequestForm.controls.cql.value,
+      this.queryRequestForm.controls.implicit.value,
       this.queryRequestForm.controls.matchCase.value,
       this.queryRequestForm.controls.selectedQueryType.value);
     this.queryRequestService.setBasicFieldRequest(fieldRequest);
@@ -312,7 +343,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     return fieldRequest;
   }
 
-  private trimInputQueryRequest(queryRequest: QueryRequest): QueryRequest{
+  private trimInputQueryRequest(queryRequest: QueryRequest): QueryRequest {
     if (queryRequest) {
       queryRequest.corpusMetadatum = queryRequest.corpusMetadatum.trim();
       queryRequest.word = queryRequest.word.trim();

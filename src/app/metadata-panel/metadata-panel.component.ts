@@ -2,7 +2,9 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
-import { MetadataQueryService } from '../services/metadata-query.service';
+import { MetadataGrouped, MetadataQueryService } from '../services/metadata-query.service';
+import { AppInitializerService } from '../services/app-initializer.service';
+import { MetadatumGroup } from '../model/metadatum-group';
 
 export class SubMetadatum {
   currentSize = 0;
@@ -26,12 +28,20 @@ export class MetadataPanelComponent implements OnInit {
   public displayPanelMetadata = false;
   public selected: any;
   public loading = 0;
-
+  public isImpaqtsCustom = false;
+  public metadataGroupedList: MetadataGrouped[] = []
+  public metadata: Metadatum[] = [];
+  
   constructor(
-    private readonly metadataQueryService: MetadataQueryService
-  ) { }
+    private readonly metadataQueryService: MetadataQueryService,
+    private readonly appInitializerService: AppInitializerService
+  ) { 
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   ngOnInit(): void {
+    this.metadata = this.metadataQueryService.getMetadata();
+    this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
     console.log('Metadata Panel Start');
   }
 
@@ -52,7 +62,4 @@ export class MetadataPanelComponent implements OnInit {
     return;
   }
 
-  get metadata(): Array<Metadatum> {
-    return this.metadataQueryService.getMetadata();
-  }
 }

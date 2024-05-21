@@ -41,8 +41,10 @@ export class MenuComponent implements OnInit {
 
   private readonly menuQueryStr: string[] = [QUERY, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
-  private readonly menuDisplayPanel: string[] = [VIEW_OPTION, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATION];
-  private readonly menuItemsWIP: string[] = [ WORD_LIST, FILTER, VIEW_OPTION]
+  // private readonly menuDisplayPanel: string[] = [VIEW_OPTION, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATION];
+  // private readonly menuItemsWIP: string[] = [ WORD_LIST, FILTER, VIEW_OPTION]
+  private readonly menuDisplayPanel: string[] = [VIEW_OPTION, SORT, FREQUENCY, COLLOCATION];
+  private readonly menuItemsWIP: string[] = []
 
   private role = '';
   private menuByRoleList: RoleMenu[] = [];
@@ -162,9 +164,9 @@ export class MenuComponent implements OnInit {
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
         case VIEW_OPTION:
-        case WORD_LIST:
+        //case WORD_LIST:
         case SORT:
-        case FILTER:
+        //case FILTER:
         case FREQUENCY:
         case COLLOCATION:
           this.setMenuItemsByRole(!!routesRole ? routesRole : [], this.menuDisplayPanel);

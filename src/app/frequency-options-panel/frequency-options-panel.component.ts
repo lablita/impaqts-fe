@@ -10,6 +10,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { FREQ_OPTIONS_QUERY_REQUEST } from '../common/constants';
+import { AppInitializerService } from '../services/app-initializer.service';
 
 const POSITION_LIST = [
   L6,
@@ -72,12 +73,17 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public selectedPosition: Array<string> = [];
   public isMetadataFreq = true;
   public metadataAttributes: Array<string> = [];
-
+  public freqMetadataLabel = 'PAGE.CONCORDANCE.FREQ_OPTIONS.METADATA_FREQ';
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
-    private readonly metadataQueryService: MetadataQueryService
-  ) { }
+    private readonly metadataQueryService: MetadataQueryService,
+    private readonly appInitializerService: AppInitializerService
+  ) {
+    if (this.appInitializerService.isImpactCustom()) {
+      this.freqMetadataLabel = 'PAGE.CONCORDANCE.FREQ_OPTIONS.FILTERS_FREQ';
+    }
+   }
 
   ngOnInit(): void {
     if (this.corpusAttributes && this.corpusAttributes.length > 0) {

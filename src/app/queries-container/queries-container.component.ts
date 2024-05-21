@@ -13,6 +13,7 @@ import { AuthorizationService } from '../services/authorization.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 
 export class ConcordanceRequest {
   fieldRequest: FieldRequest = new FieldRequest();
@@ -75,10 +76,12 @@ export class QueriesContainerComponent implements OnInit {
     private readonly authorizationService: AuthorizationService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly emitterService: EmitterService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly metadataQueryService: MetadataQueryService
   ) { }
 
   ngOnInit(): void {
+    this.metadataQueryService.resetMetadataService();
     this.authorizationService.checkInstallationAuthorization().subscribe({
       next: allowed => this.displayNotAllowedUserForInstallation = !allowed
     });

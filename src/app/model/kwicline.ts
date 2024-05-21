@@ -6,6 +6,8 @@ export class KWICline {
   pos = 0;
   startTime: string | null = null;
   videoUrl: string | null = null;
+  references: any = {};
+  docNumber = 0;
 
   public static stripTags(context: Array<string>, withContextConcordance: boolean): string {
     let ret = '';

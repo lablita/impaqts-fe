@@ -33,7 +33,7 @@ import {
 } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, forkJoin } from 'rxjs';
 import { QueryStructure } from '../model/query-structure';
 
 @Component({
@@ -113,6 +113,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public paginations: number[] = [10, 25, 50];
   public initialPagination = 10;
   public titleResult: string | null = null;
+  public metadataLabel = 'PAGE.VISUAL_QUERY.METADATA';
+  public metadataButton = 'PAGE.VISUAL_QUERY.ADD_METADATA';
 
   private holdSelectedCorpusId?: string;
   private corpusSelectedSubscription?: Subscription;
@@ -129,8 +131,13 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly sanitizer: DomSanitizer,
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly corpusSelectionService: CorpusSelectionService
-  ) { }
+    private readonly corpusSelectionService: CorpusSelectionService,
+  ) { 
+    if (this.appInitializerService.isImpactCustom()) {
+      this.metadataLabel = 'PAGE.VISUAL_QUERY.FILTERS';
+      this.metadataButton = 'PAGE.VISUAL_QUERY.ADD_FILTERS'
+    }
+  }
 
   ngOnInit(): void {
     this.displayPanelService.menuItemClickSubject.next(VISUAL_QUERY);
@@ -191,26 +198,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       this.queryPattern.structPattern = this.metadata[0];
     }
     //replace empty string with .* everywhere
-    const queryPatternToSend: QueryPattern = _.cloneDeep(this.queryPattern);
-    if (
-      queryPatternToSend.tokPattern &&
-      queryPatternToSend.tokPattern.length > 0
-    ) {
-      queryPatternToSend.tokPattern.forEach((tag) => {
-        if (tag.tags && tag.tags.length > 0) {
-          tag.tags.forEach((aqt) => {
-            if (aqt && aqt.length > 0) {
-              aqt.forEach((qt) => {
-                if (!qt.value || qt.value.trim() === '') {
-                  qt.value = '.*';
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-    queryPatternToSend.structPattern = this.cleanStructPattern(queryPatternToSend.structPattern);
+    const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(this.queryPattern);
     this.queryRequestService.setQueryPattern(queryPatternToSend);
     this.queryRequestService.getQueryRequest().queryType =
       REQUEST_TYPE.VISUAL_QUERY_REQUEST;
@@ -225,9 +213,10 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     this.noResultFound = false;
     localStorage.setItem(
       'selectedCorpus',
-      JSON.stringify(this.selectedCorpus?.value)
+      JSON.stringify(this.selectedCorpus)
     );
     if (this.selectedCorpus) {
+      this.metadataQueryService.clearViewOptionAttributesInLocalstorage();
       this.menuEmitterService.corpusSelected = true;
       this.enableSpinner = true;
       this.enableAddToken = true;
@@ -255,6 +244,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
                 );
               }
             });
+          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
       if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
@@ -354,34 +344,35 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   }
 
   private setCorpus(corpus: Corpus): void {
-    localStorage.setItem('selectedCorpus', JSON.stringify(this.selectedCorpus));
-    this.metadataUtilService
-      .createMatadataTree(`${corpus.id}`, this.installation, true)
-      .subscribe({
-        next: (metadata) => {
-          this.metadataQueryService.setMetadata(metadata);
-          this.metadataTextTypes = metadata;
-        },
-        error: (err) => {
-          this.enableSpinner = false;
-          const metadataErrorMsg = {} as Message;
-          metadataErrorMsg.severity = 'error';
-          metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-          metadataErrorMsg.summary = 'Errore';
-          this.errorMessagesService.sendError(metadataErrorMsg);
-        },
-        complete: () => {
-          this.enableSpinner = false;
-          this.enableAddMetadata = true;
-        },
-      });
-  }
-
-  private cleanStructPattern(structPattern: QueryStructure): QueryStructure {
-    if (structPattern && structPattern.tags && structPattern.tags.length > 0) {
-      structPattern.tags = structPattern.tags.map(tags => tags.filter(tag => tag.value.length > 0));
+    const metadataVQStr = localStorage.getItem('metadataVQ');
+    if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime()
+      || !metadataVQStr || this.metadataQueryService.getMetadataVQIdCorpus() !== '' + corpus.id) {
+      this.metadataUtilService
+        .createMatadataTree(`${corpus.id}`, this.installation, true)
+        .subscribe({
+          next: (metadata) => {
+            this.metadataQueryService.setMetadataVQ(metadata);
+            this.metadataTextTypes = metadata;
+          },
+          error: (err) => {
+            this.enableSpinner = false;
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          },
+          complete: () => {
+            this.metadataQueryService.storageMetadataVQ();
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          },
+        });
+    } else {
+      this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();
+      this.corpusSelectionService.setPageLoadedFirstTime(false);
+      this.enableSpinner = false;
+      this.enableAddMetadata = true;
     }
-    structPattern.tags = structPattern.tags.filter(tags => tags.length > 0);
-    return structPattern;
   }
 }

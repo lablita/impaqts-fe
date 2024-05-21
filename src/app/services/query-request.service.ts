@@ -5,8 +5,8 @@ import { FieldRequest } from '../model/field-request';
 import { FilterConcordanceQueryRequest } from '../model/filter-concordance-query-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
-import { KeyValue } from '@angular/common';
-import { KeyValueItem } from '../model/key-value-item';
+import * as _ from 'lodash';
+import { QueryStructure } from '../model/query-structure';
 
 @Injectable({
   providedIn: 'root'
@@ -86,6 +86,38 @@ export class QueryRequestService {
 
   public getQueryRequest(): QueryRequest {
     return this.queryRequest;
+  }
+
+  public replaceEmptyStringWithWildcard(queryPattern: QueryPattern): QueryPattern {
+    const queryPatternToSend: QueryPattern = _.cloneDeep(queryPattern);
+    if (
+      queryPatternToSend.tokPattern &&
+      queryPatternToSend.tokPattern.length > 0
+    ) {
+      queryPatternToSend.tokPattern.forEach((tag) => {
+        if (tag.tags && tag.tags.length > 0) {
+          tag.tags.forEach((aqt) => {
+            if (aqt && aqt.length > 0) {
+              aqt.forEach((qt) => {
+                if (!qt.value || qt.value.trim() === '') {
+                  qt.value = '.*';
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+    queryPatternToSend.structPattern = this.cleanStructPattern(queryPatternToSend.structPattern);
+    return queryPatternToSend;
+  }
+
+  private cleanStructPattern(structPattern: QueryStructure): QueryStructure {
+    if (structPattern && structPattern.tags && structPattern.tags.length > 0) {
+      structPattern.tags = structPattern.tags.map(tags => tags.filter(tag => tag.value.length > 0));
+    }
+    structPattern.tags = structPattern.tags.filter(tags => tags.length > 0);
+    return structPattern;
   }
 
 }

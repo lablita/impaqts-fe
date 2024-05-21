@@ -8,6 +8,8 @@ import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { AppInitializerService } from '../services/app-initializer.service';
 
 @Component({
   selector: 'app-right',
@@ -21,28 +23,35 @@ export class RightComponent implements OnInit {
   public labelVisibleOPT = false;
   public labelDisableMTD = false;
   public labelDisableOPT = false;
-  
   public spinnerMetadata = false;
-
   public verticalLabel = false;
+  public metadataLabel = 'PAGE.CONCORDANCE.METADATA';
   
   constructor(
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
     private readonly queryRequestService: QueryRequestService,
-  ) { }
+    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly appInitializerService: AppInitializerService
+  ) { 
+    if (this.appInitializerService.isImpactCustom()) {
+      this.metadataLabel = 'PAGE.CONCORDANCE.FILTERS';
+    }
+  }
 
   ngOnInit(): void {
     this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
       this.verticalLabel = panelLabelStatus.panelDisplayMTD || panelLabelStatus.panelDisplayOPT;
       this.labelVisibleMTD = panelLabelStatus.labelVisibleMTD;
       this.labelVisibleOPT = panelLabelStatus.labelVisibleOPT;
-      this.labelDisableMTD = panelLabelStatus.labelDisableMTD;
+      this.labelDisableMTD = panelLabelStatus.labelDisableMTD || !this.corpusSelectionService.getSelectedCorpus();
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
       this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
-    this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => this.spinnerMetadata = event });
+    this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => {
+      this.spinnerMetadata = event; 
+    }});
   }
 
   public labelOPTClick(): void {

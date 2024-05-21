@@ -8,4 +8,5 @@ export class Installation {
   logos: Logo[] = [];
   credits = '';
   copyright = '';
+  impaqts = false;
 }
