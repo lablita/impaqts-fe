@@ -132,6 +132,7 @@ export class LoadResultsService {
             })
           })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
+          queryRequest.impaqts = this.isImpaqtsCustom;
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -230,8 +231,10 @@ export class LoadResultsService {
             queryRequest.queryType ===
             REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST
           ) {
+            queryRequest.impaqts = this.isImpaqtsCustom;
             this.socketService.sendMessage(queryRequest);
           } else {
+            queryRequest.impaqts = this.isImpaqtsCustom;
             this.socketService.sendMessage(queryRequest);
           }
         }

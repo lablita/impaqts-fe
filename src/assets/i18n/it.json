@@ -45,6 +45,7 @@
       "CORPUS": "Corpus",
       "CQL": "CQL",
       "IMPLICIT": "Impliciti",
+      "EXPLANATION": "Esplicitazione",
       "DEFAULT_ATTRIBUTE": "Default attribute",
       "FILE_UPLOADED": "File uploaded",
       "WORD_LC": "word (lowercase)",

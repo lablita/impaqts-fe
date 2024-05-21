@@ -96,8 +96,20 @@ export class MetadataQueryService {
   }
   
   public isCompiled(): boolean {
-    const metadata = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST)
-    return !!metadata;
+    const metadataStr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
+    let result = false;
+    if (metadataStr) {
+      const metadata = JSON.parse(metadataStr);
+      if (metadata.freeTexts && metadata.freeTexts.length > 0) {
+        result = result || (metadata.freeTexts as any[]).filter((ft: any) => ft.value.length > 0).length > 0;
+      } else if (metadata.singleSelects && metadata.singleSelects.length > 0) {
+        result = result || (metadata.singleSelects as any[]).filter((ss: any) => ss.value.length > 0).length > 0;
+      } else if (metadata.multiSelects && metadata.multiSelects.length > 0){
+        result = result || (metadata.multiSelects as any[]).filter((ss: any) => ss.values.length > 0).length > 0;
+      }
+      return result;
+    }
+    return false;
   }
 
   public getMetadataIdCorpus(): string {

@@ -85,7 +85,7 @@
             <p-button [disabled]="loading" styleClass="p-button-link"
               (click)="reference.toggle($event); showReference(kwicLine)"><span class="button-ref">{{kwicLine.ref}}</span></p-button>
           </div>
-          <div *ngIf="queryTypeRequest === 'IMPLICIT_REQUEST'" class="flex flex-wrap justify-content-start">
+          <div class="flex flex-wrap justify-content-start">
             <div class="ml-1"><p-badge (click)="comment.toggle($event); showComment(kwicLine, 'vag')" *ngIf="kwicLine.references['vag.type'] && kwicLine.references['vag.type'].length > 0" value="V"></p-badge></div>
             <div class="ml-1"><p-badge (click)="comment.toggle($event); showComment(kwicLine, 'ppp')" *ngIf="kwicLine.references['ppp.type'] && kwicLine.references['ppp.type'].length > 0" value="P"></p-badge></div>
             <div class="ml-1"><p-badge (click)="comment.toggle($event); showComment(kwicLine, 'top')" *ngIf="kwicLine.references['top.type'] && kwicLine.references['top.type'].length > 0" value="T"></p-badge></div>
