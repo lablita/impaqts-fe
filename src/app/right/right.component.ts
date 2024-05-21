@@ -9,6 +9,7 @@ import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { AppInitializerService } from '../services/app-initializer.service';
 
 @Component({
   selector: 'app-right',
@@ -22,18 +23,22 @@ export class RightComponent implements OnInit {
   public labelVisibleOPT = false;
   public labelDisableMTD = false;
   public labelDisableOPT = false;
-  
   public spinnerMetadata = false;
-
   public verticalLabel = false;
+  public metadataLabel = 'PAGE.CONCORDANCE.METADATA';
   
   constructor(
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
     private readonly metadataQueryService: MetadataQueryService,
     private readonly queryRequestService: QueryRequestService,
-    private readonly corpusSelectionService: CorpusSelectionService
-  ) { }
+    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly appInitializerService: AppInitializerService
+  ) { 
+    if (this.appInitializerService.isImpactCustom()) {
+      this.metadataLabel = 'PAGE.CONCORDANCE.FILTERS';
+    }
+  }
 
   ngOnInit(): void {
     this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {

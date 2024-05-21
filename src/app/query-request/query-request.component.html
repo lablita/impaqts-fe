@@ -1,7 +1,7 @@
 <p-card>
   <form [formGroup]="queryRequestForm">
     <div class="flex justify-content-center">
-      <button [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button"
+      <button *ngIf="!isImpaqtsCustom" [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button"
         label="{{'PAGE.CONCORDANCE.OTHER_QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus"
         class="p-button-text mr-3" (click)="clickQueryType()"></button>&nbsp;
       <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}" [disabled]="!selectedCorpus"
@@ -24,14 +24,14 @@
     <div class="mt-3" *ngIf="displayQueryType">
       <div>
         <label class="mb-3">
-          <h2>{{"PAGE.CONCORDANCE.QUERY_TYPE" | translate}}</h2>
+          <h2>{{queryTypeLabel | translate}}</h2>
         </label>
         <div class="formgroup-inline justify-content-center">
           <div *ngFor="let queryType of queryTypes" class="field-radiobutton">
             <p-radioButton class="ml-3 mr-1" [inputId]="queryType" name="selectedQueryType" [value]="queryType"
               formControlName="selectedQueryType">
             </p-radioButton>
-            <label class="mr-3" [for]="queryTypes">{{queryType | translate}}</label>
+            <label class="mr-3" [for]="queryTypes">{{('PAGE.CONCORDANCE.'+queryType) | translate}}</label>
           </div>
         </div>
       </div>
@@ -79,6 +79,13 @@
         <label class="col-12 md:col-1" for="cql">{{"PAGE.CONCORDANCE.CQL" | translate}}</label>
         <div class="col-12 md:col-10">
           <input id="cql" type="text" pInputText formControlName="cql" style="width: 100%">
+        </div>
+      </div>
+      <div class="mt-3 field grid"
+        *ngIf="queryRequestForm.value.selectedQueryType && queryRequestForm.value.selectedQueryType === IMPLICIT">
+        <label class="col-12 md:col-1" for="implict">{{"PAGE.CONCORDANCE.EXPLANATION" | translate}}</label>
+        <div class="col-12 md:col-10">
+          <input id="implicit" type="text" pInputText formControlName="implicit" style="width: 100%">
         </div>
       </div>
     </div>

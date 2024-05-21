@@ -44,6 +44,8 @@
       "CONTEXT": "Contesto",
       "CORPUS": "Corpus",
       "CQL": "CQL",
+      "IMPLICIT": "Impliciti",
+      "EXPLANATION": "Esplicitazione",
       "DEFAULT_ATTRIBUTE": "Default attribute",
       "FILE_UPLOADED": "File uploaded",
       "WORD_LC": "word (lowercase)",
@@ -55,10 +57,12 @@
       "MAKE_CONCORDANCE": "Concordanze",
       "MATCH_CASE": "match case",
       "METADATA": "Metadati",
+      "FILTERS": "Filtri",
       "NONE": "none",
       "OF_THESE_ITEMS": "of these items",
       "PHRASE": "Frase",
       "QUERY_TYPE": "Query type",
+      "SEARCH_FOR": "Cerca per",
       "OTHER_QUERY_TYPES": "Altre interrogazioni",
       "RIGHT": "right",
       "SELECT_CORPUS": "Seleziona un Corpus",
@@ -70,7 +74,7 @@
       "VIDEO": "Video",
       "WINDOW": "Window",
       "WORD_FORM": "Word form",
-      "WORD": "Parola",
+      "WORD": "Forma",
       "VIEW_OPTIONS": {
         "VIEW_OPTIONS": "Opzioni di visualizzazione",
         "ATTRIBUTES": "Attributi",
@@ -137,10 +141,12 @@
         "SECOND_LEVEL": "second level",
         "THIRD_LEVEL": "third level",
         "CLEAR_FREQ_OPT": "Valori Default",
-        "METADATA_FREQ": "Frequenza Metadata"
+        "METADATA_FREQ": "Frequenza Metadata",
+        "FILTERS_FREQ": "Frequenza Filtri"
       },
       "COLLOCATION_OPTIONS": {
         "CANDIDATES": "Collocation candidates",
+        "ATTRIBUTE": "Attribute",
         "LOG_DICE": "logDice",
         "LOG": "log likeihood",
         "MAKE_CANDIDATE_LIST": "Make candidate list",
@@ -224,7 +230,8 @@
       "NOTHING_TO_SHOW": "No CorpusInfo to Show"
     },
     "VISUAL_QUERY": {
-      "ADD_METADATA": "Add Metadata",
+      "ADD_METADATA": "Aggiungi Metadata",
+      "ADD_FILTERS": "Aggiungi Filtri",
       "ADD_TOKEN": "Add Token",
       "ANY_WORD": "any word",
       "BEGINS": "begins with",
@@ -235,6 +242,7 @@
       "IS_NOT": "is not",
       "IS": "is",
       "METADATA": "Metadata",
+      "FILTERS": "Filtri",
       "NOT_REG": "not regexp",
       "OPTION": "Options",
       "QUERY": "Query",
@@ -281,5 +289,18 @@
     "IT": "ITA",
     "EN": "ING",
     "LABEL": "Lingua"
+  },
+  "METADATA_OPT": {
+    "IMPLICIT": "Implicito",
+    "SPEAKER": "Parlante",
+    "CLAUSE": "Periodo",
+    "TYPE": "Tipo di discorso",
+    "NO_LABEL": "",
+    "IMPL": "Implicatura",
+    "TOP": "Topic",
+    "PPP": "Presupposizione",
+    "VAG": "Vaghezza",
+    "TYP": "Type",
+    "ESPL": "Esplicitazione"
   }
 }

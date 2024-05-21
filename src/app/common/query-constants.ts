@@ -1,11 +1,12 @@
-export const CONCORDANCE = 'concordance';
-export const SIMPLE = 'simple';
-export const LEMMA = 'lemma';
-export const PHRASE = 'phrase';
-export const WORD = 'word';
-export const CHARACTER = 'character';
-export const CQL = 'cql';
-export const TAG = 'tag';
+export const CONCORDANCE = 'CONCORDANCE';
+export const SIMPLE = 'SIMPLE';
+export const LEMMA = 'LEMMA';
+export const PHRASE = 'PHRASE';
+export const WORD = 'WORD';
+export const CHARACTER = 'CHARACTER';
+export const CQL = 'CQL';
+export const TAG = 'TAG';
+export const IMPLICIT = 'IMPLICIT';
 
 export enum REQUEST_TYPE {
   VISUAL_QUERY_REQUEST = 'VISUAL_QUERY_REQUEST',
@@ -19,5 +20,6 @@ export enum REQUEST_TYPE {
   PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST = 'PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST',
   WIDE_CONTEXT_QUERY_REQUEST = 'WIDE_CONTEXT_QUERY_REQUEST',
   FILTER_CONCORDACE_QUERY_REQUEST = 'FILTER_CONCORDACE_QUERY_REQUEST',
-  WORD_LIST_REQUEST = 'WORD_LIST_REQUEST'
+  WORD_LIST_REQUEST = 'WORD_LIST_REQUEST',
+  IMPLICIT_REQUEST = 'IMPLICIT_REQUEST'
 }

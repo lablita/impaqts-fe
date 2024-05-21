@@ -55,6 +55,7 @@ import {
 } from '../utils/emitter.service';
 import { ReferencePositionService } from '../services/reference-position.service';
 import { ReferencePositionResponse } from '../model/reference-position-response';
+import { AppInitializerService } from '../services/app-initializer.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -86,6 +87,9 @@ export class ConcordanceTableComponent
   public kwicLines: Array<KWICline> = [];
   public noResultFound = true;
   public resultContext: ResultContext | null = null;
+  public implStr: string | null = null;
+  public typeStr: string | null = null;
+  public commentStr: string | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl =
     this.sanitizer.bypassSecurityTrustResourceUrl(
@@ -101,6 +105,8 @@ export class ConcordanceTableComponent
   public progressStatus = 0;
   public referencePositionResponse: ReferencePositionResponse | null = null;
   public referenceKeys: string[] = [];
+  public queryTypeRequest = '';
+  public isImpaqtsCustom = false;
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
@@ -117,8 +123,10 @@ export class ConcordanceTableComponent
     private readonly wideContextService: WideContextService,
     private readonly exportCsvService: ExportCsvService,
     private readonly installationServices: InstallationService,
-    private readonly referencePositionService: ReferencePositionService
+    private readonly referencePositionService: ReferencePositionService,
+    private readonly appInitializerService: AppInitializerService
   ) {
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
     this.queryResponseSubscription = this.loadResultService
       .getQueryResponse$()
       .subscribe((queryResponse) => {
@@ -228,6 +236,7 @@ export class ConcordanceTableComponent
         this.queryResponseSubscription.unsubscribe();
       }
     }
+    this.queryTypeRequest = this.queryRequestService.getQueryRequest().queryType;
   }
 
   public showDialog() {
@@ -405,6 +414,12 @@ export class ConcordanceTableComponent
     }
   }
 
+  public showComment(kwicline: KWICline, implType: string) {
+    this.implStr = implType.toUpperCase();
+    this.typeStr = kwicline.references[implType + '.type'];
+    this.commentStr = kwicline.references[implType + '.comment'];
+  }
+
   public clickConc(event: any): void {
     const typeSearch = ['Query'];
     const concordanceRequestPayload = new ConcordanceRequestPayload([], 0);
@@ -466,27 +481,38 @@ export class ConcordanceTableComponent
     this.resultContext = null;
     const corpus = this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
-      this.referencePositionService
-        .getReferenceByPosition(
-          corpus,
-          kwicline.pos
-        )
-        .subscribe({
-          next: (response) => {
-            if (response && response.referencePositionResponse) {
-              this.referencePositionResponse = response.referencePositionResponse;
-              this.referenceKeys = Object.keys(this.referencePositionResponse.references);
-            }
-          },
-          error: (err) => {
-            const referencePositionError = {} as Message;
-            referencePositionError.severity = 'error';
-            referencePositionError.detail =
-              'Non è stato possibile recuperare il riferimento associato';
-              referencePositionError.summary = 'Errore';
-            this.errorMessagesService.sendError(referencePositionError);
-          },
-        });
+      if (this.isImpaqtsCustom) {
+        this.referencePositionResponse = new ReferencePositionResponse();
+        this.referencePositionResponse.tokenNumber = kwicline.pos;
+        this.referencePositionResponse.documentNumber = kwicline.docNumber;
+        this.referenceKeys = Object.keys(kwicline.references);
+        this.referenceKeys.sort((a, b) => a.localeCompare(b));
+        this.referencePositionResponse.references = kwicline.references;
+      } else {
+        this.referencePositionService
+          .getReferenceByPosition(
+            corpus,
+            kwicline.pos
+          )
+          .subscribe({
+            next: (response) => {
+              if (response && response.referencePositionResponse) {
+                this.referencePositionResponse = response.referencePositionResponse;
+                this.referenceKeys = Object.keys(this.referencePositionResponse.references);
+                this.referenceKeys.sort((a, b) => a.localeCompare(b));
+              }
+            },
+            error: (err) => {
+              const referencePositionError = {} as Message;
+              referencePositionError.severity = 'error';
+              referencePositionError.detail =
+                'Non è stato possibile recuperare il riferimento associato';
+                referencePositionError.summary = 'Errore';
+              this.errorMessagesService.sendError(referencePositionError);
+            },
+          });
+      }
+
     }
   }
 

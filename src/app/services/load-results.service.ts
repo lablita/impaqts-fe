@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Query } from '@angular/core';
 import { LazyLoadEvent, Message, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { TEXT_TYPES_QUERY_REQUEST, TOKEN, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES }
 import {
   CHARACTER,
   CQL,
+  IMPLICIT,
   LEMMA,
   PHRASE,
   REQUEST_TYPE,
@@ -36,6 +37,9 @@ import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
 import { ViewOptionQueryRequest } from '../model/view-option-query-request';
+import { AppInitializerService } from './app-initializer.service';
+import { QueryRequest } from '../model/query-request';
+import { Metadatum } from '../model/metadatum';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
@@ -67,6 +71,7 @@ export class LoadResultsService {
   ];
 
   private queryResponse$: Observable<QueryResponse | null> | null = null;
+  private isImpaqtsCustom = false;
 
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
@@ -74,7 +79,8 @@ export class LoadResultsService {
     private readonly socketService: SocketService,
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService,
-    private readonly errorMessagesService: ErrorMessagesService
+    private readonly errorMessagesService: ErrorMessagesService,
+    private readonly appInitializerService: AppInitializerService
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -83,6 +89,7 @@ export class LoadResultsService {
         this.queryResponse$ = this.initWebSocket(socketServiceSubject);
       }
     }
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
 
   public loadResults(
@@ -90,9 +97,9 @@ export class LoadResultsService {
     event?: LazyLoadEvent
   ): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
-    this.setMetadataQuery();
+    this.setMetadataQuery(queryRequest);
     this.setViewOptionQueryRequest();
-    if (!!fieldRequests && fieldRequests.length > 0) {
+    if (!!fieldRequests && fieldRequests.length > 0 && this.queryRequestService.getQueryRequest().viewOptionRequest.attributesCtx) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       if (!!fieldRequest.selectedCorpus) {
         if (event) {
@@ -125,6 +132,7 @@ export class LoadResultsService {
             })
           })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
+          queryRequest.impaqts = this.isImpaqtsCustom;
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -157,6 +165,14 @@ export class LoadResultsService {
               fieldRequest.simpleResult = fieldRequest.cql;
               queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
               break;
+            case IMPLICIT:
+              fieldRequest.simpleResult = fieldRequest.cql;
+              /* 
+                //TODO
+                fieldRequest.implict?? come lo si tratta??
+              */
+              queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
+              break;
             default: // SIMPLE
               fieldRequest.simpleResult = fieldRequest.simple;
           }
@@ -187,6 +203,10 @@ export class LoadResultsService {
             simpleQueryToken.tags[0] = queryTags;
             queryRequest.queryPattern.tokPattern.push(simpleQueryToken);
           }
+          //replace empty string with .* everywhere
+          const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(queryRequest.queryPattern);
+          queryRequest.queryPattern = queryPatternToSend;
+          
           if (this.metadataQuery) {
             queryRequest.queryPattern.structPattern = this.metadataQuery;
           }
@@ -211,8 +231,10 @@ export class LoadResultsService {
             queryRequest.queryType ===
             REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST
           ) {
+            queryRequest.impaqts = this.isImpaqtsCustom;
             this.socketService.sendMessage(queryRequest);
           } else {
+            queryRequest.impaqts = this.isImpaqtsCustom;
             this.socketService.sendMessage(queryRequest);
           }
         }
@@ -254,7 +276,10 @@ export class LoadResultsService {
     return of(null);
   }
 
-  private setMetadataQuery(): void {
+  private setMetadataQuery(queryRequest: QueryRequest): void {
+    const isImplicitRequest = queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST;
+    const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    
     /** Metadata */
     const metadataRequest = new MetadataRequest();
     this.metadataQueryService.getMetadata().forEach((md) => {
@@ -293,25 +318,28 @@ export class LoadResultsService {
       (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
       localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
     }
+
+    //group IMPLICIT
+    let metadataImplicit: Metadatum[] | undefined;
+    if (isImplicitRequest) {
+      metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
+    }
+
     // Tutto in OR
+    const implicitQueryTag: QueryTag[] = [];
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
       metadataRequest.freeTexts.forEach((ft) => {
         const structTagTokens = ft.key?.split('.');
         if (structTagTokens) {
           const structTag = structTagTokens[0];
-          const tag = new QueryTag(structTag);
           if (ft.key) {
-            if (structTagTokens.length > 1) {
-              tag.name = structTagTokens[1];
+            const tag = new QueryTag(structTag);
+            this.getTagFromFreeText(structTagTokens, tag, ft);
+            if (metadataImplicit && metadataImplicit.find(m => m.name === tag.structure + '.' + tag.name)) {
+              implicitQueryTag.push(tag);
             } else {
-              tag.name = ft.key;
-            }
-            if (ft.value) {
-              tag.value = ft.value;
-            }
-            if (tag.value.length > 0 && this.metadataQuery) {
-              this.metadataQuery.tags.push([tag]);
+              this.metadataQuery!.tags.push([tag]);
             }
           }
         }
@@ -327,15 +355,12 @@ export class LoadResultsService {
           ms.values.forEach((v) => {
             const structTagTokens = ms.key?.split('.');
             if (structTagTokens) {
-              const structTag = structTagTokens[0];
-              const tag = new QueryTag(structTag);
-              if (structTagTokens.length > 1) {
-                tag.name = structTagTokens[1];
+              const tag = this.getTagFromMultiselect(structTagTokens, v, ms.key);
+              if (metadataImplicit && metadataImplicit.find(m => m.name === tag.structure + '.' + tag.name)) {
+                implicitQueryTag.push(tag);
               } else {
-                tag.name = ms.key;
+                tags.push(tag);
               }
-              tag.value = v;
-              tags.push(tag);
             }
           });
           if (this.metadataQuery && tags.length > 0) {
@@ -350,14 +375,49 @@ export class LoadResultsService {
     ) {
       const singleSelect = metadataRequest.singleSelects[0];
       if (singleSelect.value) {
-        const tag = new QueryTag(singleSelect.value);
-        if (singleSelect && singleSelect.value) {
-          tag.name = singleSelect.key;
-          tag.value = singleSelect.value;
+        const tag = this.getTagFromSingleselect(singleSelect);
+        if (metadataImplicit && metadataImplicit.find(m => m.name === tag.structure + '.' + tag.name)) {
+          implicitQueryTag.push(tag);
+        } else {
           this.metadataQuery.tags.push([tag]);
         }
       }
     }
+    //Tag Impliciti tutti in or fra di loro
+    if (implicitQueryTag.length > 0) {
+      this.metadataQuery.tags.push(implicitQueryTag);
+    }
+  }
+  
+  private getTagFromFreeText(structTagTokens: string[],tag: QueryTag, ft: Selection): QueryTag {
+    if (structTagTokens.length > 1) {
+      tag.name = structTagTokens[1];
+    } else {
+      tag.name = ft.key;
+    }
+    if (ft.value) {
+      tag.value = ft.value;
+    }
+    return tag;
+  } 
+
+  private getTagFromSingleselect(ss: Selection): QueryTag {
+    const tag = new QueryTag(ss.value!);
+    tag.name = ss.key;
+    tag.value = ss.value!;
+    return tag;
+  }
+
+  private getTagFromMultiselect(structTagTokens: string[], value: string, key: string): QueryTag {
+      const structTag = structTagTokens[0];
+      const tag = new QueryTag(structTag);
+      if (structTagTokens.length > 1) {
+        tag.name = structTagTokens[1];
+      } else {
+        tag.name = key;
+      }
+      tag.value = value;
+      return tag;
   }
 
   private setViewOptionQueryRequest(): void {
@@ -368,7 +428,6 @@ export class LoadResultsService {
     }
     const viewOptionQueryRequest = new ViewOptionQueryRequest();
     viewOptionQueryRequest.attributesKwic = corpusAttributesSelected.map(att => att.value);
-    // viewOptionQueryRequest.attributesCtx = this.metadataQueryService.getDefaultMetadataAttributes().map(att => att.value);
     viewOptionQueryRequest.attributesCtx = corpusAttributesSelected.map(att => att.value);
     this.queryRequestService.getQueryRequest().viewOptionRequest = viewOptionQueryRequest;
   }

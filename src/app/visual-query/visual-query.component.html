@@ -20,7 +20,7 @@
 
       <hr>
       <span class="p-component">
-        <h2>{{"PAGE.VISUAL_QUERY.METADATA" | translate}}</h2>
+        <h2>{{metadataLabel | translate}}</h2>
       </span>
       <div class="jc-start mt-2">
         <div *ngFor="let token of metadata" class="mr-2">
@@ -32,7 +32,7 @@
         </div>
       </div>
       <button pButton label=" " (click)="addTokenMetadata()" [disabled]="!enableAddMetadata"><i
-          class="pi pi-plus-circle"></i>&nbsp;{{"PAGE.VISUAL_QUERY.ADD_METADATA" | translate}}
+          class="pi pi-plus-circle"></i>&nbsp;{{metadataButton | translate}}
         <div *ngIf="enableSpinner">
           <p-progressSpinner [style]="{width: '25px', height: '25px'}"></p-progressSpinner>
         </div>

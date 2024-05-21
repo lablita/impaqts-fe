@@ -13,6 +13,7 @@ import { UtilService } from '../utils/util.service';
 })
 export class AppInitializerService {
   private readonly installationName: string;
+  private installation: Installation | null = null;
 
   constructor(
     private readonly http: HttpClient,
@@ -28,6 +29,7 @@ export class AppInitializerService {
         if (installation) {
           localStorage.setItem(INSTALLATION, JSON.stringify(installation));
         }
+        this.installation = JSON.parse(localStorage.getItem(INSTALLATION)!);
         return installation;
       })
       .catch(catchError(this.utils.handleErrorObservable('getInstallation', FIND_FAILED, null)));
@@ -35,6 +37,10 @@ export class AppInitializerService {
 
   public loadCorpus(idCorpus: number): Observable<Corpus> {
     return this.http.get<Corpus>(`${environment.installationUrl}/corpus/${idCorpus}`);
+  }
+
+  public isImpactCustom(): boolean {
+    return this.installation?.impaqts!;
   }
 
 }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
+import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
@@ -67,7 +68,8 @@ import { TreeTableModule } from 'primeng/treetable';
     ChartModule,
     PanelModule,
     TreeTableModule,
-    ChipModule
+    ChipModule,
+    BadgeModule
   ],
   exports: [
     CommonModule,
@@ -102,7 +104,8 @@ import { TreeTableModule } from 'primeng/treetable';
     ChartModule,
     PanelModule,
     TreeTableModule,
-    ChipModule
+    ChipModule,
+    BadgeModule
   ]
 })
 export class PrimeNgModule { }
