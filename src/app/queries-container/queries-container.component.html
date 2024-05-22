@@ -1,11 +1,9 @@
 <div class="flex flex-row">
-  <div class="flex flex-grow-1 flex-column mt-3">
-
+  <div class="flex flex-grow-1 flex-column mt-3 w-8">
     <app-query-request (titleResultChange)="setTitleResult($event)"
       (metadataAttributesChange)="setMetadataAttributes($event)"
       (textTypesAttributesChange)="setTextTypesAttributes($event)" (selectedCorpusChange)="setSelectedCorpus($event)">
     </app-query-request>
-
     <div class="flex mt-3" *ngIf="!!titleResult">
       <p-card class="w-12">
         <ng-container *ngIf="titleResult==='MENU.COLLOCATION' && !!selectedCorpus">
@@ -18,7 +16,6 @@
             [paginations]="paginations">
           </app-concordance-table>
         </ng-container>
-
         <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
           <app-frequency-table *ngFor="let category of categories, let i=index"
             [visible]="titleResult==='MENU.FREQUENCY' && categories && categories.length>0" [category]="category"
@@ -33,7 +30,7 @@
       </p-card>
     </div>
   </div>
-  <div class="flex flex-column w-6" *ngIf="(panelDisplayMTD || panelDisplayOPT) && !!selectedCorpus">
+  <div class="flex flex-column w-4" *ngIf="(panelDisplayMTD || panelDisplayOPT) && !!selectedCorpus">
     <app-dispaly-panel-options [isVisualQuery]="false" [selectedCorpus]="selectedCorpus.key"
       [panelDisplayMTD]="panelDisplayMTD" [panelDisplayOPT]="panelDisplayOPT" [metadataAttributes]="metadataAttributes"
       [textTypesAttributes]="textTypesAttributes" [metadataTextTypes]="metadataTextTypes"

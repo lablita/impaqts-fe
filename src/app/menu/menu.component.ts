@@ -99,7 +99,6 @@ export class MenuComponent implements OnInit {
         this.menuEmitterServiceSubscription = this.menuEmitterService.menuEvent$.subscribe({
           next: (event: MenuEvent) => {
             if (event && event.item) {
-              //localStorage.setItem(MENU_ITEM, event.item);
               this.displayPanelService.setMenuItem(event.item);
               this.setMenuItems(event.item, this.role);
             }

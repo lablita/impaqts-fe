@@ -197,7 +197,11 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
 
   public makeConcordances(): void {
-    localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
+    if (this.queryRequestForm.controls.simple && this.queryRequestForm.controls.simple.value) {
+      localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
+    } else {
+      localStorage.removeItem('simpleQuery');
+    }
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.resetQueryPattern();
     let typeSearch = ['Query'];
@@ -257,6 +261,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestForm.controls.cql.reset();
     this.queryRequestForm.controls.implicit.reset();
     this.queryRequestService.clearContextConcordanceQueryRequest();
+  }
+
+  public resetInputs(): void {
+    this.clearContextFields();
   }
 
   private setCorpus(corpus: Corpus, corpusChanged: boolean): void {
@@ -333,12 +341,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
   private trimInputFieldRequest(fieldRequest: FieldRequest | null): FieldRequest | null {
     if (fieldRequest) {
-      fieldRequest.simple = fieldRequest.simple.trim();
-      fieldRequest.lemma = fieldRequest.lemma.trim();
-      fieldRequest.phrase = fieldRequest.phrase.trim();
-      fieldRequest.word = fieldRequest.word.trim();
-      fieldRequest.character = fieldRequest.character.trim();
-      fieldRequest.cql = fieldRequest.cql.trim();
+      fieldRequest.simple = fieldRequest.simple ? fieldRequest.simple.trim() : '';
+      fieldRequest.lemma = fieldRequest.lemma ? fieldRequest.lemma.trim() : '';
+      fieldRequest.phrase = fieldRequest.phrase ? fieldRequest.phrase.trim() : '';
+      fieldRequest.word = fieldRequest.word ? fieldRequest.word.trim() : '';
+      fieldRequest.character = fieldRequest.character ? fieldRequest.character.trim() : '';
+      fieldRequest.cql = fieldRequest.cql ? fieldRequest.cql.trim() : '';
     }
     return fieldRequest;
   }
