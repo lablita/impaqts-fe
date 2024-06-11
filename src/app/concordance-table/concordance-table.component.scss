@@ -17,12 +17,13 @@
   align-items: center;
 }
 
-.refid {
-}
-
 .badgecontainer {
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 1em;
+}
+
+.implicit-badge {
+  cursor: pointer;
 }
