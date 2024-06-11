@@ -82,20 +82,24 @@
       </td>
       <td class="text-center">
         <div class="refcontainer">
-          <div class="refid">
+          <div>
             <p-button [disabled]="loading" styleClass="p-button-link"
               (click)="reference.toggle($event); showReference(kwicLine)"><span
                 class="button-ref">{{kwicLine.ref}}</span></p-button>
           </div>
           <div class="badgecontainer">
             <div *ngIf="kwicLine.references['impl.type'] && kwicLine.references['impl.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'impl')" value="I"></p-badge></div>
+                (click)="comment.toggle($event); showComment(kwicLine, 'impl')" value="I"
+                class="implicit-badge"></p-badge></div>
             <div *ngIf="kwicLine.references['ppp.type'] && kwicLine.references['ppp.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'ppp')" value="P"></p-badge></div>
+                (click)="comment.toggle($event); showComment(kwicLine, 'ppp')" value="P"
+                class="implicit-badge"></p-badge></div>
             <div *ngIf="kwicLine.references['top.type'] && kwicLine.references['top.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'top')" value="T"></p-badge></div>
+                (click)="comment.toggle($event); showComment(kwicLine, 'top')" value="T"
+                class="implicit-badge"></p-badge></div>
             <div *ngIf="kwicLine.references['vag.type'] && kwicLine.references['vag.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'vag')" value="V"></p-badge></div>
+                (click)="comment.toggle($event); showComment(kwicLine, 'vag')" value="V"
+                class="implicit-badge"></p-badge></div>
           </div>
         </div>
       </td>
