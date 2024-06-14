@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
+import { Observable, Subscription } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, IMPLICIT, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
@@ -13,8 +14,11 @@ import { Corpus } from '../model/corpus';
 import { FieldRequest } from '../model/field-request';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
+import { Metadatum } from '../model/metadatum';
+import { QueryRequest } from '../model/query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { AppInitializerService } from '../services/app-initializer.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
@@ -22,10 +26,6 @@ import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
-import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Observable, Subscription } from 'rxjs';
-import { QueryRequest } from '../model/query-request';
-import { Metadatum } from '../model/metadatum';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 
@@ -90,7 +90,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
     private readonly corpusSelectionService: CorpusSelectionService,
-  ) { 
+  ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
 
@@ -227,8 +227,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT) {
         this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.IMPLICIT_REQUEST;
         //TODO cql from implicit add search in comment 
-        fieldRequest.cql = '<impl/>';
-        this.queryRequestService.getQueryRequest().cql = '<impl/>';
+        // fieldRequest.cql = '<impl/>';
+        // this.queryRequestService.getQueryRequest().cql = '<impl/>';
       }
       if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];

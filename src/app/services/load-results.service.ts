@@ -1,4 +1,4 @@
-import { Injectable, Query } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { LazyLoadEvent, Message, TreeNode } from 'primeng/api';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -25,21 +25,21 @@ import { MenuEvent } from '../menu/menu.component';
 import { FieldRequest } from '../model/field-request';
 import { KeyValueItem } from '../model/key-value-item';
 import { MetadataRequest } from '../model/metadata-request';
+import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
+import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
+import { ViewOptionQueryRequest } from '../model/view-option-query-request';
+import { AppInitializerService } from './app-initializer.service';
 import { DisplayPanelService } from './display-panel.service';
 import { ErrorMessagesService } from './error-messages.service';
 import { MetadataQueryService } from './metadata-query.service';
 import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
 import { SocketService } from './socket.service';
-import { ViewOptionQueryRequest } from '../model/view-option-query-request';
-import { AppInitializerService } from './app-initializer.service';
-import { QueryRequest } from '../model/query-request';
-import { Metadatum } from '../model/metadatum';
 
 const ERROR_PREFIX = 'ERROR';
 export class CollocationSortingParams {
@@ -97,10 +97,46 @@ export class LoadResultsService {
     event?: LazyLoadEvent
   ): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
-    this.setMetadataQuery(queryRequest);
+    const implicitQueryTag: QueryTag[] = this.setMetadataQuery(queryRequest);
     this.setViewOptionQueryRequest();
     if (!!fieldRequests && fieldRequests.length > 0 && this.queryRequestService.getQueryRequest().viewOptionRequest.attributesCtx) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
+      //IMPLICIT
+      if (queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST) {
+        if (implicitQueryTag.length > 0) {
+          const structImpl: string[] = [...new Set(implicitQueryTag.map(qt => '<' + qt.structure + '/>'))];
+          fieldRequest.cql = structImpl.join(' | ');
+          this.queryRequestService.getQueryRequest().cql = structImpl.join(' | ');
+        } else {
+          fieldRequest.cql = '<impl/> | <top/> | <vag/> | <ppp/>';
+          this.queryRequestService.getQueryRequest().cql = '<impl/> | <top/> | <vag/> | <ppp/>';
+        }
+        const tagListFunctionImplicit: QueryTag[] = [];
+        this.metadataQuery?.tags.forEach(tagList => {
+          if (tagList.length === 1 && tagList[0].name === 'function') {
+            const value = tagList[0].value;
+            if (implicitQueryTag.length > 0) {
+              implicitQueryTag.forEach(iqt => {
+                if (tagListFunctionImplicit.filter(tag => tag.structure === iqt.structure).length === 0) {
+                  const tag: QueryTag = new QueryTag(iqt.structure, 'function', value);
+                  tagListFunctionImplicit.push(tag);
+                }
+              });
+            } else {
+              ['impl', 'top', 'vag', 'ppp'].forEach(iqt => {
+                const tag: QueryTag = new QueryTag(iqt, 'function', value);
+                tagListFunctionImplicit.push(tag);
+              });
+            }
+          }
+        });
+        if (this.metadataQuery && this.metadataQuery.tags) {
+          this.metadataQuery.tags = this.metadataQuery?.tags.filter(tagList => tagList[0].name !== 'function');
+          this.metadataQuery.tags.push(tagListFunctionImplicit);
+        }
+
+      }
+
       if (!!fieldRequest.selectedCorpus) {
         if (event) {
           if (
@@ -167,10 +203,6 @@ export class LoadResultsService {
               break;
             case IMPLICIT:
               fieldRequest.simpleResult = fieldRequest.cql;
-              /* 
-                //TODO
-                fieldRequest.implict?? come lo si tratta??
-              */
               queryTags.push(new QueryTag(TOKEN, 'cql', fieldRequest.cql));
               break;
             default: // SIMPLE
@@ -206,7 +238,7 @@ export class LoadResultsService {
           //replace empty string with .* everywhere
           const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(queryRequest.queryPattern);
           queryRequest.queryPattern = queryPatternToSend;
-          
+
           if (this.metadataQuery) {
             queryRequest.queryPattern.structPattern = this.metadataQuery;
           }
@@ -225,7 +257,6 @@ export class LoadResultsService {
             // remove context query param if present in previous queries
             queryRequest.contextConcordanceQueryRequest = null;
           }
-
           // frequency
           if (
             queryRequest.queryType ===
@@ -276,10 +307,10 @@ export class LoadResultsService {
     return of(null);
   }
 
-  private setMetadataQuery(queryRequest: QueryRequest): void {
+  private setMetadataQuery(queryRequest: QueryRequest): QueryTag[] {
     const isImplicitRequest = queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST;
     const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
-    
+
     /** Metadata */
     const metadataRequest = new MetadataRequest();
     this.metadataQueryService.getMetadata().forEach((md) => {
@@ -318,13 +349,11 @@ export class LoadResultsService {
       (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
       localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
     }
-
     //group IMPLICIT
     let metadataImplicit: Metadatum[] | undefined;
     if (isImplicitRequest) {
       metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
     }
-
     // Tutto in OR
     const implicitQueryTag: QueryTag[] = [];
     this.metadataQuery = new QueryToken();
@@ -387,9 +416,10 @@ export class LoadResultsService {
     if (implicitQueryTag.length > 0) {
       this.metadataQuery.tags.push(implicitQueryTag);
     }
+    return implicitQueryTag;
   }
-  
-  private getTagFromFreeText(structTagTokens: string[],tag: QueryTag, ft: Selection): QueryTag {
+
+  private getTagFromFreeText(structTagTokens: string[], tag: QueryTag, ft: Selection): QueryTag {
     if (structTagTokens.length > 1) {
       tag.name = structTagTokens[1];
     } else {
@@ -399,7 +429,7 @@ export class LoadResultsService {
       tag.value = ft.value;
     }
     return tag;
-  } 
+  }
 
   private getTagFromSingleselect(ss: Selection): QueryTag {
     const tag = new QueryTag(ss.value!);
@@ -409,15 +439,15 @@ export class LoadResultsService {
   }
 
   private getTagFromMultiselect(structTagTokens: string[], value: string, key: string): QueryTag {
-      const structTag = structTagTokens[0];
-      const tag = new QueryTag(structTag);
-      if (structTagTokens.length > 1) {
-        tag.name = structTagTokens[1];
-      } else {
-        tag.name = key;
-      }
-      tag.value = value;
-      return tag;
+    const structTag = structTagTokens[0];
+    const tag = new QueryTag(structTag);
+    if (structTagTokens.length > 1) {
+      tag.name = structTagTokens[1];
+    } else {
+      tag.name = key;
+    }
+    tag.value = value;
+    return tag;
   }
 
   private setViewOptionQueryRequest(): void {
