@@ -80,7 +80,7 @@
         "ATTRIBUTES": "Attributi",
         "CHANGE_VIEW": "Cambia vista risultati",
         "CLEAR_VIEW_OPT": "Valori Default"
-        },
+      },
       "WORD_OPTIONS": {
         "ARF": "ARF",
         "BLACK_LIST": "Blacklist",
@@ -301,6 +301,7 @@
     "PPP": "Presupposizione",
     "VAG": "Vaghezza",
     "TYP": "Type",
-    "ESPL": "Esplicitazione"
+    "ESPL": "Esplicitazione",
+    "FUNCTION": "Funzioni"
   }
 }

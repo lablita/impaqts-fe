@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { concat, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { Installation } from '../model/installation';
@@ -9,17 +9,24 @@ import { MetadataRequest } from '../model/metadata-request';
 import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { QueriesContainerService } from '../queries-container/queries-container.service';
+import { AppInitializerService } from '../services/app-initializer.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MetadataUtilService {
   public res: KeyValueItem[] = [];
+  public isImpaqtsCustom = false;
   private metadataRequest: MetadataRequest = new MetadataRequest();
 
   constructor(
-    private readonly queriesContainerService: QueriesContainerService
-  ) {}
+    private readonly queriesContainerService: QueriesContainerService,
+    private readonly appInitializerService: AppInitializerService,
+    private readonly metadataQueryService: MetadataQueryService
+  ) {
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   public createMatadataTree(
     corpusId: string,
@@ -97,14 +104,16 @@ export class MetadataUtilService {
       metadata = metadata.filter((md) => !md.child);
       const lenObsArray = obsArray.length;
       if (lenObsArray > 0) {
-        return concat(...obsArray).pipe(
-          map((res, index) => {
-            metadata = this.setInnerTree(
-              (res as any).res,
-              metadata,
-              (res as any).metadatum.id,
-              lenObsArray === index + 1
-            );
+        return forkJoin(...obsArray).pipe(
+          map(res => {
+            res.forEach((item: any, index: number) => {
+              metadata = this.setInnerTree(
+                item.res,
+                metadata,
+                item.metadatum.id,
+                lenObsArray === index + 1
+              );
+            });
             metadata.forEach((md) => {
               if (Array.isArray(md.selection)) {
                 const selection = md.selection as TreeNode[];
@@ -126,6 +135,9 @@ export class MetadataUtilService {
                 }
               }
             });
+            if (this.isImpaqtsCustom) {
+              metadata = this.functionsMetadataAggregation4ImpaqtsCustom(metadata);
+            }
             return metadata;
           })
         );
@@ -134,6 +146,15 @@ export class MetadataUtilService {
       }
     }
     return of([]);
+  }
+
+  public setUnselectable(node: TreeNode): void {
+    if (node.children && node.children.length > 0) {
+      node.selectable = false;
+      node.children.forEach((md) => {
+        this.setUnselectable(md);
+      });
+    }
   }
 
   private setInnerTree(
@@ -153,20 +174,20 @@ export class MetadataUtilService {
     if (metadatum) {
       const selected =
         this.metadataRequest &&
-        this.metadataRequest.singleSelects.filter(
-          (ss) => metadatum && ss.key === metadatum.name
-        ).length > 0
+          this.metadataRequest.singleSelects.filter(
+            (ss) => metadatum && ss.key === metadatum.name
+          ).length > 0
           ? this.metadataRequest.singleSelects.filter(
-              (ss) => metadatum && ss.key === metadatum.name
-            )[0]
+            (ss) => metadatum && ss.key === metadatum.name
+          )[0]
           : this.metadataRequest &&
             this.metadataRequest.multiSelects.filter(
               (ss) => metadatum && ss.key === metadatum.name
             ).length > 0
-          ? this.metadataRequest.multiSelects.filter(
+            ? this.metadataRequest.multiSelects.filter(
               (ss) => metadatum && ss.key === metadatum.name
             )[0]
-          : null;
+            : null;
       metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta
@@ -402,12 +423,36 @@ export class MetadataUtilService {
     return { tree: root, selections };
   }
 
-  public setUnselectable(node: TreeNode): void {
-    if (node.children && node.children.length > 0) {
-      node.selectable = false;
-      node.children.forEach((md) => {
-        this.setUnselectable(md);
+  private functionsMetadataAggregation4ImpaqtsCustom(metadata: Metadatum[]): Metadatum[] {
+    const functionsMetadata: Metadatum[] = metadata.filter(m => m.name.indexOf('.function') > 0);
+    const notFunctionsMetadata: Metadatum[] = metadata.filter(m => m.name.indexOf('.function') < 0);
+    if (functionsMetadata.length > 0) {
+      let functionMetadata: Metadatum = new Metadatum();
+      functionsMetadata.forEach((m, i) => {
+        if (i === 0) {
+          functionMetadata = m;
+          functionMetadata.label = 'Funzione';
+          functionMetadata.name = 'function';
+          functionMetadata.tree[0].label = 'Funzione';
+        } else {
+          functionMetadata.selection = (functionMetadata.selection as TreeNode[]).concat((m.selection as TreeNode[]));
+          (functionMetadata.subMetadata as any).metadataValues = ((functionMetadata.subMetadata as any).metadataValues as string[]).concat((m.subMetadata as any).metadataValues);
+          const children: TreeNode[] | undefined = m.tree[0].children;
+          if (children) {
+            functionMetadata.tree[0].children = functionMetadata.tree[0].children?.concat(children);
+          }
+        }
       });
+      let seen: any = {};
+      (functionMetadata.subMetadata as any).metadataValues = ((functionsMetadata[0].subMetadata as any).metadataValues as []).filter(m =>
+        seen.hasOwnProperty(m) ? false : seen[m] = true
+      );
+      seen = {};
+      functionMetadata.tree[0].children = functionMetadata.tree[0].children!.filter(m =>
+        seen.hasOwnProperty(m.label) ? false : seen[m.label!] = true
+      );
+      notFunctionsMetadata.push(functionsMetadata[0]);
     }
+    return notFunctionsMetadata;
   }
 }

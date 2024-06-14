@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Metadatum } from '../model/metadatum';
-import { CorpusSelectionService } from './corpus-selection.service';
+import { Message } from 'primeng/api';
 import { TEXT_TYPES_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
-import { ErrorMessagesService } from './error-messages.service';
-import { Message } from 'primeng/api';
+import { Metadatum } from '../model/metadatum';
 import { MetadatumGroup } from '../model/metadatum-group';
+import { CorpusSelectionService } from './corpus-selection.service';
+import { ErrorMessagesService } from './error-messages.service';
 
 export class Metadata {
   idCorpus: string = '';
@@ -25,15 +25,15 @@ export class MetadataGrouped {
   providedIn: 'root'
 })
 export class MetadataQueryService {
-
+  public isImpaqtsCustom = false;
   private metadataRef: Metadata = new Metadata();
   private metadataVQRef: Metadata = new Metadata();
   private metadataGroupedList: MetadataGrouped[] = [];
- 
+
   constructor(
     private readonly corpusSelectionService: CorpusSelectionService,
-    private readonly errorMessagesService: ErrorMessagesService
-  ){}
+    private readonly errorMessagesService: ErrorMessagesService,
+  ) { }
 
   private metadataAttributes: Metadatum[] = [];
 
@@ -94,7 +94,7 @@ export class MetadataQueryService {
       this.metadataVQRef = metadataVQRef;
     }
   }
-  
+
   public isCompiled(): boolean {
     const metadataStr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
     let result = false;
@@ -104,7 +104,7 @@ export class MetadataQueryService {
         result = result || (metadata.freeTexts as any[]).filter((ft: any) => ft.value.length > 0).length > 0;
       } else if (metadata.singleSelects && metadata.singleSelects.length > 0) {
         result = result || (metadata.singleSelects as any[]).filter((ss: any) => ss.value.length > 0).length > 0;
-      } else if (metadata.multiSelects && metadata.multiSelects.length > 0){
+      } else if (metadata.multiSelects && metadata.multiSelects.length > 0) {
         result = result || (metadata.multiSelects as any[]).filter((ss: any) => ss.values.length > 0).length > 0;
       }
       return result;
@@ -127,11 +127,11 @@ export class MetadataQueryService {
       metadatum.subMetadata.forEach(m => this.resetMetadatum(m));
     }
   }
-  
+
   public setMetadataAttribute(metadataAttribute: Metadatum[]): void {
     this.metadataAttributes = metadataAttribute;
   }
- 
+
   public getMetadataAttributes(): Metadatum[] {
     return this.metadataAttributes;
   }
@@ -179,10 +179,10 @@ export class MetadataQueryService {
       metadatumGroup.name = 'NO_LABEL';
       metadatumGroup.position = 1000;
       const metadataGrouped = new MetadataGrouped(metadataNoGroup, metadatumGroup);
-      result.push(metadataGrouped);  
+      result.push(metadataGrouped);
     }
     result.sort((a, b) => a.metadatumGroup.position - b.metadatumGroup.position);
     return result;
-}
+  }
 
 }
