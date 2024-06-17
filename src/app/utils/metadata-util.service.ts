@@ -44,20 +44,8 @@ export class MetadataUtilService {
       metadata.forEach((md) => {
         if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
           md.tree = [];
-          let filteredSelections: Array<Selection> = [];
-          if (this.metadataRequest && this.metadataRequest.multiSelects) {
-            filteredSelections = this.metadataRequest.multiSelects.filter(
-              (ms) => ms.key === md.name
-            );
-          }
-          const res = this.generateTree(
-            md,
-            filteredSelections[0] && filteredSelections[0].values
-              ? filteredSelections[0].values
-              : []
-          );
+          const res = this.generateTree(md);
           md.tree.push(res.tree);
-          md.selection = res.selections;
         }
       });
       // recupero freeText da localstorage
@@ -114,6 +102,25 @@ export class MetadataUtilService {
                 lenObsArray === index + 1
               );
             });
+            // set Selections from Localstorage
+            if (this.metadataRequest) {
+              if (this.metadataRequest.freeTexts && this.metadataRequest.freeTexts.length > 0) {
+                this.metadataRequest.freeTexts.forEach(selection => {
+                  this.setSelectedFromLocalstorage(metadata, selection, 'FREE');
+                });
+              }
+              if (this.metadataRequest.singleSelects && this.metadataRequest.singleSelects.length > 0) {
+                this.metadataRequest.singleSelects.forEach(selection => {
+                  this.setSelectedFromLocalstorage(metadata, selection, 'SINGLE');
+                });
+              }
+              if (this.metadataRequest.multiSelects && this.metadataRequest.multiSelects.length > 0) {
+                this.metadataRequest.multiSelects.forEach(selection => {
+                  this.setSelectedFromLocalstorage(metadata, selection, 'MULTI');
+                });
+              }
+            }
+
             metadata.forEach((md) => {
               if (Array.isArray(md.selection)) {
                 const selection = md.selection as TreeNode[];
@@ -154,6 +161,57 @@ export class MetadataUtilService {
       node.selectable = false;
       node.children.forEach((md) => {
         this.setUnselectable(md);
+      });
+    }
+  }
+
+  private setSelectedFromLocalstorage(metadata: Metadatum[], selection: Selection, type: 'FREE' | 'SINGLE' | 'MULTI'): void {
+    if (type === 'FREE') {
+      metadata.forEach(md => {
+        if (md.name === selection.key) {
+          md.selection = selection.value!;
+        }
+      });
+    } else if (type === 'SINGLE') {
+      metadata.forEach(md => {
+        if (md.name === selection.key) {
+          const parentNode: TreeNode = {
+            key: md.name,
+            label: md.label ? md.label : md.name,
+            selectable: true,
+            children: [],
+          };
+          const innerNode: TreeNode = {
+            key: selection.value,
+            label: selection.value,
+            parent: parentNode,
+            selectable: true,
+            children: [],
+          };
+          md.selection = innerNode;
+        }
+      });
+    } else {
+      metadata.forEach(md => {
+        const parentNode: TreeNode = {
+          key: md.name,
+          label: md.label ? md.label : md.name,
+          selectable: true,
+          children: [],
+        };
+        if (md.name === selection.key) {
+          const selections: TreeNode[] = [];
+          selection.values?.forEach(v => {
+            const treeNode: TreeNode = {
+              key: selection.value,
+              label: selection.value,
+              parent: parentNode,
+              selectable: true,
+              children: [],
+            };
+            selections.push(treeNode);
+          });
+        }
       });
     }
   }
@@ -371,9 +429,7 @@ export class MetadataUtilService {
 
   private generateTree(
     meta: Metadatum,
-    values: string[]
-  ): { tree: TreeNode; selections: TreeNode[] } {
-    const selections: TreeNode[] = [];
+  ): { tree: TreeNode } {
     const root = {
       label: meta.label ? meta.label : meta.name,
       selectable: true,
@@ -384,9 +440,6 @@ export class MetadataUtilService {
       selectable: true,
       children: [],
     };
-    if (values && values.indexOf(meta.name) > -1) {
-      selections.push(root);
-    }
     const expandBranch = (
       metadata: Metadatum,
       node: TreeNode,
@@ -408,9 +461,6 @@ export class MetadataUtilService {
             selectable: true,
             children: [],
           };
-          if (values && values.indexOf(md.name) > -1) {
-            selections.push(innerNode);
-          }
           if (node.children) {
             node.children.push(innerNode);
           }
@@ -421,7 +471,7 @@ export class MetadataUtilService {
       }
     };
     expandBranch(meta, root, rootParent);
-    return { tree: root, selections };
+    return { tree: root };
   }
 
   private functionsMetadataAggregation4ImpaqtsCustom(metadata: Metadatum[]): Metadatum[] {
@@ -436,7 +486,7 @@ export class MetadataUtilService {
           functionMetadata.name = 'function';
           functionMetadata.tree[0].label = 'Funzione';
         } else {
-          functionMetadata.selection = (functionMetadata.selection as TreeNode[]).concat((m.selection as TreeNode[]));
+          //functionMetadata.selection = (functionMetadata.selection as TreeNode[]).concat((m.selection as TreeNode[]));
           (functionMetadata.subMetadata as any).metadataValues = ((functionMetadata.subMetadata as any).metadataValues as string[]).concat((m.subMetadata as any).metadataValues);
           const children: TreeNode[] | undefined = m.tree[0].children;
           if (children) {
