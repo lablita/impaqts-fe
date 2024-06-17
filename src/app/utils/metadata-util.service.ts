@@ -129,6 +129,7 @@ export class MetadataUtilService {
                   md.tree &&
                   md.tree[0] &&
                   md.tree[0].children &&
+                  md.tree[0].children.length > 0 &&
                   md.tree[0].children.length === selection.length
                 ) {
                   md.selection.push(md.tree[0]);
