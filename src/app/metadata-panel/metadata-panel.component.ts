@@ -75,8 +75,11 @@ export class MetadataPanelComponent implements OnInit, AfterViewInit {
   }
 
   private init(): void {
-    this.metadata = this.metadataQueryService.getMetadata();
-    this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    if (!this.isImpaqtsCustom) {
+      this.metadata = this.metadataQueryService.getMetadata();
+    } else {
+      this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    }
     console.log('Metadata Panel Start');
   }
 
