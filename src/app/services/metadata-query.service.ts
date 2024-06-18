@@ -86,6 +86,11 @@ export class MetadataQueryService {
     }
   }
 
+  public setMetadataGroupedList(mgl: MetadataGrouped[]): void {
+    this.metadataGroupedList = mgl;
+    this.metadataRef.metadata = mgl.map(m => m.metadata).reduce((acc, val) => acc.concat(val), []);
+  }
+
   public setMetadataVQ(mds: Array<Metadatum>): void {
     if (mds) {
       const metadataVQRef = new Metadata();

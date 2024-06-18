@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
-import { MetadataGrouped, MetadataQueryService } from '../services/metadata-query.service';
 import { AppInitializerService } from '../services/app-initializer.service';
-import { MetadatumGroup } from '../model/metadatum-group';
+import { MetadataGrouped, MetadataQueryService } from '../services/metadata-query.service';
+
 
 export class SubMetadatum {
   currentSize = 0;
@@ -18,7 +18,7 @@ export class SubMetadatum {
   templateUrl: './metadata-panel.component.html',
   styleUrls: ['./metadata-panel.component.scss']
 })
-export class MetadataPanelComponent implements OnInit {
+export class MetadataPanelComponent implements OnInit, AfterViewInit {
 
   @Input() public corpus: string | null | undefined = '';
   @Input() public title = '';
@@ -29,20 +29,26 @@ export class MetadataPanelComponent implements OnInit {
   public selected: any;
   public loading = 0;
   public isImpaqtsCustom = false;
-  public metadataGroupedList: MetadataGrouped[] = []
+  public metadataGroupedList: MetadataGrouped[] = [];
   public metadata: Metadatum[] = [];
-  
+  public render = false;
+
   constructor(
     private readonly metadataQueryService: MetadataQueryService,
     private readonly appInitializerService: AppInitializerService
-  ) { 
+  ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+    this.init();
+    setTimeout(() =>
+      this.render = true, 100);
+  }
+
+  ngAfterViewInit(): void {
+    //this.init();
   }
 
   ngOnInit(): void {
-    this.metadata = this.metadataQueryService.getMetadata();
-    this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
-    console.log('Metadata Panel Start');
+    //this.init();
   }
 
   public closeSidebar(): void {
@@ -52,6 +58,7 @@ export class MetadataPanelComponent implements OnInit {
   public resetMetadata(): void {
     localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
+    this.init();
   }
 
   public isFilterOptions(): boolean {
@@ -59,7 +66,18 @@ export class MetadataPanelComponent implements OnInit {
   }
 
   public nodeSelect(event: any): void {
+    if (!this.isImpaqtsCustom) {
+      this.metadataQueryService.setMetadata(this.metadata);
+    } else {
+      this.metadataQueryService.setMetadataGroupedList(this.metadataGroupedList);
+    }
     return;
+  }
+
+  private init(): void {
+    this.metadata = this.metadataQueryService.getMetadata();
+    this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    console.log('Metadata Panel Start');
   }
 
 }

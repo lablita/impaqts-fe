@@ -33,6 +33,7 @@ import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
 import { Selection } from '../model/selection';
 import { ViewOptionQueryRequest } from '../model/view-option-query-request';
+import { EmitterService } from '../utils/emitter.service';
 import { AppInitializerService } from './app-initializer.service';
 import { DisplayPanelService } from './display-panel.service';
 import { ErrorMessagesService } from './error-messages.service';
@@ -80,7 +81,8 @@ export class LoadResultsService {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly displayPanelService: DisplayPanelService,
     private readonly errorMessagesService: ErrorMessagesService,
-    private readonly appInitializerService: AppInitializerService
+    private readonly appInitializerService: AppInitializerService,
+    private readonly emitterService: EmitterService
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -348,6 +350,7 @@ export class LoadResultsService {
     if (REQUEST_TYPE.VISUAL_QUERY_REQUEST !== this.queryRequestService.getQueryRequest().queryType &&
       (metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
       localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
+      this.emitterService.localStorageSubject.next();
     }
     //group IMPLICIT
     let metadataImplicit: Metadatum[] | undefined;

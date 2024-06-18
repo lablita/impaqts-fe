@@ -10,7 +10,7 @@ import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { QueriesContainerService } from '../queries-container/queries-container.service';
 import { AppInitializerService } from '../services/app-initializer.service';
-import { MetadataQueryService } from '../services/metadata-query.service';
+import { EmitterService } from './emitter.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +23,7 @@ export class MetadataUtilService {
   constructor(
     private readonly queriesContainerService: QueriesContainerService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly metadataQueryService: MetadataQueryService
+    private readonly emitterService: EmitterService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
@@ -39,6 +39,7 @@ export class MetadataUtilService {
         .metadata.filter((md) => md.documentMetadatum);
       // recuro i dati salvati nel localstorage
       const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
+      this.emitterService.localStorageSubject.next();
       this.metadataRequest = ttqr ? JSON.parse(ttqr) : null;
       // genero albero per componente multiselect check box
       metadata.forEach((md) => {
@@ -486,7 +487,6 @@ export class MetadataUtilService {
           functionMetadata.name = 'function';
           functionMetadata.tree[0].label = 'Funzione';
         } else {
-          //functionMetadata.selection = (functionMetadata.selection as TreeNode[]).concat((m.selection as TreeNode[]));
           (functionMetadata.subMetadata as any).metadataValues = ((functionMetadata.subMetadata as any).metadataValues as string[]).concat((m.subMetadata as any).metadataValues);
           const children: TreeNode[] | undefined = m.tree[0].children;
           if (children) {
@@ -503,6 +503,21 @@ export class MetadataUtilService {
         seen.hasOwnProperty(m.label) ? false : seen[m.label!] = true
       );
       notFunctionsMetadata.push(functionsMetadata[0]);
+    }
+    if (this.metadataRequest && this.metadataRequest.singleSelects.some(s => s.key === 'function')) {
+      const parentNode: TreeNode = {
+        label: 'Funzione',
+        selectable: false,
+        children: functionsMetadata[0].tree[0].children,
+      };
+      const selection = this.metadataRequest.singleSelects.find(s => s.key === 'function');
+      const treeNode: TreeNode = {
+        label: selection?.value,
+        key: selection?.value,
+        selectable: true,
+        parent: parentNode
+      };
+      functionsMetadata[0].selection = treeNode;
     }
     return notFunctionsMetadata;
   }
