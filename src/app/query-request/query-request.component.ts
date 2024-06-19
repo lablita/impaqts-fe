@@ -154,8 +154,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       const selectedCorpusId = selectedCorpus.key;
       if (this.corpusSelectionService.getCorpusChanged()) {
         this.emitterService.spinnerMetadata.emit(true);
-      } else {
-        //     this.holdSelectedCorpusStr = selectedCorpus.key;
       }
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
@@ -179,10 +177,13 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.metadataAttributesChange.emit(metadataAttributes);
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
+          this.emitterService.spinnerMetadata.emit(true);
           this.appInitializerService.loadCorpus(+selectedCorpusId).
             pipe(
               switchMap(corpus => this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged()))
-            ).subscribe(res => { });
+            ).subscribe(res => {
+              this.emitterService.spinnerMetadata.emit(false);
+            });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
       } else {
