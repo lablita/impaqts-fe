@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { v4 as uuid } from 'uuid';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { CHARACTER, CQL, IMPLICIT, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
@@ -153,6 +154,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       const selectedCorpusId = selectedCorpus.key;
       if (this.corpusSelectionService.getCorpusChanged()) {
         this.emitterService.spinnerMetadata.emit(true);
+      } else {
+        //     this.holdSelectedCorpusStr = selectedCorpus.key;
       }
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
@@ -176,9 +179,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.metadataAttributesChange.emit(metadataAttributes);
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
-          this.appInitializerService.loadCorpus(+selectedCorpusId).subscribe(corpus => {
-            this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged());
-          });
+          this.appInitializerService.loadCorpus(+selectedCorpusId).
+            pipe(
+              switchMap(corpus => this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged()))
+            ).subscribe(res => {
+              console.log('***');
+            });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
       } else {
@@ -267,7 +273,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.clearContextFields();
   }
 
-  private setCorpus(corpus: Corpus, corpusChanged: boolean): void {
+  private setCorpus(corpus: Corpus, corpusChanged: boolean): Observable<Metadatum[]> {
     if (corpusChanged || this.corpusSelectionService.getPageLoadedFirstTime()) {
       const installation = this.installation;
       if (installation) {
@@ -277,32 +283,39 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
           }
         });
         this.metadataQueryService.clearMetadata();
-        const metadataTreeObs: Observable<Metadatum[]>[] = [];
-        this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).subscribe(
-          {
-            next: metadata => this.metadataQueryService.setMetadata(metadata),
-            error: err => {
-              console.error(err);
-              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-              this.emitterService.spinnerMetadata.emit(false);
-              const metadataErrorMsg = {} as Message;
-              metadataErrorMsg.severity = 'error';
-              metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-              metadataErrorMsg.summary = 'Errore';
-              this.errorMessagesService.sendError(metadataErrorMsg);
-            },
-            complete: () => {
-              this.metadataQueryService.storageMetadata();
-              this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-              this.emitterService.spinnerMetadata.emit(false);
-              this.corpusSelectionService.resetCorpusChanged();
-            }
-          });
+        //const metadataTreeObs: Observable<Metadatum[]>[] = [];
+        return this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).
+          pipe(
+            tap(
+              metadata => {
+                this.metadataQueryService.setMetadata(metadata);
+                this.metadataQueryService.storageMetadata();
+                this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+                this.emitterService.spinnerMetadata.emit(false);
+                this.corpusSelectionService.resetCorpusChanged();
+              }
+            ),
+            catchError(
+              err => {
+                console.error(err);
+                this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
+                this.emitterService.spinnerMetadata.emit(false);
+                const metadataErrorMsg = {} as Message;
+                metadataErrorMsg.severity = 'error';
+                metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+                metadataErrorMsg.summary = 'Errore';
+                this.errorMessagesService.sendError(metadataErrorMsg);
+                return of([]);
+              }
+            )
+          );
       } else {
         this.metadataQueryService.resetMetadataService();
+        return of([]);
       }
     }
     this.corpusSelectionService.setPageLoadedFirstTime(false);
+    return of([]);
   }
 
   private closeWebSocket(): void {

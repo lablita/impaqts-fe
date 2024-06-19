@@ -32,7 +32,7 @@ export class MetadataUtilService {
     corpusId: string,
     installation: Installation | undefined,
     visualQueryFlag: boolean
-  ): Observable<Array<Metadatum>> {
+  ): Observable<Metadatum[]> {
     if (installation) {
       let metadata = installation.corpora
         .filter((c) => c.id === +corpusId)[0]
