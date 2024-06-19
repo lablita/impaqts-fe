@@ -3,7 +3,7 @@
   [ngClass]="{'disabled': labelDisableMTD || spinnerMetadata, 'vertical metadata': verticalLabel}">
   <div class="flex align-items-center">
     <div>
-      <fa-icon *ngIf="checkMetadata()" style="font-size: large" [icon]="faCheck"></fa-icon>
+      <fa-icon *ngIf="checkMetadata" style="font-size: large" [icon]="faCheck"></fa-icon>
       {{metadataLabel | translate}}
     </div>
     <div *ngIf="spinnerMetadata" class="progress-spinner">

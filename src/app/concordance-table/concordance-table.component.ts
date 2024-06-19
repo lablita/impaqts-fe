@@ -41,21 +41,21 @@ import { KeyValueItem } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
+import { ReferencePositionResponse } from '../model/reference-position-response';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { AppInitializerService } from '../services/app-initializer.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ExportCsvService } from '../services/export-csv.service';
 import { InstallationService } from '../services/installation.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
+import { ReferencePositionService } from '../services/reference-position.service';
 import { WideContextService } from '../services/wide-context.service';
 import {
   ConcordanceRequestPayload,
   EmitterService,
 } from '../utils/emitter.service';
-import { ReferencePositionService } from '../services/reference-position.service';
-import { ReferencePositionResponse } from '../model/reference-position-response';
-import { AppInitializerService } from '../services/app-initializer.service';
 
 const SORT_LABELS = [
   new KeyValueItem('LEFT_CONTEXT', LEFT),
@@ -73,8 +73,7 @@ const CONCORDANCE = 'concordance';
   encapsulation: ViewEncapsulation.None,
 })
 export class ConcordanceTableComponent
-  implements AfterViewInit, OnDestroy, OnChanges
-{
+  implements AfterViewInit, OnDestroy, OnChanges {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -89,6 +88,7 @@ export class ConcordanceTableComponent
   public resultContext: ResultContext | null = null;
   public implStr: string | null = null;
   public typeStr: string | null = null;
+  public functionStr: string | null = null;
   public commentStr: string | null = null;
   public displayModal = false;
   public videoUrl: SafeResourceUrl =
@@ -418,6 +418,7 @@ export class ConcordanceTableComponent
     this.implStr = implType.toUpperCase();
     this.typeStr = kwicline.references[implType + '.type'];
     this.commentStr = kwicline.references[implType + '.comment'];
+    this.functionStr = kwicline.references[implType + '.function'];
   }
 
   public clickConc(event: any): void {
@@ -507,7 +508,7 @@ export class ConcordanceTableComponent
               referencePositionError.severity = 'error';
               referencePositionError.detail =
                 'Non è stato possibile recuperare il riferimento associato';
-                referencePositionError.summary = 'Errore';
+              referencePositionError.summary = 'Errore';
               this.errorMessagesService.sendError(referencePositionError);
             },
           });
