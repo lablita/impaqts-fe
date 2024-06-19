@@ -502,6 +502,9 @@ export class MetadataUtilService {
       functionMetadata.tree[0].children = functionMetadata.tree[0].children!.filter(m =>
         seen.hasOwnProperty(m.label) ? false : seen[m.label!] = true
       );
+      //sorting
+      functionMetadata.tree[0].children.sort((a, b) => a.label!.localeCompare(b.label!));
+      (functionMetadata.subMetadata as any).metadataValues.sort();
       notFunctionsMetadata.push(functionsMetadata[0]);
     }
     if (this.metadataRequest && this.metadataRequest.singleSelects.some(s => s.key === 'function')) {
