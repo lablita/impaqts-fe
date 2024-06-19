@@ -182,9 +182,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
           this.appInitializerService.loadCorpus(+selectedCorpusId).
             pipe(
               switchMap(corpus => this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged()))
-            ).subscribe(res => {
-              console.log('***');
-            });
+            ).subscribe(res => { });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
       } else {
@@ -283,7 +281,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
           }
         });
         this.metadataQueryService.clearMetadata();
-        //const metadataTreeObs: Observable<Metadatum[]>[] = [];
         return this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).
           pipe(
             tap(
