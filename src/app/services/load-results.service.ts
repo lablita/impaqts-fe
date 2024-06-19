@@ -134,7 +134,9 @@ export class LoadResultsService {
         });
         if (this.metadataQuery && this.metadataQuery.tags) {
           this.metadataQuery.tags = this.metadataQuery?.tags.filter(tagList => tagList[0].name !== 'function');
-          this.metadataQuery.tags.push(tagListFunctionImplicit);
+          if (tagListFunctionImplicit.length > 0) {
+            this.metadataQuery.tags.push(tagListFunctionImplicit);
+          }
         }
 
       }
