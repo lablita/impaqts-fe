@@ -350,10 +350,10 @@ export class LoadResultsService {
     if (REQUEST_TYPE.VISUAL_QUERY_REQUEST !== this.queryRequestService.getQueryRequest().queryType) {
       if ((metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
         localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
-        this.emitterService.localStorageSubject.next();
       } else {
         localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
       }
+      this.emitterService.localStorageSubject.next();
     }
     //group IMPLICIT
     let metadataImplicit: Metadatum[] | undefined;
