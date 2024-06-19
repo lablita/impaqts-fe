@@ -1,22 +1,21 @@
-import { KeyValue } from '@angular/common';
-import { Component, KeyValueDiffers, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
+import { AppInitializerService } from '../services/app-initializer.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
-import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { AppInitializerService } from '../services/app-initializer.service';
 
 @Component({
   selector: 'app-right',
   templateUrl: './right.component.html',
   styleUrls: ['./right.component.scss']
 })
-export class RightComponent implements OnInit {
+export class RightComponent implements OnInit, OnDestroy {
   public titleLabelKeyValue: KeyValueItem | null = null;
   public faCheck = faCheck;
   public labelVisibleMTD = false;
@@ -26,7 +25,10 @@ export class RightComponent implements OnInit {
   public spinnerMetadata = false;
   public verticalLabel = false;
   public metadataLabel = 'PAGE.CONCORDANCE.METADATA';
-  
+  public checkMetadata = false;
+  private localStorageSubscript: Subscription;
+  private spinnerMetadataSubscript: Subscription;
+
   constructor(
     public displayPanelService: DisplayPanelService,
     private readonly emitterService: EmitterService,
@@ -34,10 +36,18 @@ export class RightComponent implements OnInit {
     private readonly queryRequestService: QueryRequestService,
     private readonly corpusSelectionService: CorpusSelectionService,
     private readonly appInitializerService: AppInitializerService
-  ) { 
+  ) {
     if (this.appInitializerService.isImpactCustom()) {
       this.metadataLabel = 'PAGE.CONCORDANCE.FILTERS';
     }
+    this.localStorageSubscript = this.emitterService.localStorageSubject.subscribe(res =>
+      this.checkMetadata = this.metadataQueryService.isCompiled()
+    );
+    this.spinnerMetadataSubscript = this.emitterService.spinnerMetadata.subscribe({
+      next: (event: boolean) => {
+        this.spinnerMetadata = event;
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -49,9 +59,15 @@ export class RightComponent implements OnInit {
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
       this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
     })
-    this.emitterService.spinnerMetadata.subscribe({ next: (event: boolean) => {
-      this.spinnerMetadata = event; 
-    }});
+  }
+
+  ngOnDestroy(): void {
+    if (this.localStorageSubscript) {
+      this.localStorageSubscript.unsubscribe();
+    }
+    if (this.spinnerMetadataSubscript) {
+      this.spinnerMetadataSubscript.unsubscribe();
+    }
   }
 
   public labelOPTClick(): void {
@@ -62,9 +78,9 @@ export class RightComponent implements OnInit {
     this.displayPanelService.labelMTDClickSubject.next();
   }
 
-  public checkMetadata(): boolean {
-    return this.metadataQueryService.isCompiled();
-  }
+  // public checkMetadata(): boolean {
+  //   return this.metadataQueryService.isCompiled();
+  // }
 
   public checkOptions(): boolean {
     return this.queryRequestService.isOptionSet();

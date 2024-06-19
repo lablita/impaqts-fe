@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { FieldRequest } from '../model/field-request';
 import { User } from '../model/user';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
@@ -26,5 +26,5 @@ export class EmitterService {
   public makeCollocation: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
   public makeFrequency: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
   public pageMenu = '';
-
+  public localStorageSubject: Subject<void> = new Subject();
 }

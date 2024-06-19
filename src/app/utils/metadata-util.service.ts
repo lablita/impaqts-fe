@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { concat, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { Installation } from '../model/installation';
@@ -9,48 +9,44 @@ import { MetadataRequest } from '../model/metadata-request';
 import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { QueriesContainerService } from '../queries-container/queries-container.service';
+import { AppInitializerService } from '../services/app-initializer.service';
+import { EmitterService } from './emitter.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MetadataUtilService {
   public res: KeyValueItem[] = [];
+  public isImpaqtsCustom = false;
   private metadataRequest: MetadataRequest = new MetadataRequest();
 
   constructor(
-    private readonly queriesContainerService: QueriesContainerService
-  ) {}
+    private readonly queriesContainerService: QueriesContainerService,
+    private readonly appInitializerService: AppInitializerService,
+    private readonly emitterService: EmitterService
+  ) {
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   public createMatadataTree(
     corpusId: string,
     installation: Installation | undefined,
     visualQueryFlag: boolean
-  ): Observable<Array<Metadatum>> {
+  ): Observable<Metadatum[]> {
     if (installation) {
       let metadata = installation.corpora
         .filter((c) => c.id === +corpusId)[0]
         .metadata.filter((md) => md.documentMetadatum);
       // recuro i dati salvati nel localstorage
       const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
+      this.emitterService.localStorageSubject.next();
       this.metadataRequest = ttqr ? JSON.parse(ttqr) : null;
       // genero albero per componente multiselect check box
       metadata.forEach((md) => {
         if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
           md.tree = [];
-          let filteredSelections: Array<Selection> = [];
-          if (this.metadataRequest && this.metadataRequest.multiSelects) {
-            filteredSelections = this.metadataRequest.multiSelects.filter(
-              (ms) => ms.key === md.name
-            );
-          }
-          const res = this.generateTree(
-            md,
-            filteredSelections[0] && filteredSelections[0].values
-              ? filteredSelections[0].values
-              : []
-          );
+          const res = this.generateTree(md);
           md.tree.push(res.tree);
-          md.selection = res.selections;
         }
       });
       // recupero freeText da localstorage
@@ -97,14 +93,35 @@ export class MetadataUtilService {
       metadata = metadata.filter((md) => !md.child);
       const lenObsArray = obsArray.length;
       if (lenObsArray > 0) {
-        return concat(...obsArray).pipe(
-          map((res, index) => {
-            metadata = this.setInnerTree(
-              (res as any).res,
-              metadata,
-              (res as any).metadatum.id,
-              lenObsArray === index + 1
-            );
+        return forkJoin(...obsArray).pipe(
+          map(res => {
+            res.forEach((item: any, index: number) => {
+              metadata = this.setInnerTree(
+                item.res,
+                metadata,
+                item.metadatum.id,
+                lenObsArray === index + 1
+              );
+            });
+            // set Selections from Localstorage
+            if (this.metadataRequest) {
+              if (this.metadataRequest.freeTexts && this.metadataRequest.freeTexts.length > 0) {
+                this.metadataRequest.freeTexts.forEach(selection => {
+                  this.setSelectedFromLocalstorage(metadata, selection, 'FREE');
+                });
+              }
+              if (this.metadataRequest.singleSelects && this.metadataRequest.singleSelects.length > 0) {
+                this.metadataRequest.singleSelects.forEach(selection => {
+                  this.setSelectedFromLocalstorage(metadata, selection, 'SINGLE');
+                });
+              }
+              if (this.metadataRequest.multiSelects && this.metadataRequest.multiSelects.length > 0) {
+                this.metadataRequest.multiSelects.forEach(selection => {
+                  this.setSelectedFromLocalstorage(metadata, selection, 'MULTI');
+                });
+              }
+            }
+
             metadata.forEach((md) => {
               if (Array.isArray(md.selection)) {
                 const selection = md.selection as TreeNode[];
@@ -120,12 +137,16 @@ export class MetadataUtilService {
                   md.tree &&
                   md.tree[0] &&
                   md.tree[0].children &&
+                  md.tree[0].children.length > 0 &&
                   md.tree[0].children.length === selection.length
                 ) {
                   md.selection.push(md.tree[0]);
                 }
               }
             });
+            if (this.isImpaqtsCustom) {
+              metadata = this.functionsMetadataAggregation4ImpaqtsCustom(metadata);
+            }
             return metadata;
           })
         );
@@ -134,6 +155,66 @@ export class MetadataUtilService {
       }
     }
     return of([]);
+  }
+
+  public setUnselectable(node: TreeNode): void {
+    if (node.children && node.children.length > 0) {
+      node.selectable = false;
+      node.children.forEach((md) => {
+        this.setUnselectable(md);
+      });
+    }
+  }
+
+  private setSelectedFromLocalstorage(metadata: Metadatum[], selection: Selection, type: 'FREE' | 'SINGLE' | 'MULTI'): void {
+    if (type === 'FREE') {
+      metadata.forEach(md => {
+        if (md.name === selection.key) {
+          md.selection = selection.value!;
+        }
+      });
+    } else if (type === 'SINGLE') {
+      metadata.forEach(md => {
+        if (md.name === selection.key) {
+          const parentNode: TreeNode = {
+            key: md.name,
+            label: md.label ? md.label : md.name,
+            selectable: true,
+            children: [],
+          };
+          const innerNode: TreeNode = {
+            key: selection.value,
+            label: selection.value,
+            parent: parentNode,
+            selectable: true,
+            children: [],
+          };
+          md.selection = innerNode;
+        }
+      });
+    } else {
+      metadata.forEach(md => {
+        const parentNode: TreeNode = {
+          key: md.name,
+          label: md.label ? md.label : md.name,
+          selectable: true,
+          children: [],
+        };
+        if (md.name === selection.key) {
+          const selections: TreeNode[] = [];
+          selection.values?.forEach(v => {
+            const treeNode: TreeNode = {
+              key: selection.value,
+              label: selection.value,
+              parent: parentNode,
+              selectable: true,
+              children: [],
+            };
+            selections.push(treeNode);
+          });
+        }
+      });
+    }
   }
 
   private setInnerTree(
@@ -153,20 +234,20 @@ export class MetadataUtilService {
     if (metadatum) {
       const selected =
         this.metadataRequest &&
-        this.metadataRequest.singleSelects.filter(
-          (ss) => metadatum && ss.key === metadatum.name
-        ).length > 0
+          this.metadataRequest.singleSelects.filter(
+            (ss) => metadatum && ss.key === metadatum.name
+          ).length > 0
           ? this.metadataRequest.singleSelects.filter(
-              (ss) => metadatum && ss.key === metadatum.name
-            )[0]
+            (ss) => metadatum && ss.key === metadatum.name
+          )[0]
           : this.metadataRequest &&
             this.metadataRequest.multiSelects.filter(
               (ss) => metadatum && ss.key === metadatum.name
             ).length > 0
-          ? this.metadataRequest.multiSelects.filter(
+            ? this.metadataRequest.multiSelects.filter(
               (ss) => metadatum && ss.key === metadatum.name
             )[0]
-          : null;
+            : null;
       metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta
@@ -349,9 +430,7 @@ export class MetadataUtilService {
 
   private generateTree(
     meta: Metadatum,
-    values: string[]
-  ): { tree: TreeNode; selections: TreeNode[] } {
-    const selections: TreeNode[] = [];
+  ): { tree: TreeNode } {
     const root = {
       label: meta.label ? meta.label : meta.name,
       selectable: true,
@@ -362,9 +441,6 @@ export class MetadataUtilService {
       selectable: true,
       children: [],
     };
-    if (values && values.indexOf(meta.name) > -1) {
-      selections.push(root);
-    }
     const expandBranch = (
       metadata: Metadatum,
       node: TreeNode,
@@ -386,9 +462,6 @@ export class MetadataUtilService {
             selectable: true,
             children: [],
           };
-          if (values && values.indexOf(md.name) > -1) {
-            selections.push(innerNode);
-          }
           if (node.children) {
             node.children.push(innerNode);
           }
@@ -399,15 +472,56 @@ export class MetadataUtilService {
       }
     };
     expandBranch(meta, root, rootParent);
-    return { tree: root, selections };
+    return { tree: root };
   }
 
-  public setUnselectable(node: TreeNode): void {
-    if (node.children && node.children.length > 0) {
-      node.selectable = false;
-      node.children.forEach((md) => {
-        this.setUnselectable(md);
+  private functionsMetadataAggregation4ImpaqtsCustom(metadata: Metadatum[]): Metadatum[] {
+    const functionsMetadata: Metadatum[] = metadata.filter(m => m.name.indexOf('.function') > 0);
+    const notFunctionsMetadata: Metadatum[] = metadata.filter(m => m.name.indexOf('.function') < 0);
+    if (functionsMetadata.length > 0) {
+      let functionMetadata: Metadatum = new Metadatum();
+      functionsMetadata.forEach((m, i) => {
+        if (i === 0) {
+          functionMetadata = m;
+          functionMetadata.label = 'Funzione';
+          functionMetadata.name = 'function';
+          functionMetadata.tree[0].label = 'Funzione';
+        } else {
+          (functionMetadata.subMetadata as any).metadataValues = ((functionMetadata.subMetadata as any).metadataValues as string[]).concat((m.subMetadata as any).metadataValues);
+          const children: TreeNode[] | undefined = m.tree[0].children;
+          if (children) {
+            functionMetadata.tree[0].children = functionMetadata.tree[0].children?.concat(children);
+          }
+        }
       });
+      let seen: any = {};
+      (functionMetadata.subMetadata as any).metadataValues = ((functionsMetadata[0].subMetadata as any).metadataValues as []).filter(m =>
+        seen.hasOwnProperty(m) ? false : seen[m] = true
+      );
+      seen = {};
+      functionMetadata.tree[0].children = functionMetadata.tree[0].children!.filter(m =>
+        seen.hasOwnProperty(m.label) ? false : seen[m.label!] = true
+      );
+      //sorting
+      functionMetadata.tree[0].children.sort((a, b) => a.label!.localeCompare(b.label!));
+      (functionMetadata.subMetadata as any).metadataValues.sort();
+      notFunctionsMetadata.push(functionsMetadata[0]);
     }
+    if (this.metadataRequest && this.metadataRequest.singleSelects.some(s => s.key === 'function')) {
+      const parentNode: TreeNode = {
+        label: 'Funzione',
+        selectable: false,
+        children: functionsMetadata[0].tree[0].children,
+      };
+      const selection = this.metadataRequest.singleSelects.find(s => s.key === 'function');
+      const treeNode: TreeNode = {
+        label: selection?.value,
+        key: selection?.value,
+        selectable: true,
+        parent: parentNode
+      };
+      functionsMetadata[0].selection = treeNode;
+    }
+    return notFunctionsMetadata;
   }
 }

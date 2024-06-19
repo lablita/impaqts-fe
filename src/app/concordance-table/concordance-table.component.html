@@ -50,7 +50,6 @@
   [rowsPerPageOptions]="paginations" [autoLayout]="true">
   <ng-template pTemplate="header">
     <tr>
-      <!-- <th style="width: 60px;"> -->
       <th style="flex: 0 0 60px;">
         <button pButton (click)="showDialog()" [disabled]="loading">CSV</button>
         <p-dialog header="File Csv in elaborazione" [(visible)]="dlgVisible" [modal]="true" [closable]="false"
@@ -88,18 +87,22 @@
                 class="button-ref">{{kwicLine.ref}}</span></p-button>
           </div>
           <div class="badgecontainer">
-            <div *ngIf="kwicLine.references['impl.type'] && kwicLine.references['impl.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'impl')" value="I"
-                class="implicit-badge"></p-badge></div>
-            <div *ngIf="kwicLine.references['ppp.type'] && kwicLine.references['ppp.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'ppp')" value="P"
-                class="implicit-badge"></p-badge></div>
-            <div *ngIf="kwicLine.references['top.type'] && kwicLine.references['top.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'top')" value="T"
-                class="implicit-badge"></p-badge></div>
-            <div *ngIf="kwicLine.references['vag.type'] && kwicLine.references['vag.type'].length > 0"><p-badge
-                (click)="comment.toggle($event); showComment(kwicLine, 'vag')" value="V"
-                class="implicit-badge"></p-badge></div>
+            <div *ngIf="kwicLine.references['impl.type'] && kwicLine.references['impl.type'].length > 0">
+              <p-badge (click)="comment.toggle($event); showComment(kwicLine, 'impl')" value="I" class="implicit-badge">
+              </p-badge>
+            </div>
+            <div *ngIf="kwicLine.references['ppp.type'] && kwicLine.references['ppp.type'].length > 0">
+              <p-badge (click)="comment.toggle($event); showComment(kwicLine, 'ppp')" value="P" class="implicit-badge">
+              </p-badge>
+            </div>
+            <div *ngIf="kwicLine.references['top.type'] && kwicLine.references['top.type'].length > 0">
+              <p-badge (click)="comment.toggle($event); showComment(kwicLine, 'top')" value="T" class="implicit-badge">
+              </p-badge>
+            </div>
+            <div *ngIf="kwicLine.references['vag.type'] && kwicLine.references['vag.type'].length > 0">
+              <p-badge (click)="comment.toggle($event); showComment(kwicLine, 'vag')" value="V" class="implicit-badge">
+              </p-badge>
+            </div>
           </div>
         </div>
       </td>
@@ -164,6 +167,9 @@
     <div><strong>{{('METADATA_OPT.' + implStr) | translate}}</strong></div>
     <div *ngIf="typeStr">
       <div><strong>{{'METADATA_OPT.TYP' | translate}}:</strong>&nbsp;{{typeStr}}</div>
+    </div>
+    <div *ngIf="functionStr">
+      <div><strong>{{'METADATA_OPT.FUNCTION' | translate}}:</strong>&nbsp;{{functionStr}}</div>
     </div>
     <div *ngIf="commentStr">
       <div><strong>{{'METADATA_OPT.ESPL' | translate}}:</strong>&nbsp;{{commentStr}}</div>

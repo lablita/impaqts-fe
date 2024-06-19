@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { Message } from 'primeng/api';
+import { Observable, Subscription, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { v4 as uuid } from 'uuid';
 import { STRUCT_DOC, TOKEN } from '../common/constants';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
@@ -18,10 +19,12 @@ import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { KWICline } from '../model/kwicline';
 import { Metadatum } from '../model/metadatum';
 import { QueryPattern } from '../model/query-pattern';
+import { QueryStructure } from '../model/query-structure';
 import { QueryToken } from '../model/query-token';
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { AppInitializerService } from '../services/app-initializer.service';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
@@ -32,9 +35,6 @@ import {
   EmitterService,
 } from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
-import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Observable, Subscription, forkJoin } from 'rxjs';
-import { QueryStructure } from '../model/query-structure';
 
 @Component({
   selector: 'app-visual-query',
@@ -132,7 +132,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService,
     private readonly corpusSelectionService: CorpusSelectionService,
-  ) { 
+  ) {
     if (this.appInitializerService.isImpactCustom()) {
       this.metadataLabel = 'PAGE.VISUAL_QUERY.FILTERS';
       this.metadataButton = 'PAGE.VISUAL_QUERY.ADD_FILTERS'
@@ -250,10 +250,10 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
         if (this.installation) {
           this.appInitializerService
-            .loadCorpus(+this.selectedCorpus.key)
-            .subscribe((corpus) => {
-              this.setCorpus(corpus);
-            });
+            .loadCorpus(+this.selectedCorpus.key).
+            pipe(
+              switchMap(corpus => this.setCorpus(corpus))
+            ).subscribe(res => { });
         }
         this.holdSelectedCorpusId = this.selectedCorpus.key;
       } else {
@@ -343,36 +343,60 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       .subscribe((res: any) => (this.selectCorpus = res));
   }
 
-  private setCorpus(corpus: Corpus): void {
+  private setCorpus(corpus: Corpus): Observable<Metadatum[]> {
     const metadataVQStr = localStorage.getItem('metadataVQ');
     if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime()
       || !metadataVQStr || this.metadataQueryService.getMetadataVQIdCorpus() !== '' + corpus.id) {
-      this.metadataUtilService
+      return this.metadataUtilService
         .createMatadataTree(`${corpus.id}`, this.installation, true)
-        .subscribe({
-          next: (metadata) => {
-            this.metadataQueryService.setMetadataVQ(metadata);
-            this.metadataTextTypes = metadata;
-          },
-          error: (err) => {
-            this.enableSpinner = false;
-            const metadataErrorMsg = {} as Message;
-            metadataErrorMsg.severity = 'error';
-            metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-            metadataErrorMsg.summary = 'Errore';
-            this.errorMessagesService.sendError(metadataErrorMsg);
-          },
-          complete: () => {
-            this.metadataQueryService.storageMetadataVQ();
-            this.enableSpinner = false;
-            this.enableAddMetadata = true;
-          },
-        });
+        .pipe(
+          tap(
+            metadata => {
+              this.metadataQueryService.setMetadataVQ(metadata);
+              this.metadataTextTypes = metadata;
+              this.metadataQueryService.storageMetadataVQ();
+              this.enableSpinner = false;
+              this.enableAddMetadata = true;
+            }
+          ),
+          catchError(
+            err => {
+              console.error(err);
+              this.enableSpinner = false;
+              const metadataErrorMsg = {} as Message;
+              metadataErrorMsg.severity = 'error';
+              metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+              metadataErrorMsg.summary = 'Errore';
+              this.errorMessagesService.sendError(metadataErrorMsg);
+              return of([]);
+            }
+          )
+        );
+      // .subscribe({
+      //   next: (metadata) => {
+      //     this.metadataQueryService.setMetadataVQ(metadata);
+      //     this.metadataTextTypes = metadata;
+      //   },
+      //   error: (err) => {
+      //     this.enableSpinner = false;
+      //     const metadataErrorMsg = {} as Message;
+      //     metadataErrorMsg.severity = 'error';
+      //     metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+      //     metadataErrorMsg.summary = 'Errore';
+      //     this.errorMessagesService.sendError(metadataErrorMsg);
+      //   },
+      //   complete: () => {
+      //     this.metadataQueryService.storageMetadataVQ();
+      //     this.enableSpinner = false;
+      //     this.enableAddMetadata = true;
+      //   },
+      // });
     } else {
       this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();
       this.corpusSelectionService.setPageLoadedFirstTime(false);
       this.enableSpinner = false;
       this.enableAddMetadata = true;
+      return of([]);
     }
   }
 }
