@@ -120,13 +120,13 @@ export class LoadResultsService {
             if (implicitQueryTag.length > 0) {
               implicitQueryTag.forEach(iqt => {
                 if (tagListFunctionImplicit.filter(tag => tag.structure === iqt.structure).length === 0) {
-                  const tag: QueryTag = new QueryTag(iqt.structure, 'function', value);
+                  const tag: QueryTag = new QueryTag(iqt.structure, 'function', `.*${value}.*`);
                   tagListFunctionImplicit.push(tag);
                 }
               });
             } else {
               ['impl', 'top', 'vag', 'ppp'].forEach(iqt => {
-                const tag: QueryTag = new QueryTag(iqt, 'function', value);
+                const tag: QueryTag = new QueryTag(iqt, 'function', `.*${value}.*`);
                 tagListFunctionImplicit.push(tag);
               });
             }
