@@ -12,6 +12,9 @@ import { QueriesContainerService } from '../queries-container/queries-container.
 import { AppInitializerService } from '../services/app-initializer.service';
 import { EmitterService } from './emitter.service';
 
+
+const FUNCTION = 'function';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -146,6 +149,7 @@ export class MetadataUtilService {
             });
             if (this.isImpaqtsCustom) {
               metadata = this.functionsMetadataAggregation4ImpaqtsCustom(metadata);
+              metadata = this.setHardCodedFunctions(metadata);
             }
             return metadata;
           })
@@ -475,6 +479,29 @@ export class MetadataUtilService {
     return { tree: root };
   }
 
+  private setHardCodedFunctions(metadata: Metadatum[]): Metadatum[] {
+    const hardcodedFunction = [
+      { name: 'TT', label: 'Attacco - TT' },
+      { name: 'OP', label: 'Opinione - OP' },
+      { name: 'DI', label: 'Difesa - DI' },
+      { name: 'EL', label: 'Elogio - EL' },
+      { name: 'AU', label: 'Auto-elogio - AU' },
+    ];
+    const functionMetadatum = metadata.find(m => m.name === FUNCTION);
+    if (functionMetadatum?.subMetadata) {
+      (functionMetadatum?.subMetadata as any).metadataValues = hardcodedFunction.map(h => h.name);
+      (functionMetadatum.tree[0].children as any) = hardcodedFunction.map(h => {
+        const treeNode: TreeNode = {
+          label: h.label,
+          key: h.name,
+          selectable: true
+        };
+        return treeNode;
+      });
+    }
+    return metadata;
+  }
+
   private functionsMetadataAggregation4ImpaqtsCustom(metadata: Metadatum[]): Metadatum[] {
     const functionsMetadata: Metadatum[] = metadata.filter(m => m.name.indexOf('.function') > 0);
     const notFunctionsMetadata: Metadatum[] = metadata.filter(m => m.name.indexOf('.function') < 0);
@@ -484,7 +511,7 @@ export class MetadataUtilService {
         if (i === 0) {
           functionMetadata = m;
           functionMetadata.label = 'Funzione';
-          functionMetadata.name = 'function';
+          functionMetadata.name = FUNCTION;
           functionMetadata.tree[0].label = 'Funzione';
         } else {
           (functionMetadata.subMetadata as any).metadataValues = ((functionMetadata.subMetadata as any).metadataValues as string[]).concat((m.subMetadata as any).metadataValues);
@@ -507,13 +534,13 @@ export class MetadataUtilService {
       (functionMetadata.subMetadata as any).metadataValues.sort();
       notFunctionsMetadata.push(functionsMetadata[0]);
     }
-    if (this.metadataRequest && this.metadataRequest.singleSelects.some(s => s.key === 'function')) {
+    if (this.metadataRequest && this.metadataRequest.singleSelects.some(s => s.key === FUNCTION)) {
       const parentNode: TreeNode = {
         label: 'Funzione',
         selectable: false,
         children: functionsMetadata[0].tree[0].children,
       };
-      const selection = this.metadataRequest.singleSelects.find(s => s.key === 'function');
+      const selection = this.metadataRequest.singleSelects.find(s => s.key === FUNCTION);
       const treeNode: TreeNode = {
         label: selection?.value,
         key: selection?.value,
