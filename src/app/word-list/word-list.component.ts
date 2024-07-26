@@ -114,9 +114,12 @@ export class WordListComponent implements OnInit, OnDestroy {
       .getWordList(queryRequest)
       .subscribe((wordList) => {
         this.loading = false;
-        this.wordListItems = wordList?.items ? wordList?.items : [];
-        this.totalFrequencies = wordList?.totalFreqs ? wordList?.totalFreqs : 0;
-        this.totalItems = wordList?.totalItems ? wordList?.totalItems : 0;
+        if (wordList) {
+          this.wordListItems = wordList?.items ? wordList?.items : [];
+          this.totalFrequencies = wordList?.totalFreqs ? wordList?.totalFreqs : 0;
+          this.totalItems = wordList?.totalItems ? wordList?.totalItems : 0;
+        }
+
       });
   }
 
