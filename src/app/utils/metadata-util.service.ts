@@ -489,6 +489,7 @@ export class MetadataUtilService {
     ];
     const functionMetadatum = metadata.find(m => m.name === FUNCTION);
     if (functionMetadatum?.subMetadata) {
+<<<<<<< Updated upstream
       (functionMetadatum?.subMetadata as any).metadataValues = hardcodedFunction.map(h => h.name);
       (functionMetadatum.tree[0].children as any) = hardcodedFunction.map(h => {
         const treeNode: TreeNode = {
@@ -498,6 +499,20 @@ export class MetadataUtilService {
         };
         return treeNode;
       });
+=======
+      (functionMetadatum.subMetadata as any).metadataValues =
+        hardcodedFunction.map((h) => h.name);
+      (functionMetadatum.tree[0].children as any) = hardcodedFunction.map(
+        (h) => {
+          const treeNode: TreeNode = {
+            label: h.label,
+            key: h.name,
+            selectable: true,
+          };
+          return treeNode;
+        }
+      );
+>>>>>>> Stashed changes
     }
     return metadata;
   }
