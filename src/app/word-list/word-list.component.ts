@@ -1,22 +1,20 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Message } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { HTTP } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { COMPLETE_FREQUENCY_LIST, WORD_LIST } from '../common/routes-constants';
 import { ASC, DESC } from '../model/constants';
-import { KeyValueItem } from '../model/key-value-item';
 import { QueryRequest } from '../model/query-request';
 import { WordListItem } from '../model/word-list-item';
 import { WordListRequest } from '../model/word-list-request';
+import { CorpusSelectionService } from '../services/corpus-selection.service';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ExportCsvService } from '../services/export-csv.service';
 import { InstallationService } from '../services/installation.service';
 import { WordListService } from '../services/word-list.service';
-import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { Subscription } from 'rxjs';
-import { DisplayPanelService } from '../services/display-panel.service';
 
 @Component({
   selector: 'app-word-list',
@@ -48,7 +46,7 @@ export class WordListComponent implements OnInit, OnDestroy {
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly corpusSelectionService: CorpusSelectionService,
     private readonly displayPanelService: DisplayPanelService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.displayPanelService.menuItemClickSubject.next(WORD_LIST);
@@ -58,7 +56,7 @@ export class WordListComponent implements OnInit, OnDestroy {
     } else {
       this.title = 'PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL';
     }
-    
+
     this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
       if (selectedCorpus) {
         this.title = 'PAGE.WORD_LIST.TITLE_NO_CORPUS_SEL';
@@ -107,8 +105,13 @@ export class WordListComponent implements OnInit, OnDestroy {
       this.queryRequest.start = event.first;
       this.queryRequest.end = event.first + event.rows;
     }
+    const queryRequest = JSON.parse(JSON.stringify(this.queryRequest));
+    delete queryRequest.viewOptionRequest;
+    delete queryRequest.impaqts;
+    delete queryRequest.referencePositionRequest;
+
     this.wordListService
-      .getWordList(this.queryRequest)
+      .getWordList(queryRequest)
       .subscribe((wordList) => {
         this.loading = false;
         this.wordListItems = wordList?.items ? wordList?.items : [];
