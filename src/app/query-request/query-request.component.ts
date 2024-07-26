@@ -1,11 +1,26 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { Observable, Subscription, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { v4 as uuid } from 'uuid';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
-import { CHARACTER, CQL, IMPLICIT, LEMMA, PHRASE, REQUEST_TYPE, SIMPLE, WORD } from '../common/query-constants';
+import {
+  CHARACTER,
+  CQL,
+  IMPLICIT,
+  LEMMA,
+  PHRASE,
+  REQUEST_TYPE,
+  SIMPLE,
+  WORD,
+} from '../common/query-constants';
 import { QUERY } from '../common/routes-constants';
 import { MenuEmitterService } from '../menu/menu-emitter.service';
 import { MenuEvent } from '../menu/menu.component';
@@ -25,7 +40,10 @@ import { ErrorMessagesService } from '../services/error-messages.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
-import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import {
+  ConcordanceRequestPayload,
+  EmitterService,
+} from '../utils/emitter.service';
 import { MetadataUtilService } from '../utils/metadata-util.service';
 
 const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
@@ -33,10 +51,9 @@ const DEFAULT_SELECTED_QUERY_TYPE = SIMPLE;
 @Component({
   selector: 'app-query-request',
   templateUrl: './query-request.component.html',
-  styleUrls: ['./query-request.component.scss']
+  styleUrls: ['./query-request.component.scss'],
 })
 export class QueryRequestComponent implements OnInit, OnDestroy {
-
   @Output() titleResultChange = new EventEmitter<string>();
   @Output() selectedCorpusChange = new EventEmitter<KeyValueItem>();
   @Output() metadataAttributesChange = new EventEmitter<Array<KeyValueItem>>();
@@ -71,7 +88,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     character: new UntypedFormControl(''),
     cql: new UntypedFormControl(''),
     implicit: new UntypedFormControl(''),
-    matchCase: new UntypedFormControl(false)
+    matchCase: new UntypedFormControl(false),
   });
   public selectedCorpus: KeyValueItem | null = null;
 
@@ -90,7 +107,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly corpusSelectionService: CorpusSelectionService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
@@ -100,8 +117,12 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     const inst = localStorage.getItem(INSTALLATION);
     if (inst) {
       this.installation = JSON.parse(inst) as Installation;
-      this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
-      this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
+      this.installation.corpora.forEach((corpus) =>
+        this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name))
+      );
+      this.corpusList.sort((c1, c2) =>
+        c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase())
+      );
     }
     this.queryTypes = [
       DEFAULT_SELECTED_QUERY_TYPE,
@@ -110,10 +131,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       PHRASE,
       CHARACTER,
       CQL,
-      IMPLICIT
+      IMPLICIT,
     ];
     this.setBasicFieldRequest();
-    this.queryRequestForm.valueChanges.subscribe(change => {
+    this.queryRequestForm.valueChanges.subscribe((change) => {
       this.setBasicFieldRequest();
     });
     this.selectedQueryType = this.queryTypes[0];
@@ -121,11 +142,14 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     if (lsSimpleQuery) {
       this.queryRequestForm.controls.simple.setValue(lsSimpleQuery);
     }
-    this.corpusSelectedSubscription = this.corpusSelectionService.corpusSelectedSubject.subscribe(selectedCorpus => {
-      this.corpusSelected(selectedCorpus!);
-      this.selectedCorpus = selectedCorpus;
-      this.setBasicFieldRequest();
-    });
+    this.corpusSelectedSubscription =
+      this.corpusSelectionService.corpusSelectedSubject.subscribe(
+        (selectedCorpus) => {
+          this.corpusSelected(selectedCorpus!);
+          this.selectedCorpus = selectedCorpus;
+          this.setBasicFieldRequest();
+        }
+      );
     if (this.corpusSelectionService.getSelectedCorpus()) {
       this.selectedCorpus = this.corpusSelectionService.getSelectedCorpus();
       this.queryRequestForm.controls.simple.enable();
@@ -159,17 +183,21 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
         if (selectedCorpusId) {
-          const corpus: Corpus = this.installation.corpora.filter(corpus => corpus.id === +selectedCorpusId)[0];
+          const corpus: Corpus = this.installation.corpora.filter(
+            (corpus) => corpus.id === +selectedCorpusId
+          )[0];
           this.socketService.setServerHost(corpus.name);
           corpus.metadata.sort((a, b) => a.position - b.position);
-          corpus.metadata.filter(md => !md.child).forEach(md => {
-            // Attributes in View Options
-            if (!md.documentMetadatum) {
-              metadataAttributes.push(new KeyValueItem(md.name, md.name));
-            } else {
-              textTypesAttributes.push(new KeyValueItem(md.name, md.name));
-            }
-          });
+          corpus.metadata
+            .filter((md) => !md.child)
+            .forEach((md) => {
+              // Attributes in View Options
+              if (!md.documentMetadatum) {
+                metadataAttributes.push(new KeyValueItem(md.name, md.name));
+              } else {
+                textTypesAttributes.push(new KeyValueItem(md.name, md.name));
+              }
+            });
           this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
@@ -178,16 +206,25 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
           this.emitterService.spinnerMetadata.emit(true);
-          this.appInitializerService.loadCorpus(+selectedCorpusId).
-            pipe(
-              switchMap(corpus => this.setCorpus(corpus, this.corpusSelectionService.getCorpusChanged()))
-            ).subscribe(res => {
+          this.appInitializerService
+            .loadCorpus(+selectedCorpusId)
+            .pipe(
+              switchMap((corpus) =>
+                this.setCorpus(
+                  corpus,
+                  this.corpusSelectionService.getCorpusChanged()
+                )
+              )
+            )
+            .subscribe((res) => {
               this.emitterService.spinnerMetadata.emit(false);
             });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
       } else {
-        this.displayPanelService.labelMetadataSubject.next(!!selectedCorpus && !!this.textTypeStatus);
+        this.displayPanelService.labelMetadataSubject.next(
+          !!selectedCorpus && !!this.textTypeStatus
+        );
         this.emitterService.spinnerMetadata.emit(false);
       }
     } else {
@@ -200,10 +237,15 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.selectedCorpusChange.emit(selectedCorpus);
   }
 
-
   public makeConcordances(): void {
-    if (this.queryRequestForm.controls.simple && this.queryRequestForm.controls.simple.value) {
-      localStorage.setItem('simpleQuery', this.queryRequestForm.controls.simple.value);
+    if (
+      this.queryRequestForm.controls.simple &&
+      this.queryRequestForm.controls.simple.value
+    ) {
+      localStorage.setItem(
+        'simpleQuery',
+        this.queryRequestForm.controls.simple.value
+      );
     } else {
       localStorage.removeItem('simpleQuery');
     }
@@ -214,32 +256,61 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestService.getQueryRequest().id = uuid();
 
     // concordance Context
-    const fieldRequest = this.trimInputFieldRequest(this.queryRequestService.getBasicFieldRequest());
-    const queryRequest = this.trimInputQueryRequest(this.queryRequestService.getQueryRequest());
+    const fieldRequest = this.trimInputFieldRequest(
+      this.queryRequestService.getBasicFieldRequest()
+    );
+    const queryRequest = this.trimInputQueryRequest(
+      this.queryRequestService.getQueryRequest()
+    );
 
     if (fieldRequest) {
-      fieldRequest.contextConcordance = this.queryRequestService.getContextConcordanceQueryRequest();
-      this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
-      if (fieldRequest.contextConcordance && fieldRequest.contextConcordance.items
-        && fieldRequest.contextConcordance.items.length > 0 && fieldRequest.contextConcordance.items[0].term) {
+      fieldRequest.contextConcordance =
+        this.queryRequestService.getContextConcordanceQueryRequest();
+      this.queryRequestService.getQueryRequest().queryType =
+        REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
+      if (
+        fieldRequest.contextConcordance &&
+        fieldRequest.contextConcordance.items &&
+        fieldRequest.contextConcordance.items.length > 0 &&
+        fieldRequest.contextConcordance.items[0].term
+      ) {
         //nelle query di contesto si invia un solo elemento
-        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
+        this.queryRequestService.getQueryRequest().queryType =
+          REQUEST_TYPE.CONTEXT_QUERY_REQUEST;
         const ccqr = new ContextConcordanceQueryRequest();
-        fieldRequest.contextConcordance.items.forEach(i => i.attribute = LEMMA);
-        ccqr.items = fieldRequest.contextConcordance.items.filter(i => i.term);
-        this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest = ccqr;
+        fieldRequest.contextConcordance.items.forEach(
+          (i) => (i.attribute = LEMMA.toLocaleLowerCase())
+        );
+        ccqr.items = fieldRequest.contextConcordance.items.filter(
+          (i) => i.term
+        );
+        this.queryRequestService.getQueryRequest().contextConcordanceQueryRequest =
+          ccqr;
       }
       if (this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT) {
-        this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.IMPLICIT_REQUEST;
-        //TODO cql from implicit add search in comment 
+        this.queryRequestService.getQueryRequest().queryType =
+          REQUEST_TYPE.IMPLICIT_REQUEST;
+        //TODO cql from implicit add search in comment
         // fieldRequest.cql = '<impl/>';
         // this.queryRequestService.getQueryRequest().cql = '<impl/>';
       }
-      if (queryRequest.sortQueryRequest && queryRequest.sortQueryRequest !== undefined) {
-        typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
+      if (
+        queryRequest.sortQueryRequest &&
+        queryRequest.sortQueryRequest !== undefined
+      ) {
+        typeSearch = [
+          'Sort',
+          !!queryRequest.sortQueryRequest.sortKey
+            ? queryRequest.sortQueryRequest.sortKey
+            : 'MULTILEVEL_CONTEXT',
+        ];
       }
       this.emitterService.makeConcordanceRequestSubject.next(
-        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+        new ConcordanceRequestPayload(
+          [new ConcordanceRequest(fieldRequest, typeSearch)],
+          0
+        )
+      );
     }
   }
 
@@ -249,7 +320,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
   public clickContext(): void {
     this.displayContext = !this.displayContext;
-    this.clearContextFields();
+    this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
   public clickTextType(): void {
@@ -272,7 +343,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.clearContextFields();
   }
 
-  private setCorpus(corpus: Corpus, corpusChanged: boolean): Observable<Metadatum[]> {
+  private setCorpus(
+    corpus: Corpus,
+    corpusChanged: boolean
+  ): Observable<Metadatum[]> {
     if (corpusChanged || this.corpusSelectionService.getPageLoadedFirstTime()) {
       const installation = this.installation;
       if (installation) {
@@ -282,30 +356,31 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
           }
         });
         this.metadataQueryService.clearMetadata();
-        return this.metadataUtilService.createMatadataTree(`${corpus.id}`, installation, false).
-          pipe(
-            tap(
-              metadata => {
-                this.metadataQueryService.setMetadata(metadata);
-                this.metadataQueryService.storageMetadata();
-                this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-                this.emitterService.spinnerMetadata.emit(false);
-                this.corpusSelectionService.resetCorpusChanged();
-              }
-            ),
-            catchError(
-              err => {
-                console.error(err);
-                this.displayPanelService.labelMetadataSubject.next(!!this.textTypeStatus);
-                this.emitterService.spinnerMetadata.emit(false);
-                const metadataErrorMsg = {} as Message;
-                metadataErrorMsg.severity = 'error';
-                metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-                metadataErrorMsg.summary = 'Errore';
-                this.errorMessagesService.sendError(metadataErrorMsg);
-                return of([]);
-              }
-            )
+        return this.metadataUtilService
+          .createMatadataTree(`${corpus.id}`, installation, false)
+          .pipe(
+            tap((metadata) => {
+              this.metadataQueryService.setMetadata(metadata);
+              this.metadataQueryService.storageMetadata();
+              this.displayPanelService.labelMetadataSubject.next(
+                !!this.textTypeStatus
+              );
+              this.emitterService.spinnerMetadata.emit(false);
+              this.corpusSelectionService.resetCorpusChanged();
+            }),
+            catchError((err) => {
+              console.error(err);
+              this.displayPanelService.labelMetadataSubject.next(
+                !!this.textTypeStatus
+              );
+              this.emitterService.spinnerMetadata.emit(false);
+              const metadataErrorMsg = {} as Message;
+              metadataErrorMsg.severity = 'error';
+              metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
+              metadataErrorMsg.summary = 'Errore';
+              this.errorMessagesService.sendError(metadataErrorMsg);
+              return of([]);
+            })
           );
       } else {
         this.metadataQueryService.resetMetadataService();
@@ -337,7 +412,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.queryRequestForm.controls.cql.value,
       this.queryRequestForm.controls.implicit.value,
       this.queryRequestForm.controls.matchCase.value,
-      this.queryRequestForm.controls.selectedQueryType.value);
+      this.queryRequestForm.controls.selectedQueryType.value
+    );
     this.queryRequestService.setBasicFieldRequest(fieldRequest);
   }
 
@@ -350,13 +426,21 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  private trimInputFieldRequest(fieldRequest: FieldRequest | null): FieldRequest | null {
+  private trimInputFieldRequest(
+    fieldRequest: FieldRequest | null
+  ): FieldRequest | null {
     if (fieldRequest) {
-      fieldRequest.simple = fieldRequest.simple ? fieldRequest.simple.trim() : '';
+      fieldRequest.simple = fieldRequest.simple
+        ? fieldRequest.simple.trim()
+        : '';
       fieldRequest.lemma = fieldRequest.lemma ? fieldRequest.lemma.trim() : '';
-      fieldRequest.phrase = fieldRequest.phrase ? fieldRequest.phrase.trim() : '';
+      fieldRequest.phrase = fieldRequest.phrase
+        ? fieldRequest.phrase.trim()
+        : '';
       fieldRequest.word = fieldRequest.word ? fieldRequest.word.trim() : '';
-      fieldRequest.character = fieldRequest.character ? fieldRequest.character.trim() : '';
+      fieldRequest.character = fieldRequest.character
+        ? fieldRequest.character.trim()
+        : '';
       fieldRequest.cql = fieldRequest.cql ? fieldRequest.cql.trim() : '';
     }
     return fieldRequest;
@@ -371,5 +455,4 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     }
     return queryRequest;
   }
-
 }

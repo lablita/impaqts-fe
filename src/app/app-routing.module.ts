@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LEMMA, WORD } from './common/query-constants';
 import { ALL_LEMMAS, ALL_WORDS, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, QUERY, VISUAL_QUERY } from './common/routes-constants';
 import { CopyrightComponent } from './copyright/copyright.component';
 import { CorpusInfoComponent } from './corpus-info/corpus-info.component';
@@ -9,7 +10,6 @@ import { MainComponent } from './main/main.component';
 import { QueriesContainerComponent } from './queries-container/queries-container.component';
 import { VisualQueryComponent } from './visual-query/visual-query.component';
 import { WordListComponent } from './word-list/word-list.component';
-import { LEMMA, WORD } from './common/query-constants';
 
 
 const routes: Routes = [
@@ -36,13 +36,13 @@ const routes: Routes = [
         path: ALL_WORDS,
         component: WordListComponent,
         canActivate: [EMMACorpGuard],
-        data: { searchAttribute: WORD }
+        data: { searchAttribute: WORD.toLowerCase() }
       },
       {
         path: ALL_LEMMAS,
         component: WordListComponent,
         canActivate: [EMMACorpGuard],
-        data: { searchAttribute: LEMMA }
+        data: { searchAttribute: LEMMA.toLowerCase() }
       },
       {
         path: CREDITS_ROUTE,
