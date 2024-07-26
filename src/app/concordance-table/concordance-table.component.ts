@@ -73,7 +73,8 @@ const CONCORDANCE = 'concordance';
   encapsulation: ViewEncapsulation.None,
 })
 export class ConcordanceTableComponent
-  implements AfterViewInit, OnDestroy, OnChanges {
+  implements AfterViewInit, OnDestroy, OnChanges
+{
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -236,7 +237,8 @@ export class ConcordanceTableComponent
         this.queryResponseSubscription.unsubscribe();
       }
     }
-    this.queryTypeRequest = this.queryRequestService.getQueryRequest().queryType;
+    this.queryTypeRequest =
+      this.queryRequestService.getQueryRequest().queryType;
   }
 
   public showDialog() {
@@ -438,8 +440,7 @@ export class ConcordanceTableComponent
 
   public showWideContext(kwicline: KWICline): void {
     this.resultContext = null;
-    const corpus =
-      this.queryRequestService.getQueryRequest().corpus;
+    const corpus = this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
       this.wideContextService
         .getWideContext(
@@ -491,15 +492,15 @@ export class ConcordanceTableComponent
         this.referencePositionResponse.references = kwicline.references;
       } else {
         this.referencePositionService
-          .getReferenceByPosition(
-            corpus,
-            kwicline.pos
-          )
+          .getReferenceByPosition(corpus, kwicline.pos)
           .subscribe({
             next: (response) => {
               if (response && response.referencePositionResponse) {
-                this.referencePositionResponse = response.referencePositionResponse;
-                this.referenceKeys = Object.keys(this.referencePositionResponse.references);
+                this.referencePositionResponse =
+                  response.referencePositionResponse;
+                this.referenceKeys = Object.keys(
+                  this.referencePositionResponse.references
+                );
                 this.referenceKeys.sort((a, b) => a.localeCompare(b));
               }
             },
@@ -513,11 +514,8 @@ export class ConcordanceTableComponent
             },
           });
       }
-
     }
   }
-
-
 
   public getItemToBeDisplayed(fieldRequest: FieldRequest): string {
     switch (fieldRequest.selectedQueryType) {
