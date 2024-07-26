@@ -69,14 +69,14 @@ export class WordListComponent implements OnInit, OnDestroy {
   }
 
   private initWordList(): void {
-    if (this.corpus) {
-      this.searchAttribute = this.route.snapshot.data.searchAttribute;
+    this.searchAttribute = this.route.snapshot.data.searchAttribute;
+    if (this.corpus && this.searchAttribute) {
       this.title = 'PAGE.WORD_LIST.TITLE'
       this.queryRequest.start = 0;
       this.queryRequest.end = this.pageSize;
       this.queryRequest.corpus = this.corpus;
       const wordListRequest: WordListRequest = new WordListRequest();
-      wordListRequest.searchAttribute = this.searchAttribute;
+      wordListRequest.searchAttribute = this.searchAttribute.toLowerCase();
       wordListRequest.sortField = 'freq';
       wordListRequest.sortDir = DESC;
       wordListRequest.minFreq = 0;
@@ -105,13 +105,9 @@ export class WordListComponent implements OnInit, OnDestroy {
       this.queryRequest.start = event.first;
       this.queryRequest.end = event.first + event.rows;
     }
-    const queryRequest = JSON.parse(JSON.stringify(this.queryRequest));
-    delete queryRequest.viewOptionRequest;
-    delete queryRequest.impaqts;
-    delete queryRequest.referencePositionRequest;
 
     this.wordListService
-      .getWordList(queryRequest)
+      .getWordList(this.queryRequest)
       .subscribe((wordList) => {
         this.loading = false;
         if (wordList) {
