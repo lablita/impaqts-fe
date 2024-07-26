@@ -76,7 +76,7 @@ export class WordListComponent implements OnInit, OnDestroy {
       this.queryRequest.end = this.pageSize;
       this.queryRequest.corpus = this.corpus;
       const wordListRequest: WordListRequest = new WordListRequest();
-      wordListRequest.searchAttribute = this.searchAttribute.toLowerCase();
+      wordListRequest.searchAttribute = this.searchAttribute;
       wordListRequest.sortField = 'freq';
       wordListRequest.sortDir = DESC;
       wordListRequest.minFreq = 0;
