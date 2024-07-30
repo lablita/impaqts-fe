@@ -105,13 +105,18 @@ export class LoadResultsService {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       //IMPLICIT
       if (queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST) {
+        let explanation: string | null = null;
+        if (this.queryRequestService.getBasicFieldRequest()) {
+          explanation = this.queryRequestService.getBasicFieldRequest()!.implicit
+        }
         if (implicitQueryTag.length > 0) {
-          const structImpl: string[] = [...new Set(implicitQueryTag.map(qt => '<' + qt.structure + '/>'))];
+          const structImpl: string[] = [...new Set(implicitQueryTag.map(qt =>
+            '<' + qt.structure + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>'))];
           fieldRequest.cql = structImpl.join(' | ');
           this.queryRequestService.getQueryRequest().cql = structImpl.join(' | ');
         } else {
-          fieldRequest.cql = '<impl/> | <top/> | <vag/> | <ppp/>';
-          this.queryRequestService.getQueryRequest().cql = '<impl/> | <top/> | <vag/> | <ppp/>';
+          fieldRequest.cql = '<impl' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <top' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <vag' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <ppp' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>';
+          this.queryRequestService.getQueryRequest().cql = fieldRequest.cql;
         }
         const tagListFunctionImplicit: QueryTag[] = [];
         this.metadataQuery?.tags.forEach(tagList => {
