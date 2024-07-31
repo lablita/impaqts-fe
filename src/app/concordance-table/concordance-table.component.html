@@ -43,6 +43,7 @@
       allowfullscreen></iframe>
   </p-dialog>
 </div>
+
 <p-table [ngClass]="{'hidden': (!visible || noResultFound) && !loading}" [value]="kwicLines" [lazy]="true"
   [loading]="loading" (onLazyLoad)="loadConcordanceForPagination($event)" [paginator]="true"
   styleClass="p-datatable-striped" [rows]="initialPagination" [totalRecords]="totalResults" [(first)]="first"

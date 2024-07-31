@@ -1,21 +1,21 @@
 import { AfterViewInit, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { faSortAmountDown } from '@fortawesome/free-solid-svg-icons';
+import * as _ from 'lodash';
 import { Subject, Subscription, timer } from 'rxjs';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
+import { HTTP } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
+import { DOWNLOAD_CSV } from '../common/routes-constants';
 import { CollocationItem } from '../model/collocation-item';
+import { CSV_PAGINATION } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
+import { QueryRequest } from '../model/query-request';
 import { ErrorMessagesService } from '../services/error-messages.service';
+import { ExportCsvService } from '../services/export-csv.service';
+import { InstallationService } from '../services/installation.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
-import { QueryRequest } from '../model/query-request';
-import { CSV_PAGINATION } from '../model/constants';
-import { switchMap, takeUntil, tap } from 'rxjs/operators';
-import { HTTP } from '../common/constants';
-import { DOWNLOAD_CSV } from '../common/routes-constants';
-import { ExportCsvService } from '../services/export-csv.service';
-import { InstallationService } from '../services/installation.service';
-import * as _ from 'lodash';
 
 
 const COLLOCATION = 'collocation';
@@ -54,16 +54,22 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
     this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
       this.loading = false;
       if (queryResponse) {
-        if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
+        if (queryResponse.error && queryResponse.errorResponse) {
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
-          this.errorMessagesService.sendError(errorMessage);
-        } else {
-          this.setColumnHeaders();
-          if (queryResponse.collocations.length > 0) {
-            this.totalResults = queryResponse.currentSize;
-            this.collocations = queryResponse.collocations;
-            this.noResultFound = queryResponse.currentSize < 1;
+          if (queryResponse.errorResponse.errorCode === 500) {
+            this.errorMessagesService.sendError(errorMessage);
+          } else if (queryResponse.errorResponse.errorCode === 400) {
+            errorMessage.detail = queryResponse.errorResponse.errorMessage;
+            this.errorMessagesService.sendError(errorMessage);
           }
+          this.initVariables();
+        } else if (queryResponse.collocations.length > 0) {
+          this.setColumnHeaders();
+          this.totalResults = queryResponse.currentSize;
+          this.collocations = queryResponse.collocations;
+          this.noResultFound = queryResponse.currentSize < 1;
+        } else {
+          this.initVariables();
         }
       }
     });
@@ -149,12 +155,16 @@ export class CollocationTableComponent implements AfterViewInit, OnDestroy, OnCh
     }
   }
 
-
   private setColumnHeaders(): void {
     const collocationSortingParams = this.loadResultService.getCollocationSortingParams();
     this.colHeader = collocationSortingParams.colHeader;
     this.sortField = collocationSortingParams.headerSortBy;
   }
 
+  private initVariables(): void {
+    this.totalResults = 0;
+    this.collocations = [];
+    this.noResultFound = true;
+  }
 
 }
