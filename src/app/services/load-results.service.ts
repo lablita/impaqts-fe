@@ -111,7 +111,7 @@ export class LoadResultsService {
       if (queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST) {
         let explanation: string | null = null;
         if (this.queryRequestService.getBasicFieldRequest()) {
-          explanation = this.queryRequestService.getBasicFieldRequest()!.implicit
+          explanation = this.queryRequestService.getBasicFieldRequest()!.implicit;
         }
         if (implicitQueryTag.length > 0) {
           const structImpl: string[] = [...new Set(implicitQueryTag.map(qt =>
@@ -147,9 +147,7 @@ export class LoadResultsService {
             this.metadataQuery.tags.push(tagListFunctionImplicit);
           }
         }
-
       }
-
       if (!!fieldRequest.selectedCorpus) {
         if (event) {
           if (
@@ -323,7 +321,7 @@ export class LoadResultsService {
   }
 
   private setMetadataQuery(queryRequest: QueryRequest): QueryTag[] {
-    const isImplicitRequest = queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST;
+    const isImplicitRequest = this.isImpaqtsCustom;
     const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
 
     /** Metadata */
