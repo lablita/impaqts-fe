@@ -38,7 +38,7 @@
         </div>
       </button>
       <div class="mt-6 text-center">
-        <button [disabled]="!atLeastOneToken() || !enableAddMetadata" pButton type="button"
+        <button [disabled]="!atLeastOneToken()" pButton type="button"
           label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}" (click)="makeConcordance()">
         </button>
       </div>

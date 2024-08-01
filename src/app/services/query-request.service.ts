@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { FilterConcordanceQueryRequest } from '../model/filter-concordance-query-request';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
-import * as _ from 'lodash';
 import { QueryStructure } from '../model/query-structure';
 
 @Injectable({
@@ -31,8 +31,8 @@ export class QueryRequestService {
   }
 
   public isOptionSet(): boolean {
-    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest || 
-    !!this.queryRequest.frequencyQueryRequest || !!this.queryRequest.filterConcordanceQueryRequest;
+    return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest ||
+      !!this.queryRequest.frequencyQueryRequest || !!this.queryRequest.filterConcordanceQueryRequest;
   }
 
   public resetContextConcordance(): void {

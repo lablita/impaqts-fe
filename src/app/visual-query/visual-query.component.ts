@@ -194,9 +194,8 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       fieldRequest,
       typeSearch
     );
-    if (!!this.metadata[0]) {
-      this.queryPattern.structPattern = this.metadata[0];
-    }
+    this.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(JSON.parse(JSON.stringify(this.metadata[0])));
+
     //replace empty string with .* everywhere
     const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(this.queryPattern);
     this.queryRequestService.setQueryPattern(queryPatternToSend);
@@ -372,25 +371,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
             }
           )
         );
-      // .subscribe({
-      //   next: (metadata) => {
-      //     this.metadataQueryService.setMetadataVQ(metadata);
-      //     this.metadataTextTypes = metadata;
-      //   },
-      //   error: (err) => {
-      //     this.enableSpinner = false;
-      //     const metadataErrorMsg = {} as Message;
-      //     metadataErrorMsg.severity = 'error';
-      //     metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
-      //     metadataErrorMsg.summary = 'Errore';
-      //     this.errorMessagesService.sendError(metadataErrorMsg);
-      //   },
-      //   complete: () => {
-      //     this.metadataQueryService.storageMetadataVQ();
-      //     this.enableSpinner = false;
-      //     this.enableAddMetadata = true;
-      //   },
-      // });
     } else {
       this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();
       this.corpusSelectionService.setPageLoadedFirstTime(false);

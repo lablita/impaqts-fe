@@ -302,11 +302,13 @@ export class MetadataUtilService {
     if (res) {
       metadatum.subMetadata = res;
       const root: TreeNode = {
+        key: metadatum.name,
         label: metadatum.label ? metadatum.label : metadatum.name,
         selectable: true,
         children: [],
       };
       const rootParent: TreeNode = {
+        key: metadatum.name,
         label: metadatum.label ? metadatum.label : metadatum.name,
         selectable: true,
         children: [],
@@ -460,11 +462,13 @@ export class MetadataUtilService {
 
   private generateTree(meta: Metadatum): { tree: TreeNode } {
     const root = {
+      key: meta.name,
       label: meta.label ? meta.label : meta.name,
       selectable: true,
       children: [],
     };
     const rootParent = {
+      key: meta.name,
       label: meta.label ? meta.label : meta.name,
       selectable: true,
       children: [],
@@ -579,6 +583,7 @@ export class MetadataUtilService {
       this.metadataRequest.singleSelects.some((s) => s.key === FUNCTION)
     ) {
       const parentNode: TreeNode = {
+        key: 'function',
         label: 'Funzione',
         selectable: false,
         children: functionsMetadata[0].tree[0].children,

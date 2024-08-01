@@ -4,8 +4,11 @@ import { TEXT_TYPES_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { MetadatumGroup } from '../model/metadatum-group';
+import { QueryTag } from '../model/query-tag';
+import { QueryToken } from '../model/query-token';
 import { CorpusSelectionService } from './corpus-selection.service';
 import { ErrorMessagesService } from './error-messages.service';
+import { STRUCTURE_IMPLICIT_METADATA } from './load-results.service';
 
 export class Metadata {
   idCorpus: string = '';
@@ -169,6 +172,44 @@ export class MetadataQueryService {
 
   public getMetadataGroupedList(): Array<MetadataGrouped> {
     return this.metadataGroupedList;
+  }
+
+  public retrieveStructPattern(queryToken: QueryToken): QueryToken {
+    const structuresInvolved = this.retrieveStructuresFromImplicitMetadata(queryToken.tags);
+
+    queryToken.tags.forEach(tag => {
+      let value: string | null = null;
+      tag.forEach(t => {
+        if (t.name === 'function') {
+          t.structure = structuresInvolved[0];
+          value = t.value;
+        }
+      });
+      if (value && structuresInvolved.length > 1) {
+        structuresInvolved.forEach((str, index) => {
+          if (index > 0) {
+            const qt: QueryTag = new QueryTag(str, 'function', value!);
+            tag.push(qt);
+          }
+        });
+      }
+    });
+    return queryToken;
+  }
+
+  private retrieveStructuresFromImplicitMetadata(tags: QueryTag[][]): string[] {
+    const result = new Set<string>();
+    tags.forEach(tags => tags.forEach(
+      tag => {
+        if (STRUCTURE_IMPLICIT_METADATA.includes(tag.structure)) {
+          result.add(tag.structure);
+        }
+      }
+    ));
+    if (result.size > 0) {
+      return [...result];
+    }
+    return STRUCTURE_IMPLICIT_METADATA;
   }
 
   private buildMetadataGroupedList(metadata: Metadatum[]): Array<MetadataGrouped> {
