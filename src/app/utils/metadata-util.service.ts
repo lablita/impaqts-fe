@@ -10,6 +10,7 @@ import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { QueriesContainerService } from '../queries-container/queries-container.service';
 import { AppInitializerService } from '../services/app-initializer.service';
+import { MetadataQueryService } from '../services/metadata-query.service';
 import { EmitterService } from './emitter.service';
 
 const FUNCTION = 'function';
@@ -25,7 +26,8 @@ export class MetadataUtilService {
   constructor(
     private readonly queriesContainerService: QueriesContainerService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
+    private readonly metadataQueryService: MetadataQueryService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
@@ -163,6 +165,7 @@ export class MetadataUtilService {
                 }
               }
             });
+            this.metadataQueryService.setMetadata4Frequency(JSON.parse(JSON.stringify(metadata)));
             if (this.isImpaqtsCustom) {
               metadata =
                 this.functionsMetadataAggregation4ImpaqtsCustom(metadata);
@@ -172,9 +175,11 @@ export class MetadataUtilService {
           })
         );
       } else {
+        this.metadataQueryService.setMetadata4Frequency(JSON.parse(JSON.stringify(metadata)));
         return of(metadata);
       }
     }
+    this.metadataQueryService.setMetadata4Frequency([]);
     return of([]);
   }
 
@@ -259,20 +264,20 @@ export class MetadataUtilService {
     if (metadatum) {
       const selected =
         this.metadataRequest &&
-        this.metadataRequest.singleSelects.filter(
-          (ss) => metadatum && ss.key === metadatum.name
-        ).length > 0
+          this.metadataRequest.singleSelects.filter(
+            (ss) => metadatum && ss.key === metadatum.name
+          ).length > 0
           ? this.metadataRequest.singleSelects.filter(
-              (ss) => metadatum && ss.key === metadatum.name
-            )[0]
+            (ss) => metadatum && ss.key === metadatum.name
+          )[0]
           : this.metadataRequest &&
             this.metadataRequest.multiSelects.filter(
               (ss) => metadatum && ss.key === metadatum.name
             ).length > 0
-          ? this.metadataRequest.multiSelects.filter(
+            ? this.metadataRequest.multiSelects.filter(
               (ss) => metadatum && ss.key === metadatum.name
             )[0]
-          : null;
+            : null;
       metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta

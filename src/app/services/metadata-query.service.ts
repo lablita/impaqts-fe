@@ -27,6 +27,7 @@ export class MetadataGrouped {
 export class MetadataQueryService {
   public isImpaqtsCustom = false;
   private metadataRef: Metadata = new Metadata();
+  private metadataRef4Frequency: Metadata = new Metadata();
   private metadataVQRef: Metadata = new Metadata();
   private metadataGroupedList: MetadataGrouped[] = [];
 
@@ -44,6 +45,10 @@ export class MetadataQueryService {
 
   public getMetadata(): Array<Metadatum> {
     return this.metadataRef.metadata;
+  }
+
+  public getMetadata4Frequency(): Array<Metadatum> {
+    return this.metadataRef4Frequency.metadata;
   }
 
   public getMetadataVQ(): Array<Metadatum> {
@@ -84,6 +89,10 @@ export class MetadataQueryService {
       this.metadataRef = metadataRef;
       this.metadataGroupedList = this.buildMetadataGroupedList(mds);
     }
+  }
+
+  public setMetadata4Frequency(metadataRef4Frequency: Metadatum[]): void {
+    this.metadataRef4Frequency.metadata = metadataRef4Frequency;
   }
 
   public setMetadataGroupedList(mgl: MetadataGrouped[]): void {
