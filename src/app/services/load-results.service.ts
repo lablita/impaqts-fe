@@ -253,6 +253,8 @@ export class LoadResultsService {
           if (this.metadataQuery) {
             if (fieldRequest.selectedQueryType !== IMPLICIT) {
               queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
+            } else {
+              queryRequest.queryPattern.structPattern = this.metadataQuery;
             }
           }
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
@@ -372,7 +374,7 @@ export class LoadResultsService {
       metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
     }
     // Tutto in OR
-    const implicitQueryTag: QueryTag[] = [];
+    let implicitQueryTag: QueryTag[] = [];
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
       metadataRequest.freeTexts.forEach((ft) => {
@@ -429,6 +431,8 @@ export class LoadResultsService {
         }
       }
     }
+    //remove tag parent 
+    implicitQueryTag = implicitQueryTag.filter(tag => tag.value.indexOf('.') < 0);
     //Tag Impliciti tutti in or fra di loro
     if (implicitQueryTag.length > 0) {
       this.metadataQuery.tags.push(implicitQueryTag);
