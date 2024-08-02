@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { FieldRequest } from '../model/field-request';
 import { User } from '../model/user';
@@ -19,7 +19,7 @@ export class ConcordanceRequestPayload {
 })
 
 export class EmitterService {
-  public spinnerMetadata: EventEmitter<boolean> = new EventEmitter<boolean>();
+  public spinnerMetadata: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public user: BehaviorSubject<User> = new BehaviorSubject(new User());
   public makeConcordanceRequestSubject: BehaviorSubject<ConcordanceRequestPayload> =
     new BehaviorSubject<ConcordanceRequestPayload>(new ConcordanceRequestPayload([], 0));

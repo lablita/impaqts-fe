@@ -177,7 +177,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.toggleSimpleDisabling(selectedCorpus);
       const selectedCorpusId = selectedCorpus.key;
       if (this.corpusSelectionService.getCorpusChanged()) {
-        this.emitterService.spinnerMetadata.emit(true);
+        this.emitterService.spinnerMetadata.next(true);
       }
       const metadataAttributes: Array<KeyValueItem> = [];
       const textTypesAttributes: Array<KeyValueItem> = [];
@@ -205,7 +205,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       this.metadataAttributesChange.emit(metadataAttributes);
       if (selectedCorpusId !== this.holdSelectedCorpusStr) {
         if (this.installation) {
-          this.emitterService.spinnerMetadata.emit(true);
+          this.emitterService.spinnerMetadata.next(true);
           this.appInitializerService
             .loadCorpus(+selectedCorpusId)
             .pipe(
@@ -217,7 +217,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               )
             )
             .subscribe((res) => {
-              this.emitterService.spinnerMetadata.emit(false);
+              this.emitterService.spinnerMetadata.next(false);
             });
         }
         this.holdSelectedCorpusStr = selectedCorpus.key;
@@ -225,7 +225,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
         this.displayPanelService.labelMetadataSubject.next(
           !!selectedCorpus && !!this.textTypeStatus
         );
-        this.emitterService.spinnerMetadata.emit(false);
+        this.emitterService.spinnerMetadata.next(false);
       }
     } else {
       this.closeWebSocket();
@@ -365,7 +365,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               this.displayPanelService.labelMetadataSubject.next(
                 !!this.textTypeStatus
               );
-              this.emitterService.spinnerMetadata.emit(false);
+              this.emitterService.spinnerMetadata.next(false);
               this.corpusSelectionService.resetCorpusChanged();
             }),
             catchError((err) => {
@@ -373,7 +373,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               this.displayPanelService.labelMetadataSubject.next(
                 !!this.textTypeStatus
               );
-              this.emitterService.spinnerMetadata.emit(false);
+              this.emitterService.spinnerMetadata.next(false);
               const metadataErrorMsg = {} as Message;
               metadataErrorMsg.severity = 'error';
               metadataErrorMsg.detail = 'Impossibile recuperare i metadati';
