@@ -73,7 +73,8 @@ const CONCORDANCE = 'concordance';
   encapsulation: ViewEncapsulation.None,
 })
 export class ConcordanceTableComponent
-  implements AfterViewInit, OnDestroy, OnChanges {
+  implements AfterViewInit, OnDestroy, OnChanges
+{
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -159,7 +160,7 @@ export class ConcordanceTableComponent
                   this.currentEnd,
                   queryResponse
                 )) &&
-              queryResponse.kwicLines
+              queryResponse.kwicLines?.length > 0
             ) {
               this.currentQueryId = queryResponse.id;
               console.log(queryResponse);
