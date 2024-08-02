@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FREQ_OPTIONS_QUERY_REQUEST } from '../common/constants';
 import { FREQ, L1, L2, L3, L4, L5, L6, NODE, R1, R2, R3, R4, R5, R6, TAG, WORD } from '../common/frequency-constants';
 import { CONCORDANCE_WORD } from '../common/label-constants';
 import { REQUEST_TYPE } from '../common/query-constants';
@@ -7,10 +8,9 @@ import { DESC } from '../model/constants';
 import { FreqOptions } from '../model/freq-options';
 import { FrequencyOption, FrequencyQueryRequest } from '../model/frequency-query-request';
 import { KeyValueItem } from '../model/key-value-item';
+import { AppInitializerService } from '../services/app-initializer.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
-import { FREQ_OPTIONS_QUERY_REQUEST } from '../common/constants';
-import { AppInitializerService } from '../services/app-initializer.service';
 
 const POSITION_LIST = [
   L6,
@@ -75,15 +75,18 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   public metadataAttributes: Array<string> = [];
   public freqMetadataLabel = 'PAGE.CONCORDANCE.FREQ_OPTIONS.METADATA_FREQ';
 
+  private isImpaqtsCustom: boolean = false;
+
   constructor(
     private readonly queryRequestService: QueryRequestService,
     private readonly metadataQueryService: MetadataQueryService,
-    private readonly appInitializerService: AppInitializerService
+    private readonly appInitializerService: AppInitializerService,
   ) {
     if (this.appInitializerService.isImpactCustom()) {
       this.freqMetadataLabel = 'PAGE.CONCORDANCE.FREQ_OPTIONS.FILTERS_FREQ';
     }
-   }
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   ngOnInit(): void {
     if (this.corpusAttributes && this.corpusAttributes.length > 0) {
@@ -98,7 +101,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
     this.selectedMultiAttribute = MULTI_ATTRIBUTE;
-    this.metadataAttributes = this.metadataQueryService.getMetadata().map(md => md.name);
+    this.metadataAttributes = this.isImpaqtsCustom ? this.metadataQueryService.getMetadata4Frequency().map(md => md.name) : this.metadataQueryService.getMetadata().map(md => md.name);
   }
 
   public closeSidebar(): void {

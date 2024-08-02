@@ -12,6 +12,7 @@ export class QueryTag {
   position: string | null = null;
   regexp = false;
   noregexp = false;
+  label = '';
 
   constructor(struct: string, name?: string, value?: string) {
     this.structure = struct;

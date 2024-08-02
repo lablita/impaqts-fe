@@ -73,8 +73,7 @@ const CONCORDANCE = 'concordance';
   encapsulation: ViewEncapsulation.None,
 })
 export class ConcordanceTableComponent
-  implements AfterViewInit, OnDestroy, OnChanges
-{
+  implements AfterViewInit, OnDestroy, OnChanges {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -147,6 +146,8 @@ export class ConcordanceTableComponent
               errorMessage.detail = queryResponse.errorResponse.errorMessage;
               this.errorMessagesService.sendError(errorMessage);
             }
+            this.kwicLines = [];
+            this.noResultFound = true;
           } else {
             if (queryResponse.id !== this.currentQueryId) {
               this.first = 0;

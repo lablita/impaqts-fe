@@ -23,6 +23,7 @@ export class QueryTagComponent implements OnInit {
   @Output() delete: EventEmitter<QueryTag> = new EventEmitter<QueryTag>();
 
   public selectedMetadata = '';
+  public selectedMetadataLbl = '';
   public freeText = false;
   public freeInputText = '';
   public metadatumSel: Metadatum | null = null;
@@ -71,11 +72,13 @@ export class QueryTagComponent implements OnInit {
 
   public selectedNode(metadata: Metadatum): void {
     if (metadata && metadata.selection) {
-      if (this.selectedMetadata !== (metadata.selection as any).label &&
+      if (this.selectedMetadata !== (metadata.selection as any).key &&
         (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0)) {
-        this.selectedMetadata = (metadata.selection as any).label;
+        this.selectedMetadata = (metadata.selection as any).key;
+        this.selectedMetadataLbl = (metadata.selection as any).label ? (metadata.selection as any).label : (metadata.selection as any).key;
       } else if (!(metadata.selection as any).children || (metadata.selection as any).children.length <= 0) {
         this.selectedMetadata = '';
+        this.selectedMetadataLbl = '';
       }
     }
 
@@ -86,18 +89,18 @@ export class QueryTagComponent implements OnInit {
     if (this.tag) {
       if (metadata.selection && (metadata.selection as TreeNode).parent) {
         const parent = (metadata.selection as TreeNode).parent;
-        if (parent && parent.label) {
-          this.tag.name = parent.label.indexOf('doc.') >= 0
-            ? parent.label.replace('doc.', '') : parent.label;
+        if (parent && parent.key) {
+          this.tag.name = parent.key.indexOf('.') >= 0
+            ? parent.key = parent.key.substring(parent.key.indexOf('.') + 1) : parent.key;
         }
       } else {
-        const label = (metadata.selection as TreeNode).label;
-        if (label) {
-          this.tag.name = label;
+        const name = (metadata.selection as TreeNode).key;
+        if (name) {
+          this.tag.name = name;
         }
       }
       this.tag.value = !this.freeText ? this.selectedMetadata : '';
-
+      this.tag.label = !this.freeText ? this.selectedMetadataLbl : '';
     }
   }
 

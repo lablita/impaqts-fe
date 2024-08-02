@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import * as _ from 'lodash';
+import { Subject, Subscription, timer } from 'rxjs';
 import { first, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HTTP } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
-import { REQUEST_TYPE} from '../common/query-constants';
+import { REQUEST_TYPE } from '../common/query-constants';
 import { DOWNLOAD_CSV } from '../common/routes-constants';
 import { ASC, CSV_PAGINATION, DESC } from '../model/constants';
 import { FieldRequest } from '../model/field-request';
@@ -10,16 +12,14 @@ import { FrequencyItem } from '../model/frequency-item';
 import { FrequencyOption } from '../model/frequency-query-request';
 import { FrequencyResultLine } from '../model/frequency-result-line';
 import { KeyValueItem } from '../model/key-value-item';
+import { QueryRequest } from '../model/query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ExportCsvService } from '../services/export-csv.service';
+import { InstallationService } from '../services/installation.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
-import { QueryRequest } from '../model/query-request';
-import * as _ from  'lodash';
-import { Subject, Subscription, timer } from 'rxjs';
-import { InstallationService } from '../services/installation.service';
 
 const PAGE_FREQUENCY_FREQUENCY = 'PAGE.FREQUENCY.FREQUENCY';
 const METADATA_FREQUENCY = 'metadata_frequency'
@@ -74,9 +74,15 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       this.loading = false;
       if (queryResponse) {
         const queryRequest = this.queryRequestService.getQueryRequest();
-        if (queryResponse.error && queryResponse.errorResponse && queryResponse.errorResponse.errorCode === 500) {
+        if (queryResponse.error && queryResponse.errorResponse) {
           const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
-          this.errorMessagesService.sendError(errorMessage);
+          if (queryResponse.errorResponse.errorCode === 500) {
+            this.errorMessagesService.sendError(errorMessage);
+          } else if (queryResponse.errorResponse.errorCode === 400) {
+            errorMessage.detail = queryResponse.errorResponse.errorMessage;
+            this.errorMessagesService.sendError(errorMessage);
+          }
+          this.initVariables()
         } else if (queryResponse.frequency && ((
           queryRequest
           && queryRequest.frequencyQueryRequest
@@ -93,11 +99,12 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
           this.operation = this.frequency.operation;
           this.noResultFound = this.totalItems < 1;
           this.setColumnHeaders();
+        } else {
+          this.initVariables();
         }
       }
     });
   }
-
 
   ngOnInit(): void {
     this.setColumnHeaders();
@@ -105,7 +112,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     if (!this.makeFrequencySubscription) {
-       this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
+      this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
         // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
         if (fieldRequest && fieldRequest.selectedCorpus) {
           this.loading = true;
@@ -149,34 +156,34 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     let timeInterval: Subscription | null = null;
     let previousProgressValue = 0;
     const stopPolling = new Subject();
-      const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
-      if (queryRequest && queryRequest.frequencyQueryRequest) {
-        queryRequest.frequencyQueryRequest.category = category;
-        queryRequest.end = CSV_PAGINATION;
-        this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
+    const queryRequest: QueryRequest = _.cloneDeep(this.queryRequestService.getQueryRequest());
+    if (queryRequest && queryRequest.frequencyQueryRequest) {
+      queryRequest.frequencyQueryRequest.category = category;
+      queryRequest.end = CSV_PAGINATION;
+      this.exportCsvService.exportCvs(queryRequest).subscribe((uuid) => {
         const endpoint = this.installationServices.getCompleteEndpoint(queryRequest.corpus, HTTP);
         const filename = queryRequest.queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST ? MULTILEVEL_FREQUENCY : `${METADATA_FREQUENCY}_${category}`;
         const downloadUrl = `${endpoint}/${DOWNLOAD_CSV}/${filename}/${uuid}`;
-         //polling on csv progress status
-         timeInterval = timer(1000, 2000)
-         .pipe(
-           switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
-           tap(res => {
-             if (res.status === 'OK' || res.status === 'KO') {
-               this.dlgVisible = false;
-               this.exportCsvService.download(downloadUrl).then();
-               stopPolling.next();
-             } else if (res.status === 'KK') {
+        //polling on csv progress status
+        timeInterval = timer(1000, 2000)
+          .pipe(
+            switchMap(() => this.exportCsvService.getCsvProgressValue(queryRequest.corpus, uuid)),
+            tap(res => {
+              if (res.status === 'OK' || res.status === 'KO') {
+                this.dlgVisible = false;
+                this.exportCsvService.download(downloadUrl).then();
+                stopPolling.next();
+              } else if (res.status === 'KK') {
                 this.progressStatus = previousProgressValue;
-             } else {
-               previousProgressValue = +res.status!;
-               this.progressStatus = +res.status!;
-             }
-           }),
-           takeUntil(stopPolling)
-         ).subscribe();  
-       });
-      }
+              } else {
+                previousProgressValue = +res.status!;
+                this.progressStatus = +res.status!;
+              }
+            }),
+            takeUntil(stopPolling)
+          ).subscribe();
+      });
+    }
   }
 
   public loadFrequencies(event: any): void {
@@ -232,6 +239,18 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       this.colHeaders = this.multilevel ? multilevelColHeaders : COL_HEADER_TEXTTYPE;
       this.sortField = `${PAGE_FREQUENCY_FREQUENCY}-${(this.colHeaders.length - 1)}`;
     }
+  }
+
+  private initVariables(): void {
+    this.noResultFound = true;
+    this.totalResults = 0;
+    this.frequency = new FrequencyItem();
+    this.lines = [];
+    this.totalItems = 0;
+    this.totalFrequency = 0;
+    this.maxFreq = 0;
+    this.maxRel = 0;
+    this.operation = '';
   }
 
 }

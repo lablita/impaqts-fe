@@ -50,7 +50,11 @@ export class CollocationSortingParams {
 
 const QUERY_TYPE = [
   CONCORDANCE, SIMPLE, LEMMA, PHRASE, WORD, CHARACTER, CQL, TAG
-]
+];
+
+export const STRUCTURE_IMPLICIT_METADATA = [
+  'top', 'ppp', 'impl', 'vag'
+];
 
 @Injectable({
   providedIn: 'root',
@@ -105,13 +109,18 @@ export class LoadResultsService {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       //IMPLICIT
       if (queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST) {
+        let explanation: string | null = null;
+        if (this.queryRequestService.getBasicFieldRequest()) {
+          explanation = this.queryRequestService.getBasicFieldRequest()!.implicit;
+        }
         if (implicitQueryTag.length > 0) {
-          const structImpl: string[] = [...new Set(implicitQueryTag.map(qt => '<' + qt.structure + '/>'))];
+          const structImpl: string[] = [...new Set(implicitQueryTag.map(qt =>
+            '<' + qt.structure + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>'))];
           fieldRequest.cql = structImpl.join(' | ');
           this.queryRequestService.getQueryRequest().cql = structImpl.join(' | ');
         } else {
-          fieldRequest.cql = '<impl/> | <top/> | <vag/> | <ppp/>';
-          this.queryRequestService.getQueryRequest().cql = '<impl/> | <top/> | <vag/> | <ppp/>';
+          fieldRequest.cql = '<impl' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <top' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <vag ' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <ppp' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>';
+          this.queryRequestService.getQueryRequest().cql = fieldRequest.cql;
         }
         const tagListFunctionImplicit: QueryTag[] = [];
         this.metadataQuery?.tags.forEach(tagList => {
@@ -125,7 +134,7 @@ export class LoadResultsService {
                 }
               });
             } else {
-              ['impl', 'top', 'vag', 'ppp'].forEach(iqt => {
+              STRUCTURE_IMPLICIT_METADATA.forEach(iqt => {
                 const tag: QueryTag = new QueryTag(iqt, 'function', `.*${value}.*`);
                 tagListFunctionImplicit.push(tag);
               });
@@ -138,9 +147,7 @@ export class LoadResultsService {
             this.metadataQuery.tags.push(tagListFunctionImplicit);
           }
         }
-
       }
-
       if (!!fieldRequest.selectedCorpus) {
         if (event) {
           if (
@@ -244,7 +251,9 @@ export class LoadResultsService {
           queryRequest.queryPattern = queryPatternToSend;
 
           if (this.metadataQuery) {
-            queryRequest.queryPattern.structPattern = this.metadataQuery;
+            if (fieldRequest.selectedQueryType !== IMPLICIT) {
+              queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
+            }
           }
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           // quick sort
@@ -312,7 +321,7 @@ export class LoadResultsService {
   }
 
   private setMetadataQuery(queryRequest: QueryRequest): QueryTag[] {
-    const isImplicitRequest = queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST;
+    const isImplicitRequest = this.isImpaqtsCustom;
     const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
 
     /** Metadata */
@@ -536,4 +545,42 @@ export class LoadResultsService {
     this.errorMessagesService.sendError(forbiddenMessage);
     return null;
   }
+
+  // private retrieveStructuresFromImplicitMetadata(tags: QueryTag[][]): string[] {
+  //   const result = new Set<string>();
+  //   tags.forEach(tags => tags.forEach(
+  //     tag => {
+  //       if (STRUCTURE_IMPLICIT_METADATA.includes(tag.structure)) {
+  //         result.add(tag.structure);
+  //       }
+  //     }
+  //   ));
+  //   if (result.size > 0) {
+  //     return [...result];
+  //   }
+  //   return STRUCTURE_IMPLICIT_METADATA;
+  // }
+
+  // public retrieveStructPattern(queryToken: QueryToken): QueryToken {
+  //   const structuresInvolved = this.retrieveStructuresFromImplicitMetadata(queryToken.tags);
+
+  //   queryToken.tags.forEach(tag => {
+  //     let value: string | null = null;
+  //     tag.forEach(t => {
+  //       if (t.name === 'function') {
+  //         t.structure = structuresInvolved[0];
+  //         value = t.value;
+  //       }
+  //     });
+  //     if (value && structuresInvolved.length > 1) {
+  //       structuresInvolved.forEach((str, index) => {
+  //         if (index > 0) {
+  //           const qt: QueryTag = new QueryTag(str, 'function', value!);
+  //           tag.push(qt);
+  //         }
+  //       });
+  //     }
+  //   });
+  //   return queryToken;
+  // }
 }
