@@ -194,7 +194,11 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       fieldRequest,
       typeSearch
     );
-    this.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(JSON.parse(JSON.stringify(this.metadata[0])));
+    if (this.metadata[0]) {
+      this.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(JSON.parse(JSON.stringify(this.metadata[0])));
+    } else {
+      this.queryPattern.structPattern = new QueryStructure();
+    }
 
     //replace empty string with .* everywhere
     const queryPatternToSend: QueryPattern = this.queryRequestService.replaceEmptyStringWithWildcard(this.queryPattern);
