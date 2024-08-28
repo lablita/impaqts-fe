@@ -85,7 +85,8 @@
           <div>
             <p-button [disabled]="loading" styleClass="p-button-link"
               (click)="reference.toggle($event); showReference(kwicLine)"><span
-                class="button-ref">{{kwicLine.ref}}</span></p-button>
+                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : kwicLine.ref}}</span>
+            </p-button>
           </div>
           <div class="badgecontainer">
             <div *ngIf="kwicLine.references['impl.type'] && kwicLine.references['impl.type'].length > 0">
