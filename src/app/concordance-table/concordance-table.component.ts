@@ -73,8 +73,7 @@ const CONCORDANCE = 'concordance';
   encapsulation: ViewEncapsulation.None,
 })
 export class ConcordanceTableComponent
-  implements AfterViewInit, OnDestroy, OnChanges
-{
+  implements AfterViewInit, OnDestroy, OnChanges {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -164,8 +163,6 @@ export class ConcordanceTableComponent
             ) {
               this.currentQueryId = queryResponse.id;
               console.log(queryResponse);
-              this.firstItemTotalResults = queryResponse.currentSize;
-              this.totalResults = queryResponse.currentSize;
               if (
                 queryResponse.descResponses &&
                 queryResponse.descResponses.length > 0
@@ -183,8 +180,12 @@ export class ConcordanceTableComponent
                 }
                 return kl;
               });
-              this.noResultFound = queryResponse.currentSize < 1;
+              this.noResultFound = false;
               this.descriptions = queryResponse.descResponses;
+            }
+            if (queryResponse.currentSize === 0) {
+              this.kwicLines = [];
+              this.noResultFound = true;
             }
             this.firstItemTotalResults = queryResponse.currentSize;
             this.totalResults = queryResponse.currentSize;
