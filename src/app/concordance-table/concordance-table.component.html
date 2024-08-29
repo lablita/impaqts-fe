@@ -154,7 +154,7 @@
         <div class="col-10" *ngIf="referenceKey.indexOf('url') === -1">
           {{referencePositionResponse.references[referenceKey]}}</div>
         <div class="col-10" *ngIf="referenceKey.indexOf('url') !== -1">
-          <a
+          <a target="blank"
             href="{{referencePositionResponse.references[referenceKey]}}">{{referencePositionResponse.references[referenceKey]}}</a>
         </div>
       </div>
