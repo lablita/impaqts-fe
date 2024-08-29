@@ -342,6 +342,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   private setCorpus(corpus: Corpus): Observable<Metadatum[]> {
     const metadataVQStr = localStorage.getItem('metadataVQ');
     if (corpus.id !== this.metadataQueryService.getCorpusIdLoaded()) {
+      this.metadataQueryService.clearMetadata();
       return this.metadataUtilService
         .createMatadataTree(`${corpus.id}`, this.installation, true)
         .pipe(

@@ -8,7 +8,7 @@ import {
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { Observable, Subscription, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatMap, switchMap, tap } from 'rxjs/operators';
 import { v4 as uuid } from 'uuid';
 import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import {
@@ -345,7 +345,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
         return this.metadataUtilService
           .createMatadataTree(`${corpus.id}`, installation, false)
           .pipe(
-            tap((metadata) => {
+            concatMap((metadata) => {
               this.metadataQueryService.setMetadata(metadata);
               this.metadataQueryService.storageMetadata();
               this.displayPanelService.labelMetadataSubject.next(
@@ -353,6 +353,13 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
               );
               this.emitterService.spinnerMetadata.next(false);
               this.corpusSelectionService.resetCorpusChanged();
+              return this.metadataUtilService
+                .createMatadataTree(`${corpus.id}`, this.installation, true);
+            }))
+          .pipe(
+            tap(metadataVQ => {
+              this.metadataQueryService.setMetadataVQ(metadataVQ);
+              this.metadataQueryService.storageMetadataVQ();
             }),
             catchError((err) => {
               console.error(err);

@@ -37,6 +37,7 @@ export class MetadataUtilService {
     installation: Installation | undefined,
     visualQueryFlag: boolean
   ): Observable<Metadatum[]> {
+    this.res = [];
     if (installation) {
       let metadata = installation.corpora
         .filter((c) => c.id === +corpusId)[0]
