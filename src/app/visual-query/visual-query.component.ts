@@ -356,7 +356,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           tap(
             metadata => {
               this.metadataQueryService.setMetadataVQ(metadata);
-              this.metadataTextTypes = metadata;
+              this.metadataTextTypes = this.setUnselectable(metadata);
               this.metadataQueryService.storageMetadataVQ();
               this.enableSpinner = false;
               this.enableAddMetadata = true;
@@ -383,4 +383,17 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
       return of([]);
     }
   }
+
+  private setUnselectable(nodeList: Metadatum[]): Metadatum[] {
+    nodeList.forEach(node => {
+      if (node.tree && node.tree.length > 0 && node.tree[0] && node.tree[0].children && node.tree[0].children.length > 0) {
+        node.tree[0].selectable = false;
+      }
+      if (node.subMetadata && node.subMetadata.length > 0) {
+        this.setUnselectable(node.subMetadata);
+      }
+    });
+    return nodeList;
+  }
+
 }

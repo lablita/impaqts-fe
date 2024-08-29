@@ -24,6 +24,8 @@ export class MetadataGrouped {
   }
 }
 
+const DECADE = 'doc.decade';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -171,6 +173,16 @@ export class MetadataQueryService {
   }
 
   public getMetadataGroupedList(): Array<MetadataGrouped> {
+    this.metadataGroupedList.forEach(metadataGroup => {
+      metadataGroup.metadata.forEach(metadata => {
+        if (DECADE === metadata.name && metadata.tree && metadata.tree[0].children) {
+          metadata.tree[0].children.sort((a, b) => b.label!.localeCompare(a.label!));
+        }
+      });
+    });
+
+
+
     return this.metadataGroupedList;
   }
 
