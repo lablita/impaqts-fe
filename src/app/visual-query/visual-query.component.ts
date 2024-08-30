@@ -341,20 +341,17 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   private setCorpus(corpus: Corpus): Observable<Metadatum[]> {
     const metadataVQStr = localStorage.getItem('metadataVQ');
-    if (corpus.id !== this.metadataQueryService.getCorpusIdLoaded()) {
-      this.metadataQueryService.clearMetadata();
+    if (corpus.id !== +this.metadataQueryService.getMetadataVQIdCorpus()) {
       return this.metadataUtilService
         .createMatadataTree(`${corpus.id}`, this.installation, true)
         .pipe(
-          tap(
-            metadata => {
-              this.metadataQueryService.setMetadataVQ(metadata);
-              this.metadataTextTypes = this.setUnselectable(metadata);
-              this.metadataQueryService.storageMetadataVQ();
-              this.enableSpinner = false;
-              this.enableAddMetadata = true;
-            }
-          ),
+          tap(metadataVQ => {
+            this.metadataQueryService.setMetadataVQ(metadataVQ);
+            this.metadataTextTypes = this.setUnselectable(metadataVQ);
+            this.metadataQueryService.storageMetadataVQ();
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          }),
           catchError(
             err => {
               console.error(err);
@@ -365,8 +362,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
               metadataErrorMsg.summary = 'Errore';
               this.errorMessagesService.sendError(metadataErrorMsg);
               return of([]);
-            }
-          )
+            })
         );
     } else {
       this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();

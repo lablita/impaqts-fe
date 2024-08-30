@@ -78,10 +78,6 @@ export class RightComponent implements OnInit, OnDestroy {
     this.displayPanelService.labelMTDClickSubject.next();
   }
 
-  // public checkMetadata(): boolean {
-  //   return this.metadataQueryService.isCompiled();
-  // }
-
   public checkOptions(): boolean {
     return this.queryRequestService.isOptionSet();
   }
