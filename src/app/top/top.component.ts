@@ -1,22 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { COLL_OPTIONS_QUERY_REQUEST, FREQ_OPTIONS_QUERY_REQUEST, SORT_OPTIONS_QUERY_REQUEST, TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
+import { SELECT_CORPUS_LABEL } from '../common/label-constants';
 import { INSTALLATION, LOGIN, LOGOUT, TOP_LEFT, TOP_RIGHT } from '../model/constants';
 import { Installation } from '../model/installation';
-import { AuthorizationService } from '../services/authorization.service';
-import { EmitterService } from '../utils/emitter.service';
 import { KeyValueItem } from '../model/key-value-item';
-import { SELECT_CORPUS_LABEL } from '../common/label-constants';
+import { AuthorizationService } from '../services/authorization.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
-import { QueryRequestService } from '../services/query-request.service';
-import { COLL_OPTIONS_QUERY_REQUEST, FREQ_OPTIONS_QUERY_REQUEST, SORT_OPTIONS_QUERY_REQUEST, TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { MetadataQueryService } from '../services/metadata-query.service';
+import { QueryRequestService } from '../services/query-request.service';
+import { EmitterService } from '../utils/emitter.service';
 @Component({
   selector: 'app-top',
   templateUrl: './top.component.html',
   styleUrls: ['./top.component.scss']
 })
 
-export class TopComponent implements OnInit{
+export class TopComponent implements OnInit {
 
   public urlTopLeft: string | null = null;
   public urlTopRight: string | null = null;
@@ -47,12 +46,12 @@ export class TopComponent implements OnInit{
       this.installation.corpora.forEach(corpus => this.corpusList.push(new KeyValueItem(`${corpus.id}`, corpus.name)));
       this.corpusList.sort((c1, c2) => c1.value.toLocaleLowerCase().localeCompare(c2.value.toLocaleLowerCase()));
     }
-     const lsSelectedCorpus = localStorage.getItem('selectedCorpus');
-      if (lsSelectedCorpus) {
-        this.selectedCorpus = JSON.parse(lsSelectedCorpus);
-        this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus!);
-        this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
-      }
+    const lsSelectedCorpus = localStorage.getItem('selectedCorpus');
+    if (lsSelectedCorpus) {
+      this.selectedCorpus = JSON.parse(lsSelectedCorpus);
+      this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus!);
+      this.corpusSelectionService.corpusSelectedSubject.next(this.selectedCorpus!);
+    }
   }
 
   private init(): void {
@@ -87,6 +86,7 @@ export class TopComponent implements OnInit{
   }
 
   public corpusSelect(): void {
+    this.metadataQueryService.clearMetadata();
     localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
     localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
