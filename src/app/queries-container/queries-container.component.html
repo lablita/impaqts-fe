@@ -1,19 +1,20 @@
+{{lastResultService.getLastResult().totalResults}}
 <div class="flex flex-row">
   <div class="flex flex-grow-1 flex-column mt-3 w-8">
     <app-query-request (titleResultChange)="setTitleResult($event)"
       (metadataAttributesChange)="setMetadataAttributes($event)"
       (textTypesAttributesChange)="setTextTypesAttributes($event)" (selectedCorpusChange)="setSelectedCorpus($event)">
     </app-query-request>
-    <div class="flex mt-3" *ngIf="!!titleResult">
+    <div class="flex mt-3" *ngIf="!!titleResult || !isLastResultsEmpty()">
       <p-card class="w-12">
         <ng-container *ngIf="titleResult==='MENU.COLLOCATION' && !!selectedCorpus">
           <app-collocation-table [visible]="titleResult==='MENU.COLLOCATION' && !!selectedCorpus"
             [initialPagination]="initialPagination" [paginations]="paginations">
           </app-collocation-table>
         </ng-container>
-        <ng-container *ngIf="titleResult==='MENU.CONCORDANCE' && !!selectedCorpus">
-          <app-concordance-table [visible]="titleResult==='MENU.CONCORDANCE'" [initialPagination]="initialPagination"
-            [paginations]="paginations">
+        <ng-container *ngIf="(!isLastResultsEmpty() || titleResult==='MENU.CONCORDANCE') && !!selectedCorpus">
+          <app-concordance-table [visible]="(!isLastResultsEmpty() || titleResult==='MENU.CONCORDANCE')"
+            [initialPagination]="initialPagination" [paginations]="paginations">
           </app-concordance-table>
         </ng-container>
         <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
