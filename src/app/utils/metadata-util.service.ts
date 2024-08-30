@@ -15,6 +15,8 @@ import { EmitterService } from './emitter.service';
 
 const FUNCTION = 'function';
 
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -22,6 +24,7 @@ export class MetadataUtilService {
   public res: KeyValueItem[] = [];
   public isImpaqtsCustom = false;
   private metadataRequest: MetadataRequest = new MetadataRequest();
+  private metadataFromCorpus: { idCorpus: number, results: any[] } = { idCorpus: 0, results: [] };
 
   constructor(
     private readonly queriesContainerService: QueriesContainerService,
@@ -98,83 +101,18 @@ export class MetadataUtilService {
       metadata = metadata.filter((md) => !md.child);
       const lenObsArray = obsArray.length;
       if (lenObsArray > 0) {
-        return forkJoin(...obsArray).pipe(
-          map((res) => {
-            res.forEach((item: any, index: number) => {
-              metadata = this.setInnerTree(
-                item.res,
-                metadata,
-                item.metadatum.id,
-                lenObsArray === index + 1
-              );
-            });
-            // set Selections from Localstorage
-            if (this.metadataRequest) {
-              if (
-                this.metadataRequest.freeTexts &&
-                this.metadataRequest.freeTexts.length > 0
-              ) {
-                this.metadataRequest.freeTexts.forEach((selection) => {
-                  this.setSelectedFromLocalstorage(metadata, selection, 'FREE');
-                });
-              }
-              if (
-                this.metadataRequest.singleSelects &&
-                this.metadataRequest.singleSelects.length > 0
-              ) {
-                this.metadataRequest.singleSelects.forEach((selection) => {
-                  this.setSelectedFromLocalstorage(
-                    metadata,
-                    selection,
-                    'SINGLE'
-                  );
-                });
-              }
-              if (
-                this.metadataRequest.multiSelects &&
-                this.metadataRequest.multiSelects.length > 0
-              ) {
-                this.metadataRequest.multiSelects.forEach((selection) => {
-                  this.setSelectedFromLocalstorage(
-                    metadata,
-                    selection,
-                    'MULTI'
-                  );
-                });
-              }
-            }
-
-            metadata.forEach((md) => {
-              if (Array.isArray(md.selection)) {
-                const selection = md.selection as TreeNode[];
-                if (
-                  selection.length > 0 &&
-                  md.tree &&
-                  md.tree[0] &&
-                  md.tree[0].children &&
-                  md.tree[0].children?.length > selection.length
-                ) {
-                  md.tree[0].partialSelected = true;
-                } else if (
-                  md.tree &&
-                  md.tree[0] &&
-                  md.tree[0].children &&
-                  md.tree[0].children.length > 0 &&
-                  md.tree[0].children.length === selection.length
-                ) {
-                  md.selection.push(md.tree[0]);
-                }
-              }
-            });
-            this.metadataQueryService.setMetadata4Frequency(JSON.parse(JSON.stringify(metadata)));
-            if (this.isImpaqtsCustom) {
-              metadata =
-                this.functionsMetadataAggregation4ImpaqtsCustom(metadata);
-              metadata = this.setHardCodedFunctions(metadata);
-            }
-            return metadata;
-          })
-        );
+        if (this.metadataFromCorpus.idCorpus !== +corpusId) {
+          return forkJoin(obsArray).pipe(
+            map((res) => {
+              // salvo i risultati delle chiamte di recupero dei metadati dal corpus per utilizzarli nella seconda chiamata 
+              this.metadataFromCorpus.idCorpus = +corpusId;
+              this.metadataFromCorpus.results = res;
+              return this.elaborateMetadatumList(res, metadata, lenObsArray);
+            })
+          );
+        } else {
+          return of(this.elaborateMetadatumList(this.metadataFromCorpus.results, metadata, lenObsArray));
+        }
       } else {
         this.metadataQueryService.setMetadata4Frequency(JSON.parse(JSON.stringify(metadata)));
         return of(metadata);
@@ -601,5 +539,80 @@ export class MetadataUtilService {
       functionsMetadata[0].selection = treeNode;
     }
     return notFunctionsMetadata;
+  }
+
+  private elaborateMetadatumList(res: any[], metadata: Metadatum[], lenObsArray: number): Metadatum[] {
+    res.forEach((item: any, index: number) => {
+      metadata = this.setInnerTree(
+        item.res,
+        metadata,
+        item.metadatum.id,
+        lenObsArray === index + 1
+      );
+    });
+    // set Selections from Localstorage
+    if (this.metadataRequest) {
+      if (
+        this.metadataRequest.freeTexts &&
+        this.metadataRequest.freeTexts.length > 0
+      ) {
+        this.metadataRequest.freeTexts.forEach((selection) => {
+          this.setSelectedFromLocalstorage(metadata, selection, 'FREE');
+        });
+      }
+      if (
+        this.metadataRequest.singleSelects &&
+        this.metadataRequest.singleSelects.length > 0
+      ) {
+        this.metadataRequest.singleSelects.forEach((selection) => {
+          this.setSelectedFromLocalstorage(
+            metadata,
+            selection,
+            'SINGLE'
+          );
+        });
+      }
+      if (
+        this.metadataRequest.multiSelects &&
+        this.metadataRequest.multiSelects.length > 0
+      ) {
+        this.metadataRequest.multiSelects.forEach((selection) => {
+          this.setSelectedFromLocalstorage(
+            metadata,
+            selection,
+            'MULTI'
+          );
+        });
+      }
+    }
+    metadata.forEach((md) => {
+      if (Array.isArray(md.selection)) {
+        const selection = md.selection as TreeNode[];
+        if (
+          selection.length > 0 &&
+          md.tree &&
+          md.tree[0] &&
+          md.tree[0].children &&
+          md.tree[0].children?.length > selection.length
+        ) {
+          md.tree[0].partialSelected = true;
+        } else if (
+          md.tree &&
+          md.tree[0] &&
+          md.tree[0].children &&
+          md.tree[0].children.length > 0 &&
+          md.tree[0].children.length === selection.length
+        ) {
+          md.selection.push(md.tree[0]);
+        }
+      }
+    });
+    this.metadataQueryService.setMetadata4Frequency(JSON.parse(JSON.stringify(metadata)));
+    if (this.isImpaqtsCustom) {
+      metadata =
+        this.functionsMetadataAggregation4ImpaqtsCustom(metadata);
+      metadata = this.setHardCodedFunctions(metadata);
+    }
+    return metadata;
   }
 }
