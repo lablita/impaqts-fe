@@ -61,6 +61,13 @@ export class MetadataQueryService {
     return this.metadataVQRef.metadata;
   }
 
+  public clearMetadata(): void {
+    this.metadataRef = new Metadata();
+    this.metadataVQRef = new Metadata();
+    localStorage.removeItem('metadata');
+    localStorage.removeItem('metadataVQ');
+  }
+
   public resetMetadataService(): void {
     let metadataStr = localStorage.getItem('metadata');
     if (metadataStr && metadataStr.length > 0) {
