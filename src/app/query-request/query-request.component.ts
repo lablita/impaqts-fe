@@ -341,7 +341,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
             installation.corpora[index] = corpus;
           }
         });
-        // this.metadataQueryService.clearMetadata();
         return this.metadataUtilService
           .createMatadataTree(`${corpus.id}`, installation, false)
           .pipe(
