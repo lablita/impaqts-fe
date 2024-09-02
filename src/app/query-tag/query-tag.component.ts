@@ -82,10 +82,9 @@ export class QueryTagComponent implements OnInit {
       }
     }
 
+    this.metadatumSel = new Metadatum();
     this.retriveMetadatumFromTreeNode((metadata.selection as any).label, this.root);
-    if (this.metadatumSel && this.metadatumSel.freeText) {
-      this.freeText = !this.freeText;
-    }
+    this.freeText = this.metadatumSel.freeText;
     if (this.tag) {
       if (metadata.selection && (metadata.selection as TreeNode).parent) {
         const parent = (metadata.selection as TreeNode).parent;
@@ -108,7 +107,7 @@ export class QueryTagComponent implements OnInit {
     if (metadatum.subMetadata && metadatum.subMetadata.length > 0) {
       metadatum.subMetadata.forEach(md => this.retriveMetadatumFromTreeNode(label, md));
     }
-    if (metadatum.name === label) {
+    if ((metadatum.label ? metadatum.label : metadatum.name) === label) {
       this.metadatumSel = metadatum;
     }
   }
