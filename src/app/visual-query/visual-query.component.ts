@@ -27,6 +27,7 @@ import { AppInitializerService } from '../services/app-initializer.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
+import { LastResultService } from '../services/last-result.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
@@ -132,6 +133,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService,
     private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly lastResultService: LastResultService
   ) {
     if (this.appInitializerService.isImpactCustom()) {
       this.metadataLabel = 'PAGE.VISUAL_QUERY.FILTERS';

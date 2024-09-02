@@ -81,6 +81,7 @@ export class ConcordanceTableComponent
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
+  @Input() public isVisualQuery = false;
   @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
 
   public loading = false;
@@ -206,7 +207,9 @@ export class ConcordanceTableComponent
             this.first,
             this.fieldRequests
           );
-          this.lastResultService.setLastResult(lastResult);
+          if (!this.isVisualQuery) {
+            this.lastResultService.setLastResult(lastResult);
+          }
         }
       });
   }
@@ -215,7 +218,7 @@ export class ConcordanceTableComponent
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
         const lastResult = this.lastResultService.getLastResult();
-        if (lastResult.kwicLines && lastResult.totalResults > 0) {
+        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
           this.initialPagination = lastResult.initialPagination;
