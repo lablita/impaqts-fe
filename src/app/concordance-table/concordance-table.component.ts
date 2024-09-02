@@ -28,8 +28,10 @@ import {
   REQUEST_TYPE,
   WORD,
 } from '../common/query-constants';
-import { DOWNLOAD_CSV } from '../common/routes-constants';
+import { DOWNLOAD_CSV, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
+import { MenuEmitterService } from '../menu/menu-emitter.service';
+import { MenuEvent } from '../menu/menu.component';
 import { CSV_PAGINATION, SHUFFLE } from '../model/constants';
 import {
   ContextConcordanceItem,
@@ -75,8 +77,7 @@ const CONCORDANCE = 'concordance';
   encapsulation: ViewEncapsulation.None,
 })
 export class ConcordanceTableComponent
-  implements AfterViewInit, OnDestroy, OnChanges
-{
+  implements AfterViewInit, OnDestroy, OnChanges {
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
@@ -110,6 +111,7 @@ export class ConcordanceTableComponent
   public referenceKeys: string[] = [];
   public queryTypeRequest = '';
   public isImpaqtsCustom = false;
+  public firstTime = true;
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
@@ -128,7 +130,8 @@ export class ConcordanceTableComponent
     private readonly installationServices: InstallationService,
     private readonly referencePositionService: ReferencePositionService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly lastResultService: LastResultService
+    private readonly lastResultService: LastResultService,
+    private readonly menuEmitterService: MenuEmitterService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
     this.queryResponseSubscription = this.loadResultService
@@ -222,6 +225,7 @@ export class ConcordanceTableComponent
           }
           this.loading = false;
           this.noResultFound = false;
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
           return;
         }
         this.fieldRequests = [];
@@ -348,6 +352,7 @@ export class ConcordanceTableComponent
   }
 
   public makeConcordanceFromBreadcrumbs(idx: number): void {
+    this.firstTime = false;
     const descriptionsForContextQuery = this.descriptions.slice(0, idx + 1);
     this.queryRequestService.resetOptionsRequest();
     const typeSearch = ['Query'];
