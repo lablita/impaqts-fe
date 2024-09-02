@@ -1,14 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
+import { STRUCT_DOC, STRUCT_IMPL, STRUCT_PPP, STRUCT_TOP, STRUCT_VAG } from '../common/constants';
 import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
+
+const IMPL = 'Implicatur';
+const TOP = 'Topic';
+const PPP = 'Presupposizione';
+const VAG = 'Vaghezza';
 
 @Component({
   selector: 'app-query-tag',
   templateUrl: './query-tag.component.html',
   styleUrls: ['./query-tag.component.scss']
 })
+
 export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag | null = null;
@@ -91,6 +98,23 @@ export class QueryTagComponent implements OnInit {
         if (parent && parent.key) {
           this.tag.name = parent.key.indexOf('.') >= 0
             ? parent.key = parent.key.substring(parent.key.indexOf('.') + 1) : parent.key;
+          switch (parent.label) {
+            case IMPL:
+              this.tag.structure = STRUCT_IMPL;
+              break;
+            case TOP:
+              this.tag.structure = STRUCT_TOP;
+              break;
+            case PPP:
+              this.tag.structure = STRUCT_PPP;
+              break;
+            case VAG:
+              this.tag.structure = STRUCT_VAG;
+              break;
+            default:
+              this.tag.structure = STRUCT_DOC;
+          }
+
         }
       } else {
         const name = (metadata.selection as TreeNode).key;

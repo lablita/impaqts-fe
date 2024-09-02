@@ -1,4 +1,8 @@
 export const STRUCT_DOC = 'doc';
+export const STRUCT_IMPL = 'impl';
+export const STRUCT_TOP = 'top';
+export const STRUCT_PPP = 'ppp';
+export const STRUCT_VAG = 'vag';
 export const TOKEN = 'token';
 export const WS_URL = 'web-socket';
 export const TEXT_TYPES_QUERY_REQUEST = 'textTypesQueryRequest';
