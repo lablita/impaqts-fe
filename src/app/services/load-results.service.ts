@@ -37,7 +37,6 @@ import { EmitterService } from '../utils/emitter.service';
 import { AppInitializerService } from './app-initializer.service';
 import { DisplayPanelService } from './display-panel.service';
 import { ErrorMessagesService } from './error-messages.service';
-import { ImplicatureCommentService } from './implicature-comment.service';
 import { MetadataQueryService } from './metadata-query.service';
 import { QueryRequestService } from './query-request.service';
 import { RxWebsocketSubject } from './rx-websocket-subject';
@@ -90,7 +89,6 @@ export class LoadResultsService {
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
     private readonly emitterService: EmitterService,
-    private readonly implicatureCommentService: ImplicatureCommentService
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
