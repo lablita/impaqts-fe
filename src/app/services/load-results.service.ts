@@ -188,6 +188,9 @@ export class LoadResultsService {
           })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           queryRequest.impaqts = this.isImpaqtsCustom;
+          if (queryRequest.queryPattern && queryRequest.queryPattern.structPattern) {
+            queryRequest.queryPattern.structPattern.tags = this.commentNormalization(queryRequest.queryPattern.structPattern.tags);
+          }
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -260,6 +263,8 @@ export class LoadResultsService {
 
           if (this.metadataQuery) {
             if (fieldRequest.selectedQueryType !== IMPLICIT) {
+              //se presente il metadato comment (label esplicitazione nel Filtro Panel)
+              this.metadataQuery.tags = this.commentNormalization(this.metadataQueryService.retrieveStructPattern(this.metadataQuery).tags);
               queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
             } else {
               queryRequest.queryPattern.structPattern = JSON.parse(JSON.stringify(this.metadataQuery));
@@ -299,6 +304,40 @@ export class LoadResultsService {
         console.log('queryRequest: ' + JSON.stringify(queryRequest));
       }
     }
+  }
+
+  private commentNormalization(tags: QueryTag[][]): QueryTag[][] {
+    let tagComment: QueryTag | undefined = undefined;
+    tags.forEach(tags => {
+      if (tags.find(tag => tag.name === 'comment')) {
+        tagComment = tags.find(tag => tag.name === 'comment');
+      }
+    });
+    let commentStructures = new Set<string>();
+    if (tagComment) {
+      tags.forEach(tags => {
+        tags.forEach(tag => {
+          if (STRUCTURE_IMPLICIT_METADATA.join(',').indexOf(tag.structure) > -1) {
+            commentStructures.add(tag.structure);
+          }
+        });
+      });
+      if (commentStructures.size === 0) {
+        commentStructures = new Set(STRUCTURE_IMPLICIT_METADATA);
+      }
+      tags = tags.map(tags => {
+        if (tags.find(tag => tag.structure === 'comment')) {
+          commentStructures.forEach(structure => {
+            const tag: QueryTag = JSON.parse(JSON.stringify(tagComment));
+            tag.structure = structure;
+            tags.push(tag);
+          });
+          return tags.filter(tag => tag.structure !== 'comment');
+        }
+        return tags;
+      });
+    }
+    return tags;
   }
 
   public getCollocationSortingParams(): CollocationSortingParams {
