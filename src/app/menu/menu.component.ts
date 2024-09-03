@@ -33,7 +33,7 @@ import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
 import { MenuItemObject } from './menu-item-object';
 export class MenuEvent {
-  constructor(public item: string) {}
+  constructor(public item: string) { }
 }
 
 @Component({
@@ -81,7 +81,7 @@ export class MenuComponent implements OnInit {
     private readonly displayPanelService: DisplayPanelService,
     private readonly authService: AuthService,
     private readonly queryRequestService: QueryRequestService
-  ) {}
+  ) { }
 
   public click(route: string): void {
     this.displayPanelService.menuItemClickSubject.next(route);
@@ -168,6 +168,7 @@ export class MenuComponent implements OnInit {
             this.emitterService.pageMenu = route;
             this.queryRequestService.resetOptionsRequest();
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
+            this.emitterService.elaborationSubject.next('');
             this.displayPanelService.menuItemClickSubject.next(route);
           };
           const menuItemObject = new MenuItemObject(

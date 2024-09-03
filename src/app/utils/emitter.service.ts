@@ -31,4 +31,5 @@ export class EmitterService {
     new BehaviorSubject<FieldRequest>(new FieldRequest());
   public pageMenu = '';
   public localStorageSubject: Subject<void> = new Subject();
+  public elaborationSubject: BehaviorSubject<string> = new BehaviorSubject('');
 }

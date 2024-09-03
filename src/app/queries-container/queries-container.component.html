@@ -6,17 +6,18 @@
     </app-query-request>
     <div class="flex mt-3" *ngIf="!!titleResult || !isLastResultsEmpty()">
       <p-card class="w-12">
-        <ng-container *ngIf="titleResult==='MENU.COLLOCATION' && !!selectedCorpus">
+        <ng-container *ngIf="titleResult==='MENU.COLLOCATION' && !!selectedCorpus && elaboration === 'collocation'">
           <app-collocation-table [visible]="titleResult==='MENU.COLLOCATION' && !!selectedCorpus"
             [initialPagination]="initialPagination" [paginations]="paginations">
           </app-collocation-table>
         </ng-container>
-        <ng-container *ngIf="(!isLastResultsEmpty() || titleResult==='MENU.CONCORDANCE') && !!selectedCorpus">
+        <ng-container
+          *ngIf="(!isLastResultsEmpty() || titleResult==='MENU.CONCORDANCE') && !!selectedCorpus && elaboration.length === 0">
           <app-concordance-table [visible]="(!isLastResultsEmpty() || titleResult==='MENU.CONCORDANCE')"
             [initialPagination]="initialPagination" [paginations]="paginations">
           </app-concordance-table>
         </ng-container>
-        <ng-container *ngIf="titleResult==='MENU.FREQUENCY'">
+        <ng-container *ngIf="titleResult==='MENU.FREQUENCY' && elaboration === 'frequency'">
           <app-frequency-table *ngFor="let category of categories, let i=index"
             [visible]="titleResult==='MENU.FREQUENCY' && categories && categories.length>0" [category]="category"
             [first]="i===0" (titleResult)="setTitleResult($event)">

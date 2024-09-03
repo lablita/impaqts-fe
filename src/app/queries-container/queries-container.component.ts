@@ -72,6 +72,8 @@ export class QueriesContainerComponent implements OnInit {
   public panelDisplayOPT = true;
   public titleLabelKeyValue: KeyValueItem | null = null;
 
+  public elaboration: string = '';
+
   constructor(
     public readonly displayPanelService: DisplayPanelService,
     private readonly authorizationService: AuthorizationService,
@@ -80,7 +82,7 @@ export class QueriesContainerComponent implements OnInit {
     private readonly queryRequestService: QueryRequestService,
     private readonly metadataQueryService: MetadataQueryService,
     public readonly lastResultService: LastResultService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.metadataQueryService.resetMetadataService();
@@ -98,6 +100,7 @@ export class QueriesContainerComponent implements OnInit {
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
+    this.emitterService.elaborationSubject.subscribe(elaboration => this.elaboration = elaboration);
   }
 
   public isLastResultsEmpty(): boolean {
