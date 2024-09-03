@@ -46,8 +46,7 @@
                 </p-checkbox>
               </div>
               <div class="field ml-2">
-                <p-dropdown [options]="positionList"
-                  [(ngModel)]="freqOptionsQueryRequest.freqOptionList[i].position"
+                <p-dropdown [options]="positionList" [(ngModel)]="freqOptionsQueryRequest.freqOptionList[i].position"
                   [showClear]="true">
                 </p-dropdown>
               </div>
@@ -63,8 +62,7 @@
         </span>
 
       </p-accordionTab>
-      <p-accordionTab header="{{freqMetadataLabel | translate}}"
-        [selected]="isMetadataFreq">
+      <p-accordionTab header="{{freqMetadataLabel | translate}}" [selected]="isMetadataFreq">
         <h3>{{'PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_DIST' | translate}}</h3>
         <div class="field ml-2">
           <label for="numToken" style="width: 145px;" class="mr-3">{{"PAGE.CONCORDANCE.FREQ_OPTIONS.FREQ_LIMIT" |
@@ -84,8 +82,7 @@
 
         <span class="flex justify-content-center">
           <button pButton type="button" [disabled]="freqOptionsQueryRequest.categories.length<1"
-            label="{{freqMetadataLabel | translate}}" (click)="makeMetadataFreq()"
-            class="mr-5"></button>
+            label="{{freqMetadataLabel | translate}}" (click)="makeMetadataFreq()" class="mr-5"></button>
           <button pButton type="button" label="{{'PAGE.CONCORDANCE.FREQ_OPTIONS.CLEAR_FREQ_OPT' | translate}}"
             (click)="removeFrequencyOption()" class="mr-5"></button>
         </span>

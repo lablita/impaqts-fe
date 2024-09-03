@@ -117,7 +117,6 @@ export class LoadResultsService {
           containsWord = this.queryRequestService.getBasicFieldRequest()!.implicit;
         }
         if (implicitQueryTag.length > 0) {
-          //da cambiare con la nuova sintassi
           const structImpl: string[] = [...new Set(implicitQueryTag.map(qt =>
             '<' + qt.structure + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/>'))];
           fieldRequest.cql = structImpl.join(' | ');

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { STRUCT_DOC, STRUCT_IMPL, STRUCT_PPP, STRUCT_TOP, STRUCT_VAG } from '../common/constants';
 import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
@@ -96,30 +95,20 @@ export class QueryTagComponent implements OnInit {
       if (metadata.selection && (metadata.selection as TreeNode).parent) {
         const parent = (metadata.selection as TreeNode).parent;
         if (parent && parent.key) {
-          this.tag.name = parent.key.indexOf('.') >= 0
-            ? parent.key = parent.key.substring(parent.key.indexOf('.') + 1) : parent.key;
-          switch (parent.label) {
-            case IMPL:
-              this.tag.structure = STRUCT_IMPL;
-              break;
-            case TOP:
-              this.tag.structure = STRUCT_TOP;
-              break;
-            case PPP:
-              this.tag.structure = STRUCT_PPP;
-              break;
-            case VAG:
-              this.tag.structure = STRUCT_VAG;
-              break;
-            default:
-              this.tag.structure = STRUCT_DOC;
+          const structTagToken = parent.key.split('.');
+          this.tag.name = structTagToken[structTagToken.length - 1];
+          if (structTagToken.length > 1) {
+            this.tag.structure = structTagToken[0];
           }
-
         }
       } else {
         const name = (metadata.selection as TreeNode).key;
         if (name) {
-          this.tag.name = name;
+          const structTagToken = name.split('.');
+          this.tag.name = structTagToken[structTagToken.length - 1];
+          if (structTagToken.length > 1) {
+            this.tag.structure = structTagToken[0];
+          }
         }
       }
       this.tag.value = !this.freeText ? this.selectedMetadata : '';
