@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
 import { MetadataRequest } from '../model/metadata-request';
@@ -23,7 +22,6 @@ const FUNCTION = 'function';
 export class MetadataUtilService {
   public res: KeyValueItem[] = [];
   public isImpaqtsCustom = false;
-  private metadataRequest: MetadataRequest = new MetadataRequest();
   private metadataFromCorpus: { idCorpus: number, results: any[] } = { idCorpus: 0, results: [] };
 
   constructor(
@@ -45,10 +43,7 @@ export class MetadataUtilService {
       let metadata = installation.corpora
         .filter((c) => c.id === +corpusId)[0]
         .metadata.filter((md) => md.documentMetadatum);
-      // recuro i dati salvati nel localstorage
-      const ttqr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
       this.emitterService.localStorageSubject.next();
-      this.metadataRequest = ttqr ? JSON.parse(ttqr) : null;
       // genero albero per componente multiselect check box
       metadata.forEach((md) => {
         if (visualQueryFlag || (md.subMetadata && !md.freeText)) {
@@ -57,32 +52,6 @@ export class MetadataUtilService {
           md.tree.push(res.tree);
         }
       });
-      // recupero freeText da localstorage
-      if (this.metadataRequest && this.metadataRequest.freeTexts) {
-        metadata.forEach((md) => {
-          if (md.freeText) {
-            let value = null;
-            if (
-              this.metadataRequest &&
-              this.metadataRequest.freeTexts &&
-              this.metadataRequest.freeTexts.length > 0
-            ) {
-              const ft = this.metadataRequest.freeTexts.filter(
-                (freeT) => freeT.key === md.name
-              );
-              if (ft.length > 0) {
-                value = this.metadataRequest.freeTexts.filter(
-                  (freeT) => freeT.key === md.name
-                )[0].value;
-              }
-            }
-            if (value) {
-              md.selection = value;
-            }
-          }
-        });
-      }
-      // genero albero flat per componente multiselect check box e single select
       const obsArray: Array<any> = [];
       metadata.forEach((metadatum) => {
         this.res.push(new KeyValueItem(metadatum.name, ''));
@@ -104,13 +73,15 @@ export class MetadataUtilService {
         if (this.metadataFromCorpus.idCorpus !== +corpusId) {
           return forkJoin(obsArray).pipe(
             map((res) => {
-              // salvo i risultati delle chiamte di recupero dei metadati dal corpus per utilizzarli nella seconda chiamata 
+              // salvo i risultati delle chiamate di recupero dei metadati dal corpus per utilizzarli nella seconda chiamata 
               this.metadataFromCorpus.idCorpus = +corpusId;
               this.metadataFromCorpus.results = res;
               return this.elaborateMetadatumList(res, metadata, lenObsArray);
+              return metadata;
             })
           );
         } else {
+          return of(metadata);
           return of(this.elaborateMetadatumList(this.metadataFromCorpus.results, metadata, lenObsArray));
         }
       } else {
@@ -201,26 +172,10 @@ export class MetadataUtilService {
       }
     }
     if (metadatum) {
-      const selected =
-        this.metadataRequest &&
-          this.metadataRequest.singleSelects.filter(
-            (ss) => metadatum && ss.key === metadatum.name
-          ).length > 0
-          ? this.metadataRequest.singleSelects.filter(
-            (ss) => metadatum && ss.key === metadatum.name
-          )[0]
-          : this.metadataRequest &&
-            this.metadataRequest.multiSelects.filter(
-              (ss) => metadatum && ss.key === metadatum.name
-            ).length > 0
-            ? this.metadataRequest.multiSelects.filter(
-              (ss) => metadatum && ss.key === metadatum.name
-            )[0]
-            : null;
-      metadatum = this.mergeMetadata(res, metadatum, selected, metadata);
+      metadatum = this.mergeMetadata(res, metadatum, null, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta
-        metadata = this.linkLeafs(metadata, this.metadataRequest);
+        metadata = this.linkLeafs(metadata, null);
         metadata.forEach((md) => {
           if (!md.multipleChoice && !md.freeText) {
             this.setUnselectable(md.tree[0]);
@@ -357,11 +312,10 @@ export class MetadataUtilService {
     }
     return null;
   }
-
   // collego quanto recuperato dal corpus al nodo corretto
   private linkLeafs(
     metadata: Metadatum[],
-    metadataRequest: MetadataRequest
+    metadataRequest: MetadataRequest | null
   ): Metadatum[] {
     metadata.forEach((md) => {
       if (md.child && md.retrieveValuesFromCorpus) {
@@ -370,27 +324,6 @@ export class MetadataUtilService {
             const node = this.retrieveNodeFromTree(m.tree[0], md.name, 0);
             if (!!node && md && md.tree && md.tree[0] && md.tree[0].children) {
               node.children = md.tree[0].children.slice();
-              const selected =
-                metadataRequest &&
-                metadataRequest.multiSelects &&
-                metadataRequest.multiSelects.filter(
-                  (ms) => ms.key === m.name
-                )[0] &&
-                metadataRequest.multiSelects.filter(
-                  (ms) => ms.key === m.name
-                )[0].values;
-              if (selected) {
-                selected.forEach((sel) => {
-                  if (md.tree[0].children) {
-                    const no = md.tree[0].children.filter(
-                      (m2) => m2.label === sel
-                    );
-                    if (no && no.length > 0) {
-                      (m.selection as TreeNode[]).push(no[0]);
-                    }
-                  }
-                });
-              }
             }
           }
         });
@@ -517,27 +450,6 @@ export class MetadataUtilService {
       (functionMetadata.subMetadata as any).metadataValues.sort();
       notFunctionsMetadata.push(functionsMetadata[0]);
     }
-    if (
-      this.metadataRequest &&
-      this.metadataRequest.singleSelects.some((s) => s.key === FUNCTION)
-    ) {
-      const parentNode: TreeNode = {
-        key: 'function',
-        label: 'Funzione',
-        selectable: false,
-        children: functionsMetadata[0].tree[0].children,
-      };
-      const selection = this.metadataRequest.singleSelects.find(
-        (s) => s.key === FUNCTION
-      );
-      const treeNode: TreeNode = {
-        label: selection?.value,
-        key: selection?.value,
-        selectable: true,
-        parent: parentNode,
-      };
-      functionsMetadata[0].selection = treeNode;
-    }
     return notFunctionsMetadata;
   }
 
@@ -550,41 +462,6 @@ export class MetadataUtilService {
         lenObsArray === index + 1
       );
     });
-    // set Selections from Localstorage
-    if (this.metadataRequest) {
-      if (
-        this.metadataRequest.freeTexts &&
-        this.metadataRequest.freeTexts.length > 0
-      ) {
-        this.metadataRequest.freeTexts.forEach((selection) => {
-          this.setSelectedFromLocalstorage(metadata, selection, 'FREE');
-        });
-      }
-      if (
-        this.metadataRequest.singleSelects &&
-        this.metadataRequest.singleSelects.length > 0
-      ) {
-        this.metadataRequest.singleSelects.forEach((selection) => {
-          this.setSelectedFromLocalstorage(
-            metadata,
-            selection,
-            'SINGLE'
-          );
-        });
-      }
-      if (
-        this.metadataRequest.multiSelects &&
-        this.metadataRequest.multiSelects.length > 0
-      ) {
-        this.metadataRequest.multiSelects.forEach((selection) => {
-          this.setSelectedFromLocalstorage(
-            metadata,
-            selection,
-            'MULTI'
-          );
-        });
-      }
-    }
     metadata.forEach((md) => {
       if (Array.isArray(md.selection)) {
         const selection = md.selection as TreeNode[];

@@ -40,6 +40,7 @@ export class RightComponent implements OnInit, OnDestroy {
     if (this.appInitializerService.isImpactCustom()) {
       this.metadataLabel = 'PAGE.CONCORDANCE.FILTERS';
     }
+    this.checkMetadata = this.metadataQueryService.isCompiled();
     this.localStorageSubscript = this.emitterService.localStorageSubject.subscribe(res =>
       this.checkMetadata = this.metadataQueryService.isCompiled()
     );
