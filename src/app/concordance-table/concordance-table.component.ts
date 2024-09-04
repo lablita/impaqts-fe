@@ -28,8 +28,10 @@ import {
   REQUEST_TYPE,
   WORD,
 } from '../common/query-constants';
-import { DOWNLOAD_CSV } from '../common/routes-constants';
+import { DOWNLOAD_CSV, RESULT_CONCORDANCE } from '../common/routes-constants';
 import { LEFT, MULTILEVEL, NODE, RIGHT } from '../common/sort-constants';
+import { MenuEmitterService } from '../menu/menu-emitter.service';
+import { MenuEvent } from '../menu/menu.component';
 import { CSV_PAGINATION, SHUFFLE } from '../model/constants';
 import {
   ContextConcordanceItem,
@@ -45,9 +47,11 @@ import { ReferencePositionResponse } from '../model/reference-position-response'
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { AppInitializerService } from '../services/app-initializer.service';
+import { LastResult } from '../services/dto/last-result';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ExportCsvService } from '../services/export-csv.service';
 import { InstallationService } from '../services/installation.service';
+import { LastResultService } from '../services/last-result.service';
 import { LoadResultsService } from '../services/load-results.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { ReferencePositionService } from '../services/reference-position.service';
@@ -77,6 +81,7 @@ export class ConcordanceTableComponent
   @Input() public initialPagination = 10;
   @Input() public paginations: Array<number> = [];
   @Input() public visible = false;
+  @Input() public isVisualQuery = false;
   @Output() public setContextFiledsFromBreadcrumbs = new EventEmitter<number>();
 
   public loading = false;
@@ -107,6 +112,7 @@ export class ConcordanceTableComponent
   public referenceKeys: string[] = [];
   public queryTypeRequest = '';
   public isImpaqtsCustom = false;
+  public firstTime = true;
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
@@ -124,7 +130,9 @@ export class ConcordanceTableComponent
     private readonly exportCsvService: ExportCsvService,
     private readonly installationServices: InstallationService,
     private readonly referencePositionService: ReferencePositionService,
-    private readonly appInitializerService: AppInitializerService
+    private readonly appInitializerService: AppInitializerService,
+    private readonly lastResultService: LastResultService,
+    private readonly menuEmitterService: MenuEmitterService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
     this.queryResponseSubscription = this.loadResultService
@@ -192,6 +200,16 @@ export class ConcordanceTableComponent
           }
           this.currentStart = queryResponse.start;
           this.currentEnd = queryResponse.end;
+          const lastResult = new LastResult(
+            this.kwicLines,
+            this.initialPagination,
+            this.totalResults,
+            this.first,
+            this.fieldRequests
+          );
+          if (!this.isVisualQuery) {
+            this.lastResultService.setLastResult(lastResult);
+          }
         }
       });
   }
@@ -199,6 +217,20 @@ export class ConcordanceTableComponent
   ngAfterViewInit(): void {
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
+        const lastResult = this.lastResultService.getLastResult();
+        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery) {
+          this.kwicLines = [...lastResult.kwicLines];
+          this.first = lastResult.first;
+          this.initialPagination = lastResult.initialPagination;
+          this.totalResults = lastResult.totalResults;
+          if (lastResult.fieldRequest) {
+            this.fieldRequests = lastResult.fieldRequest;
+          }
+          this.loading = false;
+          this.noResultFound = false;
+          this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
+          return;
+        }
         this.fieldRequests = [];
         this.loading = true;
         if (res.concordances.length > 0) {
@@ -210,7 +242,7 @@ export class ConcordanceTableComponent
               const foundSortOption = SORT_LABELS.find(
                 (sl) => sl.key === res.concordances[res.pos].sortOptions[1]
               );
-              if (foundSortOption && foundSortOption.value) {
+              if (foundSortOption?.value) {
                 res.concordances[res.pos].sortOptions[1] =
                   foundSortOption.value;
               }
@@ -220,7 +252,7 @@ export class ConcordanceTableComponent
             this.fieldRequests = [res.concordances[0].fieldRequest];
           }
           this.sortOptions = res.concordances[res.pos].sortOptions;
-          this.loadResultService.loadResults(this.fieldRequests, undefined);
+          this.loadResultService.loadResults(this.fieldRequests);
         }
       });
   }
@@ -323,6 +355,7 @@ export class ConcordanceTableComponent
   }
 
   public makeConcordanceFromBreadcrumbs(idx: number): void {
+    this.firstTime = false;
     const descriptionsForContextQuery = this.descriptions.slice(0, idx + 1);
     this.queryRequestService.resetOptionsRequest();
     const typeSearch = ['Query'];

@@ -11,7 +11,7 @@
           <a (click)="clickConc(fr)" *ngIf="i<(fieldRequests.length-1)">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
           <a *ngIf="i===fieldRequests.length-1">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
         </span>&nbsp;
-        <b>{{firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
+        <b>{{firstTime ? totalResults : firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
       </span>
       <ng-container *ngIf="isQueryWithContext()">
         <span *ngFor="let description of descriptions, let idx = index">

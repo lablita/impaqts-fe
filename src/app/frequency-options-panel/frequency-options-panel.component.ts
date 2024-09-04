@@ -11,6 +11,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { AppInitializerService } from '../services/app-initializer.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
+import { EmitterService } from '../utils/emitter.service';
 
 const POSITION_LIST = [
   L6,
@@ -81,6 +82,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     private readonly queryRequestService: QueryRequestService,
     private readonly metadataQueryService: MetadataQueryService,
     private readonly appInitializerService: AppInitializerService,
+    private readonly emitterService: EmitterService
   ) {
     if (this.appInitializerService.isImpactCustom()) {
       this.freqMetadataLabel = 'PAGE.CONCORDANCE.FREQ_OPTIONS.FILTERS_FREQ';
@@ -194,6 +196,7 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   private doMakeFrequency(): void {
+    this.emitterService.elaborationSubject.next('frequency');
     this.queryRequestService.resetQueryPattern();
     const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
     if (basicFieldRequest) {
