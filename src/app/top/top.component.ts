@@ -74,7 +74,7 @@ export class TopComponent implements OnInit {
   private init(): void {
     this.emitterService.user.subscribe({
       next: (user) => {
-        this.authLabel = !!user.name ? LOGOUT : LOGIN;
+        this.authLabel = user.name ? LOGOUT : LOGIN;
       },
     });
 
@@ -103,6 +103,7 @@ export class TopComponent implements OnInit {
 
   public corpusSelect(): void {
     this.lastResultService.resetLastResult();
+    this.metadataQueryService.clearMetadata();
     localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
     localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
@@ -113,7 +114,7 @@ export class TopComponent implements OnInit {
     if (this.selectedCorpus) {
       this.corpusSelectionService.setSelectedCorpus(this.selectedCorpus);
       this.corpusSelectionService.corpusSelectedSubject.next(
-        this.selectedCorpus!
+        this.selectedCorpus
       );
     }
   }

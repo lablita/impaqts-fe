@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TEXT_TYPES_QUERY_REQUEST } from '../common/constants';
 import { FUNCTION, IMPLICIT } from '../common/query-constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -19,7 +19,7 @@ export class SubMetadatum {
   templateUrl: './metadata-panel.component.html',
   styleUrls: ['./metadata-panel.component.scss']
 })
-export class MetadataPanelComponent implements OnInit, AfterViewInit {
+export class MetadataPanelComponent {
 
   @Input() public corpus: string | null | undefined = '';
   @Input() public title = '';
@@ -44,14 +44,6 @@ export class MetadataPanelComponent implements OnInit, AfterViewInit {
       this.render = true, 100);
   }
 
-  ngAfterViewInit(): void {
-    //this.init();
-  }
-
-  ngOnInit(): void {
-    //this.init();
-  }
-
   public closeSidebar(): void {
     this.closeSidebarEvent.emit(true);
   }
@@ -72,7 +64,6 @@ export class MetadataPanelComponent implements OnInit, AfterViewInit {
     } else {
       this.metadataQueryService.setMetadataGroupedList(this.metadataGroupedList);
     }
-    return;
   }
 
   private init(): void {
@@ -80,11 +71,13 @@ export class MetadataPanelComponent implements OnInit, AfterViewInit {
       this.metadata = this.metadataQueryService.getMetadata();
     } else {
       this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
-      const funcGroup = this.metadataGroupedList.find(mg => mg.metadatumGroup.name === FUNCTION);
-      if (funcGroup && funcGroup.metadata.length > 0) {
-        const implGroup = this.metadataGroupedList.find(mg => mg.metadatumGroup.name === IMPLICIT);
-        if (implGroup) {
-          implGroup.metadata = implGroup.metadata.concat(funcGroup.metadata);
+      const implGroup = this.metadataGroupedList.find(mg => mg.metadatumGroup.name === IMPLICIT);
+      if (!implGroup?.metadata.find(md => md.name === 'function')) {
+        const funcGroup = this.metadataGroupedList.find(mg => mg.metadatumGroup.name === FUNCTION);
+        if (funcGroup && funcGroup.metadata.length > 0) {
+          if (implGroup) {
+            implGroup.metadata = implGroup.metadata.concat(funcGroup.metadata);
+          }
         }
       }
       this.metadataGroupedList = this.metadataGroupedList.filter(mg => mg.metadatumGroup.name !== FUNCTION);
