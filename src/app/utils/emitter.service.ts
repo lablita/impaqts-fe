@@ -15,16 +15,21 @@ export class ConcordanceRequestPayload {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class EmitterService {
-  public spinnerMetadata: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public spinnerMetadata: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
   public user: BehaviorSubject<User> = new BehaviorSubject(new User());
   public makeConcordanceRequestSubject: BehaviorSubject<ConcordanceRequestPayload> =
-    new BehaviorSubject<ConcordanceRequestPayload>(new ConcordanceRequestPayload([], 0));
-  public makeCollocation: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
-  public makeFrequency: BehaviorSubject<FieldRequest> = new BehaviorSubject<FieldRequest>(new FieldRequest());
+    new BehaviorSubject<ConcordanceRequestPayload>(
+      new ConcordanceRequestPayload([], 0)
+    );
+  public makeCollocation: BehaviorSubject<FieldRequest> =
+    new BehaviorSubject<FieldRequest>(new FieldRequest());
+  public makeFrequency: BehaviorSubject<FieldRequest> =
+    new BehaviorSubject<FieldRequest>(new FieldRequest());
   public pageMenu = '';
   public localStorageSubject: Subject<void> = new Subject();
+  public elaborationSubject: BehaviorSubject<string> = new BehaviorSubject('');
 }
