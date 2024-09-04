@@ -280,9 +280,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT) {
         this.queryRequestService.getQueryRequest().queryType =
           REQUEST_TYPE.IMPLICIT_REQUEST;
-        //TODO cql from implicit add search in comment
-        // fieldRequest.cql = '<impl/>';
-        // this.queryRequestService.getQueryRequest().cql = '<impl/>';
       }
       if (
         queryRequest.sortQueryRequest &&
@@ -344,7 +341,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
             installation.corpora[index] = corpus;
           }
         });
-        // this.metadataQueryService.clearMetadata();
         return this.metadataUtilService
           .createMatadataTree(`${corpus.id}`, installation, false)
           .pipe(

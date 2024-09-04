@@ -104,8 +104,8 @@ export class TopComponent implements OnInit {
   public corpusSelect(): void {
     this.lastResultService.resetLastResult();
     this.metadataQueryService.clearMetadata();
-    localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     this.metadataQueryService.reset();
+    localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
     localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
     localStorage.removeItem(FREQ_OPTIONS_QUERY_REQUEST);
     localStorage.removeItem(COLL_OPTIONS_QUERY_REQUEST);

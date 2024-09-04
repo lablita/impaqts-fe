@@ -56,6 +56,8 @@ export const STRUCTURE_IMPLICIT_METADATA = [
   'top', 'ppp', 'impl', 'vag'
 ];
 
+const COMMENT = 'comment';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -86,7 +88,7 @@ export class LoadResultsService {
     private readonly displayPanelService: DisplayPanelService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -102,6 +104,7 @@ export class LoadResultsService {
     fieldRequests: FieldRequest[],
     event?: LazyLoadEvent
   ): void {
+    const commentImpl = this.retrieveCommentIfExist4ImplicitQuery();
     const queryRequest = this.queryRequestService.getQueryRequest();
     const implicitQueryTag: QueryTag[] = this.setMetadataQuery(queryRequest);
     this.setViewOptionQueryRequest();
@@ -109,17 +112,22 @@ export class LoadResultsService {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       //IMPLICIT
       if (queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST) {
-        let explanation: string | null = null;
+        let containsWord: string | null = null;
         if (this.queryRequestService.getBasicFieldRequest()) {
-          explanation = this.queryRequestService.getBasicFieldRequest()!.implicit;
+          containsWord = this.queryRequestService.getBasicFieldRequest()!.implicit;
         }
         if (implicitQueryTag.length > 0) {
           const structImpl: string[] = [...new Set(implicitQueryTag.map(qt =>
-            '<' + qt.structure + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>'))];
+            '<' + qt.structure + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/>'))];
           fieldRequest.cql = structImpl.join(' | ');
           this.queryRequestService.getQueryRequest().cql = structImpl.join(' | ');
         } else {
-          fieldRequest.cql = '<impl' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <top' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <vag ' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <ppp' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>';
+          fieldRequest.cql = '<impl' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/> | <top' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/> | <vag' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/> | <ppp' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/>';
+          this.queryRequestService.getQueryRequest().cql = fieldRequest.cql;
+        }
+        if (containsWord) {
+          const str = ` containing [word="${containsWord}" | lemma="${containsWord}"]`;
+          fieldRequest.cql = fieldRequest.cql + str;
           this.queryRequestService.getQueryRequest().cql = fieldRequest.cql;
         }
         const tagListFunctionImplicit: QueryTag[] = [];
@@ -180,6 +188,9 @@ export class LoadResultsService {
           })
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           queryRequest.impaqts = this.isImpaqtsCustom;
+          if (queryRequest.queryPattern && queryRequest.queryPattern.structPattern) {
+            queryRequest.queryPattern.structPattern.tags = this.commentNormalization(queryRequest.queryPattern.structPattern.tags);
+          }
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -252,9 +263,15 @@ export class LoadResultsService {
 
           if (this.metadataQuery) {
             if (fieldRequest.selectedQueryType !== IMPLICIT) {
+              //se presente il metadato comment (label esplicitazione nel Filtro Panel)
+              this.metadataQuery.tags = this.commentNormalization(this.metadataQueryService.retrieveStructPattern(this.metadataQuery).tags);
               queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
             } else {
-              queryRequest.queryPattern.structPattern = this.metadataQuery;
+              queryRequest.queryPattern.structPattern = JSON.parse(JSON.stringify(this.metadataQuery));
+              queryRequest.queryPattern.structPattern.tags = queryRequest.queryPattern.structPattern.tags.map(tags =>
+                tags.filter(tag => tag.name !== COMMENT)
+              );
+              queryRequest.queryPattern.structPattern.tags = queryRequest.queryPattern.structPattern.tags.filter(tags => tags.length > 0);
             }
           }
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
@@ -287,6 +304,40 @@ export class LoadResultsService {
         console.log('queryRequest: ' + JSON.stringify(queryRequest));
       }
     }
+  }
+
+  private commentNormalization(tags: QueryTag[][]): QueryTag[][] {
+    let tagComment: QueryTag | undefined = undefined;
+    tags.forEach(tags => {
+      if (tags.find(tag => tag.name === 'comment')) {
+        tagComment = tags.find(tag => tag.name === 'comment');
+      }
+    });
+    let commentStructures = new Set<string>();
+    if (tagComment) {
+      tags.forEach(tags => {
+        tags.forEach(tag => {
+          if (STRUCTURE_IMPLICIT_METADATA.join(',').indexOf(tag.structure) > -1) {
+            commentStructures.add(tag.structure);
+          }
+        });
+      });
+      if (commentStructures.size === 0) {
+        commentStructures = new Set(STRUCTURE_IMPLICIT_METADATA);
+      }
+      tags = tags.map(tags => {
+        if (tags.find(tag => tag.structure === 'comment')) {
+          commentStructures.forEach(structure => {
+            const tag: QueryTag = JSON.parse(JSON.stringify(tagComment));
+            tag.structure = structure;
+            tags.push(tag);
+          });
+          return tags.filter(tag => tag.structure !== 'comment');
+        }
+        return tags;
+      });
+    }
+    return tags;
   }
 
   public getCollocationSortingParams(): CollocationSortingParams {
@@ -373,7 +424,6 @@ export class LoadResultsService {
     if (isImplicitRequest) {
       metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
     }
-    // Tutto in OR
     let implicitQueryTag: QueryTag[] = [];
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
@@ -438,6 +488,22 @@ export class LoadResultsService {
       this.metadataQuery.tags.push(implicitQueryTag);
     }
     return implicitQueryTag;
+  }
+
+  private retrieveCommentIfExist4ImplicitQuery(): string {
+    let result = '';
+    const isImplicitRequest = this.isImpaqtsCustom
+    const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    if (isImplicitRequest) {
+      const metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
+      if (metadataImplicit) {
+        const commentTag = metadataImplicit.find(mt => COMMENT === mt.name);
+        if (commentTag && commentTag.selection) {
+          result = '' + commentTag.selection;
+        }
+      }
+    }
+    return result;
   }
 
   private getTagFromFreeText(structTagTokens: string[], tag: QueryTag, ft: Selection): QueryTag {
@@ -549,42 +615,4 @@ export class LoadResultsService {
     this.errorMessagesService.sendError(forbiddenMessage);
     return null;
   }
-
-  // private retrieveStructuresFromImplicitMetadata(tags: QueryTag[][]): string[] {
-  //   const result = new Set<string>();
-  //   tags.forEach(tags => tags.forEach(
-  //     tag => {
-  //       if (STRUCTURE_IMPLICIT_METADATA.includes(tag.structure)) {
-  //         result.add(tag.structure);
-  //       }
-  //     }
-  //   ));
-  //   if (result.size > 0) {
-  //     return [...result];
-  //   }
-  //   return STRUCTURE_IMPLICIT_METADATA;
-  // }
-
-  // public retrieveStructPattern(queryToken: QueryToken): QueryToken {
-  //   const structuresInvolved = this.retrieveStructuresFromImplicitMetadata(queryToken.tags);
-
-  //   queryToken.tags.forEach(tag => {
-  //     let value: string | null = null;
-  //     tag.forEach(t => {
-  //       if (t.name === 'function') {
-  //         t.structure = structuresInvolved[0];
-  //         value = t.value;
-  //       }
-  //     });
-  //     if (value && structuresInvolved.length > 1) {
-  //       structuresInvolved.forEach((str, index) => {
-  //         if (index > 0) {
-  //           const qt: QueryTag = new QueryTag(str, 'function', value!);
-  //           tag.push(qt);
-  //         }
-  //       });
-  //     }
-  //   });
-  //   return queryToken;
-  // }
 }

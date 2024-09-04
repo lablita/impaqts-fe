@@ -4,11 +4,17 @@ import { KeyValueItem, KeyValueItemExtended } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { QueryTag } from '../model/query-tag';
 
+const IMPL = 'Implicatur';
+const TOP = 'Topic';
+const PPP = 'Presupposizione';
+const VAG = 'Vaghezza';
+
 @Component({
   selector: 'app-query-tag',
   templateUrl: './query-tag.component.html',
   styleUrls: ['./query-tag.component.scss']
 })
+
 export class QueryTagComponent implements OnInit {
 
   @Input() tag: QueryTag | null = null;
@@ -82,21 +88,27 @@ export class QueryTagComponent implements OnInit {
       }
     }
 
+    this.metadatumSel = new Metadatum();
     this.retriveMetadatumFromTreeNode((metadata.selection as any).label, this.root);
-    if (this.metadatumSel && this.metadatumSel.freeText) {
-      this.freeText = !this.freeText;
-    }
+    this.freeText = this.metadatumSel.freeText;
     if (this.tag) {
       if (metadata.selection && (metadata.selection as TreeNode).parent) {
         const parent = (metadata.selection as TreeNode).parent;
         if (parent && parent.key) {
-          this.tag.name = parent.key.indexOf('.') >= 0
-            ? parent.key = parent.key.substring(parent.key.indexOf('.') + 1) : parent.key;
+          const structTagToken = parent.key.split('.');
+          this.tag.name = structTagToken[structTagToken.length - 1];
+          if (structTagToken.length > 1) {
+            this.tag.structure = structTagToken[0];
+          }
         }
       } else {
         const name = (metadata.selection as TreeNode).key;
         if (name) {
-          this.tag.name = name;
+          const structTagToken = name.split('.');
+          this.tag.name = structTagToken[structTagToken.length - 1];
+          if (structTagToken.length > 1) {
+            this.tag.structure = structTagToken[0];
+          }
         }
       }
       this.tag.value = !this.freeText ? this.selectedMetadata : '';
@@ -108,7 +120,7 @@ export class QueryTagComponent implements OnInit {
     if (metadatum.subMetadata && metadatum.subMetadata.length > 0) {
       metadatum.subMetadata.forEach(md => this.retriveMetadatumFromTreeNode(label, md));
     }
-    if (metadatum.name === label) {
+    if ((metadatum.label ? metadatum.label : metadatum.name) === label) {
       this.metadatumSel = metadatum;
     }
   }
