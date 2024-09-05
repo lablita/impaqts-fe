@@ -1,9 +1,11 @@
-import { Injectable, OnDestroy, OnInit } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { COLLOCATION_OPTION_LABEL, COPYRIGHT, CREDITS, FILTER_OPTION_LABEL, FREQ_OPTION_LABEL, MENU_CONCORDANCE, 
-  SORT_OPTION_LABEL, VIEW_OPTION_LABEL, WORD_LIST_OPTION_LABEL} from '../common/label-constants';
-import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_COLLOCATION, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST} from '../common/routes-constants';
-import { MENU_ITEM } from '../model/constants';
+import {
+  COLLOCATION_OPTION_LABEL,
+  FILTER_OPTION_LABEL, FREQ_OPTION_LABEL,
+  SORT_OPTION_LABEL, VIEW_OPTION_LABEL, WORD_LIST_OPTION_LABEL
+} from '../common/label-constants';
+import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_COLLOCATION, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
 
@@ -43,28 +45,28 @@ const MENU_TO_PANEL_LABEL: KeyValueItem[] = [
 @Injectable({
   providedIn: 'root'
 })
-export class DisplayPanelService implements OnDestroy{
+export class DisplayPanelService implements OnDestroy {
 
   public panelLabelStatusSubject: BehaviorSubject<PanelLabelStatus> = new BehaviorSubject<PanelLabelStatus>(panelLabelStatusNoLabel);
-  
+
   // signals for page events
   public metadataPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelOptionsSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelMetadataSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public optionsPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  
+
   // signals from page events
   public labelMTDClickSubject: Subject<void> = new Subject();
   public labelOPTClickSubject: Subject<void> = new Subject();
   public menuItemClickSubject: Subject<string> = new Subject();
-  
+
   //states
-  private panelLabelStatus: PanelLabelStatus = panelLabelStatusStart; 
+  private panelLabelStatus: PanelLabelStatus = panelLabelStatusStart;
   private lastClickedMenuItem: string | null = null;
 
   //MenuItem
   private menuItem = QUERY;
- 
+
   constructor() {
     if (this.menuItem) {
       this.setPanelLabelStatusByMenuItem(this.menuItem);
@@ -73,42 +75,41 @@ export class DisplayPanelService implements OnDestroy{
     this.labelMTDClickSubject.subscribe(() => {
       const panelDisplayMTD = this.panelLabelStatus.panelDisplayMTD;
       this.panelLabelStatus = new PanelLabelStatus(
-        !panelDisplayMTD, 
+        !panelDisplayMTD,
         false,
         true,
         true,
         false,
         !panelDisplayMTD,
         this.panelLabelStatus.titleLabelKeyValue);
-        this.optionsPanelSubject.next(false);
-        this.labelMetadataSubject.next(true);
-        if (panelDisplayMTD)  {
-          this.closeMetadataPanel();
-        }
-        this.panelLabelStatusSubject.next(this.panelLabelStatus);
-        
+      this.optionsPanelSubject.next(false);
+      this.labelMetadataSubject.next(true);
+      if (panelDisplayMTD) {
+        this.closeMetadataPanel();
+      }
+      this.panelLabelStatusSubject.next(this.panelLabelStatus);
+
     });
     this.labelOPTClickSubject.subscribe(() => {
       const panelDisplayOPT = this.panelLabelStatus.panelDisplayOPT;
       this.panelLabelStatus = new PanelLabelStatus(
-        false, 
+        false,
         !panelDisplayOPT,
         true,
         true,
         !panelDisplayOPT,
         false,
         this.panelLabelStatus.titleLabelKeyValue);
-        this.optionsPanelSubject.next(true);
-        this.labelMetadataSubject.next(false);
-        if (panelDisplayOPT)  {
-          this.closeOptionsPanel();
-        }
-        this.panelLabelStatusSubject.next(this.panelLabelStatus);
+      this.optionsPanelSubject.next(true);
+      this.labelMetadataSubject.next(false);
+      if (panelDisplayOPT) {
+        this.closeOptionsPanel();
+      }
+      this.panelLabelStatusSubject.next(this.panelLabelStatus);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
       this.setPanelLabelStatusByMenuItem(menuItem);
       const menuToPanelLabelItem = MENU_TO_PANEL_LABEL.find(item => item.key === menuItem);
-      
       this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(SORT, SORT_OPTION_LABEL);
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
       this.lastClickedMenuItem = menuItem;
@@ -146,7 +147,7 @@ export class DisplayPanelService implements OnDestroy{
     this.panelLabelStatusSubject.next(panelLabelStatusStart);
   }
 
-  public reset(): void  {
+  public reset(): void {
     this.closeOptionsPanel();
     this.closeMetadataPanel();
   }
@@ -171,7 +172,7 @@ export class DisplayPanelService implements OnDestroy{
         //same menu
         const panelDisplayOPT = this.panelLabelStatus.panelDisplayOPT;
         this.panelLabelStatus = new PanelLabelStatus(
-          false, 
+          false,
           !panelDisplayOPT,
           true,
           true,
@@ -181,7 +182,7 @@ export class DisplayPanelService implements OnDestroy{
       } else {
         //other menu
         this.panelLabelStatus = new PanelLabelStatus(
-          false, 
+          false,
           true,
           true,
           true,

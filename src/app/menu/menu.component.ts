@@ -195,6 +195,9 @@ export class MenuComponent implements OnInit {
   }
 
   private setMenuItems(page: string, role: string): void {
+    if (this.queryRequestService.getSortQueryRequest()) {
+      page = RESULT_CONCORDANCE;
+    }
     const menuByRole = this.getMenuByRole(role);
     if (menuByRole !== undefined) {
       const routesRole = this.getRoutesByMenu(
