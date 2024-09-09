@@ -45,7 +45,6 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { ReferencePositionResponse } from '../model/reference-position-response';
 import { ResultContext } from '../model/result-context';
-import { SortQueryRequest } from '../model/sort-query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { AppInitializerService } from '../services/app-initializer.service';
 import { LastResult } from '../services/dto/last-result';
@@ -114,13 +113,13 @@ export class ConcordanceTableComponent
   public queryTypeRequest = '';
   public isImpaqtsCustom = false;
   public firstTime = true;
+  public queryTitle = 'Query';
 
   private readonly queryResponseSubscription: Subscription;
   private makeConcordanceRequestSubscription: Subscription | null = null;
   private currentStart = 0;
   private currentEnd = 0;
   private currentQueryId = '';
-  private sortQueryRequest: SortQueryRequest | null = null;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -210,6 +209,7 @@ export class ConcordanceTableComponent
             this.fieldRequests
           );
           if (!this.isVisualQuery) {
+            lastResult.queryType = this.queryRequestService.getQueryRequest().queryType;
             this.lastResultService.setLastResult(lastResult);
           }
         }
@@ -220,9 +220,7 @@ export class ConcordanceTableComponent
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
         const lastResult = this.lastResultService.getLastResult();
-        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery
-          && this.queryRequestService.getSortQueryRequest()
-        ) {
+        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery && this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
           this.initialPagination = lastResult.initialPagination;
@@ -233,6 +231,7 @@ export class ConcordanceTableComponent
           this.loading = false;
           this.noResultFound = false;
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
+          this.queryTitle = this.lastResultService.getQueryTitle();
           return;
         }
         if (this.queryRequestService.getQueryRequest().sortQueryRequest) {
@@ -263,6 +262,8 @@ export class ConcordanceTableComponent
           }
           this.sortOptions = res.concordances[res.pos].sortOptions;
           this.loadResultService.loadResults(this.fieldRequests);
+          this.queryTitle = this.sortOptions.length > 1 ? this.sortOptions[0] + ' ' + this.sortOptions[1] : this.sortOptions[0]
+          this.lastResultService.setQueryTitle(this.queryTitle);
         }
       });
   }
