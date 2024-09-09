@@ -7,6 +7,7 @@ import { ConcordanceRequest } from '../queries-container/queries-container.compo
 export class ConcordanceRequestPayload {
   concordances: Array<ConcordanceRequest> = [];
   pos = 0;
+  queryFromSortPanel = false;
 
   constructor(concordances: Array<ConcordanceRequest>, pos: number) {
     this.concordances = concordances;

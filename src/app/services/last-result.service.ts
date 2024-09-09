@@ -6,7 +6,8 @@ import { LastResult } from './dto/last-result';
 })
 export class LastResultService {
   private lastResult = new LastResult([]);
-  constructor() {}
+  private queryTitle = '';
+  constructor() { }
 
   public setLastResult(lastResult: LastResult): void {
     this.lastResult = lastResult;
@@ -18,5 +19,13 @@ export class LastResultService {
 
   public resetLastResult(): void {
     this.lastResult = new LastResult([]);
+  }
+
+  public setQueryTitle(queryTitle: string) {
+    this.queryTitle = queryTitle;
+  }
+
+  public getQueryTitle(): string {
+    return this.queryTitle;
   }
 }

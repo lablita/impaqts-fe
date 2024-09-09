@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { v4 as uuid } from 'uuid';
+import { SORT_OPTIONS_QUERY_REQUEST } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { L1, L2, L3, LEFT_CONTEXT, NODE, NODE_CONTEXT, R1, R2, R3, RIGHT_CONTEXT, SHUFFLE_CONTEXT, WORD } from '../common/sort-constants';
 import { KeyValueItem } from '../model/key-value-item';
@@ -7,8 +9,6 @@ import { SortQueryRequest } from '../model/sort-query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { QueryRequestService } from '../services/query-request.service';
 import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
-import { v4 as uuid } from 'uuid';
-import { SORT_OPTIONS_QUERY_REQUEST } from '../common/constants';
 
 const POSITION_LIST = [
   L3,
@@ -33,10 +33,10 @@ const SORT_KEYS = [
 ];
 
 const LEVELS = [
-  'FIRST_LEVEL', 
+  'FIRST_LEVEL',
   'SECOND_LEVEL',
   'THIRD_LEVEL'
-] 
+]
 
 const MULTI_ATTRIBUTE = [
   'WORD',
@@ -254,8 +254,10 @@ export class SortOptionsPanelComponent implements OnInit {
         typeSearch = ['Sort', !!queryRequest.sortQueryRequest.sortKey
           ? queryRequest.sortQueryRequest.sortKey : 'MULTILEVEL_CONTEXT'];
       }
-      this.emitterService.makeConcordanceRequestSubject.next(
-        new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0));
+      const concordanceRequestPayload = new ConcordanceRequestPayload([new ConcordanceRequest(fieldRequest, typeSearch)], 0);
+      concordanceRequestPayload.queryFromSortPanel = true;
+      this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
+      concordanceRequestPayload.queryFromSortPanel = false;
     }
   }
 
