@@ -220,7 +220,12 @@ export class ConcordanceTableComponent
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
         const lastResult = this.lastResultService.getLastResult();
-        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery && this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel) {
+        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery &&
+          (this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.COLLOCATION_REQUEST
+            || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST
+            || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST
+            || this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel)
+        ) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
           this.initialPagination = lastResult.initialPagination;
