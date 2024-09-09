@@ -270,15 +270,18 @@ export class LoadResultsService {
                 tagComment = tags.find(tag => tag.name === 'comment');
               });
               if (tagComment) {
-
                 this.metadataQuery.tags = this.commentNormalization(this.metadataQueryService.retrieveStructPattern(this.metadataQuery).tags);
                 const commentRefactoring = this.commentRefactoring(this.metadataQuery.tags);
                 const queryToken: QueryToken = new QueryToken();
                 queryToken.tags = commentRefactoring.tags;
-                // queryRequest.queryPattern.tokPattern[0].tags.push(commentRefactoring.tags[0]);
-                // queryRequest.queryPattern.tokPattern[0].tags.push(commentRefactoring.tags[0]);
+                let tags: QueryTag[] = [];
+                queryRequest.queryPattern.tokPattern.forEach(t => {
+                  tags = JSON.parse(JSON.stringify(t.tags[0]));
+                });
+                queryRequest.queryPattern.tokPattern = [];
+                const cql = this.retrieveCqlByQueryTags(tags);
+                queryToken.tags[0][0].value = cql + queryToken.tags[0][0].value;
                 queryRequest.queryPattern.tokPattern.push(queryToken);
-                queryRequest.cql = commentRefactoring.cql;
               } else {
                 queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
               }
@@ -365,7 +368,7 @@ export class LoadResultsService {
               } else {
                 cql += ' | ';
               }
-              cql += `<${tag.structure} type='${tag.value}' & comment='${tagComment?.value}' />`;
+              cql += `<${tag.structure.trim()} type="${tag.value}" & comment="(?i)${tagComment?.value}" />`;
             }
           });
           cql += ')';
@@ -411,6 +414,30 @@ export class LoadResultsService {
       });
     }
     return tags;
+  }
+
+  private retrieveCqlByQueryTags(tags: QueryTag[]): string {
+    let cql = '';
+    if (tags.length > 0) {
+      tags.forEach((tag, index) => {
+        if (index === 0 && tag.name !== 'cql') {
+          cql = '[(';
+        } else if (tag.name !== 'cql') {
+          cql += ' | ';
+        }
+        if (tag.name === 'cql') {
+          cql += tag.value;
+        } else {
+          cql += `${(tag.name === 'phrase' || tag.name === 'character') ? 'word' : tag.name}="${tag.name === 'character' ? '.*' : ''}${!tag.matchCase ? '(?i)' : ''}${tag.value}${tag.name === 'character' ? '.*' : ''}"`;
+        }
+        if (index === (tags.length - 1) && tag.name !== 'cql') {
+          cql += ')]';
+        }
+      });
+      cql += ' within ';
+    }
+
+    return cql;
   }
 
   public getCollocationSortingParams(): CollocationSortingParams {
