@@ -85,7 +85,7 @@
           <div>
             <p-button [disabled]="loading" styleClass="p-button-link"
               (click)="reference.toggle($event); showReference(kwicLine)"><span
-                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : kwicLine.ref}}</span>
+                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : 'doc#' + kwicLine.docNumber}}</span>
             </p-button>
           </div>
           <div class="badgecontainer">

@@ -45,6 +45,7 @@ import { QueryRequest } from '../model/query-request';
 import { QueryResponse } from '../model/query-response';
 import { ReferencePositionResponse } from '../model/reference-position-response';
 import { ResultContext } from '../model/result-context';
+import { SortQueryRequest } from '../model/sort-query-request';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { AppInitializerService } from '../services/app-initializer.service';
 import { LastResult } from '../services/dto/last-result';
@@ -119,6 +120,7 @@ export class ConcordanceTableComponent
   private currentStart = 0;
   private currentEnd = 0;
   private currentQueryId = '';
+  private sortQueryRequest: SortQueryRequest | null = null;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -218,7 +220,9 @@ export class ConcordanceTableComponent
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
         const lastResult = this.lastResultService.getLastResult();
-        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery) {
+        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery
+          && this.queryRequestService.getSortQueryRequest()
+        ) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
           this.initialPagination = lastResult.initialPagination;
@@ -230,6 +234,12 @@ export class ConcordanceTableComponent
           this.noResultFound = false;
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
           return;
+        }
+        if (this.queryRequestService.getQueryRequest().sortQueryRequest) {
+          this.queryRequestService.setSortQueryRequest(
+            JSON.parse(JSON.stringify(this.queryRequestService.getQueryRequest().sortQueryRequest!)));
+        } else {
+          this.queryRequestService.restSortQueryRequest();
         }
         this.fieldRequests = [];
         this.loading = true;
