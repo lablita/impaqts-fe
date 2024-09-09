@@ -27,6 +27,7 @@ import { AppInitializerService } from '../services/app-initializer.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
+import { LastResultService } from '../services/last-result.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
@@ -116,7 +117,6 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
   public metadataLabel = 'PAGE.VISUAL_QUERY.METADATA';
   public metadataButton = 'PAGE.VISUAL_QUERY.ADD_METADATA';
 
-  private holdSelectedCorpusId?: string;
   private corpusSelectedSubscription?: Subscription;
 
   constructor(
@@ -132,6 +132,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     private readonly queryRequestService: QueryRequestService,
     private readonly appInitializerService: AppInitializerService,
     private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly lastResultService: LastResultService
   ) {
     if (this.appInitializerService.isImpactCustom()) {
       this.metadataLabel = 'PAGE.VISUAL_QUERY.FILTERS';
@@ -211,7 +212,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
     );
   }
 
-  public corpusSelected(): void {
+  private corpusSelected(): void {
     this.resultView = false;
     this.noResultFound = false;
     localStorage.setItem(
@@ -250,18 +251,12 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
           this.metadataQueryService.setMetadataAttribute(corpus.metadata);
         }
       }
-      if (this.selectedCorpus.key !== this.holdSelectedCorpusId) {
-        if (this.installation) {
-          this.appInitializerService
-            .loadCorpus(+this.selectedCorpus.key).
-            pipe(
-              switchMap(corpus => this.setCorpus(corpus))
-            ).subscribe(res => { });
-        }
-        this.holdSelectedCorpusId = this.selectedCorpus.key;
-      } else {
-        this.enableSpinner = false;
-        this.enableAddMetadata = true;
+      if (this.installation) {
+        this.appInitializerService
+          .loadCorpus(+this.selectedCorpus.key).
+          pipe(
+            switchMap(corpus => this.setCorpus(corpus))
+          ).subscribe(res => { });
       }
     } else {
       this.closeWebSocket();
@@ -348,20 +343,17 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
 
   private setCorpus(corpus: Corpus): Observable<Metadatum[]> {
     const metadataVQStr = localStorage.getItem('metadataVQ');
-    if (this.corpusSelectionService.getCorpusChanged() || this.corpusSelectionService.getPageLoadedFirstTime()
-      || !metadataVQStr || this.metadataQueryService.getMetadataVQIdCorpus() !== '' + corpus.id) {
+    if (corpus.id !== +this.metadataQueryService.getMetadataVQIdCorpus()) {
       return this.metadataUtilService
         .createMatadataTree(`${corpus.id}`, this.installation, true)
         .pipe(
-          tap(
-            metadata => {
-              this.metadataQueryService.setMetadataVQ(metadata);
-              this.metadataTextTypes = this.setUnselectable(metadata);
-              this.metadataQueryService.storageMetadataVQ();
-              this.enableSpinner = false;
-              this.enableAddMetadata = true;
-            }
-          ),
+          tap(metadataVQ => {
+            this.metadataQueryService.setMetadataVQ(metadataVQ);
+            this.metadataTextTypes = this.setUnselectable(metadataVQ);
+            this.metadataQueryService.storageMetadataVQ();
+            this.enableSpinner = false;
+            this.enableAddMetadata = true;
+          }),
           catchError(
             err => {
               console.error(err);
@@ -372,8 +364,7 @@ export class VisualQueryComponent implements OnInit, OnDestroy {
               metadataErrorMsg.summary = 'Errore';
               this.errorMessagesService.sendError(metadataErrorMsg);
               return of([]);
-            }
-          )
+            })
         );
     } else {
       this.metadataTextTypes = this.metadataQueryService.getMetadataVQ();

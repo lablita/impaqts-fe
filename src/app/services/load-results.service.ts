@@ -56,6 +56,8 @@ export const STRUCTURE_IMPLICIT_METADATA = [
   'top', 'ppp', 'impl', 'vag'
 ];
 
+const COMMENT = 'comment';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -86,7 +88,7 @@ export class LoadResultsService {
     private readonly displayPanelService: DisplayPanelService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly emitterService: EmitterService
+    private readonly emitterService: EmitterService,
   ) {
     if (!this.socketService.getSocketSubject()) {
       this.socketService.connect();
@@ -103,23 +105,30 @@ export class LoadResultsService {
     event?: LazyLoadEvent
   ): void {
     const queryRequest = this.queryRequestService.getQueryRequest();
-    const implicitQueryTag: QueryTag[] = this.setMetadataQuery(queryRequest);
+    let implicitQueryTag: QueryTag[] = this.setMetadataQuery(queryRequest);
     this.setViewOptionQueryRequest();
     if (!!fieldRequests && fieldRequests.length > 0 && this.queryRequestService.getQueryRequest().viewOptionRequest.attributesCtx) {
       const fieldRequest = fieldRequests[fieldRequests.length - 1];
       //IMPLICIT
       if (queryRequest.queryType === REQUEST_TYPE.IMPLICIT_REQUEST) {
-        let explanation: string | null = null;
+        let containsWord: string | null = null;
         if (this.queryRequestService.getBasicFieldRequest()) {
-          explanation = this.queryRequestService.getBasicFieldRequest()!.implicit;
+          containsWord = this.queryRequestService.getBasicFieldRequest()!.implicit;
         }
+        const commentImpl = this.retrieveCommentIfExist4ImplicitQuery();
+        implicitQueryTag = this.implicitCommentNormalization(implicitQueryTag);
         if (implicitQueryTag.length > 0) {
           const structImpl: string[] = [...new Set(implicitQueryTag.map(qt =>
-            '<' + qt.structure + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>'))];
+            '<' + qt.structure + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/>'))];
           fieldRequest.cql = structImpl.join(' | ');
           this.queryRequestService.getQueryRequest().cql = structImpl.join(' | ');
         } else {
-          fieldRequest.cql = '<impl' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <top' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <vag ' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/> | <ppp' + (explanation ? ' comment=".*' + explanation + '.*" ' : '') + '/>';
+          fieldRequest.cql = '<impl' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/> | <top' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/> | <vag' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/> | <ppp' + (commentImpl ? ' comment=".*' + commentImpl + '.*" ' : '') + '/>';
+          this.queryRequestService.getQueryRequest().cql = fieldRequest.cql;
+        }
+        if (containsWord) {
+          const str = ` containing [word="${containsWord}" | lemma="${containsWord}"]`;
+          fieldRequest.cql = fieldRequest.cql + str;
           this.queryRequestService.getQueryRequest().cql = fieldRequest.cql;
         }
         const tagListFunctionImplicit: QueryTag[] = [];
@@ -176,10 +185,13 @@ export class LoadResultsService {
             tags.forEach(tag => {
               const structTagToken = tag.name.split('.');
               tag.name = structTagToken[structTagToken.length - 1];
-            })
-          })
+            });
+          });
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
           queryRequest.impaqts = this.isImpaqtsCustom;
+          if (queryRequest.queryPattern && queryRequest.queryPattern.structPattern) {
+            queryRequest.queryPattern.structPattern.tags = this.commentNormalization(queryRequest.queryPattern.structPattern.tags);
+          }
           this.socketService.sendMessage(queryRequest);
         } else {
           // !VISUAL_QUERY_REQUEST
@@ -252,9 +264,33 @@ export class LoadResultsService {
 
           if (this.metadataQuery) {
             if (fieldRequest.selectedQueryType !== IMPLICIT) {
-              queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
+              //se presente il metadato comment (label esplicitazione nel Filtro Panel)
+              let tagComment: QueryTag | undefined = undefined;
+              this.metadataQueryService.retrieveStructPattern(this.metadataQuery).tags.forEach(tags => {
+                tagComment = tags.find(tag => tag.name === 'comment');
+              });
+              if (tagComment) {
+                this.metadataQuery.tags = this.commentNormalization(this.metadataQueryService.retrieveStructPattern(this.metadataQuery).tags);
+                const commentRefactoring = this.commentRefactoring(this.metadataQuery.tags);
+                const queryToken: QueryToken = new QueryToken();
+                queryToken.tags = commentRefactoring.tags;
+                let tags: QueryTag[] = [];
+                queryRequest.queryPattern.tokPattern.forEach(t => {
+                  tags = JSON.parse(JSON.stringify(t.tags[0]));
+                });
+                queryRequest.queryPattern.tokPattern = [];
+                const cql = this.retrieveCqlByQueryTags(tags);
+                queryToken.tags[0][0].value = cql + queryToken.tags[0][0].value;
+                queryRequest.queryPattern.tokPattern.push(queryToken);
+              } else {
+                queryRequest.queryPattern.structPattern = this.metadataQueryService.retrieveStructPattern(this.metadataQuery);
+              }
             } else {
-              queryRequest.queryPattern.structPattern = this.metadataQuery;
+              queryRequest.queryPattern.structPattern = JSON.parse(JSON.stringify(this.metadataQuery));
+              queryRequest.queryPattern.structPattern.tags = queryRequest.queryPattern.structPattern.tags.map(tags =>
+                tags.filter(tag => tag.name !== COMMENT)
+              );
+              queryRequest.queryPattern.structPattern.tags = queryRequest.queryPattern.structPattern.tags.filter(tags => tags.length > 0);
             }
           }
           queryRequest.corpus = fieldRequest.selectedCorpus.value;
@@ -281,12 +317,127 @@ export class LoadResultsService {
             this.socketService.sendMessage(queryRequest);
           } else {
             queryRequest.impaqts = this.isImpaqtsCustom;
+            if (this.queryRequestService.getSortQueryRequest()) {
+              queryRequest.sortQueryRequest = this.queryRequestService.getSortQueryRequest();
+            }
             this.socketService.sendMessage(queryRequest);
           }
         }
         console.log('queryRequest: ' + JSON.stringify(queryRequest));
       }
     }
+  }
+
+  private implicitCommentNormalization(tags: QueryTag[]): QueryTag[] {
+    let tagComment: QueryTag | undefined = undefined;
+    tagComment = tags.find(tag => tag.name === 'comment');
+    let commentStructures = new Set<string>();
+    if (tagComment) {
+      tags.forEach(tag => {
+        if (STRUCTURE_IMPLICIT_METADATA.join(',').indexOf(tag.structure) > -1) {
+          commentStructures.add(tag.structure);
+        }
+      });
+      if (commentStructures.size === 0) {
+        commentStructures = new Set(STRUCTURE_IMPLICIT_METADATA);
+      }
+      commentStructures.forEach(structure => {
+        const tag: QueryTag = JSON.parse(JSON.stringify(tagComment));
+        tag.structure = structure;
+        tags.push(tag);
+      });
+      tags = tags.filter(tag => tag.structure !== 'comment');
+    }
+    return tags;
+  }
+
+  private commentRefactoring(tags: QueryTag[][]): { cql: string, tags: QueryTag[][] } {
+    let cql = '';
+    let tagComment: QueryTag | undefined = undefined;
+    const newTags: QueryTag[] = [];
+    tags.forEach(tags => {
+      tagComment = tags.find(tag => tag.name === 'comment');
+    });
+    if (tagComment) {
+      tags = tags.map(tags => {
+        if (tags.find(tag => tag.name === 'comment')) {
+          tags.forEach((tag, index) => {
+            if (STRUCTURE_IMPLICIT_METADATA.join(',').indexOf(tag.structure) > -1 && tag.name === 'type') {
+              if (index === 0) {
+                cql += '(';
+              } else {
+                cql += ' | ';
+              }
+              cql += `<${tag.structure.trim()} type="${tag.value}" & comment="(?i)${tagComment?.value}" />`;
+            }
+          });
+          cql += ')';
+          tags = tags.filter(tag => tag.name !== 'comment');
+          tags = tags.filter(tag => tag.name !== 'type');
+          const tag: QueryTag = new QueryTag(TOKEN, 'cql', cql);
+          tags.push(tag);
+        }
+        return tags;
+      });
+    }
+    return { cql: cql, tags: tags };
+  }
+
+  private commentNormalization(tags: QueryTag[][]): QueryTag[][] {
+    let tagComment: QueryTag | undefined = undefined;
+    tags.forEach(tags => {
+      tagComment = tags.find(tag => tag.name === 'comment');
+    });
+    let commentStructures = new Set<string>();
+    if (tagComment) {
+      tags.forEach(tags => {
+        tags.forEach(tag => {
+          if (STRUCTURE_IMPLICIT_METADATA.join(',').indexOf(tag.structure) > -1) {
+            commentStructures.add(tag.structure);
+          }
+        });
+      });
+      if (commentStructures.size === 0) {
+        commentStructures = new Set(STRUCTURE_IMPLICIT_METADATA);
+      }
+      tags = tags.map(tags => {
+        if (tags.find(tag => tag.structure === 'comment')) {
+          commentStructures.forEach(structure => {
+            const tag: QueryTag = JSON.parse(JSON.stringify(tagComment));
+            tag.value = '.*' + tag.value + '.*';
+            tag.structure = structure;
+            tags.push(tag);
+          });
+          return tags.filter(tag => tag.structure !== 'comment');
+        }
+        return tags;
+      });
+    }
+    return tags;
+  }
+
+  private retrieveCqlByQueryTags(tags: QueryTag[]): string {
+    let cql = '';
+    if (tags.length > 0) {
+      tags.forEach((tag, index) => {
+        if (index === 0 && tag.name !== 'cql') {
+          cql = '[(';
+        } else if (tag.name !== 'cql') {
+          cql += ' | ';
+        }
+        if (tag.name === 'cql') {
+          cql += tag.value;
+        } else {
+          cql += `${(tag.name === 'phrase' || tag.name === 'character') ? 'word' : tag.name}="${tag.name === 'character' ? '.*' : ''}${!tag.matchCase ? '(?i)' : ''}${tag.value}${tag.name === 'character' ? '.*' : ''}"`;
+        }
+        if (index === (tags.length - 1) && tag.name !== 'cql') {
+          cql += ')]';
+        }
+      });
+      cql += ' within ';
+    }
+
+    return cql;
   }
 
   public getCollocationSortingParams(): CollocationSortingParams {
@@ -363,8 +514,6 @@ export class LoadResultsService {
     if (REQUEST_TYPE.VISUAL_QUERY_REQUEST !== this.queryRequestService.getQueryRequest().queryType) {
       if ((metadataRequest.freeTexts.length > 0 || metadataRequest.multiSelects.length > 0 || metadataRequest.singleSelects.length > 0)) {
         localStorage.setItem(TEXT_TYPES_QUERY_REQUEST, JSON.stringify(metadataRequest));
-      } else {
-        localStorage.removeItem(TEXT_TYPES_QUERY_REQUEST);
       }
       this.emitterService.localStorageSubject.next();
     }
@@ -373,7 +522,6 @@ export class LoadResultsService {
     if (isImplicitRequest) {
       metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
     }
-    // Tutto in OR
     let implicitQueryTag: QueryTag[] = [];
     this.metadataQuery = new QueryToken();
     if (metadataRequest.freeTexts && metadataRequest.freeTexts.length > 0) {
@@ -438,6 +586,22 @@ export class LoadResultsService {
       this.metadataQuery.tags.push(implicitQueryTag);
     }
     return implicitQueryTag;
+  }
+
+  private retrieveCommentIfExist4ImplicitQuery(): string {
+    let result = '';
+    // const isImplicitRequest = this.isImpaqtsCustom;
+    const metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
+    if (this.isImpaqtsCustom) {
+      const metadataImplicit = metadataGroupedList.find(mg => IMPLICIT === mg.metadatumGroup.name)?.metadata;
+      if (metadataImplicit) {
+        const commentTag = metadataImplicit.find(mt => mt.name.indexOf(COMMENT) > -1);
+        if (commentTag && commentTag.selection) {
+          result = '' + commentTag.selection;
+        }
+      }
+    }
+    return result;
   }
 
   private getTagFromFreeText(structTagTokens: string[], tag: QueryTag, ft: Selection): QueryTag {
@@ -549,42 +713,4 @@ export class LoadResultsService {
     this.errorMessagesService.sendError(forbiddenMessage);
     return null;
   }
-
-  // private retrieveStructuresFromImplicitMetadata(tags: QueryTag[][]): string[] {
-  //   const result = new Set<string>();
-  //   tags.forEach(tags => tags.forEach(
-  //     tag => {
-  //       if (STRUCTURE_IMPLICIT_METADATA.includes(tag.structure)) {
-  //         result.add(tag.structure);
-  //       }
-  //     }
-  //   ));
-  //   if (result.size > 0) {
-  //     return [...result];
-  //   }
-  //   return STRUCTURE_IMPLICIT_METADATA;
-  // }
-
-  // public retrieveStructPattern(queryToken: QueryToken): QueryToken {
-  //   const structuresInvolved = this.retrieveStructuresFromImplicitMetadata(queryToken.tags);
-
-  //   queryToken.tags.forEach(tag => {
-  //     let value: string | null = null;
-  //     tag.forEach(t => {
-  //       if (t.name === 'function') {
-  //         t.structure = structuresInvolved[0];
-  //         value = t.value;
-  //       }
-  //     });
-  //     if (value && structuresInvolved.length > 1) {
-  //       structuresInvolved.forEach((str, index) => {
-  //         if (index > 0) {
-  //           const qt: QueryTag = new QueryTag(str, 'function', value!);
-  //           tag.push(qt);
-  //         }
-  //       });
-  //     }
-  //   });
-  //   return queryToken;
-  // }
 }

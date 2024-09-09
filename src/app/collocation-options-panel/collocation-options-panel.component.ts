@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { COLL_OPTIONS_QUERY_REQUEST } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { CollocationOptionsQueryRequestDTO, DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST } from '../model/collocation-options-query-request-dto';
 import { CollocationQueryRequest } from '../model/collocation-query-request';
 import { KeyValueItemExtended } from '../model/key-value-item';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
-import { COLL_OPTIONS_QUERY_REQUEST } from '../common/constants';
 
 const STAT_DESC: { [key: string]: string } = {
   T_SCORE: 't',
@@ -32,16 +32,16 @@ const OPTION_LIST = [
 const OPTION_SORT_LIST = [
   new KeyValueItemExtended('T_SCORE', 'T_SCORE', true),
   new KeyValueItemExtended('MI', 'MI', true),
-  new KeyValueItemExtended('MI3', 'MI3', true), 
+  new KeyValueItemExtended('MI3', 'MI3', true),
   new KeyValueItemExtended('LOG', 'LOG', true),
-  new KeyValueItemExtended('MIN', 'MIN' , true),
+  new KeyValueItemExtended('MIN', 'MIN', true),
   new KeyValueItemExtended('LOG_DICE', 'LOG_DICE', true),
   new KeyValueItemExtended('MI_LOG', 'MI_LOG', true)
 ];
 
 const ATTRIBUTE_LIST = [
-  'WORD', 
-  'TAG', 
+  'WORD',
+  'TAG',
   'LEMMA'
 ]
 
@@ -63,13 +63,12 @@ export class CollocationOptionsPanelComponent {
   constructor(
     private readonly queryRequestService: QueryRequestService,
     private readonly emitterService: EmitterService,
-    //private readonly cd: ChangeDetectorRef
   ) {
     const collOptReq = localStorage.getItem(COLL_OPTIONS_QUERY_REQUEST);
 
     this.collocationOptionsQueryRequest = collOptReq ?
       JSON.parse(collOptReq) : DEFAULT_COLLOCATION_OPTIONS_QUERY_REQUEST;
-      this.changeSortListEnabled();
+    this.changeSortListEnabled();
   }
 
   public closeSidebar(): void {
@@ -78,6 +77,7 @@ export class CollocationOptionsPanelComponent {
 
 
   public retrieveCollocations(): void {
+    this.emitterService.elaborationSubject.next('collocation');
     localStorage.setItem(COLL_OPTIONS_QUERY_REQUEST, JSON.stringify(this.collocationOptionsQueryRequest));
     this.queryRequestService.resetOptionsRequest();
     this.queryRequestService.resetQueryPattern();
@@ -99,7 +99,7 @@ export class CollocationOptionsPanelComponent {
       const optSort = this.optionSortList.find(o => o.key === c);
       if (optSort) {
         optSort.inactive = false
-      } 
+      }
     });
     sortList = this.optionSortList.slice();
     this.optionSortList = sortList;

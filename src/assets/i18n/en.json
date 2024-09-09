@@ -52,7 +52,7 @@
       "CHARACTER": "Character",
       "CQL": "CQL",
       "IMPLICIT": "Implicit",
-      "EXPLANATION": "Explanation",
+      "EXPLANATION": "Contains the word",
       "WORD_FORM": "Word form",
       "MATCH_CASE": "match case",
       "DEFAULT_ATTRIBUTE": "Default attribute",

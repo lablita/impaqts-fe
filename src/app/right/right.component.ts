@@ -40,6 +40,7 @@ export class RightComponent implements OnInit, OnDestroy {
     if (this.appInitializerService.isImpactCustom()) {
       this.metadataLabel = 'PAGE.CONCORDANCE.FILTERS';
     }
+    this.checkMetadata = this.metadataQueryService.isCompiled();
     this.localStorageSubscript = this.emitterService.localStorageSubject.subscribe(res =>
       this.checkMetadata = this.metadataQueryService.isCompiled()
     );
@@ -58,7 +59,7 @@ export class RightComponent implements OnInit, OnDestroy {
       this.labelDisableMTD = panelLabelStatus.labelDisableMTD || !this.corpusSelectionService.getSelectedCorpus();
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
       this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -78,11 +79,8 @@ export class RightComponent implements OnInit, OnDestroy {
     this.displayPanelService.labelMTDClickSubject.next();
   }
 
-  // public checkMetadata(): boolean {
-  //   return this.metadataQueryService.isCompiled();
-  // }
-
   public checkOptions(): boolean {
+    this.labelDisableOPT = !(!!this.queryRequestService.getSortQueryRequest() && this.titleLabelKeyValue?.key === 'sort');
     return this.queryRequestService.isOptionSet();
   }
 

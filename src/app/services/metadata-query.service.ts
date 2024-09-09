@@ -35,6 +35,7 @@ export class MetadataQueryService {
   private metadataRef4Frequency: Metadata = new Metadata();
   private metadataVQRef: Metadata = new Metadata();
   private metadataGroupedList: MetadataGrouped[] = [];
+  private corpusIdLoaded: number = 0;
 
   constructor(
     private readonly corpusSelectionService: CorpusSelectionService,
@@ -86,6 +87,10 @@ export class MetadataQueryService {
     localStorage.setItem('metadata', JSON.stringify(this.metadataRef));
   }
 
+  public getCorpusIdLoaded(): number {
+    return this.corpusIdLoaded;
+  }
+
   public setMetadata(mds: Array<Metadatum>): void {
     if (mds) {
       const metadataRef = new Metadata();
@@ -93,6 +98,17 @@ export class MetadataQueryService {
       metadataRef.metadata = mds.sort((a, b) => a.position - b.position);
       this.metadataRef = metadataRef;
       this.metadataGroupedList = this.buildMetadataGroupedList(mds);
+      this.corpusIdLoaded = +metadataRef.idCorpus;
+    }
+  }
+
+  public setMetadataVQ(mds: Array<Metadatum>): void {
+    if (mds) {
+      const metadataVQRef = new Metadata();
+      metadataVQRef.idCorpus = this.corpusSelectionService.getSelectedCorpus()?.key!;
+      metadataVQRef.metadata = mds.sort((a, b) => a.position - b.position);
+      this.metadataVQRef = metadataVQRef;
+      this.corpusIdLoaded = +metadataVQRef.idCorpus;
     }
   }
 
@@ -105,14 +121,6 @@ export class MetadataQueryService {
     this.metadataRef.metadata = mgl.map(m => m.metadata).reduce((acc, val) => acc.concat(val), []);
   }
 
-  public setMetadataVQ(mds: Array<Metadatum>): void {
-    if (mds) {
-      const metadataVQRef = new Metadata();
-      metadataVQRef.idCorpus = this.corpusSelectionService.getSelectedCorpus()?.key!;
-      metadataVQRef.metadata = mds.sort((a, b) => a.position - b.position);
-      this.metadataVQRef = metadataVQRef;
-    }
-  }
 
   public isCompiled(): boolean {
     const metadataStr = localStorage.getItem(TEXT_TYPES_QUERY_REQUEST);
@@ -180,9 +188,6 @@ export class MetadataQueryService {
         }
       });
     });
-
-
-
     return this.metadataGroupedList;
   }
 

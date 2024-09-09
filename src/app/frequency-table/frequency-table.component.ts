@@ -99,8 +99,6 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
           this.operation = this.frequency.operation;
           this.noResultFound = this.totalItems < 1;
           this.setColumnHeaders();
-        } else {
-          this.initVariables();
         }
       }
     });

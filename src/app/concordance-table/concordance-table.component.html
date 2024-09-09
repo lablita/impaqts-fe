@@ -11,7 +11,7 @@
           <a (click)="clickConc(fr)" *ngIf="i<(fieldRequests.length-1)">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
           <a *ngIf="i===fieldRequests.length-1">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
         </span>&nbsp;
-        <b>{{firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
+        <b>{{firstTime ? totalResults : firstItemTotalResults}} {{fieldRequests.length > (i + 1) ? '>' : ''}} </b>
       </span>
       <ng-container *ngIf="isQueryWithContext()">
         <span *ngFor="let description of descriptions, let idx = index">
@@ -85,7 +85,7 @@
           <div>
             <p-button [disabled]="loading" styleClass="p-button-link"
               (click)="reference.toggle($event); showReference(kwicLine)"><span
-                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : kwicLine.ref}}</span>
+                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : 'doc#' + kwicLine.docNumber}}</span>
             </p-button>
           </div>
           <div class="badgecontainer">

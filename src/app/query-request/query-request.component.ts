@@ -37,6 +37,7 @@ import { AppInitializerService } from '../services/app-initializer.service';
 import { CorpusSelectionService } from '../services/corpus-selection.service';
 import { DisplayPanelService } from '../services/display-panel.service';
 import { ErrorMessagesService } from '../services/error-messages.service';
+import { LastResultService } from '../services/last-result.service';
 import { MetadataQueryService } from '../services/metadata-query.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { SocketService } from '../services/socket.service';
@@ -92,7 +93,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   });
   public selectedCorpus: KeyValueItem | null = null;
 
-  private holdSelectedCorpusStr = '';
   private installation?: Installation;
   private textTypeStatus = false;
   private corpusSelectedSubscription?: Subscription;
@@ -107,7 +107,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     private readonly menuEmitterService: MenuEmitterService,
     private readonly errorMessagesService: ErrorMessagesService,
     private readonly appInitializerService: AppInitializerService,
-    private readonly corpusSelectionService: CorpusSelectionService
+    private readonly corpusSelectionService: CorpusSelectionService,
+    private readonly lastResultService: LastResultService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
   }
@@ -203,29 +204,17 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       }
       this.textTypesAttributesChange.emit(textTypesAttributes);
       this.metadataAttributesChange.emit(metadataAttributes);
-      if (selectedCorpusId !== this.holdSelectedCorpusStr) {
-        if (this.installation) {
-          this.emitterService.spinnerMetadata.next(true);
-          this.appInitializerService
-            .loadCorpus(+selectedCorpusId)
-            .pipe(
-              switchMap((corpus) =>
-                this.setCorpus(
-                  corpus,
-                  this.corpusSelectionService.getCorpusChanged()
-                )
-              )
+      if (this.installation) {
+        this.emitterService.spinnerMetadata.next(true);
+        this.appInitializerService
+          .loadCorpus(+selectedCorpusId)
+          .pipe(
+            switchMap((corpus) => this.setCorpus(corpus)
             )
-            .subscribe((res) => {
-              this.emitterService.spinnerMetadata.next(false);
-            });
-        }
-        this.holdSelectedCorpusStr = selectedCorpus.key;
-      } else {
-        this.displayPanelService.labelMetadataSubject.next(
-          !!selectedCorpus && !!this.textTypeStatus
-        );
-        this.emitterService.spinnerMetadata.next(false);
+          )
+          .subscribe((res) => {
+            this.emitterService.spinnerMetadata.next(false);
+          });
       }
     } else {
       this.closeWebSocket();
@@ -238,6 +227,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   public makeConcordances(): void {
+    this.lastResultService.resetLastResult();
     if (
       this.queryRequestForm.controls.simple &&
       this.queryRequestForm.controls.simple.value
@@ -290,9 +280,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       if (this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT) {
         this.queryRequestService.getQueryRequest().queryType =
           REQUEST_TYPE.IMPLICIT_REQUEST;
-        //TODO cql from implicit add search in comment
-        // fieldRequest.cql = '<impl/>';
-        // this.queryRequestService.getQueryRequest().cql = '<impl/>';
       }
       if (
         queryRequest.sortQueryRequest &&
@@ -344,10 +331,9 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   private setCorpus(
-    corpus: Corpus,
-    corpusChanged: boolean
+    corpus: Corpus
   ): Observable<Metadatum[]> {
-    if (corpusChanged || this.corpusSelectionService.getPageLoadedFirstTime()) {
+    if (corpus.id !== +this.metadataQueryService.getMetadataIdCorpus()) {
       const installation = this.installation;
       if (installation) {
         installation.corpora.forEach((c, index) => {
@@ -355,11 +341,10 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
             installation.corpora[index] = corpus;
           }
         });
-        this.metadataQueryService.clearMetadata();
         return this.metadataUtilService
           .createMatadataTree(`${corpus.id}`, installation, false)
           .pipe(
-            tap((metadata) => {
+            tap(metadata => {
               this.metadataQueryService.setMetadata(metadata);
               this.metadataQueryService.storageMetadata();
               this.displayPanelService.labelMetadataSubject.next(

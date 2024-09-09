@@ -43,7 +43,8 @@
         </button>
       </div>
       <ng-container *ngIf="!!selectedCorpus && titleResult">
-        <app-concordance-table [visible]="true" [initialPagination]="initialPagination" [paginations]="paginations">
+        <app-concordance-table [visible]="true" [initialPagination]="initialPagination" [paginations]="paginations"
+          [isVisualQuery]="true">
         </app-concordance-table>
       </ng-container>
     </p-card>
