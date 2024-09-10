@@ -18,7 +18,7 @@
     <div *ngIf="!(displayContext || displayQueryType)" style="height: 30px;">
       <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
         (click)="makeConcordances()"
-        [disabled]="!selectedCorpus || (displayPanelService.optionsPanelSubject | async) || (emitterService.spinnerMetadata | async)"></button>
+        [disabled]="!selectedCorpus || displayPanelService.getOptionPanelDisplayed() || (emitterService.spinnerMetadata | async)"></button>
     </div>
     <div class="mt-3" *ngIf="displayQueryType">
       <div>
@@ -94,9 +94,12 @@
     </div>
     <div *ngIf="displayContext || displayQueryType">
       <div class="flex justify-content-center mt-3">
+        <!-- <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
+          (click)="makeConcordances()" class="mr-3"
+          [disabled]="(displayPanelService.optionsPanelSubject | async) || (emitterService.spinnerMetadata | async)"></button> -->
         <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
           (click)="makeConcordances()" class="mr-3"
-          [disabled]="(displayPanelService.optionsPanelSubject | async) || (emitterService.spinnerMetadata | async)"></button>
+          [disabled]="displayPanelService.getOptionPanelDisplayed() || (emitterService.spinnerMetadata | async)"></button>
         <button pButton type="button" label="{{'PAGE.CONCORDANCE.CLEAR_ALL' | translate}}"
           (click)="clearContextFields()"></button>
       </div>

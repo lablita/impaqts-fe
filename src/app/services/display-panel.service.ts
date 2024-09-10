@@ -85,7 +85,7 @@ export class DisplayPanelService implements OnDestroy {
         false,
         !panelDisplayMTD || !!this.lastResultService.getLastResult().kwicLines && this.lastResultService.getLastResult().kwicLines!.length === 0,
         this.panelLabelStatus.titleLabelKeyValue);
-      this.optionsPanelSubject.next(false);
+      //this.optionsPanelSubject.next(false);
       this.labelMetadataSubject.next(true);
       if (panelDisplayMTD) {
         this.closeMetadataPanel();
@@ -103,7 +103,7 @@ export class DisplayPanelService implements OnDestroy {
         !(this.panelLabelStatus.panelDisplayMTD || this.panelLabelStatus.panelDisplayOPT),
         false,
         this.panelLabelStatus.titleLabelKeyValue);
-      this.optionsPanelSubject.next(true);
+      //this.optionsPanelSubject.next(true);
       this.labelMetadataSubject.next(false);
       if (panelDisplayOPT) {
         this.closeOptionsPanel();
@@ -118,6 +118,7 @@ export class DisplayPanelService implements OnDestroy {
       this.lastClickedMenuItem = menuItem;
     });
   }
+
   ngOnDestroy(): void {
     if (this.metadataPanelSubject) {
       this.metadataPanelSubject.unsubscribe();
@@ -140,6 +141,10 @@ export class DisplayPanelService implements OnDestroy {
     if (this.menuItemClickSubject) {
       this.menuItemClickSubject.unsubscribe();
     }
+  }
+
+  public getOptionPanelDisplayed(): boolean {
+    return this.panelLabelStatus.panelDisplayMTD || this.panelLabelStatus.panelDisplayOPT;
   }
 
   public setMenuItem(menuItem: string) {
