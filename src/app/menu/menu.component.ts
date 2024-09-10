@@ -13,10 +13,9 @@ import {
   FREQUENCY,
   QUERY,
   RESULT_CONCORDANCE,
-  RESULT_QUERY,
   SORT,
   VIEW_OPTION,
-  VISUAL_QUERY,
+  VISUAL_QUERY
 } from '../common/routes-constants';
 import {
   BOTTOM_LEFT,
@@ -28,6 +27,7 @@ import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { User } from '../model/user';
 import { DisplayPanelService } from '../services/display-panel.service';
+import { LastResultService } from '../services/last-result.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
@@ -78,7 +78,8 @@ export class MenuComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly displayPanelService: DisplayPanelService,
     private readonly authService: AuthService,
-    private readonly queryRequestService: QueryRequestService
+    private readonly queryRequestService: QueryRequestService,
+    private readonly lastResultService: LastResultService
   ) { }
 
   public click(route: string): void {
@@ -130,11 +131,9 @@ export class MenuComponent implements OnInit {
                 this.setMenuItems(event.item, this.role);
               }
               if (
-                this.menuEmitterService.corpusSelected &&
-                this.items &&
-                event.item === QUERY
+                this.menuEmitterService.corpusSelected && this.items && event.item === QUERY
               ) {
-                this.setMenuItems(RESULT_QUERY, this.role);
+                this.setMenuItems(RESULT_CONCORDANCE, this.role);
               }
             },
           });
@@ -215,9 +214,7 @@ export class MenuComponent implements OnInit {
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
         case VIEW_OPTION:
-        //case WORD_LIST:
         case SORT:
-        //case FILTER:
         case FREQUENCY:
         case COLLOCATION:
           this.setMenuItemsByRole(
