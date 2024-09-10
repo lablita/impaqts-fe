@@ -86,9 +86,4 @@ export class RightComponent implements OnInit, OnDestroy {
   public optionsButtonEnabled(): BehaviorSubject<boolean> {
     return this.displayPanelService.labelOptionsSubject;
   }
-
-  public metadataButtonEnabled(): BehaviorSubject<boolean> {
-    return this.displayPanelService.labelMetadataSubject;
-  }
-
 }

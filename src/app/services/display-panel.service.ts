@@ -53,7 +53,6 @@ export class DisplayPanelService implements OnDestroy {
   // signals for page events
   public metadataPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelOptionsSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public labelMetadataSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   // signals from page events
   public labelMTDClickSubject: Subject<void> = new Subject();
@@ -84,7 +83,6 @@ export class DisplayPanelService implements OnDestroy {
         false,
         !panelDisplayMTD || !!this.lastResultService.getLastResult().kwicLines && this.lastResultService.getLastResult().kwicLines!.length === 0,
         this.panelLabelStatus.titleLabelKeyValue);
-      this.labelMetadataSubject.next(true);
       if (panelDisplayMTD) {
         this.closeMetadataPanel();
       }
@@ -101,7 +99,6 @@ export class DisplayPanelService implements OnDestroy {
         !(this.panelLabelStatus.panelDisplayMTD || this.panelLabelStatus.panelDisplayOPT),
         false,
         this.panelLabelStatus.titleLabelKeyValue);
-      this.labelMetadataSubject.next(false);
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
@@ -119,9 +116,6 @@ export class DisplayPanelService implements OnDestroy {
     }
     if (this.labelOptionsSubject) {
       this.labelOptionsSubject.unsubscribe();
-    }
-    if (this.labelMetadataSubject) {
-      this.labelMetadataSubject.unsubscribe();
     }
     if (this.labelMTDClickSubject) {
       this.labelMTDClickSubject.unsubscribe();

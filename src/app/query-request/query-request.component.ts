@@ -94,7 +94,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   public selectedCorpus: KeyValueItem | null = null;
 
   private installation?: Installation;
-  private textTypeStatus = false;
   private corpusSelectedSubscription?: Subscription;
 
   constructor(
@@ -170,7 +169,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
   public corpusSelected(selectedCorpus: KeyValueItem | undefined): void {
     this.titleResultChange.emit('');
-    this.clickTextType();
     this.displayPanelService.closePanel();
     this.queryRequestService.resetOptionsRequest();
     if (selectedCorpus) {
@@ -310,11 +308,6 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     this.queryRequestService.clearContextConcordanceQueryRequest();
   }
 
-  public clickTextType(): void {
-    this.textTypeStatus = true;
-    this.displayPanelService.labelMetadataSubject.next(!this.textTypeStatus);
-  }
-
   public clearContextFields(): void {
     this.queryRequestForm.controls.simple.reset();
     this.queryRequestForm.controls.lemma.reset();
@@ -347,17 +340,11 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
             tap(metadata => {
               this.metadataQueryService.setMetadata(metadata);
               this.metadataQueryService.storageMetadata();
-              this.displayPanelService.labelMetadataSubject.next(
-                !!this.textTypeStatus
-              );
               this.emitterService.spinnerMetadata.next(false);
               this.corpusSelectionService.resetCorpusChanged();
             }),
             catchError((err) => {
               console.error(err);
-              this.displayPanelService.labelMetadataSubject.next(
-                !!this.textTypeStatus
-              );
               this.emitterService.spinnerMetadata.next(false);
               const metadataErrorMsg = {} as Message;
               metadataErrorMsg.severity = 'error';
