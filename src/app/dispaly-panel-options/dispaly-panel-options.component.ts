@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import {COLLOCATION, FILTER, FREQUENCY, SORT, VIEW_OPTION, WORD_LIST} from '../common/routes-constants';
+import { COLLOCATION, FILTER, FREQUENCY, SORT, VIEW_OPTION, WORD_LIST } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { Metadatum } from '../model/metadatum';
 import { SortQueryRequest } from '../model/sort-query-request';
@@ -31,7 +31,7 @@ export class DispalyPanelOptionsComponent {
   public FREQUENCY = FREQUENCY;
   public COLLOCATION = COLLOCATION;
   public titleOption: string | null = null;
-  
+
   constructor(
     public displayPanelService: DisplayPanelService
   ) {
@@ -47,10 +47,6 @@ export class DispalyPanelOptionsComponent {
 
   public loadFrequencies(): void {
     this.frequency.emit();
-  }
-
-  public displayOptionsPanel(): BehaviorSubject<boolean> {
-    return this.displayPanelService.optionsPanelSubject;
   }
 
   public displayMetadataPanel(): BehaviorSubject<boolean> {

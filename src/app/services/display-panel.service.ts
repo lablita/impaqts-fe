@@ -54,7 +54,6 @@ export class DisplayPanelService implements OnDestroy {
   public metadataPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelOptionsSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelMetadataSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public optionsPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   // signals from page events
   public labelMTDClickSubject: Subject<void> = new Subject();
@@ -85,7 +84,6 @@ export class DisplayPanelService implements OnDestroy {
         false,
         !panelDisplayMTD || !!this.lastResultService.getLastResult().kwicLines && this.lastResultService.getLastResult().kwicLines!.length === 0,
         this.panelLabelStatus.titleLabelKeyValue);
-      //this.optionsPanelSubject.next(false);
       this.labelMetadataSubject.next(true);
       if (panelDisplayMTD) {
         this.closeMetadataPanel();
@@ -103,11 +101,7 @@ export class DisplayPanelService implements OnDestroy {
         !(this.panelLabelStatus.panelDisplayMTD || this.panelLabelStatus.panelDisplayOPT),
         false,
         this.panelLabelStatus.titleLabelKeyValue);
-      //this.optionsPanelSubject.next(true);
       this.labelMetadataSubject.next(false);
-      if (panelDisplayOPT) {
-        this.closeOptionsPanel();
-      }
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
@@ -128,9 +122,6 @@ export class DisplayPanelService implements OnDestroy {
     }
     if (this.labelMetadataSubject) {
       this.labelMetadataSubject.unsubscribe();
-    }
-    if (this.optionsPanelSubject) {
-      this.optionsPanelSubject.unsubscribe();
     }
     if (this.labelMTDClickSubject) {
       this.labelMTDClickSubject.unsubscribe();
@@ -156,16 +147,11 @@ export class DisplayPanelService implements OnDestroy {
   }
 
   public reset(): void {
-    this.closeOptionsPanel();
     this.closeMetadataPanel();
   }
 
   public activeOptionsButton(): void {
     this.labelOptionsSubject.next(true);
-  }
-
-  public closeOptionsPanel(): void {
-    this.optionsPanelSubject.next(false);
   }
 
   public enableOptLabel(): void {
