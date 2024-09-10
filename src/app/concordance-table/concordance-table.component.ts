@@ -220,11 +220,12 @@ export class ConcordanceTableComponent
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
         const lastResult = this.lastResultService.getLastResult();
-        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery &&
+        const viewOptionIsChanged = this.queryRequestService.getViewOptionIsChanged();
+        if (!viewOptionIsChanged && (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery &&
           (this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.COLLOCATION_REQUEST
             || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST
             || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST
-            || this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel)
+            || this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel))
         ) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
@@ -270,6 +271,7 @@ export class ConcordanceTableComponent
           this.queryTitle = this.sortOptions.length > 1 ? this.sortOptions[0] + ' ' + this.sortOptions[1] : this.sortOptions[0]
           this.lastResultService.setQueryTitle(this.queryTitle);
         }
+        this.queryRequestService.setViewOptionHasChanged(false);
       });
   }
 
