@@ -134,22 +134,22 @@ export class QueriesContainerComponent implements OnInit {
 
   public displayFrequency(): void {
     // workaround to reload frequency table when press same button in frequency panel
-    this.titleResult = '';
+    //    this.titleResult = '';
     setTimeout(() => {
       this.titleResult = 'MENU.FREQUENCY';
-    }, 0);
+      const queryRequest = this.queryRequestService.getQueryRequest();
+      if (
+        queryRequest.frequencyQueryRequest &&
+        queryRequest.frequencyQueryRequest.categories
+      ) {
+        this.categories = queryRequest.frequencyQueryRequest.categories;
+      }
+      const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+      if (basicFieldRequest) {
+        this.emitterService.makeFrequency.next(basicFieldRequest);
+      }
+    }, 100);
     //
-    const queryRequest = this.queryRequestService.getQueryRequest();
-    if (
-      queryRequest.frequencyQueryRequest &&
-      queryRequest.frequencyQueryRequest.categories
-    ) {
-      this.categories = queryRequest.frequencyQueryRequest.categories;
-    }
-    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
-    if (basicFieldRequest) {
-      this.emitterService.makeFrequency.next(basicFieldRequest);
-    }
   }
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {

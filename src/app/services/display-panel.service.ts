@@ -129,7 +129,7 @@ export class DisplayPanelService implements OnDestroy {
   }
 
   public getOptionPanelDisplayed(): boolean {
-    return this.panelLabelStatus.panelDisplayMTD || this.panelLabelStatus.panelDisplayOPT;
+    return this.panelLabelStatus.panelDisplayOPT;
   }
 
   public setMenuItem(menuItem: string) {

@@ -103,7 +103,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
     this.selectedMultiAttribute = MULTI_ATTRIBUTE;
-    this.metadataAttributes = this.isImpaqtsCustom ? this.metadataQueryService.getMetadata4Frequency().map(md => md.name) : this.metadataQueryService.getMetadata().map(md => md.name);
+    this.metadataAttributes = this.isImpaqtsCustom ?
+      this.metadataQueryService.getMetadata4Frequency().map(md => md.name) : this.metadataQueryService.getMetadata().map(md => md.name);
   }
 
   public closeSidebar(): void {

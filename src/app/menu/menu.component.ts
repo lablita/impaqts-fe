@@ -165,7 +165,6 @@ export class MenuComponent implements OnInit {
             this.emitterService.pageMenu = route;
             this.queryRequestService.resetOptionsRequest();
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
-            this.emitterService.elaborationSubject.next('');
             this.displayPanelService.menuItemClickSubject.next(route);
           };
           const menuItemObject = new MenuItemObject(
