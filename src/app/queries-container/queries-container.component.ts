@@ -100,7 +100,9 @@ export class QueriesContainerComponent implements OnInit {
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
-    this.emitterService.elaborationSubject.subscribe(elaboration => this.elaboration = elaboration);
+    this.emitterService.elaborationSubject.subscribe(elaboration => {
+      this.elaboration = elaboration;
+    });
   }
 
   public isLastResultsEmpty(): boolean {

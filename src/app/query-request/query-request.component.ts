@@ -225,6 +225,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   public makeConcordances(): void {
+    this.emitterService.elaborationSubject.next('concordance');
     this.lastResultService.resetLastResult();
     if (
       this.queryRequestForm.controls.simple &&

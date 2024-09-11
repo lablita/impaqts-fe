@@ -94,9 +94,6 @@
     </div>
     <div *ngIf="displayContext || displayQueryType">
       <div class="flex justify-content-center mt-3">
-        <!-- <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
-          (click)="makeConcordances()" class="mr-3"
-          [disabled]="(displayPanelService.optionsPanelSubject | async) || (emitterService.spinnerMetadata | async)"></button> -->
         <button pButton type="button" label="{{'PAGE.CONCORDANCE.MAKE_CONCORDANCE' | translate}}"
           (click)="makeConcordances()" class="mr-3"
           [disabled]="displayPanelService.getOptionPanelDisplayed() || (emitterService.spinnerMetadata | async)"></button>
