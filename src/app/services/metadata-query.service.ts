@@ -6,6 +6,7 @@ import { Metadatum } from '../model/metadatum';
 import { MetadatumGroup } from '../model/metadatum-group';
 import { QueryTag } from '../model/query-tag';
 import { QueryToken } from '../model/query-token';
+import { AppInitializerService } from './app-initializer.service';
 import { CorpusSelectionService } from './corpus-selection.service';
 import { ErrorMessagesService } from './error-messages.service';
 import { STRUCTURE_IMPLICIT_METADATA } from './load-results.service';
@@ -40,7 +41,10 @@ export class MetadataQueryService {
   constructor(
     private readonly corpusSelectionService: CorpusSelectionService,
     private readonly errorMessagesService: ErrorMessagesService,
-  ) { }
+    private readonly appInitializerService: AppInitializerService
+  ) {
+    this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
+  }
 
   private metadataAttributes: Metadatum[] = [];
 
@@ -114,6 +118,15 @@ export class MetadataQueryService {
   }
 
   public setMetadata4Frequency(metadataRef4Frequency: Metadatum[]): void {
+    if (this.isImpaqtsCustom) {
+      metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'function');
+      STRUCTURE_IMPLICIT_METADATA.forEach(im => {
+        const metadatum = new Metadatum();
+        metadatum.name = im + '.function';
+        metadataRef4Frequency.push(metadatum);
+      });
+
+    }
     this.metadataRef4Frequency.metadata = metadataRef4Frequency;
   }
 
