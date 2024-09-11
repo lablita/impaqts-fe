@@ -72,6 +72,7 @@ export class MetadataQueryService {
     let metadataStr = localStorage.getItem('metadata');
     if (metadataStr && metadataStr.length > 0) {
       this.setMetadata(JSON.parse(metadataStr).metadata);
+      this.setMetadata4Frequency(JSON.parse(metadataStr).metadata);
     }
     metadataStr = localStorage.getItem('metadataVQ');
     if (metadataStr && metadataStr.length > 0) {

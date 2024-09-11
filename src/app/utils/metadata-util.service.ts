@@ -175,7 +175,6 @@ export class MetadataUtilService {
       metadatum = this.mergeMetadata(res, metadatum, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta
-        // metadata = this.linkLeafs(metadata, null);
         metadata = this.linkLeafs(metadata);
         metadata.forEach((md) => {
           if (!md.multipleChoice && !md.freeText) {
@@ -218,9 +217,6 @@ export class MetadataUtilService {
           if (root.children) {
             root.children.push(node);
           }
-          // if (selected && selected.value === el) {
-          //   metadatum.selection = node;
-          // }
         });
       } else {
         (res.metadataValues as Array<string>).forEach((el) => {
@@ -234,9 +230,6 @@ export class MetadataUtilService {
           if (root.children) {
             root.children.push(node);
           }
-          // if (selected && selected.values && selected.values.indexOf(el) > -1) {
-          //   selection.push(node);
-          // }
         });
       }
       metadatum.tree = [];
@@ -324,27 +317,6 @@ export class MetadataUtilService {
             const node = this.retrieveNodeFromTree(m.tree[0], md.name, 0);
             if (!!node && md && md.tree && md.tree[0] && md.tree[0].children) {
               node.children = md.tree[0].children.slice();
-              // const selected =
-              //   metadataRequest &&
-              //   metadataRequest.multiSelects &&
-              //   metadataRequest.multiSelects.filter(
-              //     (ms) => ms.key === m.name
-              //   )[0] &&
-              //   metadataRequest.multiSelects.filter(
-              //     (ms) => ms.key === m.name
-              //   )[0].values;
-              // if (selected) {
-              //   selected.forEach((sel) => {
-              //     if (md.tree[0].children) {
-              //       const no = md.tree[0].children.filter(
-              //         (m2) => m2.label === sel
-              //       );
-              //       if (no && no.length > 0) {
-              //         (m.selection as TreeNode[]).push(no[0]);
-              //       }
-              //     }
-              //   });
-              // }
             }
           }
         });
