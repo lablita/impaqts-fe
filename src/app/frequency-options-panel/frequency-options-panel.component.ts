@@ -103,7 +103,8 @@ export class FrequencyOptionsPanelComponent implements OnInit {
     this.selectedPosition = SELECTED_POSITION;
     this.levels = LEVELS;
     this.selectedMultiAttribute = MULTI_ATTRIBUTE;
-    this.metadataAttributes = this.isImpaqtsCustom ? this.metadataQueryService.getMetadata4Frequency().map(md => md.name) : this.metadataQueryService.getMetadata().map(md => md.name);
+    this.metadataAttributes = this.isImpaqtsCustom ?
+      this.metadataQueryService.getMetadata4Frequency().map(md => md.name) : this.metadataQueryService.getMetadata().map(md => md.name);
   }
 
   public closeSidebar(): void {
@@ -119,8 +120,23 @@ export class FrequencyOptionsPanelComponent implements OnInit {
   }
 
   public removeFrequencyOption(): void {
-    this.queryRequestService.resetOptionsRequest();
+    this.freqOptionsQueryRequest.categories = [];
+    this.freqOptionsQueryRequest.freqLimit = 0;
+    this.freqOptionsQueryRequest.includeCat = false;
+    this.queryRequestService.resetFrequencyOptRequest();
   }
+
+  public removeMultiFrequencyOption(): void {
+    this.freqOptionsQueryRequest.levelSelected = 0;
+    this.freqOptionsQueryRequest.freqLimitMulti = 0;
+    this.freqOptionsQueryRequest.freqOptionList.forEach(opt => opt.level = false);
+    this.freqOptionsQueryRequest.freqOptionList.forEach(opt => opt.ignoreCase = false);
+    this.freqOptionsQueryRequest.freqOptionList.forEach(opt => opt.attribute = WORD);
+    this.freqOptionsQueryRequest.freqOptionList.forEach(opt => opt.position = NODE);
+    this.queryRequestService.resetFrequencyOptRequest();
+  }
+
+
 
   public makeMetadataFreq(): void {
     this.isMetadataFreq = true;

@@ -1,4 +1,4 @@
-import { NODE, RIGHT_CONTEXT, WORD } from "../common/sort-constants";
+import { NODE, NODE_CONTEXT, WORD } from "../common/sort-constants";
 
 export class SortOptionDTO {
   level: boolean;
@@ -41,7 +41,7 @@ export class SortOptionsQueryRequestDTO {
 
 export const DEFAULT_SORT_OPTIONS_QUERY_REQUEST = new SortOptionsQueryRequestDTO(
   WORD,
-  RIGHT_CONTEXT,
+  NODE_CONTEXT,
   3,
   false,
   false,

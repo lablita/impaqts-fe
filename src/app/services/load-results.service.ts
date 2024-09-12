@@ -452,9 +452,12 @@ export class LoadResultsService {
         'PAGE.COLLOCATION.CONC_COUNT',
         'PAGE.COLLOCATION.CAND_COUNT',
       ];
-      queryRequest.collocationQueryRequest.showFunc.forEach((f) =>
-        colHeader.push(this.colHeaderList.filter((h) => h.key === f)[0].value)
-      );
+      this.colHeaderList.forEach(h => {
+        if (queryRequest.collocationQueryRequest && queryRequest.collocationQueryRequest.showFunc && queryRequest.collocationQueryRequest.showFunc.indexOf(h.key) > -1) {
+          colHeader.push(h.value);
+        }
+      });
+
       collocationSortingParams.colHeader = colHeader;
     }
     const sortBy = queryRequest.collocationQueryRequest?.sortBy
