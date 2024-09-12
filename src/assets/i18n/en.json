@@ -140,7 +140,7 @@
         "MAKE_FREQ": "Make frequency list",
         "INCLUDE_CAT": "Include categories with no hits",
         "IGNORE_CASE": "Ignore case",
-        "CLEAR_FREQ_OPT": "Default Value",
+        "CLEAR_FREQ_OPT": "Clear",
         "METADATA_FREQ": "Metadata frequency",
         "FILTERS_FREQ": "Filters frequency"
       },

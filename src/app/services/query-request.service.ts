@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
-import { VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
+import { FREQ_OPTIONS_QUERY_REQUEST, VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
@@ -54,6 +54,11 @@ export class QueryRequestService {
     this.queryRequest.collocationQueryRequest = null;
     this.queryRequest.sortQueryRequest = null;
     this.queryRequest.frequencyQueryRequest = null;
+  }
+
+  public resetFrequencyOptRequest(): void {
+    this.queryRequest.frequencyQueryRequest = null;
+    localStorage.removeItem(FREQ_OPTIONS_QUERY_REQUEST);
   }
 
   public resetQueryPattern(): void {
