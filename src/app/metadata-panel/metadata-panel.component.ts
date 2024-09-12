@@ -79,6 +79,7 @@ export class MetadataPanelComponent {
     if (!this.isImpaqtsCustom) {
       this.metadata = this.metadataQueryService.getMetadata();
       this.restoreFilterSelections(selections, this.metadata);
+      this.metadataQueryService.setMetadata(this.metadata);
     } else {
       this.metadataGroupedList = this.metadataQueryService.getMetadataGroupedList();
       const implGroup = this.metadataGroupedList.find(mg => mg.metadatumGroup.name === IMPLICIT);
@@ -94,6 +95,7 @@ export class MetadataPanelComponent {
       this.metadataGroupedList.forEach(group => {
         this.restoreFilterSelections(selections, group.metadata);
       });
+      this.metadataQueryService.setMetadataGroupedList(this.metadataGroupedList);
     }
     console.log('Metadata Panel Start');
   }

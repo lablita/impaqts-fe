@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
+import { VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
 import { REQUEST_TYPE } from '../common/query-constants';
 import { ContextConcordanceItem, ContextConcordanceQueryRequest } from '../model/context-concordance-query-request';
 import { FieldRequest } from '../model/field-request';
 import { FilterConcordanceQueryRequest } from '../model/filter-concordance-query-request';
+import { KeyValueItem } from '../model/key-value-item';
+import { PanelLabelStatus } from '../model/panel-label-status';
 import { QueryPattern } from '../model/query-pattern';
 import { QueryRequest } from '../model/query-request';
 import { QueryStructure } from '../model/query-structure';
+import { SortQueryRequest } from '../model/sort-query-request';
+import { DisplayPanelService } from './display-panel.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +22,33 @@ export class QueryRequestService {
 
   private basicFieldRequest: FieldRequest | null = null;
 
+  private sortQueryRequest: SortQueryRequest | null = null;
 
   private contextConcordanceQueryRequest: ContextConcordanceQueryRequest = new ContextConcordanceQueryRequest();
+
+  private titleLabelKeyValue = '';
+
+  private viewOptionIsChanged = false;
+
+  constructor(
+    private readonly displayPanelService: DisplayPanelService
+  ) {
+    this.displayPanelService.panelLabelStatusSubject.subscribe((panelLabelStatus: PanelLabelStatus) => {
+      this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue.key;
+    });
+  }
+
+  public setSortQueryRequest(sortQueryRequest: SortQueryRequest): void {
+    this.sortQueryRequest = sortQueryRequest;
+  }
+
+  public getSortQueryRequest(): SortQueryRequest | null {
+    return this.sortQueryRequest;
+  }
+
+  public restSortQueryRequest(): void {
+    this.sortQueryRequest = null;
+  }
 
   public resetOptionsRequest(): void {
     this.queryRequest.collocationQueryRequest = null;
@@ -30,9 +60,24 @@ export class QueryRequestService {
     this.queryRequest.queryPattern = new QueryPattern();
   }
 
+  public setViewOptionHasChanged(viewOptionIsChanged: boolean): void {
+    this.viewOptionIsChanged = viewOptionIsChanged;
+  }
+
+  public elaborationViewOptionHasChanged(viewOptionSelected: Array<KeyValueItem>): void {
+    const viewOptionStored = localStorage.getItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES);
+    const res = JSON.stringify(viewOptionSelected) !== viewOptionStored;
+    this.viewOptionIsChanged = res;
+  }
+
+  public getViewOptionIsChanged(): boolean {
+    return this.viewOptionIsChanged;
+  }
+
   public isOptionSet(): boolean {
     return !!this.queryRequest.collocationQueryRequest || !!this.queryRequest.sortQueryRequest ||
-      !!this.queryRequest.frequencyQueryRequest || !!this.queryRequest.filterConcordanceQueryRequest;
+      !!this.queryRequest.frequencyQueryRequest || !!this.queryRequest.filterConcordanceQueryRequest
+      || (!!this.sortQueryRequest && this.titleLabelKeyValue === 'sort');
   }
 
   public resetContextConcordance(): void {

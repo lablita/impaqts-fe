@@ -4,8 +4,8 @@
     <h3><b>{{'MENU.CONCORDANCE' | translate}}</b></h3>
   </div>
   <div *ngIf="kwicLines.length > 0">
-    <h3 *ngIf="totalResults && !loading">{{sortOptions.length > 1 ? sortOptions[0] + " " + sortOptions[1] :
-      sortOptions[0]}}
+    <h3 *ngIf="totalResults && !loading">
+      {{queryTitle}}
       <span *ngFor="let fr of fieldRequests; let i = index">
         <span style="color:red;">
           <a (click)="clickConc(fr)" *ngIf="i<(fieldRequests.length-1)">{{fr ? getItemToBeDisplayed(fr) :''}}</a>
@@ -85,7 +85,7 @@
           <div>
             <p-button [disabled]="loading" styleClass="p-button-link"
               (click)="reference.toggle($event); showReference(kwicLine)"><span
-                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : kwicLine.ref}}</span>
+                class="button-ref">{{kwicLine.references['doc.id'] ? kwicLine.references['doc.id'] : 'doc#' + kwicLine.docNumber}}</span>
             </p-button>
           </div>
           <div class="badgecontainer">

@@ -13,10 +13,9 @@ import {
   FREQUENCY,
   QUERY,
   RESULT_CONCORDANCE,
-  RESULT_QUERY,
   SORT,
   VIEW_OPTION,
-  VISUAL_QUERY,
+  VISUAL_QUERY
 } from '../common/routes-constants';
 import {
   BOTTOM_LEFT,
@@ -57,8 +56,6 @@ export class MenuComponent implements OnInit {
 
   private readonly menuQueryStr: string[] = [QUERY, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
-  // private readonly menuDisplayPanel: string[] = [VIEW_OPTION, WORD_LIST, SORT, FILTER, FREQUENCY, COLLOCATION];
-  // private readonly menuItemsWIP: string[] = [ WORD_LIST, FILTER, VIEW_OPTION]
   private readonly menuDisplayPanel: string[] = [
     VIEW_OPTION,
     SORT,
@@ -127,16 +124,17 @@ export class MenuComponent implements OnInit {
         this.menuEmitterServiceSubscription =
           this.menuEmitterService.menuEvent$.subscribe({
             next: (event: MenuEvent) => {
+              if (event.item === 'query' || event.item === 'view_option' || event.item === 'sort') {
+                this.emitterService.elaborationSubject.next('concordance');
+              }
               if (event && event.item) {
                 this.displayPanelService.setMenuItem(event.item);
                 this.setMenuItems(event.item, this.role);
               }
               if (
-                this.menuEmitterService.corpusSelected &&
-                this.items &&
-                event.item === QUERY
+                this.menuEmitterService.corpusSelected && this.items && event.item === QUERY
               ) {
-                this.setMenuItems(RESULT_QUERY, this.role);
+                this.setMenuItems(RESULT_CONCORDANCE, this.role);
               }
             },
           });
@@ -168,7 +166,6 @@ export class MenuComponent implements OnInit {
             this.emitterService.pageMenu = route;
             this.queryRequestService.resetOptionsRequest();
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
-            this.emitterService.elaborationSubject.next('');
             this.displayPanelService.menuItemClickSubject.next(route);
           };
           const menuItemObject = new MenuItemObject(
@@ -195,6 +192,9 @@ export class MenuComponent implements OnInit {
   }
 
   private setMenuItems(page: string, role: string): void {
+    if (this.queryRequestService.getSortQueryRequest()) {
+      page = RESULT_CONCORDANCE;
+    }
     const menuByRole = this.getMenuByRole(role);
     if (menuByRole !== undefined) {
       const routesRole = this.getRoutesByMenu(
@@ -214,9 +214,7 @@ export class MenuComponent implements OnInit {
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
         case VIEW_OPTION:
-        //case WORD_LIST:
         case SORT:
-        //case FILTER:
         case FREQUENCY:
         case COLLOCATION:
           this.setMenuItemsByRole(

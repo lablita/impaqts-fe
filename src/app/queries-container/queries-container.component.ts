@@ -100,7 +100,9 @@ export class QueriesContainerComponent implements OnInit {
     this.emitterService.pageMenu = QUERY;
     this.menuEmitterService.corpusSelected = false;
     this.menuEmitterService.menuEvent$.next(new MenuEvent(QUERY));
-    this.emitterService.elaborationSubject.subscribe(elaboration => this.elaboration = elaboration);
+    this.emitterService.elaborationSubject.subscribe(elaboration => {
+      this.elaboration = elaboration;
+    });
   }
 
   public isLastResultsEmpty(): boolean {
@@ -132,22 +134,22 @@ export class QueriesContainerComponent implements OnInit {
 
   public displayFrequency(): void {
     // workaround to reload frequency table when press same button in frequency panel
-    this.titleResult = '';
+    //    this.titleResult = '';
     setTimeout(() => {
       this.titleResult = 'MENU.FREQUENCY';
-    }, 0);
+      const queryRequest = this.queryRequestService.getQueryRequest();
+      if (
+        queryRequest.frequencyQueryRequest &&
+        queryRequest.frequencyQueryRequest.categories
+      ) {
+        this.categories = queryRequest.frequencyQueryRequest.categories;
+      }
+      const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
+      if (basicFieldRequest) {
+        this.emitterService.makeFrequency.next(basicFieldRequest);
+      }
+    }, 100);
     //
-    const queryRequest = this.queryRequestService.getQueryRequest();
-    if (
-      queryRequest.frequencyQueryRequest &&
-      queryRequest.frequencyQueryRequest.categories
-    ) {
-      this.categories = queryRequest.frequencyQueryRequest.categories;
-    }
-    const basicFieldRequest = this.queryRequestService.getBasicFieldRequest();
-    if (basicFieldRequest) {
-      this.emitterService.makeFrequency.next(basicFieldRequest);
-    }
   }
 
   public setSelectedCorpus(selectedCorpus: KeyValueItem): void {

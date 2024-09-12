@@ -59,7 +59,7 @@ export class RightComponent implements OnInit, OnDestroy {
       this.labelDisableMTD = panelLabelStatus.labelDisableMTD || !this.corpusSelectionService.getSelectedCorpus();
       this.labelDisableOPT = panelLabelStatus.labelDisableOPT;
       this.titleLabelKeyValue = panelLabelStatus.titleLabelKeyValue;
-    })
+    });
   }
 
   ngOnDestroy(): void {
@@ -86,9 +86,4 @@ export class RightComponent implements OnInit, OnDestroy {
   public optionsButtonEnabled(): BehaviorSubject<boolean> {
     return this.displayPanelService.labelOptionsSubject;
   }
-
-  public metadataButtonEnabled(): BehaviorSubject<boolean> {
-    return this.displayPanelService.labelMetadataSubject;
-  }
-
 }

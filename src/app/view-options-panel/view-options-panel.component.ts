@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { KeyValueItem } from '../model/key-value-item';
-import { QueryRequestService } from '../services/query-request.service';
-import { VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
-import { MetadataQueryService } from '../services/metadata-query.service';
 import { v4 as uuid } from 'uuid';
-import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
+import { VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES } from '../common/constants';
+import { REQUEST_TYPE } from '../common/query-constants';
+import { KeyValueItem } from '../model/key-value-item';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
+import { MetadataQueryService } from '../services/metadata-query.service';
+import { QueryRequestService } from '../services/query-request.service';
+import { ConcordanceRequestPayload, EmitterService } from '../utils/emitter.service';
 
 @Component({
   selector: 'app-view-options-panel',
@@ -20,7 +21,7 @@ export class ViewOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
 
 
- public corpusAttributesSelected: Array<KeyValueItem> = [];
+  public corpusAttributesSelected: Array<KeyValueItem> = [];
 
   constructor(
     private readonly queryRequestService: QueryRequestService,
@@ -38,6 +39,7 @@ export class ViewOptionsPanelComponent implements OnInit {
   }
 
   public clickChangeViewOption(): void {
+    this.queryRequestService.elaborationViewOptionHasChanged(this.corpusAttributesSelected);
     localStorage.setItem(VIEW_OPTION_QUERY_REQUEST_ATTRIBUTES, JSON.stringify(this.corpusAttributesSelected));
     this.makeConcordances();
   }
@@ -53,8 +55,9 @@ export class ViewOptionsPanelComponent implements OnInit {
   }
 
   private makeConcordances(): void {
+    this.queryRequestService.getQueryRequest().queryType = REQUEST_TYPE.TEXTUAL_QUERY_REQUEST;
     this.queryRequestService.resetQueryPattern();
-    let typeSearch = ['Query'];
+    const typeSearch = ['Query'];
     const fieldRequest = this.queryRequestService.getBasicFieldRequest();
     this.queryRequestService.getQueryRequest().id = uuid();
     if (fieldRequest) {

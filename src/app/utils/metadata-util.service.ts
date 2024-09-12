@@ -4,7 +4,6 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Installation } from '../model/installation';
 import { KeyValueItem } from '../model/key-value-item';
-import { MetadataRequest } from '../model/metadata-request';
 import { Metadatum } from '../model/metadatum';
 import { Selection } from '../model/selection';
 import { QueriesContainerService } from '../queries-container/queries-container.service';
@@ -22,6 +21,7 @@ const FUNCTION = 'function';
 export class MetadataUtilService {
   public res: KeyValueItem[] = [];
   public isImpaqtsCustom = false;
+  //private metadataRequest: MetadataRequest = new MetadataRequest();
   private metadataFromCorpus: { idCorpus: number, results: any[] } = { idCorpus: 0, results: [] };
 
   constructor(
@@ -52,6 +52,7 @@ export class MetadataUtilService {
           md.tree.push(res.tree);
         }
       });
+      // genero albero flat per componente multiselect check box e single select
       const obsArray: Array<any> = [];
       metadata.forEach((metadatum) => {
         this.res.push(new KeyValueItem(metadatum.name, ''));
@@ -73,15 +74,13 @@ export class MetadataUtilService {
         if (this.metadataFromCorpus.idCorpus !== +corpusId) {
           return forkJoin(obsArray).pipe(
             map((res) => {
-              // salvo i risultati delle chiamate di recupero dei metadati dal corpus per utilizzarli nella seconda chiamata 
+              // salvo i risultati delle chiamte di recupero dei metadati dal corpus per utilizzarli nella seconda chiamata 
               this.metadataFromCorpus.idCorpus = +corpusId;
               this.metadataFromCorpus.results = res;
               return this.elaborateMetadatumList(res, metadata, lenObsArray);
-              return metadata;
             })
           );
         } else {
-          return of(metadata);
           return of(this.elaborateMetadatumList(this.metadataFromCorpus.results, metadata, lenObsArray));
         }
       } else {
@@ -172,10 +171,11 @@ export class MetadataUtilService {
       }
     }
     if (metadatum) {
-      metadatum = this.mergeMetadata(res, metadatum, null, metadata);
+      // metadatum = this.mergeMetadata(res, metadatum, null, metadata);
+      metadatum = this.mergeMetadata(res, metadatum, metadata);
       if (pruneTree) {
         // collego l'elenco dei metadati recuperato dal corpus e lo collego al ramo cui spetta
-        metadata = this.linkLeafs(metadata, null);
+        metadata = this.linkLeafs(metadata);
         metadata.forEach((md) => {
           if (!md.multipleChoice && !md.freeText) {
             this.setUnselectable(md.tree[0]);
@@ -189,7 +189,6 @@ export class MetadataUtilService {
   private mergeMetadata(
     res: any,
     metadatum: Metadatum,
-    selected: Selection | null,
     metadata: Metadatum[]
   ): Metadatum {
     const selection: TreeNode[] = [];
@@ -218,9 +217,6 @@ export class MetadataUtilService {
           if (root.children) {
             root.children.push(node);
           }
-          if (selected && selected.value === el) {
-            metadatum.selection = node;
-          }
         });
       } else {
         (res.metadataValues as Array<string>).forEach((el) => {
@@ -233,9 +229,6 @@ export class MetadataUtilService {
           };
           if (root.children) {
             root.children.push(node);
-          }
-          if (selected && selected.values && selected.values.indexOf(el) > -1) {
-            selection.push(node);
           }
         });
       }
@@ -312,10 +305,10 @@ export class MetadataUtilService {
     }
     return null;
   }
+
   // collego quanto recuperato dal corpus al nodo corretto
   private linkLeafs(
     metadata: Metadatum[],
-    metadataRequest: MetadataRequest | null
   ): Metadatum[] {
     metadata.forEach((md) => {
       if (md.child && md.retrieveValuesFromCorpus) {
