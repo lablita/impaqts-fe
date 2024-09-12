@@ -83,7 +83,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
               errorMessage.detail = queryResponse.errorResponse.errorMessage;
               this.errorMessagesService.sendError(errorMessage);
             }
-            this.initVariables()
+            this.initVariables();
           } else if (queryResponse.frequency && ((
             queryRequest
             && queryRequest.frequencyQueryRequest
