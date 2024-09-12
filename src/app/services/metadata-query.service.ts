@@ -120,10 +120,14 @@ export class MetadataQueryService {
   public setMetadata4Frequency(metadataRef4Frequency: Metadatum[]): void {
     if (this.isImpaqtsCustom) {
       metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'function');
+      metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'comment.comment');
       STRUCTURE_IMPLICIT_METADATA.forEach(im => {
-        const metadatum = new Metadatum();
-        metadatum.name = im + '.function';
-        metadataRef4Frequency.push(metadatum);
+        const metadatumFunc = new Metadatum();
+        metadatumFunc.name = im + '.function';
+        metadataRef4Frequency.push(metadatumFunc);
+        const metadatumComm = new Metadatum();
+        metadatumComm.name = im + '.comment';
+        metadataRef4Frequency.push(metadatumComm);
       });
 
     }
