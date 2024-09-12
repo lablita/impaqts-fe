@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject, Subscription, timer } from 'rxjs';
-import { first, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HTTP } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE } from '../common/query-constants';
@@ -113,7 +113,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     if (!this.makeFrequencySubscription) {
-      this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
+      this.makeFrequencySubscription = this.emitterService.makeFrequency.subscribe(fieldRequest => {
         // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
         if (fieldRequest && fieldRequest.selectedCorpus) {
           this.loading = true;

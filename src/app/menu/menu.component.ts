@@ -27,7 +27,6 @@ import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
 import { User } from '../model/user';
 import { DisplayPanelService } from '../services/display-panel.service';
-import { LastResultService } from '../services/last-result.service';
 import { QueryRequestService } from '../services/query-request.service';
 import { EmitterService } from '../utils/emitter.service';
 import { MenuEmitterService } from './menu-emitter.service';
@@ -78,8 +77,7 @@ export class MenuComponent implements OnInit {
     private readonly translateService: TranslateService,
     private readonly displayPanelService: DisplayPanelService,
     private readonly authService: AuthService,
-    private readonly queryRequestService: QueryRequestService,
-    private readonly lastResultService: LastResultService
+    private readonly queryRequestService: QueryRequestService
   ) { }
 
   public click(route: string): void {
@@ -126,6 +124,9 @@ export class MenuComponent implements OnInit {
         this.menuEmitterServiceSubscription =
           this.menuEmitterService.menuEvent$.subscribe({
             next: (event: MenuEvent) => {
+              if (event.item === 'query' || event.item === 'view_option' || event.item === 'sort') {
+                this.emitterService.elaborationSubject.next('concordance');
+              }
               if (event && event.item) {
                 this.displayPanelService.setMenuItem(event.item);
                 this.setMenuItems(event.item, this.role);
