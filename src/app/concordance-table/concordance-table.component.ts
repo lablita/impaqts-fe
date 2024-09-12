@@ -47,6 +47,7 @@ import { ReferencePositionResponse } from '../model/reference-position-response'
 import { ResultContext } from '../model/result-context';
 import { ConcordanceRequest } from '../queries-container/queries-container.component';
 import { AppInitializerService } from '../services/app-initializer.service';
+import { DisplayPanelService } from '../services/display-panel.service';
 import { LastResult } from '../services/dto/last-result';
 import { ErrorMessagesService } from '../services/error-messages.service';
 import { ExportCsvService } from '../services/export-csv.service';
@@ -133,7 +134,8 @@ export class ConcordanceTableComponent
     private readonly referencePositionService: ReferencePositionService,
     private readonly appInitializerService: AppInitializerService,
     private readonly lastResultService: LastResultService,
-    private readonly menuEmitterService: MenuEmitterService
+    private readonly menuEmitterService: MenuEmitterService,
+    private readonly displayPanelService: DisplayPanelService
   ) {
     this.isImpaqtsCustom = this.appInitializerService.isImpactCustom();
     this.queryResponseSubscription = this.loadResultService
@@ -220,11 +222,12 @@ export class ConcordanceTableComponent
     this.makeConcordanceRequestSubscription =
       this.emitterService.makeConcordanceRequestSubject.subscribe((res) => {
         const lastResult = this.lastResultService.getLastResult();
-        if (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery &&
+        const viewOptionIsChanged = this.queryRequestService.getViewOptionIsChanged();
+        if (!viewOptionIsChanged && (lastResult.kwicLines && lastResult.totalResults > 0 && !this.isVisualQuery &&
           (this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.COLLOCATION_REQUEST
             || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST
             || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST
-            || this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel)
+            || this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel))
         ) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
@@ -270,6 +273,8 @@ export class ConcordanceTableComponent
           this.queryTitle = this.sortOptions.length > 1 ? this.sortOptions[0] + ' ' + this.sortOptions[1] : this.sortOptions[0]
           this.lastResultService.setQueryTitle(this.queryTitle);
         }
+        this.queryRequestService.setViewOptionHasChanged(false);
+        this.displayPanelService.enableOptLabel();
       });
   }
 

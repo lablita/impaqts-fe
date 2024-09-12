@@ -5,26 +5,27 @@
   </div>
 </div>
 <div class="ml-3" *ngIf="panelDisplayOPT && selectedCorpus">
-  <app-view-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === VIEW_OPTION"
-    [corpusAttributes]="metadataAttributes"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()">
+  <app-view-options-panel
+    *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === VIEW_OPTION"
+    [corpusAttributes]="metadataAttributes">
   </app-view-options-panel>
-  <app-word-list-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === WORD_LIST"
-    [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()">
+  <app-word-list-options-panel
+    *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === WORD_LIST"
+    [corpusAttributes]="metadataAttributes" [textTypesAttributes]="textTypesAttributes">
   </app-word-list-options-panel>
-  <app-sort-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === SORT"
-    [corpusAttributes]="metadataAttributes"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (concordanceSort)="sortConcordances($event)">
+  <app-sort-options-panel
+    *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === SORT"
+    [corpusAttributes]="metadataAttributes" (concordanceSort)="sortConcordances($event)">
   </app-sort-options-panel>
-  <app-frequency-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FREQUENCY"
-    [corpusAttributes]="metadataAttributes"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (metadataFrequency)="loadFrequencies()">
+  <app-frequency-options-panel
+    *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FREQUENCY"
+    [corpusAttributes]="metadataAttributes" (metadataFrequency)="loadFrequencies()">
   </app-frequency-options-panel>
-  <app-collocation-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === COLLOCATION"
-    (closeSidebarEvent)="displayPanelService.closeOptionsPanel()" (loadCollocations)="loadColl()">
+  <app-collocation-options-panel
+    *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === COLLOCATION"
+    (loadCollocations)="loadColl()">
   </app-collocation-options-panel>
-  <app-filter-options-panel *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FILTER"
-  (closeSidebarEvent)="displayPanelService.closeOptionsPanel()">
+  <app-filter-options-panel
+    *ngIf="(displayPanelService.panelLabelStatusSubject | async)?.titleLabelKeyValue?.key === FILTER">
   </app-filter-options-panel>
 </div>

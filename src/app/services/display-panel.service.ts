@@ -8,6 +8,7 @@ import {
 import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_COLLOCATION, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
+import { LastResultService } from './last-result.service';
 
 
 const MENU_LABEL = [
@@ -52,8 +53,6 @@ export class DisplayPanelService implements OnDestroy {
   // signals for page events
   public metadataPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public labelOptionsSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public labelMetadataSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public optionsPanelSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   // signals from page events
   public labelMTDClickSubject: Subject<void> = new Subject();
@@ -67,7 +66,9 @@ export class DisplayPanelService implements OnDestroy {
   //MenuItem
   private menuItem = QUERY;
 
-  constructor() {
+  constructor(
+    private readonly lastResultService: LastResultService
+  ) {
     if (this.menuItem) {
       this.setPanelLabelStatusByMenuItem(this.menuItem);
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
@@ -80,10 +81,8 @@ export class DisplayPanelService implements OnDestroy {
         true,
         true,
         false,
-        !panelDisplayMTD,
+        !panelDisplayMTD || !!this.lastResultService.getLastResult().kwicLines && this.lastResultService.getLastResult().kwicLines!.length === 0,
         this.panelLabelStatus.titleLabelKeyValue);
-      this.optionsPanelSubject.next(false);
-      this.labelMetadataSubject.next(true);
       if (panelDisplayMTD) {
         this.closeMetadataPanel();
       }
@@ -94,17 +93,12 @@ export class DisplayPanelService implements OnDestroy {
       const panelDisplayOPT = this.panelLabelStatus.panelDisplayOPT;
       this.panelLabelStatus = new PanelLabelStatus(
         false,
-        !panelDisplayOPT,
+        !this.panelLabelStatus.panelDisplayOPT,
         true,
-        true,
-        !panelDisplayOPT,
+        !this.panelLabelStatus.labelDisableOPT,
+        !(this.panelLabelStatus.panelDisplayMTD || this.panelLabelStatus.panelDisplayOPT),
         false,
         this.panelLabelStatus.titleLabelKeyValue);
-      this.optionsPanelSubject.next(true);
-      this.labelMetadataSubject.next(false);
-      if (panelDisplayOPT) {
-        this.closeOptionsPanel();
-      }
       this.panelLabelStatusSubject.next(this.panelLabelStatus);
     });
     this.menuItemClickSubject.subscribe(menuItem => {
@@ -115,18 +109,13 @@ export class DisplayPanelService implements OnDestroy {
       this.lastClickedMenuItem = menuItem;
     });
   }
+
   ngOnDestroy(): void {
     if (this.metadataPanelSubject) {
       this.metadataPanelSubject.unsubscribe();
     }
     if (this.labelOptionsSubject) {
       this.labelOptionsSubject.unsubscribe();
-    }
-    if (this.labelMetadataSubject) {
-      this.labelMetadataSubject.unsubscribe();
-    }
-    if (this.optionsPanelSubject) {
-      this.optionsPanelSubject.unsubscribe();
     }
     if (this.labelMTDClickSubject) {
       this.labelMTDClickSubject.unsubscribe();
@@ -139,6 +128,10 @@ export class DisplayPanelService implements OnDestroy {
     }
   }
 
+  public getOptionPanelDisplayed(): boolean {
+    return this.panelLabelStatus.panelDisplayOPT;
+  }
+
   public setMenuItem(menuItem: string) {
     this.menuItem = menuItem;
   }
@@ -148,7 +141,6 @@ export class DisplayPanelService implements OnDestroy {
   }
 
   public reset(): void {
-    this.closeOptionsPanel();
     this.closeMetadataPanel();
   }
 
@@ -156,8 +148,9 @@ export class DisplayPanelService implements OnDestroy {
     this.labelOptionsSubject.next(true);
   }
 
-  public closeOptionsPanel(): void {
-    this.optionsPanelSubject.next(false);
+  public enableOptLabel(): void {
+    this.panelLabelStatus.labelDisableOPT = false;
+    this.panelLabelStatusSubject.next(this.panelLabelStatus);
   }
 
   private closeMetadataPanel(): void {

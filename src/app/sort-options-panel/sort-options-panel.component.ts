@@ -55,7 +55,7 @@ export class SortOptionsPanelComponent implements OnInit {
   @Output() public closeSidebarEvent = new EventEmitter<boolean>();
   @Output() public concordanceSort = new EventEmitter<SortQueryRequest>();
 
-  public sortOptionsQueryRequest: SortOptionsQueryRequestDTO = DEFAULT_SORT_OPTIONS_QUERY_REQUEST;
+  public sortOptionsQueryRequest: SortOptionsQueryRequestDTO = JSON.parse(JSON.stringify(DEFAULT_SORT_OPTIONS_QUERY_REQUEST));
 
   public attributeList: KeyValueItem[] = [];
 
@@ -121,12 +121,11 @@ export class SortOptionsPanelComponent implements OnInit {
   public deafultValues(): void {
     this.queryRequestService.resetOptionsRequest();
     localStorage.removeItem(SORT_OPTIONS_QUERY_REQUEST);
-    this.sortOptionsQueryRequest = DEFAULT_SORT_OPTIONS_QUERY_REQUEST;
+    this.sortOptionsQueryRequest = JSON.parse(JSON.stringify(DEFAULT_SORT_OPTIONS_QUERY_REQUEST));
     this.sortOptionsQueryRequest.sortOptionList[0].level = true;
   }
 
   public clickLeft(): void {
-    //const sortOptionList = this.sortOptionsQueryRequest.sortOptionList;
     const sortOptionsQueryRequest = new SortOptionsQueryRequestDTO(
       WORD,
       LEFT_CONTEXT,

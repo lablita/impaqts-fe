@@ -7,11 +7,13 @@
       <div>
         <span class="flex justify-content-center">
           <h3>{{'PAGE.CONCORDANCE.VIEW_OPTIONS.ATTRIBUTES' | translate}}</h3>
-          </span>
-          <div class="flex justify-content-start field-checkbox mb-3" *ngFor="let attr of corpusAttributes, let i = index">
-              <p-checkbox name="group2" value="attr" [value]="attr"  [(ngModel)]="corpusAttributesSelected" [inputId]="attr.key" [label]="attr.value| translate" >
+        </span>
+        <div class="flex justify-content-start field-checkbox mb-3"
+          *ngFor="let attr of corpusAttributes, let i = index">
+          <p-checkbox name="group2" value="attr" [value]="attr" [(ngModel)]="corpusAttributesSelected"
+            [inputId]="attr.key" [label]="attr.value| translate">
           </p-checkbox>
-          </div>
+        </div>
       </div>
     </div>
 

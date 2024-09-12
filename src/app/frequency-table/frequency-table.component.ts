@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject, Subscription, timer } from 'rxjs';
-import { first, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HTTP } from '../common/constants';
 import { FREQ, REL } from '../common/frequency-constants';
 import { REQUEST_TYPE } from '../common/query-constants';
@@ -59,7 +59,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
   public dlgVisible = false;
   public progressStatus = 0;
 
-  private readonly queryResponseSubscription: Subscription;
+  private queryResponseSubscription: Subscription | null = null;
   private makeFrequencySubscription: Subscription | null = null;
 
   constructor(
@@ -70,38 +70,41 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
     private readonly exportCsvService: ExportCsvService,
     private readonly installationServices: InstallationService
   ) {
-    this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
-      this.loading = false;
-      if (queryResponse) {
-        const queryRequest = this.queryRequestService.getQueryRequest();
-        if (queryResponse.error && queryResponse.errorResponse) {
-          const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
-          if (queryResponse.errorResponse.errorCode === 500) {
-            this.errorMessagesService.sendError(errorMessage);
-          } else if (queryResponse.errorResponse.errorCode === 400) {
-            errorMessage.detail = queryResponse.errorResponse.errorMessage;
-            this.errorMessagesService.sendError(errorMessage);
+    setTimeout(() => {
+      this.queryResponseSubscription = this.loadResultService.getQueryResponse$().subscribe(queryResponse => {
+        this.loading = false;
+        if (queryResponse) {
+          const queryRequest = this.queryRequestService.getQueryRequest();
+          if (queryResponse.error && queryResponse.errorResponse) {
+            const errorMessage = { severity: 'error', summary: 'Errore', detail: 'Errore I/O sul server, i dati potrebbero non essere attendibili' };
+            if (queryResponse.errorResponse.errorCode === 500) {
+              this.errorMessagesService.sendError(errorMessage);
+            } else if (queryResponse.errorResponse.errorCode === 400) {
+              errorMessage.detail = queryResponse.errorResponse.errorMessage;
+              this.errorMessagesService.sendError(errorMessage);
+            }
+            this.initVariables()
+          } else if (queryResponse.frequency && ((
+            queryRequest
+            && queryRequest.frequencyQueryRequest
+            && queryRequest.frequencyQueryRequest.categories
+            && queryRequest.frequencyQueryRequest.categories.length > 0)
+            ? this.category === queryResponse.frequency.head : true)) {
+            this.totalResults = queryResponse.currentSize;
+            this.frequency = queryResponse.frequency;
+            this.lines = this.frequency.items;
+            this.totalItems = this.frequency.total;
+            this.totalFrequency = this.frequency.totalFreq;
+            this.maxFreq = this.frequency.maxFreq;
+            this.maxRel = this.frequency.maxRel;
+            this.operation = this.frequency.operation;
+            this.noResultFound = this.totalItems < 1;
+            this.setColumnHeaders();
           }
-          this.initVariables()
-        } else if (queryResponse.frequency && ((
-          queryRequest
-          && queryRequest.frequencyQueryRequest
-          && queryRequest.frequencyQueryRequest.categories
-          && queryRequest.frequencyQueryRequest.categories.length > 0)
-          ? this.category === queryResponse.frequency.head : true)) {
-          this.totalResults = queryResponse.currentSize;
-          this.frequency = queryResponse.frequency;
-          this.lines = this.frequency.items;
-          this.totalItems = this.frequency.total;
-          this.totalFrequency = this.frequency.totalFreq;
-          this.maxFreq = this.frequency.maxFreq;
-          this.maxRel = this.frequency.maxRel;
-          this.operation = this.frequency.operation;
-          this.noResultFound = this.totalItems < 1;
-          this.setColumnHeaders();
         }
-      }
-    });
+      });
+    }, 0);
+
   }
 
   ngOnInit(): void {
@@ -110,7 +113,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     if (!this.makeFrequencySubscription) {
-      this.makeFrequencySubscription = this.emitterService.makeFrequency.pipe(first()).subscribe(fieldRequest => {
+      this.makeFrequencySubscription = this.emitterService.makeFrequency.subscribe(fieldRequest => {
         // this is to remove double spinner. First call is due to empty FieldRequest in behaviour subject initialization
         if (fieldRequest && fieldRequest.selectedCorpus) {
           this.loading = true;

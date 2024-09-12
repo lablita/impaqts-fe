@@ -13,10 +13,9 @@ import {
   FREQUENCY,
   QUERY,
   RESULT_CONCORDANCE,
-  RESULT_QUERY,
   SORT,
   VIEW_OPTION,
-  VISUAL_QUERY,
+  VISUAL_QUERY
 } from '../common/routes-constants';
 import {
   BOTTOM_LEFT,
@@ -125,16 +124,17 @@ export class MenuComponent implements OnInit {
         this.menuEmitterServiceSubscription =
           this.menuEmitterService.menuEvent$.subscribe({
             next: (event: MenuEvent) => {
+              if (event.item === 'query' || event.item === 'view_option' || event.item === 'sort') {
+                this.emitterService.elaborationSubject.next('concordance');
+              }
               if (event && event.item) {
                 this.displayPanelService.setMenuItem(event.item);
                 this.setMenuItems(event.item, this.role);
               }
               if (
-                this.menuEmitterService.corpusSelected &&
-                this.items &&
-                event.item === QUERY
+                this.menuEmitterService.corpusSelected && this.items && event.item === QUERY
               ) {
-                this.setMenuItems(RESULT_QUERY, this.role);
+                this.setMenuItems(RESULT_CONCORDANCE, this.role);
               }
             },
           });
@@ -166,7 +166,6 @@ export class MenuComponent implements OnInit {
             this.emitterService.pageMenu = route;
             this.queryRequestService.resetOptionsRequest();
             this.menuEmitterService.menuEvent$.next(new MenuEvent(route));
-            this.emitterService.elaborationSubject.next('');
             this.displayPanelService.menuItemClickSubject.next(route);
           };
           const menuItemObject = new MenuItemObject(
@@ -215,9 +214,7 @@ export class MenuComponent implements OnInit {
         case RESULT_CONCORDANCE:
         case AS_SUBCORPUS:
         case VIEW_OPTION:
-        //case WORD_LIST:
         case SORT:
-        //case FILTER:
         case FREQUENCY:
         case COLLOCATION:
           this.setMenuItemsByRole(

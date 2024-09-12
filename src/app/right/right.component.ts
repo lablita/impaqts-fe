@@ -80,16 +80,10 @@ export class RightComponent implements OnInit, OnDestroy {
   }
 
   public checkOptions(): boolean {
-    this.labelDisableOPT = !(!!this.queryRequestService.getSortQueryRequest() && this.titleLabelKeyValue?.key === 'sort');
     return this.queryRequestService.isOptionSet();
   }
 
   public optionsButtonEnabled(): BehaviorSubject<boolean> {
     return this.displayPanelService.labelOptionsSubject;
   }
-
-  public metadataButtonEnabled(): BehaviorSubject<boolean> {
-    return this.displayPanelService.labelMetadataSubject;
-  }
-
 }
