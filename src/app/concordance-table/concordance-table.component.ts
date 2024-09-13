@@ -227,7 +227,9 @@ export class ConcordanceTableComponent
           (this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.COLLOCATION_REQUEST
             || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.METADATA_FREQUENCY_QUERY_REQUEST
             || this.queryRequestService.getQueryRequest().queryType === REQUEST_TYPE.MULTI_FREQUENCY_QUERY_REQUEST
-            || this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel))
+            || (this.queryRequestService.getQueryRequest().queryType !== REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST
+              && this.queryRequestService.getQueryRequest().queryType !== REQUEST_TYPE.PN_MULTI_FREQ_CONCORDANCE_QUERY_REQUEST
+              && this.queryRequestService.getQueryRequest().queryType === lastResult.queryType && !res.queryFromSortPanel)))
         ) {
           this.kwicLines = [...lastResult.kwicLines];
           this.first = lastResult.first;
