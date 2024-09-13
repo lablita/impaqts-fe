@@ -17,9 +17,6 @@ const ITEMS = [
 
 const TOKENS = [1, 2, 3, 4, 5, 7, 10, 15];
 
-
-
-
 @Component({
   selector: 'app-context-concordance',
   templateUrl: './context-concordance.component.html',

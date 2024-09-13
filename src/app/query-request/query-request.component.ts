@@ -78,6 +78,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   public IMPLICIT = IMPLICIT;
   public isImpaqtsCustom = false;
   public queryTypeLabel = 'PAGE.CONCORDANCE.QUERY_TYPE';
+  public contextDisabled = false;
 
   public queryRequestForm = new UntypedFormGroup({
     selectedCorpus: new UntypedFormControl(null),
@@ -321,6 +322,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
   }
 
   public resetInputs(): void {
+    this.contextDisabled = this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT;
+    this.emitterService.freqAndCollDisablingSubject.next(this.contextDisabled);
     this.clearContextFields();
   }
 

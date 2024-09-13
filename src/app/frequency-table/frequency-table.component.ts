@@ -93,6 +93,11 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
             this.totalResults = queryResponse.currentSize;
             this.frequency = queryResponse.frequency;
             this.lines = this.frequency.items;
+            this.lines.forEach(line => {
+              line.word = line.word.map(w => {
+                return w.replace(/\u000b/g, ' ');
+              });
+            });
             this.totalItems = this.frequency.total;
             this.totalFrequency = this.frequency.totalFreq;
             this.maxFreq = this.frequency.maxFreq;
