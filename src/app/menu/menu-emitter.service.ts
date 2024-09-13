@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import {
   MENU_ALL_LEMMAS, MENU_ALL_WORDS, MENU_AS_SUBCORPUS, MENU_COLLOCATION, MENU_CONCORDANCE,
-  MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS, MENU_FILTER, MENU_FREQUENCY, MENU_LOGIN, MENU_RESULT_CONCORDANCE,
-  MENU_SORT, MENU_VIEW_OPTION, MENU_VISUAL_QUERY, MENU_WORD_LIST
+  MENU_COPYRIGHT, MENU_CORPUS_INFO, MENU_CREDITS,
+  MENU_FREQUENCY, MENU_LOGIN, MENU_RESULT_CONCORDANCE,
+  MENU_SORT, MENU_VIEW_OPTION, MENU_VISUAL_QUERY
 } from '../common/label-constants';
 import { ADMIN, ADVANCEDUSER, USER } from '../common/roles-constants';
 import {
   ALL_LEMMAS, ALL_WORDS, AS_SUBCORPUS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO,
-  CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST
+  CREDITS_ROUTE,
+  FREQUENCY, QUERY, RESULT_QUERY, SORT, VIEW_OPTION, VISUAL_QUERY
 } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { RoleMenu } from '../model/role-menu';
@@ -69,10 +71,8 @@ export class MenuEmitterService {
       new KeyValueItem(MENU_AS_SUBCORPUS, AS_SUBCORPUS),
       new KeyValueItem(MENU_VIEW_OPTION, VIEW_OPTION),
       new KeyValueItem(MENU_SORT, SORT),
-      //new KeyValueItem(MENU_FILTER, FILTER),
       new KeyValueItem(MENU_FREQUENCY, FREQUENCY),
       new KeyValueItem(MENU_COLLOCATION, COLLOCATION),
-      //new KeyValueItem(MENU_WORD_LIST, WORD_LIST),
     ];
   }
 
