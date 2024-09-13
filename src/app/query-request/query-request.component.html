@@ -4,8 +4,8 @@
       <button *ngIf="!isImpaqtsCustom" [requiredRole]="['ADMIN', 'ADVANCEDUSER']" pButton type="button"
         label="{{'PAGE.CONCORDANCE.OTHER_QUERY_TYPES' | translate}}" [disabled]="!selectedCorpus"
         class="p-button-text mr-3" (click)="clickQueryType()"></button>&nbsp;
-      <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}" [disabled]="!selectedCorpus"
-        class="p-button-text" (click)="clickContext()"></button>&nbsp;
+      <button pButton type="button" label="{{'PAGE.CONCORDANCE.CONTEXT' | translate}}"
+        [disabled]="!selectedCorpus || contextDisabled" class="p-button-text" (click)="clickContext()"></button>&nbsp;
     </div>
     <div class="field grid" [ngClass]="{'hidden': displayQueryType}">
       <label for="simple_query" class="col-12 md:col-1">

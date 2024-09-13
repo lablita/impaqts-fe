@@ -72,7 +72,7 @@ export class QueriesContainerComponent implements OnInit {
   public panelDisplayOPT = true;
   public titleLabelKeyValue: KeyValueItem | null = null;
 
-  public elaboration: string = '';
+  public elaboration = '';
 
   constructor(
     public readonly displayPanelService: DisplayPanelService,
