@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '@auth0/auth0-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -40,7 +40,7 @@ export class MenuEvent {
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent implements OnInit, OnDestroy {
   public items: MenuItemObject[] = [];
   public urlBottomLeft: string | null = null;
 
@@ -53,6 +53,7 @@ export class MenuComponent implements OnInit {
   ];
   public selectedLanguage: KeyValueItem | null = null;
   public selectedLang = '';
+  public freqAndCollDisabling = false;
 
   private readonly menuQueryStr: string[] = [QUERY, CORPUS_INFO, VISUAL_QUERY];
   private readonly menuWordListStr: string[] = [ALL_WORDS, ALL_LEMMAS];
@@ -70,6 +71,8 @@ export class MenuComponent implements OnInit {
   private menuRoutes: KeyValueItem[] = [];
 
   private menuEmitterServiceSubscription: Subscription | null = null;
+  private freqAndCollDisablingSubscription: Subscription | null = null;
+
 
   constructor(
     private readonly emitterService: EmitterService,
@@ -140,6 +143,29 @@ export class MenuComponent implements OnInit {
           });
       }
     });
+    this.freqAndCollDisablingSubscription = this.emitterService.freqAndCollDisablingSubject.subscribe(res => {
+      this.freqAndCollDisabling = res;
+      this.items.forEach(item => {
+        if (item.routerLink === FREQUENCY || item.routerLink === COLLOCATION) {
+          item.disabled = res;
+        }
+      });
+      this.items = [...this.items];
+      if (res) {
+        this.queryRequestService.resetOptionsRequest();
+        this.displayPanelService.menuItemClickSubject.next(SORT);
+        this.emitterService.elaborationSubject.next('concordance');
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.freqAndCollDisablingSubscription) {
+      this.freqAndCollDisablingSubscription.unsubscribe();
+    }
+    if (this.menuEmitterServiceSubscription) {
+      this.menuEmitterServiceSubscription.unsubscribe();
+    }
   }
 
   public selectLanguage(event: any): void {
@@ -175,7 +201,7 @@ export class MenuComponent implements OnInit {
             null,
             null,
             false,
-            false,
+            (route === FREQUENCY || route === COLLOCATION) ? this.freqAndCollDisabling : false,
             route
           );
           menuItems.push(menuItemObject);

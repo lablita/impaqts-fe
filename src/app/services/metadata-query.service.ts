@@ -121,13 +121,12 @@ export class MetadataQueryService {
     if (this.isImpaqtsCustom) {
       metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'function');
       metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'comment.comment');
+      metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'errore.comment');
+      metadataRef4Frequency = metadataRef4Frequency.filter(md => md.name !== 'doc.data');
       STRUCTURE_IMPLICIT_METADATA.forEach(im => {
         const metadatumFunc = new Metadatum();
         metadatumFunc.name = im + '.function';
         metadataRef4Frequency.push(metadatumFunc);
-        const metadatumComm = new Metadatum();
-        metadatumComm.name = im + '.comment';
-        metadataRef4Frequency.push(metadatumComm);
       });
 
     }

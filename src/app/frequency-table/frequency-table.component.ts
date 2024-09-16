@@ -93,6 +93,11 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
             this.totalResults = queryResponse.currentSize;
             this.frequency = queryResponse.frequency;
             this.lines = this.frequency.items;
+            this.lines.forEach(line => {
+              line.word = line.word.map(w => {
+                return w.replace(/\u000b/g, ' ');
+              });
+            });
             this.totalItems = this.frequency.total;
             this.totalFrequency = this.frequency.totalFreq;
             this.maxFreq = this.frequency.maxFreq;
@@ -228,7 +233,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       queryRequest.queryType = REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
     }
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
-    this.titleResult.emit('MENU.CONCORDANCE');
+    this.emitterService.elaborationSubject.next('concordance');
   }
 
   private setColumnHeaders(): void {

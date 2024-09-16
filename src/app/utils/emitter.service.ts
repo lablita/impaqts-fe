@@ -33,4 +33,5 @@ export class EmitterService {
   public pageMenu = '';
   public localStorageSubject: Subject<void> = new Subject();
   public elaborationSubject: BehaviorSubject<string> = new BehaviorSubject('');
+  public freqAndCollDisablingSubject: Subject<boolean> = new Subject();
 }
