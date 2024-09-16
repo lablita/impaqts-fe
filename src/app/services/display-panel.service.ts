@@ -8,6 +8,7 @@ import {
 import { ALL_LEMMAS, ALL_WORDS, COLLOCATION, CONCORDANCE, COPYRIGHT_ROUTE, CORPUS_INFO, CREDITS_ROUTE, FILTER, FREQUENCY, QUERY, RESULT_COLLOCATION, SORT, VIEW_OPTION, VISUAL_QUERY, WORD_LIST } from '../common/routes-constants';
 import { KeyValueItem } from '../model/key-value-item';
 import { PanelLabelStatus } from '../model/panel-label-status';
+import { EmitterService } from '../utils/emitter.service';
 import { LastResultService } from './last-result.service';
 
 
@@ -67,7 +68,8 @@ export class DisplayPanelService implements OnDestroy {
   private menuItem = QUERY;
 
   constructor(
-    private readonly lastResultService: LastResultService
+    private readonly lastResultService: LastResultService,
+    private readonly emitterService: EmitterService
   ) {
     if (this.menuItem) {
       this.setPanelLabelStatusByMenuItem(this.menuItem);
@@ -105,7 +107,12 @@ export class DisplayPanelService implements OnDestroy {
       this.setPanelLabelStatusByMenuItem(menuItem);
       const menuToPanelLabelItem = MENU_TO_PANEL_LABEL.find(item => item.key === menuItem);
       this.panelLabelStatus.titleLabelKeyValue = menuToPanelLabelItem ? menuToPanelLabelItem : new KeyValueItem(SORT, SORT_OPTION_LABEL);
-      this.panelLabelStatusSubject.next(this.panelLabelStatus);
+      setTimeout(() => {
+        if (this.emitterService.implicitSelected) {
+          this.setPanelLabelStatusByMenuItem('query');
+        }
+        this.panelLabelStatusSubject.next(this.panelLabelStatus);
+      }, 100);
       this.lastClickedMenuItem = menuItem;
     });
   }

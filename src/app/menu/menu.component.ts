@@ -71,7 +71,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   private menuRoutes: KeyValueItem[] = [];
 
   private menuEmitterServiceSubscription: Subscription | null = null;
-  private freqAndCollDisablingSubscription: Subscription | null = null;
+  private implicitSelectedSubscription: Subscription | null = null;
 
 
   constructor(
@@ -143,7 +143,7 @@ export class MenuComponent implements OnInit, OnDestroy {
           });
       }
     });
-    this.freqAndCollDisablingSubscription = this.emitterService.freqAndCollDisablingSubject.subscribe(res => {
+    this.implicitSelectedSubscription = this.emitterService.implicitSelectedSubject.subscribe(res => {
       this.freqAndCollDisabling = res;
       this.items.forEach(item => {
         if (item.routerLink === FREQUENCY || item.routerLink === COLLOCATION) {
@@ -160,8 +160,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.freqAndCollDisablingSubscription) {
-      this.freqAndCollDisablingSubscription.unsubscribe();
+    if (this.implicitSelectedSubscription) {
+      this.implicitSelectedSubscription.unsubscribe();
     }
     if (this.menuEmitterServiceSubscription) {
       this.menuEmitterServiceSubscription.unsubscribe();

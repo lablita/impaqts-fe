@@ -227,6 +227,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
   public makeConcordances(): void {
     this.emitterService.elaborationSubject.next('concordance');
+    this.emitterService.implicitSelected = false;
     this.lastResultService.resetLastResult();
     if (
       this.queryRequestForm.controls.simple &&
@@ -323,7 +324,8 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
 
   public resetInputs(): void {
     this.contextDisabled = this.queryRequestForm.controls.selectedQueryType.value === IMPLICIT;
-    this.emitterService.freqAndCollDisablingSubject.next(this.contextDisabled);
+    this.emitterService.implicitSelectedSubject.next(this.contextDisabled);
+    this.emitterService.implicitSelected = this.contextDisabled;
     this.clearContextFields();
   }
 
