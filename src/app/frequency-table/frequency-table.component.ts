@@ -233,7 +233,7 @@ export class FrequencyTableComponent implements OnInit, AfterViewInit, OnDestroy
       queryRequest.queryType = REQUEST_TYPE.PN_METADATA_FREQ_CONCORDANCE_QUERY_REQUEST;
     }
     this.emitterService.makeConcordanceRequestSubject.next(concordanceRequestPayload);
-    this.titleResult.emit('MENU.CONCORDANCE');
+    this.emitterService.elaborationSubject.next('concordance');
   }
 
   private setColumnHeaders(): void {

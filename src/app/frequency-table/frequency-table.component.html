@@ -47,8 +47,7 @@
           pButton (click)="clickPN(line, false)" class="p-button-link p-n-button" label="N"
           [disabled]="colHeaders.length > 2"></button></td>
       <td *ngIf="multilevel && colHeaders.length >= 2" class="text-right">{{line.word[0]}}</td>
-      <td *ngIf="!multilevel" class="text-right"><a href="http://{{line.word[0]}}" target="_blank">{{line.word[0]}}</a>
-      </td>
+      <td *ngIf="!multilevel" class="text-right">{{line.word[0]}}</td>
       <td *ngIf="multilevel && colHeaders.length >= 3" class="text-right">{{line.word[1]}}</td>
       <td *ngIf="multilevel && colHeaders.length >= 4" class="text-right">{{line.word[2]}}</td>
       <td *ngIf="multilevel && colHeaders.length >= 5" class="text-right">{{line.word[3]}}</td>
