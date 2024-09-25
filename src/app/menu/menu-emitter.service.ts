@@ -48,13 +48,16 @@ export class MenuEmitterService {
   private initMenuByRoleList(): Array<RoleMenu> {
     return [
       new RoleMenu(ADMIN, [MENU_CORPUS_INFO, MENU_ALL_WORDS, MENU_ALL_LEMMAS, MENU_VISUAL_QUERY]),
-      new RoleMenu(ADVANCEDUSER, [MENU_CORPUS_INFO, MENU_VISUAL_QUERY]),
-      new RoleMenu(USER, [MENU_VISUAL_QUERY]),
+      new RoleMenu(ADVANCEDUSER, [MENU_CORPUS_INFO, MENU_ALL_WORDS, MENU_ALL_LEMMAS, MENU_VISUAL_QUERY]),
+      new RoleMenu(USER, [MENU_CORPUS_INFO, MENU_ALL_WORDS, MENU_ALL_LEMMAS, MENU_VISUAL_QUERY]),
+      // new RoleMenu(ADVANCEDUSER, [MENU_CORPUS_INFO, MENU_VISUAL_QUERY]),
+      // new RoleMenu(USER, [MENU_VISUAL_QUERY]),
     ];
   }
 
   private initMenuNoRole(): Array<string> {
-    return [MENU_LOGIN, MENU_CONCORDANCE, MENU_ALL_WORDS, MENU_ALL_LEMMAS];
+    return [MENU_LOGIN, MENU_CONCORDANCE, MENU_ALL_WORDS, MENU_ALL_LEMMAS,
+      MENU_CORPUS_INFO, MENU_ALL_WORDS, MENU_ALL_LEMMAS, MENU_VISUAL_QUERY];
   }
 
   private initMenuRoutes(): Array<KeyValueItem> {
