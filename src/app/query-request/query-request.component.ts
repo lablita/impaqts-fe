@@ -131,8 +131,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       WORD,
       PHRASE,
       CHARACTER,
-      CQL,
-      IMPLICIT,
+      CQL
     ];
     this.setBasicFieldRequest();
     this.queryRequestForm.valueChanges.subscribe((change) => {
@@ -159,6 +158,7 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
     if (this.isImpaqtsCustom) {
       this.queryTypeLabel = 'PAGE.CONCORDANCE.SEARCH_FOR';
       this.displayQueryType = true;
+      this.queryTypes.push(IMPLICIT);
     }
   }
 
@@ -183,22 +183,31 @@ export class QueryRequestComponent implements OnInit, OnDestroy {
       const textTypesAttributes: Array<KeyValueItem> = [];
       if (this.installation && this.installation.corpora) {
         if (selectedCorpusId) {
-          const corpus: Corpus = this.installation.corpora.filter(
-            (corpus) => corpus.id === +selectedCorpusId
-          )[0];
-          this.socketService.setServerHost(corpus.name);
-          corpus.metadata.sort((a, b) => a.position - b.position);
-          corpus.metadata
-            .filter((md) => !md.child)
-            .forEach((md) => {
-              // Attributes in View Options
-              if (!md.documentMetadatum) {
-                metadataAttributes.push(new KeyValueItem(md.name, md.name));
-              } else {
-                textTypesAttributes.push(new KeyValueItem(md.name, md.name));
-              }
-            });
-          this.metadataQueryService.setMetadataAttribute(corpus.metadata);
+          let corpus: Corpus;
+          try {
+            corpus = this.installation.corpora.filter(
+              (corpus) => corpus.id === +selectedCorpusId
+            )[0];
+            this.socketService.setServerHost(corpus.name);
+            corpus.metadata.sort((a, b) => a.position - b.position);
+            corpus.metadata
+              .filter((md) => !md.child)
+              .forEach((md) => {
+                // Attributes in View Options
+                if (!md.documentMetadatum) {
+                  metadataAttributes.push(new KeyValueItem(md.name, md.name));
+                } else {
+                  textTypesAttributes.push(new KeyValueItem(md.name, md.name));
+                }
+              });
+            this.metadataQueryService.setMetadataAttribute(corpus.metadata);
+          } catch (e) {
+            const metadataErrorMsg = {} as Message;
+            metadataErrorMsg.severity = 'error';
+            metadataErrorMsg.detail = 'Nessun corpus disponibile';
+            metadataErrorMsg.summary = 'Errore';
+            this.errorMessagesService.sendError(metadataErrorMsg);
+          }
         }
       }
       this.textTypesAttributesChange.emit(textTypesAttributes);
