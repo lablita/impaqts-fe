@@ -122,6 +122,8 @@ export class ConcordanceTableComponent
   private currentEnd = 0;
   private currentQueryId = '';
 
+  private queryResponseHold: QueryResponse = new QueryResponse();
+
   constructor(
     private readonly sanitizer: DomSanitizer,
     private readonly emitterService: EmitterService,
@@ -141,7 +143,6 @@ export class ConcordanceTableComponent
     this.queryResponseSubscription = this.loadResultService
       .getQueryResponse$()
       .subscribe((queryResponse) => {
-        this.loading = false;
         this.queryType = this.queryRequestService.getQueryRequest().queryType;
         if (queryResponse) {
           if (queryResponse.error && queryResponse.errorResponse) {
@@ -214,7 +215,10 @@ export class ConcordanceTableComponent
             lastResult.queryType = this.queryRequestService.getQueryRequest().queryType;
             this.lastResultService.setLastResult(lastResult);
           }
-          if (this.isImpaqtsCustom) {
+          if (this.isImpaqtsCustom && queryResponse.kwicLines.length > 0 && JSON.stringify(queryResponse) !== JSON.stringify(this.queryResponseHold)) {
+            // si rimuovono le references dalla kwic 
+            this.kwicLines.forEach(kwicLine => kwicLine.references = {});
+            this.queryResponseHold = JSON.parse(JSON.stringify(queryResponse));
             this.retrieveReferencesFromKwicLines(this.kwicLines);
           }
         }
@@ -223,21 +227,16 @@ export class ConcordanceTableComponent
 
   private retrieveReferencesFromKwicLines(kwicLines: KWICline[]): void {
     const corpus = this.queryRequestService.getQueryRequest().corpus;
-    this.kwicLines.forEach(kwicline => {
+    this.kwicLines.forEach((kwicline, index) => {
       this.referencePositionService
         .getReferenceByPosition(corpus, kwicline.pos)
         .subscribe({
           next: (response) => {
             if (response && response.referencePositionResponse) {
-              this.referencePositionResponse = new ReferencePositionResponse();
-              this.referencePositionResponse.tokenNumber = kwicline.pos;
-              this.referencePositionResponse.documentNumber = kwicline.docNumber;
-              this.referencePositionResponse =
-                response.referencePositionResponse;
-              this.referenceKeys = Object.keys(
-                this.referencePositionResponse.references
-              );
-              this.referenceKeys.sort((a, b) => a.localeCompare(b));
+              kwicline.references = response.referencePositionResponse.references;
+              if (index === this.kwicLines.length - 1) {
+                this.loading = false;
+              }
             }
           },
           error: (err) => {
@@ -272,7 +271,7 @@ export class ConcordanceTableComponent
           if (lastResult.fieldRequest) {
             this.fieldRequests = lastResult.fieldRequest;
           }
-          this.loading = false;
+          // this.loading = false;
           this.noResultFound = false;
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
           this.queryTitle = this.lastResultService.getQueryTitle();
@@ -576,28 +575,37 @@ export class ConcordanceTableComponent
     this.resultContext = null;
     const corpus = this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
-      this.referencePositionService
-        .getReferenceByPosition(corpus, kwicline.pos)
-        .subscribe({
-          next: (response) => {
-            if (response && response.referencePositionResponse) {
-              this.referencePositionResponse =
-                response.referencePositionResponse;
-              this.referenceKeys = Object.keys(
-                this.referencePositionResponse.references
-              );
-              this.referenceKeys.sort((a, b) => a.localeCompare(b));
-            }
-          },
-          error: (err) => {
-            const referencePositionError = {} as Message;
-            referencePositionError.severity = 'error';
-            referencePositionError.detail =
-              'Non è stato possibile recuperare il riferimento associato';
-            referencePositionError.summary = 'Errore';
-            this.errorMessagesService.sendError(referencePositionError);
-          },
-        });
+      if (this.isImpaqtsCustom) {
+        this.referencePositionResponse = new ReferencePositionResponse();
+        this.referencePositionResponse.tokenNumber = kwicline.pos;
+        this.referencePositionResponse.documentNumber = kwicline.docNumber;
+        this.referenceKeys = Object.keys(kwicline.references);
+        this.referenceKeys.sort((a, b) => a.localeCompare(b));
+        this.referencePositionResponse.references = kwicline.references;
+      } else {
+        this.referencePositionService
+          .getReferenceByPosition(corpus, kwicline.pos)
+          .subscribe({
+            next: (response) => {
+              if (response && response.referencePositionResponse) {
+                this.referencePositionResponse =
+                  response.referencePositionResponse;
+                this.referenceKeys = Object.keys(
+                  this.referencePositionResponse.references
+                );
+                this.referenceKeys.sort((a, b) => a.localeCompare(b));
+              }
+            },
+            error: (err) => {
+              const referencePositionError = {} as Message;
+              referencePositionError.severity = 'error';
+              referencePositionError.detail =
+                'Non è stato possibile recuperare il riferimento associato';
+              referencePositionError.summary = 'Errore';
+              this.errorMessagesService.sendError(referencePositionError);
+            },
+          });
+      }
     }
   }
 
