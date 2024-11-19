@@ -214,8 +214,42 @@ export class ConcordanceTableComponent
             lastResult.queryType = this.queryRequestService.getQueryRequest().queryType;
             this.lastResultService.setLastResult(lastResult);
           }
+          if (this.isImpaqtsCustom) {
+            this.retrieveReferencesFromKwicLines(this.kwicLines);
+          }
         }
       });
+  }
+
+  private retrieveReferencesFromKwicLines(kwicLines: KWICline[]): void {
+    const corpus = this.queryRequestService.getQueryRequest().corpus;
+    this.kwicLines.forEach(kwicline => {
+      this.referencePositionService
+        .getReferenceByPosition(corpus, kwicline.pos)
+        .subscribe({
+          next: (response) => {
+            if (response && response.referencePositionResponse) {
+              this.referencePositionResponse = new ReferencePositionResponse();
+              this.referencePositionResponse.tokenNumber = kwicline.pos;
+              this.referencePositionResponse.documentNumber = kwicline.docNumber;
+              this.referencePositionResponse =
+                response.referencePositionResponse;
+              this.referenceKeys = Object.keys(
+                this.referencePositionResponse.references
+              );
+              this.referenceKeys.sort((a, b) => a.localeCompare(b));
+            }
+          },
+          error: (err) => {
+            const referencePositionError = {} as Message;
+            referencePositionError.severity = 'error';
+            referencePositionError.detail =
+              'Non è stato possibile recuperare il riferimento associato';
+            referencePositionError.summary = 'Errore';
+            this.errorMessagesService.sendError(referencePositionError);
+          },
+        });
+    });
   }
 
   ngAfterViewInit(): void {
@@ -542,37 +576,28 @@ export class ConcordanceTableComponent
     this.resultContext = null;
     const corpus = this.queryRequestService.getQueryRequest().corpus;
     if (corpus) {
-      if (this.isImpaqtsCustom) {
-        this.referencePositionResponse = new ReferencePositionResponse();
-        this.referencePositionResponse.tokenNumber = kwicline.pos;
-        this.referencePositionResponse.documentNumber = kwicline.docNumber;
-        this.referenceKeys = Object.keys(kwicline.references);
-        this.referenceKeys.sort((a, b) => a.localeCompare(b));
-        this.referencePositionResponse.references = kwicline.references;
-      } else {
-        this.referencePositionService
-          .getReferenceByPosition(corpus, kwicline.pos)
-          .subscribe({
-            next: (response) => {
-              if (response && response.referencePositionResponse) {
-                this.referencePositionResponse =
-                  response.referencePositionResponse;
-                this.referenceKeys = Object.keys(
-                  this.referencePositionResponse.references
-                );
-                this.referenceKeys.sort((a, b) => a.localeCompare(b));
-              }
-            },
-            error: (err) => {
-              const referencePositionError = {} as Message;
-              referencePositionError.severity = 'error';
-              referencePositionError.detail =
-                'Non è stato possibile recuperare il riferimento associato';
-              referencePositionError.summary = 'Errore';
-              this.errorMessagesService.sendError(referencePositionError);
-            },
-          });
-      }
+      this.referencePositionService
+        .getReferenceByPosition(corpus, kwicline.pos)
+        .subscribe({
+          next: (response) => {
+            if (response && response.referencePositionResponse) {
+              this.referencePositionResponse =
+                response.referencePositionResponse;
+              this.referenceKeys = Object.keys(
+                this.referencePositionResponse.references
+              );
+              this.referenceKeys.sort((a, b) => a.localeCompare(b));
+            }
+          },
+          error: (err) => {
+            const referencePositionError = {} as Message;
+            referencePositionError.severity = 'error';
+            referencePositionError.detail =
+              'Non è stato possibile recuperare il riferimento associato';
+            referencePositionError.summary = 'Errore';
+            this.errorMessagesService.sendError(referencePositionError);
+          },
+        });
     }
   }
 

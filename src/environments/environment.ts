@@ -16,6 +16,7 @@ export const environment = {
   auth0ClientId: 'qNCjNNTK0firA2j8LP8JwJQXJzbfDF1V',
   production: true,
   installationName: 'IMPAQTS1',
+  //installationName: 'DEFAULT',
   installationUrl: 'https://impaqts.drwolf.it/impaqts-configurator',
   RECONNECT_INTERVAL: 1000, // ms
 };
