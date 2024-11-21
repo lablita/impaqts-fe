@@ -12,7 +12,7 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import * as _ from 'lodash';
 import { Message } from 'primeng/api';
-import { Subject, Subscription, timer } from 'rxjs';
+import { forkJoin, Subject, Subscription, timer } from 'rxjs';
 import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import {
   CONTEXT_TYPE_ALL,
@@ -123,6 +123,7 @@ export class ConcordanceTableComponent
   private currentQueryId = '';
 
   private queryResponseHold: QueryResponse = new QueryResponse();
+  private loadingCheck = true;
 
   constructor(
     private readonly sanitizer: DomSanitizer,
@@ -220,35 +221,57 @@ export class ConcordanceTableComponent
             this.kwicLines.forEach(kwicLine => kwicLine.references = {});
             this.queryResponseHold = JSON.parse(JSON.stringify(queryResponse));
             this.retrieveReferencesFromKwicLines(this.kwicLines);
+          } else if (this.loadingCheck) {
+            this.loading = false;
           }
         }
       });
   }
 
   private retrieveReferencesFromKwicLines(kwicLines: KWICline[]): void {
+    this.loadingCheck = false;
     const corpus = this.queryRequestService.getQueryRequest().corpus;
-    this.kwicLines.forEach((kwicline, index) => {
-      this.referencePositionService
-        .getReferenceByPosition(corpus, kwicline.pos)
-        .subscribe({
-          next: (response) => {
-            if (response && response.referencePositionResponse) {
-              kwicline.references = response.referencePositionResponse.references;
-              if (index === this.kwicLines.length - 1) {
-                this.loading = false;
-              }
-            }
-          },
-          error: (err) => {
-            const referencePositionError = {} as Message;
-            referencePositionError.severity = 'error';
-            referencePositionError.detail =
-              'Non è stato possibile recuperare il riferimento associato';
-            referencePositionError.summary = 'Errore';
-            this.errorMessagesService.sendError(referencePositionError);
-          },
-        });
-    });
+    const referencePositionObsArray = this.kwicLines.map(kwicline => this.referencePositionService.getReferenceByPosition(corpus, kwicline.pos));
+    forkJoin(referencePositionObsArray).subscribe({
+      next: (res) => res.forEach((r, index) => {
+        const kwicline = this.kwicLines.find(kwicline => kwicline.pos === r?.referencePositionResponse?.tokenNumber);
+        kwicline!.references = r!.referencePositionResponse!.references;
+        if (index === this.kwicLines.length - 1) {
+          this.loading = false;
+          this.loadingCheck = true;
+        }
+      }),
+      error: (err) => {
+        const referencePositionError = {} as Message;
+        referencePositionError.severity = 'error';
+        referencePositionError.detail =
+          'Non è stato possibile recuperare il riferimento associato';
+        referencePositionError.summary = 'Errore';
+        this.errorMessagesService.sendError(referencePositionError);
+      }
+    })
+    // this.kwicLines.forEach((kwicline, index) => {
+    //   this.referencePositionService
+    //     .getReferenceByPosition(corpus, kwicline.pos)
+    //     .subscribe({
+    //       next: (response) => {
+    //         if (response && response.referencePositionResponse) {
+    //           kwicline.references = response.referencePositionResponse.references;
+    //           if (index === this.kwicLines.length - 1) {
+    //             this.loading = false;
+    //           }
+    //         }
+    //       },
+    //       error: (err) => {
+    //         const referencePositionError = {} as Message;
+    //         referencePositionError.severity = 'error';
+    //         referencePositionError.detail =
+    //           'Non è stato possibile recuperare il riferimento associato';
+    //         referencePositionError.summary = 'Errore';
+    //         this.errorMessagesService.sendError(referencePositionError);
+    //       },
+    //     });
+    // });
   }
 
   ngAfterViewInit(): void {
@@ -271,7 +294,6 @@ export class ConcordanceTableComponent
           if (lastResult.fieldRequest) {
             this.fieldRequests = lastResult.fieldRequest;
           }
-          // this.loading = false;
           this.noResultFound = false;
           this.menuEmitterService.menuEvent$.next(new MenuEvent(RESULT_CONCORDANCE));
           this.queryTitle = this.lastResultService.getQueryTitle();
